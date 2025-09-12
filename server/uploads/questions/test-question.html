@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سؤال تجريبي</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .question-number {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .question-text {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .option {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
+        }
+        .option:hover {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+        .correct {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="question-card">
+        <div class="question-number">السؤال 1</div>
+        <div class="question-text">
+            ما هو ناتج العملية التالية؟<br>
+            <strong>5 + 3 × 2 = ؟</strong>
+        </div>
+        <div class="options">
+            <div class="option">A) 11</div>
+            <div class="option correct">B) 16</div>
+            <div class="option">C) 13</div>
+            <div class="option">D) 10</div>
+        </div>
+    </div>
+</body>
+</html>
