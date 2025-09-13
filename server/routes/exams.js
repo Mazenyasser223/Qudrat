@@ -11,7 +11,9 @@ const {
   getReviewExam,
   submitReviewExam,
   getStudentReviewExams,
-  repeatExam
+  repeatExam,
+  getStudentMistakes,
+  getStudentSubmission
 } = require('../controllers/examController');
 const { protect, isTeacher, isStudent } = require('../middleware/auth');
 const upload = require('../middleware/upload');
@@ -28,8 +30,8 @@ const createExamValidation = [
     .isLength({ min: 1 })
     .withMessage('عنوان الامتحان مطلوب'),
   body('examGroup')
-    .isInt({ min: 1, max: 8 })
-    .withMessage('المجموعة يجب أن تكون بين 1 و 8'),
+    .isInt({ min: 0, max: 8 })
+    .withMessage('المجموعة يجب أن تكون بين 0 و 8'),
   body('order')
     .isInt({ min: 1 })
     .withMessage('الترتيب يجب أن يكون رقماً موجباً'),
@@ -64,8 +66,8 @@ const updateExamValidation = [
     .withMessage('عنوان الامتحان لا يمكن أن يكون فارغاً'),
   body('examGroup')
     .optional()
-    .isInt({ min: 1, max: 8 })
-    .withMessage('المجموعة يجب أن تكون بين 1 و 8'),
+    .isInt({ min: 0, max: 8 })
+    .withMessage('المجموعة يجب أن تكون بين 0 و 8'),
   body('order')
     .optional()
     .isInt({ min: 1 })
@@ -172,6 +174,16 @@ router.get('/review/:reviewExamId', isStudent, getReviewExam);
 // @desc    Submit review exam answers
 // @access  Private (Student only)
 router.post('/review/:reviewExamId/submit', isStudent, submitExamValidation, submitReviewExam);
+
+// @route   GET /api/exams/:examId/student-mistakes/:studentId
+// @desc    Get student mistakes for a specific exam
+// @access  Private (Teacher only)
+router.get('/:examId/student-mistakes/:studentId', isTeacher, getStudentMistakes);
+
+// @route   GET /api/exams/:examId/student-submission/:studentId
+// @desc    Get student submission for a specific exam
+// @access  Private (Teacher only)
+router.get('/:examId/student-submission/:studentId', isTeacher, getStudentSubmission);
 
 // Regular Exam Routes
 // @route   GET /api/exams/:id

@@ -31,7 +31,7 @@ const examSchema = new mongoose.Schema({
   examGroup: {
     type: Number,
     required: [true, 'Exam group is required'],
-    min: 1,
+    min: 0,
     max: 8
   },
   order: {

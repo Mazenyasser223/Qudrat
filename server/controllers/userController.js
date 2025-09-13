@@ -32,13 +32,20 @@ const getStudent = async (req, res) => {
   try {
     const student = await User.findById(req.params.id)
       .select('-password')
-      .populate('examProgress.examId', 'title examGroup order');
+      .populate('examProgress.examId', 'title examGroup order isActive');
 
     if (!student || student.role !== 'student') {
       return res.status(404).json({
         success: false,
         message: 'Student not found'
       });
+    }
+
+    // Filter out progress for inactive exams
+    if (student.examProgress) {
+      student.examProgress = student.examProgress.filter(progress => 
+        progress.examId && progress.examId.isActive !== false
+      );
     }
 
     res.json({
@@ -705,6 +712,72 @@ const assignMultipleCategories = async (req, res) => {
   }
 };
 
+// @desc    Get all student answers across all exams
+// @route   GET /api/users/students/:id/all-answers
+// @access  Private (Teacher only)
+const getAllStudentAnswers = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    
+    // Get student with exam progress
+    const student = await User.findById(studentId).select('-password');
+    if (!student || student.role !== 'student') {
+      return res.status(404).json({
+        success: false,
+        message: 'Student not found'
+      });
+    }
+
+    // Get all exams that the student has attempted
+    const attemptedExams = student.examProgress.filter(progress => 
+      progress.status === 'completed' || progress.status === 'in_progress'
+    );
+
+    const studentAnswers = [];
+
+    for (const progress of attemptedExams) {
+      // Get the full exam with questions (only active exams)
+      const exam = await Exam.findById(progress.examId).populate('questions');
+      if (!exam || !exam.isActive) continue;
+
+      studentAnswers.push({
+        exam: {
+          _id: exam._id,
+          title: exam.title,
+          examGroup: exam.examGroup,
+          order: exam.order,
+          questions: exam.questions
+        },
+        status: progress.status,
+        score: progress.score || 0,
+        totalQuestions: progress.totalQuestions || exam.questions.length,
+        percentage: progress.percentage || 0,
+        answers: progress.answers || []
+      });
+    }
+
+    // Sort by exam group and order
+    studentAnswers.sort((a, b) => {
+      if (a.exam.examGroup !== b.exam.examGroup) {
+        return a.exam.examGroup - b.exam.examGroup;
+      }
+      return a.exam.order - b.exam.order;
+    });
+
+    res.json({
+      success: true,
+      data: studentAnswers,
+      count: studentAnswers.length
+    });
+  } catch (error) {
+    console.error('Get all student answers error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching student answers'
+    });
+  }
+};
+
 module.exports = {
   getStudents,
   getStudent,
@@ -718,5 +791,6 @@ module.exports = {
   searchStudents,
   assignSpecificExams,
   assignCategory,
-  assignMultipleCategories
+  assignMultipleCategories,
+  getAllStudentAnswers
 };

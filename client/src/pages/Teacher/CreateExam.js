@@ -291,10 +291,11 @@ const CreateExam = () => {
                   className={`input-field ${errors.examGroup ? 'border-red-500' : ''}`}
                   {...register('examGroup', {
                     required: 'المجموعة مطلوبة',
-                    min: { value: 1, message: 'المجموعة يجب أن تكون 1 أو أكثر' },
+                    min: { value: 0, message: 'المجموعة يجب أن تكون 0 أو أكثر' },
                     max: { value: 8, message: 'المجموعة يجب أن تكون 8 أو أقل' }
                   })}
                 >
+                  <option value={0}>اختبارات التأسيس</option>
                   {Array.from({ length: 8 }, (_, i) => i + 1).map(num => (
                     <option key={num} value={num}>المجموعة {num}</option>
                   ))}

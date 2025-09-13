@@ -12,6 +12,8 @@ const TakeExam = () => {
   const navigate = useNavigate();
   
   const [exam, setExam] = useState(null);
+  const [shuffledQuestions, setShuffledQuestions] = useState([]);
+  const [questionOrder, setQuestionOrder] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
@@ -24,6 +26,16 @@ const TakeExam = () => {
     fetchExam();
   }, [examId]);
 
+  // Function to shuffle array using Fisher-Yates algorithm
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   const fetchExam = async () => {
     try {
       setLoading(true);
@@ -32,11 +44,22 @@ const TakeExam = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setExam(res.data.data);
+      const examData = res.data.data;
+      setExam(examData);
+      
+      // Shuffle questions for this exam session
+      const shuffled = shuffleArray(examData.questions);
+      setShuffledQuestions(shuffled);
+      
+      // Create question order mapping (original index -> shuffled index)
+      const order = examData.questions.map((_, originalIndex) => {
+        return shuffled.findIndex(q => q === examData.questions[originalIndex]);
+      });
+      setQuestionOrder(order);
       
       // Initialize answers object
       const initialAnswers = {};
-      res.data.data.questions.forEach((_, index) => {
+      shuffled.forEach((_, index) => {
         initialAnswers[index] = null;
       });
       setAnswers(initialAnswers);
@@ -63,7 +86,7 @@ const TakeExam = () => {
   };
 
   const handleNext = () => {
-    if (currentQuestion < exam.questions.length - 1) {
+    if (currentQuestion < shuffledQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
@@ -73,10 +96,13 @@ const TakeExam = () => {
       try {
         setSubmitting(true);
         
-        // Prepare answers array
-        const answersArray = exam.questions.map((_, index) => ({
-          selectedAnswer: answers[index] || null
-        }));
+        // Map shuffled answers back to original question order
+        const answersArray = exam.questions.map((_, originalIndex) => {
+          const shuffledIndex = questionOrder[originalIndex];
+          return {
+            selectedAnswer: answers[shuffledIndex] || null
+          };
+        });
 
         const res = await axios.post(`/api/exams/${examId}/submit`, {
           answers: answersArray
@@ -145,10 +171,14 @@ const TakeExam = () => {
       <ExamResults
         exam={exam}
         results={results}
-        answers={exam.questions.map((_, index) => ({
-          selectedAnswer: answers[index],
-          isCorrect: answers[index] === exam.questions[index].correctAnswer
-        }))}
+        answers={exam.questions.map((question, originalIndex) => {
+          const shuffledIndex = questionOrder[originalIndex];
+          const selectedAnswer = answers[shuffledIndex];
+          return {
+            selectedAnswer: selectedAnswer,
+            isCorrect: selectedAnswer === question.correctAnswer
+          };
+        })}
         onBackToDashboard={() => navigate('/student')}
       />
     );
@@ -194,7 +224,7 @@ const TakeExam = () => {
             </div>
             <div className="card-body">
               <div className="grid grid-cols-4 gap-2 mb-4">
-                {exam.questions.map((_, index) => (
+                {shuffledQuestions.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentQuestion(index)}
@@ -215,13 +245,13 @@ const TakeExam = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">تم الإجابة:</span>
                   <span className="font-medium text-green-600">
-                    {getAnsweredCount()} / {exam.questions.length}
+                    {getAnsweredCount()} / {shuffledQuestions.length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">غير مجاب:</span>
                   <span className="font-medium text-red-600">
-                    {exam.questions.length - getAnsweredCount()}
+                    {shuffledQuestions.length - getAnsweredCount()}
                   </span>
                 </div>
               </div>
@@ -241,9 +271,9 @@ const TakeExam = () => {
         {/* Question Content */}
         <div className="lg:col-span-3">
           <QuestionCard
-            question={exam.questions[currentQuestion]}
+            question={shuffledQuestions[currentQuestion]}
             questionNumber={currentQuestion + 1}
-            totalQuestions={exam.questions.length}
+            totalQuestions={shuffledQuestions.length}
             selectedAnswer={answers[currentQuestion]}
             onAnswerSelect={handleAnswerSelect}
             onPrevious={handlePrevious}

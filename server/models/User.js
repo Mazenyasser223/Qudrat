@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema({
     },
     status: {
       type: String,
-      enum: ['locked', 'unlocked', 'completed'],
+      enum: ['locked', 'unlocked', 'in_progress', 'completed'],
       default: 'locked'
     },
     score: {
@@ -66,6 +66,16 @@ const userSchema = new mongoose.Schema({
     percentage: {
       type: Number,
       default: 0
+    },
+    totalQuestions: {
+      type: Number,
+      default: 0
+    },
+    startTime: {
+      type: Date
+    },
+    endTime: {
+      type: Date
     },
     completedAt: {
       type: Date

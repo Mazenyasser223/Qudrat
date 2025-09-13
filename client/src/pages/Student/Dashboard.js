@@ -90,10 +90,6 @@ const StudentDashboard = () => {
     return 'locked';
   };
 
-  const getExamScore = (exam) => {
-    const progress = studentProgress.find(p => p.examId === exam._id);
-    return progress ? progress.score : 0;
-  };
 
   const getExamPercentage = (exam) => {
     const progress = studentProgress.find(p => p.examId === exam._id);
@@ -178,6 +174,90 @@ const StudentDashboard = () => {
 
       {/* Exam Groups */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* اختبارات التأسيس Group */}
+        <div key={0} className="card">
+          <div className="card-header">
+            <h3 className="text-lg font-semibold text-gray-900">
+              اختبارات التأسيس
+            </h3>
+          </div>
+          <div className="card-body">
+            {examGroups[0] ? (
+              <div className="space-y-3">
+                {examGroups[0].map((exam, index) => {
+                  const status = getExamStatus(exam);
+                  return (
+                    <div
+                      key={exam._id}
+                      className={`p-3 rounded-lg border ${
+                        status === 'locked'
+                          ? 'bg-gray-50 border-gray-200'
+                          : status === 'completed'
+                          ? 'bg-green-50 border-green-200'
+                          : status === 'unlocked'
+                          ? 'bg-blue-50 border-blue-200'
+                          : 'bg-yellow-50 border-yellow-200'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                          {getStatusIcon(status)}
+                          <span className="text-sm font-medium text-gray-700">
+                            امتحان {exam.order}
+                          </span>
+                        </div>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          status === 'locked'
+                            ? 'bg-gray-200 text-gray-600'
+                            : status === 'completed'
+                            ? 'bg-green-200 text-green-700'
+                            : status === 'unlocked'
+                            ? 'bg-blue-200 text-blue-700'
+                            : 'bg-yellow-200 text-yellow-700'
+                        }`}>
+                          {getStatusText(status)}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {exam.totalQuestions} سؤال • {exam.timeLimit} دقيقة
+                      </p>
+                      {status !== 'locked' && (
+                        <button
+                          className="mt-2 w-full text-xs btn-primary py-1 flex items-center justify-center space-x-1 rtl:space-x-reverse"
+                          onClick={() => handleStartExam(exam)}
+                        >
+                          {status === 'completed' ? (
+                            <>
+                              <CheckCircle className="h-3 w-3" />
+                              <span>امتحان المراجعة ({getExamPercentage(exam)}%)</span>
+                            </>
+                          ) : status === 'in_progress' ? (
+                            <>
+                              <Clock className="h-3 w-3" />
+                              <span>متابعة الامتحان</span>
+                            </>
+                          ) : (
+                            <>
+                              <Play className="h-3 w-3" />
+                              <span>بدء الامتحان</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                <BookOpen className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-500">لا توجد امتحانات متاحة</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Regular Groups 1-8 */}
         {Array.from({ length: 8 }, (_, i) => i + 1).map(groupNumber => (
           <div key={groupNumber} className="card">
             <div className="card-header">

@@ -1,6 +1,5 @@
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
-import { Navigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   // Always show the landing page first, regardless of authentication status
@@ -26,16 +25,21 @@ const Home = () => {
           <p className="text-green-900/80 text-lg">تدريب احترافي لاختبارات القدرات الكمي</p>
         </section>
 
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <div className="card p-8 text-center bg-[#214C3A] text-white border-none">
-            <img src="/icons/basics.png" alt="أساسيات" className="mx-auto h-16 w-16 mb-4 opacity-90" />
-            <h3 className="text-2xl font-bold mb-2">أساسيات</h3>
-            <a href="/( تبسيط قدرات (مستر علاء وهبه.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-4 py-2 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition">أساسيات</a>
+            <img src="/icons/basics.png" alt="تأسيس" className="mx-auto h-16 w-16 mb-4 opacity-90" />
+            <h3 className="text-2xl font-bold mb-2">تأسيس</h3>
+            <a href="/( تبسيط قدرات (مستر علاء وهبه.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-4 py-2 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition">تأسيس</a>
           </div>
           <div className="card p-8 text-center bg-[#214C3A] text-white border-none">
             <img src="/icons/rules.png" alt="قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" />
             <h3 className="text-2xl font-bold mb-2">قوانين</h3>
-            <a href="/___اختبار قوانين القدرات.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-4 py-2 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition">قوانين</a>
+            <a href="/ملف القوانين 2025.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-4 py-2 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition">قوانين</a>
+          </div>
+          <div className="card p-8 text-center bg-[#214C3A] text-white border-none">
+            <img src="/icons/rules.png" alt="تسميع قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" />
+            <h3 className="text-2xl font-bold mb-2">تسميع قوانين</h3>
+            <a href="/___اختبار قوانين القدرات.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-4 py-2 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition">تسميع قوانين</a>
           </div>
         </section>
 

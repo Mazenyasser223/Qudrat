@@ -4,7 +4,6 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import ExamTimer from '../../components/Exam/ExamTimer';
 import QuestionCard from '../../components/Exam/QuestionCard';
-import ExamResults from '../../components/Exam/ExamResults';
 import { ArrowLeft, CheckCircle, RotateCcw } from 'lucide-react';
 
 const TakeReviewExam = () => {
@@ -12,6 +11,8 @@ const TakeReviewExam = () => {
   const navigate = useNavigate();
   
   const [reviewExam, setReviewExam] = useState(null);
+  const [shuffledQuestions, setShuffledQuestions] = useState([]);
+  const [questionOrder, setQuestionOrder] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
@@ -24,6 +25,16 @@ const TakeReviewExam = () => {
     fetchReviewExam();
   }, [reviewExamId]);
 
+  // Function to shuffle array using Fisher-Yates algorithm
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   const fetchReviewExam = async () => {
     try {
       setLoading(true);
@@ -32,11 +43,22 @@ const TakeReviewExam = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setReviewExam(res.data.data);
+      const reviewExamData = res.data.data;
+      setReviewExam(reviewExamData);
+      
+      // Shuffle questions for this review exam session
+      const shuffled = shuffleArray(reviewExamData.questions);
+      setShuffledQuestions(shuffled);
+      
+      // Create question order mapping (original index -> shuffled index)
+      const order = reviewExamData.questions.map((_, originalIndex) => {
+        return shuffled.findIndex(q => q === reviewExamData.questions[originalIndex]);
+      });
+      setQuestionOrder(order);
       
       // Initialize answers object
       const initialAnswers = {};
-      res.data.data.questions.forEach((_, index) => {
+      shuffled.forEach((_, index) => {
         initialAnswers[index] = null;
       });
       setAnswers(initialAnswers);
@@ -63,7 +85,7 @@ const TakeReviewExam = () => {
   };
 
   const handleNext = () => {
-    if (currentQuestion < reviewExam.questions.length - 1) {
+    if (currentQuestion < shuffledQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
@@ -73,10 +95,13 @@ const TakeReviewExam = () => {
       try {
         setSubmitting(true);
         
-        // Prepare answers array
-        const answersArray = reviewExam.questions.map((_, index) => ({
-          selectedAnswer: answers[index] || null
-        }));
+        // Map shuffled answers back to original question order
+        const answersArray = reviewExam.questions.map((_, originalIndex) => {
+          const shuffledIndex = questionOrder[originalIndex];
+          return {
+            selectedAnswer: answers[shuffledIndex] || null
+          };
+        });
 
         const res = await axios.post(`/api/exams/review/${reviewExamId}/submit`, {
           answers: answersArray
@@ -215,9 +240,20 @@ const TakeReviewExam = () => {
               setResults(null);
               setCurrentQuestion(0);
               setAnswers({});
+              
+              // Reshuffle questions for new attempt
+              const shuffled = shuffleArray(reviewExam.questions);
+              setShuffledQuestions(shuffled);
+              
+              // Create new question order mapping
+              const order = reviewExam.questions.map((_, originalIndex) => {
+                return shuffled.findIndex(q => q === reviewExam.questions[originalIndex]);
+              });
+              setQuestionOrder(order);
+              
               // Reset answers
               const initialAnswers = {};
-              reviewExam.questions.forEach((_, index) => {
+              shuffled.forEach((_, index) => {
                 initialAnswers[index] = null;
               });
               setAnswers(initialAnswers);
@@ -285,7 +321,7 @@ const TakeReviewExam = () => {
             </div>
             <div className="card-body">
               <div className="grid grid-cols-4 gap-2 mb-4">
-                {reviewExam.questions.map((_, index) => (
+                {shuffledQuestions.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentQuestion(index)}
@@ -306,13 +342,13 @@ const TakeReviewExam = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">تم الإجابة:</span>
                   <span className="font-medium text-green-600">
-                    {getAnsweredCount()} / {reviewExam.questions.length}
+                    {getAnsweredCount()} / {shuffledQuestions.length}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">غير مجاب:</span>
                   <span className="font-medium text-red-600">
-                    {reviewExam.questions.length - getAnsweredCount()}
+                    {shuffledQuestions.length - getAnsweredCount()}
                   </span>
                 </div>
               </div>
@@ -331,11 +367,11 @@ const TakeReviewExam = () => {
 
         {/* Question Content */}
         <div className="lg:col-span-3">
-          {reviewExam.questions[currentQuestion] ? (
+          {shuffledQuestions[currentQuestion] ? (
             <QuestionCard
-              question={reviewExam.questions[currentQuestion]}
+              question={shuffledQuestions[currentQuestion]}
               questionNumber={currentQuestion + 1}
-              totalQuestions={reviewExam.questions.length}
+              totalQuestions={shuffledQuestions.length}
               selectedAnswer={answers[currentQuestion]}
               onAnswerSelect={handleAnswerSelect}
               onPrevious={handlePrevious}

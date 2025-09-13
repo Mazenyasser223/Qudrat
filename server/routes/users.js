@@ -13,7 +13,8 @@ const {
   searchStudents,
   assignSpecificExams,
   assignCategory,
-  assignMultipleCategories
+  assignMultipleCategories,
+  getAllStudentAnswers
 } = require('../controllers/userController');
 const { protect, isTeacher } = require('../middleware/auth');
 
@@ -144,6 +145,11 @@ router.get('/students/search', isTeacher, searchStudents);
 // @desc    Get single student
 // @access  Private (Teacher only)
 router.get('/students/:id', isTeacher, getStudent);
+
+// @route   GET /api/users/students/:id/all-answers
+// @desc    Get all student answers across all exams
+// @access  Private (Teacher only)
+router.get('/students/:id/all-answers', isTeacher, getAllStudentAnswers);
 
 // @route   POST /api/users/students
 // @desc    Create new student

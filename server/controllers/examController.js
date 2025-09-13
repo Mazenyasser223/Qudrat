@@ -237,9 +237,15 @@ const deleteExam = async (req, res) => {
     exam.isActive = false;
     await exam.save();
 
+    // Clean up orphaned progress data from all students
+    await User.updateMany(
+      { 'examProgress.examId': exam._id },
+      { $pull: { examProgress: { examId: exam._id } } }
+    );
+
     res.json({
       success: true,
-      message: 'Exam deleted successfully'
+      message: 'Exam deleted successfully and progress data cleaned up'
     });
   } catch (error) {
     console.error('Delete exam error:', error);
@@ -793,6 +799,140 @@ const repeatExam = async (req, res) => {
   }
 };
 
+// @desc    Get student mistakes for a specific exam
+// @route   GET /api/exams/:examId/student-mistakes/:studentId
+// @access  Private (Teacher only)
+const getStudentMistakes = async (req, res) => {
+  try {
+    const { examId, studentId } = req.params;
+
+    // Get the exam with questions
+    const exam = await Exam.findById(examId).populate('questions');
+    if (!exam) {
+      return res.status(404).json({
+        success: false,
+        message: 'Exam not found'
+      });
+    }
+
+    // Get student's exam progress
+    const student = await User.findById(studentId);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Student not found'
+      });
+    }
+
+    const examProgress = student.examProgress.find(progress => 
+      progress.examId.toString() === examId
+    );
+
+    if (!examProgress || (examProgress.status !== 'completed' && examProgress.status !== 'in_progress')) {
+      return res.json({
+        success: true,
+        data: [],
+        message: 'Student has not attempted this exam yet'
+      });
+    }
+
+    // Find mistakes (wrong answers)
+    const mistakes = [];
+    
+    examProgress.answers.forEach((answer, index) => {
+      const question = exam.questions.find(q => q._id.toString() === answer.questionId.toString());
+      if (question && answer.selectedAnswer !== question.correctAnswer) {
+        mistakes.push({
+          question: question,
+          studentAnswer: answer.selectedAnswer,
+          correctAnswer: question.correctAnswer,
+          isCorrect: answer.isCorrect
+        });
+      }
+    });
+
+    res.json({
+      success: true,
+      data: mistakes,
+      count: mistakes.length
+    });
+
+  } catch (error) {
+    console.error('Get student mistakes error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching student mistakes'
+    });
+  }
+};
+
+// @desc    Get student submission for a specific exam
+// @route   GET /api/exams/:examId/student-submission/:studentId
+// @access  Private (Teacher only)
+const getStudentSubmission = async (req, res) => {
+  try {
+    const { examId, studentId } = req.params;
+
+    // Get the exam with questions
+    const exam = await Exam.findById(examId).populate('questions');
+    if (!exam) {
+      return res.status(404).json({
+        success: false,
+        message: 'Exam not found'
+      });
+    }
+
+    // Get student's exam progress
+    const student = await User.findById(studentId);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Student not found'
+      });
+    }
+
+    const examProgress = student.examProgress.find(progress => 
+      progress.examId.toString() === examId
+    );
+
+    if (!examProgress || (examProgress.status !== 'completed' && examProgress.status !== 'in_progress')) {
+      return res.status(404).json({
+        success: false,
+        message: 'Student has not attempted this exam yet'
+      });
+    }
+
+    // Prepare submission data
+    const submission = {
+      exam: {
+        _id: exam._id,
+        title: exam.title,
+        examGroup: exam.examGroup,
+        order: exam.order,
+        questions: exam.questions
+      },
+      status: examProgress.status,
+      score: examProgress.score || 0,
+      totalQuestions: examProgress.totalQuestions || exam.questions.length,
+      percentage: examProgress.percentage || 0,
+      answers: examProgress.answers || [],
+      startTime: examProgress.startTime,
+      endTime: examProgress.endTime
+    };
+
+    res.json({
+      success: true,
+      data: submission
+    });
+  } catch (error) {
+    console.error('Get student submission error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching student submission'
+    });
+  }
+};
+
 module.exports = {
   getExams,
   getExam,
@@ -804,5 +944,7 @@ module.exports = {
   getReviewExam,
   submitReviewExam,
   getStudentReviewExams,
-  repeatExam
+  repeatExam,
+  getStudentMistakes,
+  getStudentSubmission
 };

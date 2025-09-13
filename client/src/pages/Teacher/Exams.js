@@ -117,6 +117,92 @@ const Exams = () => {
 
       {/* Exam Groups */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* اختبارات التأسيس (Foundation Tests) - Group 0 */}
+        <div className="card border-2 border-blue-200 bg-blue-50">
+          <div className="card-header bg-blue-100">
+            <h3 className="text-lg font-semibold text-blue-900">
+              اختبارات التأسيس
+            </h3>
+            <p className="text-xs text-blue-700 mt-1">امتحانات التأسيس الأساسية</p>
+          </div>
+          <div className="card-body">
+            {groupedExams[0] ? (
+              <div className="space-y-3">
+                {groupedExams[0].map((exam) => (
+                  <div
+                    key={exam._id}
+                    className="p-3 bg-white rounded-lg border border-blue-200"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-sm font-medium text-gray-900">
+                        {exam.title}
+                      </h4>
+                      <span className="text-xs text-gray-500">
+                        ترتيب {exam.order}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-4 rtl:space-x-reverse text-xs text-gray-500 mb-3">
+                      <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                        <BookOpen className="h-3 w-3" />
+                        <span>{exam.totalQuestions} سؤال</span>
+                      </div>
+                      <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                        <Clock className="h-3 w-3" />
+                        <span>{exam.timeLimit} دقيقة</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                        <Users className="h-3 w-3 text-gray-400" />
+                        <span className="text-xs text-gray-500">
+                          {exam.statistics.totalAttempts} محاولة
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                        <button
+                          onClick={() => handleView(exam._id)}
+                          className="text-blue-600 hover:text-blue-900"
+                          title="عرض"
+                        >
+                          <Eye className="h-3 w-3" />
+                        </button>
+                        <button
+                          onClick={() => handleEdit(exam._id)}
+                          className="text-green-600 hover:text-green-900"
+                          title="تعديل"
+                        >
+                          <Edit className="h-3 w-3" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(exam._id)}
+                          className="text-red-600 hover:text-red-900"
+                          title="حذف"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                <BookOpen className="h-8 w-8 text-blue-400 mx-auto mb-2" />
+                <p className="text-sm text-blue-600">لا توجد امتحانات تأسيس</p>
+                <button
+                  onClick={() => navigate('/teacher/exams/create')}
+                  className="mt-2 text-xs text-blue-600 hover:text-blue-800 underline"
+                >
+                  إضافة امتحان تأسيس
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Regular Groups 1-8 */}
         {Array.from({ length: 8 }, (_, i) => i + 1).map(groupNumber => (
           <div key={groupNumber} className="card">
             <div className="card-header">
