@@ -12,7 +12,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://your-backend-url.railway.app/api/$1"
+      "dest": "https://qudrat-production.up.railway.app/api/$1"
     },
     {
       "src": "/(.*)",
@@ -20,6 +20,6 @@
     }
   ],
   "env": {
-    "REACT_APP_API_URL": "https://your-backend-url.railway.app"
+    "REACT_APP_API_URL": "https://qudrat-production.up.railway.app"
   }
 }
