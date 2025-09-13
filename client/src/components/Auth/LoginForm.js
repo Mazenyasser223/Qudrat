@@ -19,7 +19,7 @@ const LoginForm = () => {
     const result = await login(data.email, data.password);
     if (result.success) {
       // Redirect based on user role after successful login
-      if (result.user?.role === 'teacher') {
+      if (result.user?.role === 'admin' || result.user?.role === 'teacher') {
         navigate('/teacher');
       } else if (result.user?.role === 'student') {
         navigate('/student');
