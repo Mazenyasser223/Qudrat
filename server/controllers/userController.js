@@ -778,6 +778,140 @@ const getAllStudentAnswers = async (req, res) => {
   }
 };
 
+// @desc    Get dashboard statistics
+// @route   GET /api/users/dashboard-stats
+// @access  Private (Teacher/Admin only)
+const getDashboardStats = async (req, res) => {
+  try {
+    // Get total students
+    const totalStudents = await User.countDocuments({ role: 'student' });
+    
+    // Get total exams
+    const totalExams = await Exam.countDocuments({ isActive: { $ne: false } });
+    
+    // Get completed exams (students who have completed at least one exam)
+    const studentsWithProgress = await User.countDocuments({
+      role: 'student',
+      'examProgress.status': 'completed'
+    });
+    
+    // Calculate average grades
+    const studentsWithGrades = await User.aggregate([
+      { $match: { role: 'student', 'examProgress.status': 'completed' } },
+      { $unwind: '$examProgress' },
+      { $match: { 'examProgress.status': 'completed' } },
+      {
+        $group: {
+          _id: null,
+          averageGrade: { $avg: '$examProgress.grade' }
+        }
+      }
+    ]);
+    
+    const averageGrade = studentsWithGrades.length > 0 ? studentsWithGrades[0].averageGrade : 0;
+    
+    res.json({
+      success: true,
+      data: {
+        totalStudents,
+        totalExams,
+        completedExams: studentsWithProgress,
+        averageGrade: Math.round(averageGrade * 100) / 100
+      }
+    });
+  } catch (error) {
+    console.error('Get dashboard stats error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching dashboard statistics'
+    });
+  }
+};
+
+// @desc    Get analytics data
+// @route   GET /api/users/analytics
+// @access  Private (Teacher/Admin only)
+const getAnalytics = async (req, res) => {
+  try {
+    // Get total students
+    const totalStudents = await User.countDocuments({ role: 'student' });
+    
+    // Get total exams
+    const totalExams = await Exam.countDocuments({ isActive: { $ne: false } });
+    
+    // Get completed exams
+    const studentsWithProgress = await User.countDocuments({
+      role: 'student',
+      'examProgress.status': 'completed'
+    });
+    
+    // Calculate average grades
+    const studentsWithGrades = await User.aggregate([
+      { $match: { role: 'student', 'examProgress.status': 'completed' } },
+      { $unwind: '$examProgress' },
+      { $match: { 'examProgress.status': 'completed' } },
+      {
+        $group: {
+          _id: null,
+          averageGrade: { $avg: '$examProgress.grade' }
+        }
+      }
+    ]);
+    
+    const averageGrade = studentsWithGrades.length > 0 ? studentsWithGrades[0].averageGrade : 0;
+    
+    // Get student performance data
+    const studentPerformance = await User.aggregate([
+      { $match: { role: 'student' } },
+      {
+        $project: {
+          name: 1,
+          email: 1,
+          examProgress: {
+            $filter: {
+              input: '$examProgress',
+              cond: { $eq: ['$$this.status', 'completed'] }
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          name: 1,
+          email: 1,
+          totalCompleted: { $size: '$examProgress' },
+          averageGrade: {
+            $cond: {
+              if: { $gt: [{ $size: '$examProgress' }, 0] },
+              then: { $avg: '$examProgress.grade' },
+              else: 0
+            }
+          }
+        }
+      },
+      { $sort: { averageGrade: -1 } },
+      { $limit: 10 }
+    ]);
+    
+    res.json({
+      success: true,
+      data: {
+        totalStudents,
+        totalExams,
+        completedExams: studentsWithProgress,
+        averageGrade: Math.round(averageGrade * 100) / 100,
+        studentPerformance
+      }
+    });
+  } catch (error) {
+    console.error('Get analytics error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching analytics'
+    });
+  }
+};
+
 module.exports = {
   getStudents,
   getStudent,
@@ -792,5 +926,7 @@ module.exports = {
   assignSpecificExams,
   assignCategory,
   assignMultipleCategories,
-  getAllStudentAnswers
+  getAllStudentAnswers,
+  getDashboardStats,
+  getAnalytics
 };

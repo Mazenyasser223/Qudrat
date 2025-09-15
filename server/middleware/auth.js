@@ -69,12 +69,12 @@ const authorize = (...roles) => {
   };
 };
 
-// Check if user is teacher
+// Check if user is teacher or admin
 const isTeacher = (req, res, next) => {
-  if (req.user.role !== 'teacher') {
+  if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
     return res.status(403).json({
       success: false,
-      message: 'Access denied. Teacher role required.'
+      message: 'Access denied. Teacher or admin role required.'
     });
   }
   next();

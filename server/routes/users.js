@@ -14,7 +14,9 @@ const {
   assignSpecificExams,
   assignCategory,
   assignMultipleCategories,
-  getAllStudentAnswers
+  getAllStudentAnswers,
+  getDashboardStats,
+  getAnalytics
 } = require('../controllers/userController');
 const { protect, isTeacher } = require('../middleware/auth');
 
@@ -200,5 +202,15 @@ router.post('/students/:id/assign-category', isTeacher, assignCategoryValidation
 // @desc    Assign multiple categories to student
 // @access  Private (Teacher only)
 router.post('/students/:id/assign-categories', isTeacher, assignMultipleCategoriesValidation, assignMultipleCategories);
+
+// @route   GET /api/users/dashboard-stats
+// @desc    Get dashboard statistics
+// @access  Private (Teacher/Admin only)
+router.get('/dashboard-stats', isTeacher, getDashboardStats);
+
+// @route   GET /api/users/analytics
+// @desc    Get analytics data
+// @access  Private (Teacher/Admin only)
+router.get('/analytics', isTeacher, getAnalytics);
 
 module.exports = router;
