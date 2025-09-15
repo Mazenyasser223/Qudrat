@@ -12,7 +12,7 @@ const Header = () => {
     navigate('/');
   };
 
-  const isTeacher = user?.role === 'teacher';
+  const isTeacher = user?.role === 'teacher' || user?.role === 'admin';
   const isStudent = user?.role === 'student';
 
   return (
@@ -80,7 +80,7 @@ const Header = () => {
                   {user.name}
                 </span>
                 <span className="text-xs text-green-700 bg-green-100 px-2 py-1 rounded-full">
-                  {isTeacher ? 'مدرس' : 'طالب'}
+                  {user?.role === 'admin' ? 'مدير' : isTeacher ? 'مدرس' : 'طالب'}
                 </span>
               </div>
               <button
