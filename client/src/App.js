@@ -54,7 +54,7 @@ function App() {
             <Route
               path="/teacher"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
                   <Layout>
                     <TeacherDashboard />
                   </Layout>
@@ -64,7 +64,7 @@ function App() {
             <Route
               path="/teacher/students"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
                   <Layout>
                     <TeacherStudents />
                   </Layout>
@@ -74,7 +74,7 @@ function App() {
             <Route
               path="/teacher/students/:studentId"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
                   <Layout>
                     <StudentProfile />
                   </Layout>
@@ -84,7 +84,7 @@ function App() {
             <Route
               path="/teacher/exams"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
                   <Layout>
                     <TeacherExams />
                   </Layout>
@@ -94,7 +94,7 @@ function App() {
             <Route
               path="/teacher/exams/create"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
                   <Layout>
                     <CreateExam />
                   </Layout>
@@ -104,7 +104,7 @@ function App() {
             <Route
               path="/teacher/exams/edit/:examId"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
                   <Layout>
                     <EditExam />
                   </Layout>
@@ -114,7 +114,7 @@ function App() {
             <Route
               path="/teacher/exams/view/:examId"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
                   <Layout>
                     <ViewExam />
                   </Layout>
@@ -124,7 +124,7 @@ function App() {
             <Route
               path="/teacher/analytics"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
                   <Layout>
                     <TeacherAnalytics />
                   </Layout>
