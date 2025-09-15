@@ -45,5 +45,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://qudrat-production-024a.up.railway.app"
+  "proxy": "http://localhost:5000"
 }
