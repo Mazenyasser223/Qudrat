@@ -63,8 +63,8 @@ app.use(cors({
       return callback(null, true);
     }
     
-    // Reject other origins
-    callback(new Error('Not allowed by CORS'));
+    // Allow all origins for now (more permissive)
+    return callback(null, true);
   },
   credentials: true
 }));
