@@ -146,6 +146,7 @@ const CreateExam = () => {
       
       // Set the uploaded image URL
       const imageUrl = response.data.imageUrl;
+      console.log('Uploaded image URL:', imageUrl);
       setValue(`questions.${questionIndex}.questionImage`, imageUrl);
       
       toast.success('تم رفع الصورة بنجاح');
@@ -193,7 +194,9 @@ const CreateExam = () => {
           },
         });
         
-        return response.data.imageUrl;
+        const imageUrl = response.data.imageUrl;
+        console.log('Multiple upload image URL:', imageUrl);
+        return imageUrl;
       });
 
       const uploadedUrls = await Promise.all(uploadPromises);
@@ -433,7 +436,8 @@ const CreateExam = () => {
                               className="w-full h-32 object-cover rounded-lg border"
                               onError={(e) => {
                                 console.error('Image load error:', e.target.src);
-                                e.target.src = '/icons/basics.png'; // Fallback image
+                                console.error('Available image URL:', watch(`questions.${index}.questionImage`));
+                                // Don't set fallback image, let it show broken image icon
                               }}
                             />
                             <p className="text-xs text-green-600 mt-1">✓ تم رفع الصورة بنجاح</p>
