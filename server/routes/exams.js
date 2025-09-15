@@ -133,7 +133,7 @@ router.post('/upload-image', isTeacher, upload.single('questionImage'), (req, re
       });
     }
 
-    const imageUrl = `/uploads/questions/${req.file.filename}`;
+    const imageUrl = `${process.env.API_URL || 'http://localhost:5000'}/uploads/questions/${req.file.filename}`;
     
     res.json({
       success: true,

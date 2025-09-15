@@ -94,7 +94,7 @@ const createExam = async (req, res) => {
       const file = files[index];
       return {
         ...question,
-        questionImage: file ? `/uploads/questions/${file.filename}` : question.questionImage || '/uploads/questions/default-question.png'
+        questionImage: file ? `${process.env.API_URL || 'http://localhost:5000'}/uploads/questions/${file.filename}` : question.questionImage || `${process.env.API_URL || 'http://localhost:5000'}/uploads/questions/default-question.png`
       };
     });
 
@@ -186,7 +186,7 @@ const updateExam = async (req, res) => {
       const file = files[index];
       return {
         ...question,
-        questionImage: file ? `/uploads/questions/${file.filename}` : question.questionImage
+        questionImage: file ? `${process.env.API_URL || 'http://localhost:5000'}/uploads/questions/${file.filename}` : question.questionImage
       };
     });
 
