@@ -124,21 +124,29 @@ const submitExamValidation = [
 // @route   POST /api/exams/upload-image
 // @desc    Upload question image
 // @access  Private (Teacher only)
-router.post('/upload-image', isTeacher, upload.single('questionImage'), (req, res) => {
+router.post('/upload-image', isTeacher, (req, res) => {
   try {
-    if (!req.file) {
+    const { imageData } = req.body;
+    
+    if (!imageData) {
       return res.status(400).json({
         success: false,
         message: 'لم يتم رفع أي ملف'
       });
     }
 
-    const imageUrl = `${process.env.API_URL || 'http://localhost:5000'}/uploads/questions/${req.file.filename}`;
+    // Validate base64 format
+    if (!imageData.startsWith('data:image/')) {
+      return res.status(400).json({
+        success: false,
+        message: 'تنسيق الصورة غير صحيح'
+      });
+    }
     
     res.json({
       success: true,
       message: 'تم رفع الصورة بنجاح',
-      imageUrl: imageUrl
+      imageUrl: imageData // Return the base64 data directly
     });
   } catch (error) {
     console.error('Upload error:', error);
@@ -194,12 +202,12 @@ router.get('/:id', getExam);
 // @route   POST /api/exams
 // @desc    Create new exam
 // @access  Private (Teacher only)
-router.post('/', isTeacher, upload.array('questionImages', 20), createExamValidation, createExam);
+router.post('/', isTeacher, createExamValidation, createExam);
 
 // @route   PUT /api/exams/:id
 // @desc    Update exam
 // @access  Private (Teacher only)
-router.put('/:id', isTeacher, upload.array('questionImages', 20), updateExamValidation, updateExam);
+router.put('/:id', isTeacher, updateExamValidation, updateExam);
 
 // @route   DELETE /api/exams/:id
 // @desc    Delete exam

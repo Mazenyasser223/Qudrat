@@ -132,32 +132,45 @@ const CreateExam = () => {
     try {
       setUploading(true);
       
-      // Create FormData for file upload
-      const formData = new FormData();
-      formData.append('questionImage', file);
-
-      // Upload the image
-      const response = await axios.post('/api/exams/upload-image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      // Convert file to Base64
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const imageData = e.target.result;
+          
+          // Upload the image as Base64
+          const response = await axios.post('/api/exams/upload-image', 
+            { imageData }, 
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              },
+            }
+          );
+          
+          // Set the uploaded image URL (Base64 data)
+          const imageUrl = response.data.imageUrl;
+          console.log('Uploaded image URL:', imageUrl);
+          setValue(`questions.${questionIndex}.questionImage`, imageUrl);
+          
+          toast.success('تم رفع الصورة بنجاح');
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          if (error.response) {
+            toast.error(`حدث خطأ أثناء رفع الصورة: ${error.response.data.message || 'خطأ غير معروف'}`);
+          } else {
+            toast.error('حدث خطأ أثناء رفع الصورة');
+          }
+        } finally {
+          setUploading(false);
+        }
+      };
       
-      // Set the uploaded image URL
-      const imageUrl = response.data.imageUrl;
-      console.log('Uploaded image URL:', imageUrl);
-      setValue(`questions.${questionIndex}.questionImage`, imageUrl);
-      
-      toast.success('تم رفع الصورة بنجاح');
+      reader.readAsDataURL(file);
     } catch (error) {
-      console.error('Error uploading image:', error);
-      if (error.response) {
-        toast.error(`حدث خطأ أثناء رفع الصورة: ${error.response.data.message || 'خطأ غير معروف'}`);
-      } else {
-        toast.error('حدث خطأ أثناء رفع الصورة');
-      }
-    } finally {
+      console.error('Error reading file:', error);
+      toast.error('حدث خطأ أثناء قراءة الملف');
       setUploading(false);
     }
   };
@@ -182,21 +195,33 @@ const CreateExam = () => {
       setUploading(true);
       toast.loading(`جاري رفع ${files.length} صورة...`);
 
-      // Upload all images
+      // Upload all images as Base64
       const uploadPromises = files.map(async (file) => {
-        const formData = new FormData();
-        formData.append('questionImage', file);
-        
-        const response = await axios.post('/api/exams/upload-image', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          },
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            try {
+              const imageData = e.target.result;
+              
+              const response = await axios.post('/api/exams/upload-image', 
+                { imageData }, 
+                {
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                  },
+                }
+              );
+              
+              const imageUrl = response.data.imageUrl;
+              console.log('Multiple upload image URL:', imageUrl);
+              resolve(imageUrl);
+            } catch (error) {
+              reject(error);
+            }
+          };
+          reader.readAsDataURL(file);
         });
-        
-        const imageUrl = response.data.imageUrl;
-        console.log('Multiple upload image URL:', imageUrl);
-        return imageUrl;
       });
 
       const uploadedUrls = await Promise.all(uploadPromises);

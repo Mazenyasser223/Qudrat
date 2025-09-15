@@ -70,7 +70,6 @@ const createExam = async (req, res) => {
     }
 
     const { title, description, examGroup, order, timeLimit, questions } = req.body;
-    const files = req.files || [];
 
     // Check if exam with same group and order exists
     const existingExam = await Exam.findOne({ 
@@ -89,12 +88,11 @@ const createExam = async (req, res) => {
     // Parse questions if it's a string
     const parsedQuestions = typeof questions === 'string' ? JSON.parse(questions) : questions;
 
-    // Map uploaded files to questions
-    const questionsWithImages = parsedQuestions.map((question, index) => {
-      const file = files[index];
+    // Questions already contain Base64 image data, no need to map files
+    const questionsWithImages = parsedQuestions.map((question) => {
       return {
         ...question,
-        questionImage: file ? `${process.env.API_URL || 'http://localhost:5000'}/uploads/questions/${file.filename}` : question.questionImage || `${process.env.API_URL || 'http://localhost:5000'}/uploads/questions/default-question.png`
+        questionImage: question.questionImage || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==' // 1x1 transparent pixel
       };
     });
 
@@ -142,7 +140,6 @@ const updateExam = async (req, res) => {
     }
 
     const { title, description, examGroup, order, timeLimit, questions, isActive } = req.body;
-    const files = req.files || [];
 
     const exam = await Exam.findById(req.params.id);
     if (!exam) {
@@ -181,12 +178,11 @@ const updateExam = async (req, res) => {
       });
     }
 
-    // Map uploaded files to questions (only update if new files are uploaded)
-    const questionsWithImages = parsedQuestions.map((question, index) => {
-      const file = files[index];
+    // Questions already contain Base64 image data, no need to map files
+    const questionsWithImages = parsedQuestions.map((question) => {
       return {
         ...question,
-        questionImage: file ? `${process.env.API_URL || 'http://localhost:5000'}/uploads/questions/${file.filename}` : question.questionImage
+        questionImage: question.questionImage || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==' // 1x1 transparent pixel
       };
     });
 
