@@ -44,7 +44,12 @@ app.use(limiter);
 
 // CORS
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: [
+    process.env.CLIENT_URL || 'http://localhost:3000',
+    'https://qudrat-five.vercel.app',
+    'https://qudrat-git-main-mazenyasser223s-projects.vercel.app',
+    'https://qudrat-d8tmgyc4c-mazenyasser223s-projects.vercel.app'
+  ],
   credentials: true
 }));
 
