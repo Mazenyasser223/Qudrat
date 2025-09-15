@@ -8,7 +8,7 @@ const Register = () => {
 
   if (isAuthenticated) {
     // Redirect based on user role
-    if (user.role === 'teacher') {
+    if (user.role === 'teacher' || user.role === 'admin') {
       return <Navigate to="/teacher" replace />;
     } else if (user.role === 'student') {
       return <Navigate to="/student" replace />;

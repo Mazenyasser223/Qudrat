@@ -31,7 +31,7 @@ export const SocketProvider = ({ children }) => {
         setIsConnected(true);
         
         // Join appropriate room based on user role
-        if (user.role === 'teacher') {
+        if (user.role === 'teacher' || user.role === 'admin') {
           newSocket.emit('join-teacher-room', user.id);
         } else if (user.role === 'student') {
           newSocket.emit('join-student-room', user.id);
