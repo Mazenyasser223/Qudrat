@@ -80,26 +80,19 @@ const CreateExam = () => {
     try {
       setSubmitting(true);
       
-      // Create FormData for file upload
-      const formData = new FormData();
-      formData.append('title', data.title);
-      formData.append('description', data.description);
-      formData.append('examGroup', data.examGroup);
-      formData.append('order', data.order);
-      formData.append('timeLimit', data.timeLimit);
-      formData.append('questions', JSON.stringify(data.questions));
+      // Send exam data as JSON (images are already Base64 in data.questions)
+      const examData = {
+        title: data.title,
+        description: data.description,
+        examGroup: parseInt(data.examGroup),
+        order: parseInt(data.order),
+        timeLimit: parseInt(data.timeLimit),
+        questions: data.questions
+      };
 
-      // Add uploaded files
-      const fileInputs = document.querySelectorAll('input[type="file"]');
-      fileInputs.forEach((input, index) => {
-        if (input.files && input.files[0]) {
-          formData.append('questionImages', input.files[0]);
-        }
-      });
-
-      await axios.post('/api/exams', formData, {
+      await axios.post('/api/exams', examData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
         },
       });
       
@@ -107,7 +100,14 @@ const CreateExam = () => {
       navigate('/teacher/exams');
     } catch (error) {
       console.error('Error creating exam:', error);
-      toast.error(error.response?.data?.message || 'حدث خطأ أثناء إنشاء الامتحان');
+      if (error.response?.data?.errors) {
+        // Display validation errors
+        error.response.data.errors.forEach(err => {
+          toast.error(err.msg);
+        });
+      } else {
+        toast.error(error.response?.data?.message || 'حدث خطأ أثناء إنشاء الامتحان');
+      }
     } finally {
       setSubmitting(false);
     }
