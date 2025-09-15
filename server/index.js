@@ -44,12 +44,28 @@ app.use(limiter);
 
 // CORS
 app.use(cors({
-  origin: [
-    process.env.CLIENT_URL || 'http://localhost:3000',
-    'https://qudrat-five.vercel.app',
-    'https://qudrat-git-main-mazenyasser223s-projects.vercel.app',
-    'https://qudrat-d8tmgyc4c-mazenyasser223s-projects.vercel.app'
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost for development
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+    
+    // Allow any Vercel domain
+    if (origin.includes('vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // Allow the specific client URL if set
+    if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) {
+      return callback(null, true);
+    }
+    
+    // Reject other origins
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
 
