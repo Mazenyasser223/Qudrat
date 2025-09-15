@@ -128,7 +128,7 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+  console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT} - Updated`);
   console.log(`📚 Qudrat Educational Platform API is ready!`);
   console.log(`🔌 Socket.IO server is ready!`);
 });
