@@ -13,7 +13,8 @@ const {
   getStudentReviewExams,
   repeatExam,
   getStudentMistakes,
-  getStudentSubmission
+  getStudentSubmission,
+  getMySubmission
 } = require('../controllers/examController');
 const { protect, isTeacher, isStudent } = require('../middleware/auth');
 const upload = require('../middleware/upload');
@@ -192,6 +193,11 @@ router.get('/:examId/student-mistakes/:studentId', isTeacher, getStudentMistakes
 // @desc    Get student submission for a specific exam
 // @access  Private (Teacher only)
 router.get('/:examId/student-submission/:studentId', isTeacher, getStudentSubmission);
+
+// @route   GET /api/exams/:examId/student-submission
+// @desc    Get current student's submission for a specific exam
+// @access  Private (Student only)
+router.get('/:examId/student-submission', isStudent, getMySubmission);
 
 // Regular Exam Routes
 // @route   GET /api/exams/:id

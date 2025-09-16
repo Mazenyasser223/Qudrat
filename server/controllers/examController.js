@@ -929,6 +929,61 @@ const getStudentSubmission = async (req, res) => {
   }
 };
 
+// @desc    Get current student's submission for a specific exam
+// @route   GET /api/exams/:examId/student-submission
+// @access  Private (Student only)
+const getMySubmission = async (req, res) => {
+  try {
+    const student = await User.findById(req.user.id);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'الطالب غير موجود'
+      });
+    }
+
+    const examProgress = student.examProgress.find(
+      progress => progress.examId.toString() === req.params.examId
+    );
+
+    if (!examProgress) {
+      return res.status(404).json({
+        success: false,
+        message: 'لم يتم العثور على نتائج هذا الامتحان'
+      });
+    }
+
+    if (examProgress.status !== 'completed') {
+      return res.status(400).json({
+        success: false,
+        message: 'لم يتم إكمال هذا الامتحان بعد'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        examId: examProgress.examId,
+        score: examProgress.score,
+        percentage: examProgress.percentage,
+        correctAnswers: examProgress.correctAnswers,
+        wrongAnswers: examProgress.wrongAnswers,
+        totalQuestions: examProgress.totalQuestions,
+        timeSpent: examProgress.timeSpent,
+        completedAt: examProgress.completedAt,
+        submittedAt: examProgress.submittedAt,
+        answers: examProgress.answers
+      }
+    });
+  } catch (error) {
+    console.error('Get my submission error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching submission'
+    });
+  }
+};
+
 module.exports = {
   getExams,
   getExam,
@@ -942,5 +997,6 @@ module.exports = {
   getStudentReviewExams,
   repeatExam,
   getStudentMistakes,
-  getStudentSubmission
+  getStudentSubmission,
+  getMySubmission
 };

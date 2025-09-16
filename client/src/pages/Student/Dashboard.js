@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { BookOpen, Lock, Unlock, CheckCircle, Clock, Play, RotateCcw, AlertCircle } from 'lucide-react';
+import { BookOpen, Lock, Unlock, CheckCircle, Clock, Play, RotateCcw, AlertCircle, History, Eye, TrendingUp } from 'lucide-react';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -70,7 +70,19 @@ const StudentDashboard = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setReviewExams(res.data.data || []);
+      const reviewExamsData = res.data.data || [];
+      
+      // Group review exams by examGroup
+      const groupedReviewExams = {};
+      reviewExamsData.forEach(reviewExam => {
+        const group = reviewExam.originalExamId?.examGroup || 0;
+        if (!groupedReviewExams[group]) {
+          groupedReviewExams[group] = [];
+        }
+        groupedReviewExams[group].push(reviewExam);
+      });
+      
+      setReviewExams(groupedReviewExams);
     } catch (error) {
       console.error('Error fetching review exams:', error);
     }
@@ -343,61 +355,145 @@ const StudentDashboard = () => {
         ))}
       </div>
 
-      {/* Review Exams Section */}
-      {reviewExams.length > 0 && (
-        <div className="card">
-          <div className="card-header">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 rtl:space-x-reverse">
-              <RotateCcw className="h-5 w-5 text-orange-600" />
+      {/* Review Exams Section - Categorized by Groups */}
+      {Object.keys(reviewExams).length > 0 && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 flex items-center space-x-2 rtl:space-x-reverse">
+              <RotateCcw className="h-6 w-6 text-orange-600" />
               <span>امتحانات المراجعة</span>
-            </h3>
+            </h2>
             <p className="text-gray-600 mt-1">امتحانات للأسئلة الخاطئة - يمكن حلها عدة مرات</p>
           </div>
-          <div className="card-body">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {reviewExams.map((reviewExam) => (
-                <div
-                  key={reviewExam._id}
-                  className="p-4 bg-orange-50 border border-orange-200 rounded-lg"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-gray-900 text-sm">
-                      {reviewExam.title}
-                    </h4>
-                    <AlertCircle className="h-4 w-4 text-orange-600" />
-                  </div>
-                  
-                  <div className="text-xs text-gray-600 mb-3">
-                    <div className="flex items-center space-x-2 rtl:space-x-reverse mb-1">
-                      <BookOpen className="h-3 w-3" />
-                      <span>{reviewExam.questions.length} سؤال</span>
-                    </div>
-                    <div className="flex items-center space-x-2 rtl:space-x-reverse mb-1">
-                      <Clock className="h-3 w-3" />
-                      <span>{reviewExam.timeLimit} دقيقة</span>
-                    </div>
-                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <RotateCcw className="h-3 w-3" />
-                      <span>{reviewExam.totalAttempts} محاولة</span>
-                    </div>
-                  </div>
 
-                  {reviewExam.bestPercentage > 0 && (
-                    <div className="text-xs text-green-600 mb-3">
-                      أفضل نتيجة: {reviewExam.bestPercentage}%
-                    </div>
-                  )}
-
-                  <button
-                    onClick={() => handleStartReviewExam(reviewExam)}
-                    className="w-full text-xs btn-primary py-2 flex items-center justify-center space-x-1 rtl:space-x-reverse"
-                  >
-                    <RotateCcw className="h-3 w-3" />
-                    <span>بدء المراجعة</span>
-                  </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* اختبارات التأسيس Review Exams */}
+            {reviewExams[0] && reviewExams[0].length > 0 && (
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 rtl:space-x-reverse">
+                    <AlertCircle className="h-5 w-5 text-orange-600" />
+                    <span>مراجعة اختبارات التأسيس</span>
+                  </h3>
+                  <p className="text-sm text-gray-600">{reviewExams[0].length} امتحان مراجعة</p>
                 </div>
-              ))}
-            </div>
+                <div className="card-body">
+                  <div className="space-y-3">
+                    {reviewExams[0].map((reviewExam) => (
+                      <div
+                        key={reviewExam._id}
+                        className="p-3 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-lg hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium text-gray-900 text-sm">
+                            {reviewExam.originalExamId?.title || 'امتحان مراجعة'}
+                          </h4>
+                          <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                            <span className="text-xs bg-orange-200 text-orange-800 px-2 py-1 rounded-full">
+                              امتحان {reviewExam.originalExamId?.order}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 mb-3">
+                          <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                            <BookOpen className="h-3 w-3" />
+                            <span>{reviewExam.questions.length} سؤال</span>
+                          </div>
+                          <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                            <Clock className="h-3 w-3" />
+                            <span>{reviewExam.timeLimit} دقيقة</span>
+                          </div>
+                          <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                            <RotateCcw className="h-3 w-3" />
+                            <span>{reviewExam.totalAttempts} محاولة</span>
+                          </div>
+                          {reviewExam.bestPercentage > 0 && (
+                            <div className="flex items-center space-x-1 rtl:space-x-reverse text-green-600">
+                              <CheckCircle className="h-3 w-3" />
+                              <span>{reviewExam.bestPercentage}%</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <button
+                          onClick={() => handleStartReviewExam(reviewExam)}
+                          className="w-full text-xs bg-orange-600 hover:bg-orange-700 text-white py-2 px-3 rounded-lg flex items-center justify-center space-x-1 rtl:space-x-reverse transition-colors"
+                        >
+                          <RotateCcw className="h-3 w-3" />
+                          <span>بدء المراجعة</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Regular Groups 1-8 Review Exams */}
+            {Array.from({ length: 8 }, (_, i) => i + 1).map(groupNumber => (
+              reviewExams[groupNumber] && reviewExams[groupNumber].length > 0 && (
+                <div key={groupNumber} className="card">
+                  <div className="card-header">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 rtl:space-x-reverse">
+                      <AlertCircle className="h-5 w-5 text-orange-600" />
+                      <span>مراجعة المجموعة {groupNumber}</span>
+                    </h3>
+                    <p className="text-sm text-gray-600">{reviewExams[groupNumber].length} امتحان مراجعة</p>
+                  </div>
+                  <div className="card-body">
+                    <div className="space-y-3">
+                      {reviewExams[groupNumber].map((reviewExam) => (
+                        <div
+                          key={reviewExam._id}
+                          className="p-3 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-lg hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-medium text-gray-900 text-sm">
+                              {reviewExam.originalExamId?.title || 'امتحان مراجعة'}
+                            </h4>
+                            <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                              <span className="text-xs bg-orange-200 text-orange-800 px-2 py-1 rounded-full">
+                                امتحان {reviewExam.originalExamId?.order}
+                              </span>
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 mb-3">
+                            <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                              <BookOpen className="h-3 w-3" />
+                              <span>{reviewExam.questions.length} سؤال</span>
+                            </div>
+                            <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                              <Clock className="h-3 w-3" />
+                              <span>{reviewExam.timeLimit} دقيقة</span>
+                            </div>
+                            <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                              <RotateCcw className="h-3 w-3" />
+                              <span>{reviewExam.totalAttempts} محاولة</span>
+                            </div>
+                            {reviewExam.bestPercentage > 0 && (
+                              <div className="flex items-center space-x-1 rtl:space-x-reverse text-green-600">
+                                <CheckCircle className="h-3 w-3" />
+                                <span>{reviewExam.bestPercentage}%</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <button
+                            onClick={() => handleStartReviewExam(reviewExam)}
+                            className="w-full text-xs bg-orange-600 hover:bg-orange-700 text-white py-2 px-3 rounded-lg flex items-center justify-center space-x-1 rtl:space-x-reverse transition-colors"
+                          >
+                            <RotateCcw className="h-3 w-3" />
+                            <span>بدء المراجعة</span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )
+            ))}
           </div>
         </div>
       )}
@@ -431,11 +527,134 @@ const StudentDashboard = () => {
             </div>
             <div className="text-center p-4 bg-orange-50 rounded-lg">
               <div className="text-2xl font-bold text-orange-600">
-                {reviewExams.length}
+                {Object.values(reviewExams).flat().length}
               </div>
               <div className="text-sm text-gray-600">امتحانات مراجعة</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Exam History Section */}
+      <div className="card">
+        <div className="card-header">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 rtl:space-x-reverse">
+            <History className="h-5 w-5 text-blue-600" />
+            <span>سجل الامتحانات</span>
+          </h3>
+          <p className="text-gray-600 mt-1">عرض نتائج الامتحانات السابقة وتفاصيل الإجابات</p>
+        </div>
+        <div className="card-body">
+          {studentProgress.filter(p => p.status === 'completed').length > 0 ? (
+            <div className="space-y-4">
+              {studentProgress
+                .filter(p => p.status === 'completed')
+                .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt))
+                .map((progress) => {
+                  const exam = Object.values(examGroups).flat().find(e => e._id === progress.examId);
+                  if (!exam) return null;
+                  
+                  return (
+                    <div
+                      key={progress._id}
+                      className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                          <div className="p-2 bg-blue-100 rounded-lg">
+                            <BookOpen className="h-5 w-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">
+                              {exam.title}
+                            </h4>
+                            <p className="text-sm text-gray-600">
+                              {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} • امتحان {exam.order}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className={`text-2xl font-bold ${
+                            progress.percentage >= 80 ? 'text-green-600' :
+                            progress.percentage >= 60 ? 'text-blue-600' :
+                            'text-orange-600'
+                          }`}>
+                            {progress.percentage}%
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {new Date(progress.completedAt).toLocaleDateString('ar-SA')}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div className="text-center p-2 bg-white rounded-lg">
+                          <div className="text-lg font-semibold text-gray-900">{progress.score}</div>
+                          <div className="text-xs text-gray-600">الدرجة</div>
+                        </div>
+                        <div className="text-center p-2 bg-white rounded-lg">
+                          <div className="text-lg font-semibold text-green-600">{progress.correctAnswers}</div>
+                          <div className="text-xs text-gray-600">صحيح</div>
+                        </div>
+                        <div className="text-center p-2 bg-white rounded-lg">
+                          <div className="text-lg font-semibold text-red-600">{progress.wrongAnswers}</div>
+                          <div className="text-xs text-gray-600">خطأ</div>
+                        </div>
+                        <div className="text-center p-2 bg-white rounded-lg">
+                          <div className="text-lg font-semibold text-gray-900">{progress.totalQuestions}</div>
+                          <div className="text-xs text-gray-600">إجمالي</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                          {progress.timeSpent && (
+                            <div className="flex items-center space-x-1 rtl:space-x-reverse text-sm text-gray-600">
+                              <Clock className="h-4 w-4" />
+                              <span>{Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}</span>
+                            </div>
+                          )}
+                          {progress.submittedAt && (
+                            <div className="flex items-center space-x-1 rtl:space-x-reverse text-sm text-gray-600">
+                              <span>{new Date(progress.submittedAt).toLocaleTimeString('ar-SA', { 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                              })}</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                          <button
+                            onClick={() => navigate(`/student/exam-history/${exam._id}`)}
+                            className="flex items-center space-x-1 rtl:space-x-reverse text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors"
+                          >
+                            <Eye className="h-4 w-4" />
+                            <span>عرض التفاصيل</span>
+                          </button>
+                          
+                          {progress.reviewExamId && (
+                            <button
+                              onClick={() => navigate(`/student/review-exam/${progress.reviewExamId}`)}
+                              className="flex items-center space-x-1 rtl:space-x-reverse text-sm bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-lg transition-colors"
+                            >
+                              <RotateCcw className="h-4 w-4" />
+                              <span>امتحان المراجعة</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <History className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">لا توجد امتحانات مكتملة</h3>
+              <p className="text-gray-600">ابدأ بحل الامتحانات لترى سجل النتائج هنا</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

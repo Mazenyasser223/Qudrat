@@ -20,6 +20,7 @@ import TeacherAnalytics from './pages/Teacher/Analytics';
 import StudentDashboard from './pages/Student/Dashboard';
 import TakeExam from './pages/Student/TakeExam';
 import TakeReviewExam from './pages/Student/TakeReviewExam';
+import ExamHistory from './pages/Student/ExamHistory';
 
 // Unauthorized page
 const Unauthorized = () => (
@@ -159,6 +160,16 @@ function App() {
                 <ProtectedRoute allowedRoles={['student']}>
                   <Layout>
                     <TakeReviewExam />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/exam-history/:examId"
+              element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <Layout>
+                    <ExamHistory />
                   </Layout>
                 </ProtectedRoute>
               }
