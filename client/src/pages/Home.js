@@ -51,10 +51,10 @@ const Home = () => {
                 <img 
                   src="/mazen.jpg" 
                   alt="مستر علاء وهبة" 
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-cover"
                   style={{
                     objectFit: 'cover',
-                    objectPosition: 'center center'
+                    objectPosition: 'center 20%'
                   }}
                   onError={(e) => {
                     e.target.style.display = 'none';
