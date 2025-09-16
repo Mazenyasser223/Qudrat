@@ -95,15 +95,15 @@ const Exams = () => {
   return (
     <div className="space-y-6">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-6 text-white">
+      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-6 text-white">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold mb-2">إدارة الامتحانات</h1>
-            <p className="text-blue-100">إنشاء وإدارة الامتحانات والمجموعات بسهولة</p>
+            <p className="text-primary-100">إنشاء وإدارة الامتحانات والمجموعات بسهولة</p>
           </div>
           <button
             onClick={() => navigate('/teacher/exams/create')}
-            className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 rtl:space-x-reverse transition-colors shadow-lg"
+            className="bg-white text-primary-600 hover:bg-primary-50 px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 rtl:space-x-reverse transition-colors shadow-lg"
           >
             <Plus className="h-5 w-5" />
             <span>إضافة امتحان جديد</span>
@@ -123,7 +123,7 @@ const Exams = () => {
                 placeholder="البحث في الامتحانات..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
             </div>
             
@@ -133,7 +133,7 @@ const Exams = () => {
               <select
                 value={selectedGroup}
                 onChange={(e) => setSelectedGroup(e.target.value)}
-                className="appearance-none pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white min-w-[150px]"
+                className="appearance-none pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white min-w-[150px]"
               >
                 <option value="all">جميع المجموعات</option>
                 <option value="0">اختبارات التأسيس</option>
@@ -149,7 +149,7 @@ const Exams = () => {
             <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-md transition-colors ${
-                viewMode === 'grid' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                viewMode === 'grid' ? 'bg-white shadow-sm text-primary-600' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               <Grid className="h-5 w-5" />
@@ -157,7 +157,7 @@ const Exams = () => {
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-md transition-colors ${
-                viewMode === 'list' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                viewMode === 'list' ? 'bg-white shadow-sm text-primary-600' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               <List className="h-5 w-5" />
@@ -173,7 +173,7 @@ const Exams = () => {
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
-              className="text-blue-600 hover:text-blue-800"
+              className="text-primary-600 hover:text-primary-800"
             >
               مسح البحث
             </button>
@@ -216,7 +216,7 @@ const Exams = () => {
                 </p>
                 <button
                   onClick={() => navigate('/teacher/exams/create')}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors"
                 >
                   إضافة امتحان جديد
                 </button>
@@ -228,7 +228,7 @@ const Exams = () => {
                 {/* Group Header */}
                 <div className={`p-4 ${
                   groupNumber === '0' 
-                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' 
+                    ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white' 
                     : 'bg-gradient-to-r from-gray-50 to-gray-100 border-b'
                 }`}>
                   <h3 className={`text-lg font-semibold ${
@@ -237,7 +237,7 @@ const Exams = () => {
                     {groupNumber === '0' ? 'اختبارات التأسيس' : `المجموعة ${groupNumber}`}
                   </h3>
                   <p className={`text-sm ${
-                    groupNumber === '0' ? 'text-blue-100' : 'text-gray-600'
+                    groupNumber === '0' ? 'text-primary-100' : 'text-gray-600'
                   }`}>
                     {groupExams.length} امتحان
                   </p>
@@ -262,7 +262,7 @@ const Exams = () => {
                         <div className="flex items-center space-x-1 rtl:space-x-reverse">
                           <button
                             onClick={() => handleView(exam._id)}
-                            className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                            className="p-2 text-primary-600 hover:bg-primary-100 rounded-lg transition-colors"
                             title="عرض"
                           >
                             <Eye className="h-4 w-4" />
@@ -376,7 +376,7 @@ const Exams = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             groupNumber === '0' 
-                              ? 'bg-blue-100 text-blue-800' 
+                              ? 'bg-primary-100 text-primary-800' 
                               : 'bg-gray-100 text-gray-800'
                           }`}>
                             {groupNumber === '0' ? 'التأسيس' : `المجموعة ${groupNumber}`}
@@ -414,7 +414,7 @@ const Exams = () => {
                           <div className="flex items-center space-x-2 rtl:space-x-reverse">
                             <button
                               onClick={() => handleView(exam._id)}
-                              className="text-blue-600 hover:text-blue-900 p-1 rounded"
+                              className="text-primary-600 hover:text-primary-900 p-1 rounded"
                               title="عرض"
                             >
                               <Eye className="h-4 w-4" />
@@ -453,8 +453,8 @@ const Exams = () => {
               <p className="text-sm font-medium text-gray-600">إجمالي الامتحانات</p>
               <p className="text-3xl font-bold text-gray-900">{exams.length}</p>
             </div>
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <BookOpen className="h-6 w-6 text-blue-600" />
+            <div className="p-3 bg-primary-100 rounded-lg">
+              <BookOpen className="h-6 w-6 text-primary-600" />
             </div>
           </div>
         </div>

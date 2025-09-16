@@ -90,11 +90,11 @@ const Analytics = () => {
   return (
     <div className="space-y-6">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-xl p-6 text-white">
+      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-6 text-white">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold mb-2">التقارير والتحليلات</h1>
-            <p className="text-purple-100">متابعة أداء الطلاب وتقدمهم في الامتحانات</p>
+            <p className="text-primary-100">متابعة أداء الطلاب وتقدمهم في الامتحانات</p>
           </div>
           <div className="p-4 bg-white bg-opacity-20 rounded-lg">
             <BarChart3 className="h-8 w-8 text-white" />
@@ -110,8 +110,8 @@ const Analytics = () => {
               <p className="text-sm font-medium text-gray-600">إجمالي الطلاب</p>
               <p className="text-3xl font-bold text-gray-900">{analytics.overallStats.totalStudents}</p>
             </div>
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <Users className="h-6 w-6 text-blue-600" />
+            <div className="p-3 bg-primary-100 rounded-lg">
+              <Users className="h-6 w-6 text-primary-600" />
             </div>
           </div>
         </div>
@@ -134,8 +134,8 @@ const Analytics = () => {
               <p className="text-sm font-medium text-gray-600">امتحانات مكتملة</p>
               <p className="text-3xl font-bold text-gray-900">{analytics.overallStats.completedExams}</p>
             </div>
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <BarChart3 className="h-6 w-6 text-purple-600" />
+            <div className="p-3 bg-primary-100 rounded-lg">
+              <BarChart3 className="h-6 w-6 text-primary-600" />
             </div>
           </div>
         </div>
@@ -246,17 +246,17 @@ const Analytics = () => {
       {selectedStudent && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
           <div className="relative top-10 mx-auto p-0 border-0 w-11/12 md:w-3/4 lg:w-2/3 shadow-2xl rounded-xl bg-white">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-t-xl">
+            <div className="bg-gradient-to-r from-primary-600 to-primary-700 p-6 rounded-t-xl">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-2xl font-bold text-white">
                     تفاصيل أداء {selectedStudent.name}
                   </h3>
-                  <p className="text-blue-100 mt-1">عرض تفصيلي لنتائج الامتحانات</p>
+                  <p className="text-primary-100 mt-1">عرض تفصيلي لنتائج الامتحانات</p>
                 </div>
                 <button
                   onClick={() => setSelectedStudent(null)}
-                  className="text-white hover:text-blue-200 p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors"
+                  className="text-white hover:text-primary-200 p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors"
                 >
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -278,7 +278,7 @@ const Analytics = () => {
                         progress.status === 'completed'
                           ? 'bg-gradient-to-r from-green-50 to-green-100 border-green-200'
                           : progress.status === 'unlocked'
-                          ? 'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200'
+                          ? 'bg-gradient-to-r from-primary-50 to-primary-100 border-primary-200'
                           : 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200'
                       }`}
                     >
@@ -289,14 +289,14 @@ const Analytics = () => {
                               progress.status === 'completed'
                                 ? 'bg-green-200'
                                 : progress.status === 'unlocked'
-                                ? 'bg-blue-200'
+                                ? 'bg-primary-200'
                                 : 'bg-gray-200'
                             }`}>
                               <BookOpen className={`h-5 w-5 ${
                                 progress.status === 'completed'
                                   ? 'text-green-700'
                                   : progress.status === 'unlocked'
-                                  ? 'text-blue-700'
+                                  ? 'text-primary-700'
                                   : 'text-gray-700'
                               }`} />
                             </div>
@@ -313,7 +313,7 @@ const Analytics = () => {
                             progress.status === 'completed'
                               ? 'text-green-700'
                               : progress.status === 'unlocked'
-                              ? 'text-blue-700'
+                              ? 'text-primary-700'
                               : 'text-gray-700'
                           }`}>
                             {progress.status === 'completed' && `${progress.percentage}%`}
