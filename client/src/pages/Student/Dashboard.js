@@ -498,42 +498,6 @@ const StudentDashboard = () => {
         </div>
       )}
 
-      {/* Progress Summary */}
-      <div className="card">
-        <div className="card-header">
-          <h3 className="text-lg font-semibold text-gray-900">ملخص التقدم</h3>
-        </div>
-        <div className="card-body">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">
-                {studentProgress.filter(p => p.status === 'completed').length}
-              </div>
-              <div className="text-sm text-gray-600">امتحانات مكتملة</div>
-            </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">
-                {studentProgress.length > 0 
-                  ? Math.round(studentProgress.reduce((sum, p) => sum + p.percentage, 0) / studentProgress.length)
-                  : 0}%
-              </div>
-              <div className="text-sm text-gray-600">متوسط الدرجات</div>
-            </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">
-                {studentProgress.reduce((sum, p) => sum + p.score, 0)}
-              </div>
-              <div className="text-sm text-gray-600">إجمالي النقاط</div>
-            </div>
-            <div className="text-center p-4 bg-orange-50 rounded-lg">
-              <div className="text-2xl font-bold text-orange-600">
-                {Object.values(reviewExams).flat().length}
-              </div>
-              <div className="text-sm text-gray-600">امتحانات مراجعة</div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Exam History Section */}
       <div className="card">
