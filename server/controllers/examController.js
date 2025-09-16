@@ -984,6 +984,142 @@ const getMySubmission = async (req, res) => {
   }
 };
 
+// @desc    Get free exams for home page
+// @route   GET /api/exams/free
+// @access  Public
+const getFreeExams = async (req, res) => {
+  try {
+    const freeExams = await Exam.find({ 
+      isFreeExam: true, 
+      isActive: true 
+    })
+      .sort({ freeExamOrder: 1 })
+      .select('title description timeLimit totalQuestions freeExamOrder');
+
+    res.json({
+      success: true,
+      count: freeExams.length,
+      data: freeExams
+    });
+  } catch (error) {
+    console.error('Get free exams error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching free exams'
+    });
+  }
+};
+
+// @desc    Get free exams for teacher management
+// @route   GET /api/exams/free/manage
+// @access  Private (Teacher only)
+const getFreeExamsForManagement = async (req, res) => {
+  try {
+    const freeExams = await Exam.find({ 
+      isFreeExam: true 
+    })
+      .sort({ freeExamOrder: 1 })
+      .populate('createdBy', 'name email');
+
+    res.json({
+      success: true,
+      count: freeExams.length,
+      data: freeExams
+    });
+  } catch (error) {
+    console.error('Get free exams for management error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching free exams for management'
+    });
+  }
+};
+
+// @desc    Set exam as free exam
+// @route   PUT /api/exams/:id/set-free
+// @access  Private (Teacher only)
+const setExamAsFree = async (req, res) => {
+  try {
+    const { freeExamOrder } = req.body;
+    
+    if (!freeExamOrder || freeExamOrder < 1 || freeExamOrder > 3) {
+      return res.status(400).json({
+        success: false,
+        message: 'Free exam order must be between 1 and 3'
+      });
+    }
+
+    const exam = await Exam.findById(req.params.id);
+    if (!exam) {
+      return res.status(404).json({
+        success: false,
+        message: 'Exam not found'
+      });
+    }
+
+    // Check if another exam already has this free exam order
+    const existingFreeExam = await Exam.findOne({ 
+      freeExamOrder: freeExamOrder,
+      isFreeExam: true,
+      _id: { $ne: req.params.id }
+    });
+
+    if (existingFreeExam) {
+      return res.status(400).json({
+        success: false,
+        message: `Another exam is already set as free exam #${freeExamOrder}`
+      });
+    }
+
+    exam.isFreeExam = true;
+    exam.freeExamOrder = freeExamOrder;
+    await exam.save();
+
+    res.json({
+      success: true,
+      message: 'Exam set as free exam successfully',
+      data: exam
+    });
+  } catch (error) {
+    console.error('Set exam as free error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while setting exam as free'
+    });
+  }
+};
+
+// @desc    Remove exam from free exams
+// @route   PUT /api/exams/:id/remove-free
+// @access  Private (Teacher only)
+const removeExamFromFree = async (req, res) => {
+  try {
+    const exam = await Exam.findById(req.params.id);
+    if (!exam) {
+      return res.status(404).json({
+        success: false,
+        message: 'Exam not found'
+      });
+    }
+
+    exam.isFreeExam = false;
+    exam.freeExamOrder = undefined;
+    await exam.save();
+
+    res.json({
+      success: true,
+      message: 'Exam removed from free exams successfully',
+      data: exam
+    });
+  } catch (error) {
+    console.error('Remove exam from free error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while removing exam from free exams'
+    });
+  }
+};
+
 module.exports = {
   getExams,
   getExam,
@@ -998,5 +1134,9 @@ module.exports = {
   repeatExam,
   getStudentMistakes,
   getStudentSubmission,
-  getMySubmission
+  getMySubmission,
+  getFreeExams,
+  getFreeExamsForManagement,
+  setExamAsFree,
+  removeExamFromFree
 };

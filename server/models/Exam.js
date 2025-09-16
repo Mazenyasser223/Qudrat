@@ -53,6 +53,15 @@ const examSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  isFreeExam: {
+    type: Boolean,
+    default: false
+  },
+  freeExamOrder: {
+    type: Number,
+    min: 1,
+    max: 3
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

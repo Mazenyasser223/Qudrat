@@ -1,7 +1,78 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Home = () => {
+  const [freeExams, setFreeExams] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFreeExams();
+  }, []);
+
+  const fetchFreeExams = async () => {
+    try {
+      const res = await axios.get('/api/exams/free');
+      setFreeExams(res.data.data || []);
+    } catch (error) {
+      console.error('Error fetching free exams:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getFreeExamTitle = (order) => {
+    switch (order) {
+      case 1:
+        return 'الامتحان التأسيسي المجاني';
+      case 2:
+        return 'الامتحان المجاني الأول';
+      case 3:
+        return 'الامتحان المجاني الثاني';
+      default:
+        return 'امتحان مجاني';
+    }
+  };
+
+  const getFreeExamDescription = (order) => {
+    switch (order) {
+      case 1:
+        return 'اختبار تأسيسي شامل للمفاهيم الأساسية';
+      case 2:
+        return 'اختبار تجريبي للمستوى المتوسط';
+      case 3:
+        return 'اختبار متقدم للمستوى العالي';
+      default:
+        return 'امتحان مجاني للتدريب';
+    }
+  };
+
+  const getFreeExamGradient = (order) => {
+    switch (order) {
+      case 1:
+        return 'from-green-500 to-green-600';
+      case 2:
+        return 'from-green-600 to-green-700';
+      case 3:
+        return 'from-green-700 to-green-800';
+      default:
+        return 'from-green-500 to-green-600';
+    }
+  };
+
+  const getFreeExamButtonColor = (order) => {
+    switch (order) {
+      case 1:
+        return 'text-green-600';
+      case 2:
+        return 'text-green-700';
+      case 3:
+        return 'text-green-800';
+      default:
+        return 'text-green-600';
+    }
+  };
+
   // Always show the landing page first, regardless of authentication status
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
@@ -32,44 +103,82 @@ const Home = () => {
             <p className="text-green-700 text-lg">جرب هذه الامتحانات المجانية قبل الاشتراك</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="card p-8 text-center bg-gradient-to-br from-green-500 to-green-600 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-2">الامتحان التأسيسي المجاني</h3>
-              <p className="text-green-100 mb-4">اختبار تأسيسي شامل للمفاهيم الأساسية</p>
-              <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-600 font-semibold hover:bg-gray-100 transition shadow-md">
-                ابدأ الامتحان
-              </Link>
-            </div>
-            
-            <div className="card p-8 text-center bg-gradient-to-br from-green-600 to-green-700 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-2">الامتحان المجاني الأول</h3>
-              <p className="text-green-100 mb-4">اختبار تجريبي للمستوى المتوسط</p>
-              <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-700 font-semibold hover:bg-gray-100 transition shadow-md">
-                ابدأ الامتحان
-              </Link>
-            </div>
-            
-            <div className="card p-8 text-center bg-gradient-to-br from-green-700 to-green-800 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-2">الامتحان المجاني الثاني</h3>
-              <p className="text-green-100 mb-4">اختبار متقدم للمستوى العالي</p>
-              <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-800 font-semibold hover:bg-gray-100 transition shadow-md">
-                ابدأ الامتحان
-              </Link>
-            </div>
+            {loading ? (
+              // Loading state
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="card p-8 text-center bg-gray-200 border-none shadow-lg animate-pulse">
+                  <div className="bg-gray-300 rounded-full p-4 w-20 h-20 mx-auto mb-4"></div>
+                  <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-300 rounded mb-4"></div>
+                  <div className="h-10 bg-gray-300 rounded"></div>
+                </div>
+              ))
+            ) : freeExams.length > 0 ? (
+              // Dynamic free exams
+              freeExams.map((exam) => (
+                <div key={exam._id} className={`card p-8 text-center bg-gradient-to-br ${getFreeExamGradient(exam.freeExamOrder)} text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}>
+                  <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">{getFreeExamTitle(exam.freeExamOrder)}</h3>
+                  <p className="text-green-100 mb-4">{getFreeExamDescription(exam.freeExamOrder)}</p>
+                  <div className="text-green-100 text-sm mb-4">
+                    {exam.totalQuestions} سؤال • {exam.timeLimit} دقيقة
+                  </div>
+                  <Link 
+                    to={`/student/exam/${exam._id}`} 
+                    className="mt-4 inline-block px-6 py-3 rounded-lg bg-white font-semibold hover:bg-gray-100 transition shadow-md"
+                    style={{ color: getFreeExamButtonColor(exam.freeExamOrder) }}
+                  >
+                    ابدأ الامتحان
+                  </Link>
+                </div>
+              ))
+            ) : (
+              // Fallback static content if no free exams are set
+              <>
+                <div className="card p-8 text-center bg-gradient-to-br from-green-500 to-green-600 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">الامتحان التأسيسي المجاني</h3>
+                  <p className="text-green-100 mb-4">اختبار تأسيسي شامل للمفاهيم الأساسية</p>
+                  <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-600 font-semibold hover:bg-gray-100 transition shadow-md">
+                    ابدأ الامتحان
+                  </Link>
+                </div>
+                
+                <div className="card p-8 text-center bg-gradient-to-br from-green-600 to-green-700 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">الامتحان المجاني الأول</h3>
+                  <p className="text-green-100 mb-4">اختبار تجريبي للمستوى المتوسط</p>
+                  <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-700 font-semibold hover:bg-gray-100 transition shadow-md">
+                    ابدأ الامتحان
+                  </Link>
+                </div>
+                
+                <div className="card p-8 text-center bg-gradient-to-br from-green-700 to-green-800 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">الامتحان المجاني الثاني</h3>
+                  <p className="text-green-100 mb-4">اختبار متقدم للمستوى العالي</p>
+                  <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-800 font-semibold hover:bg-gray-100 transition shadow-md">
+                    ابدأ الامتحان
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </section>
 
@@ -87,8 +196,8 @@ const Home = () => {
               <a href="/( تبسيط قدرات (مستر علاء وهبه.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition shadow-md">تحميل المذكرة</a>
             </div>
             <div className="card p-8 text-center bg-[#214C3A] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <img src="/icons/rules.png" alt="قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" />
-              <h3 className="text-2xl font-bold mb-2">قوانين</h3>
+            <img src="/icons/rules.png" alt="قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" />
+            <h3 className="text-2xl font-bold mb-2">قوانين</h3>
               <p className="text-gray-200 mb-4">ملف شامل لقوانين القدرات الكمي</p>
               <a href="/ملف القوانين 2025.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition shadow-md">تحميل القوانين</a>
             </div>
@@ -152,7 +261,7 @@ const Home = () => {
                   <li>مذكرة تأسيس شاملة لأهم القوانين والمفاهيم الأساسية في الكمي.</li>
                   <li>اختبار تأسيسي مجاني .</li>
                   <li> اختبارين  مجانين.</li>
-                </ul>
+            </ul>
               </div>
 
               <div className="text-green-700 font-medium">

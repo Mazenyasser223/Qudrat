@@ -1,11 +1,11 @@
 const express = require('express');
 const { body } = require('express-validator');
-const {
-  getExams,
-  getExam,
-  createExam,
-  updateExam,
-  deleteExam,
+const { 
+  getExams, 
+  getExam, 
+  createExam, 
+  updateExam, 
+  deleteExam, 
   getExamsByGroup,
   submitExam,
   getReviewExam,
@@ -14,7 +14,11 @@ const {
   repeatExam,
   getStudentMistakes,
   getStudentSubmission,
-  getMySubmission
+  getMySubmission,
+  getFreeExams,
+  getFreeExamsForManagement,
+  setExamAsFree,
+  removeExamFromFree
 } = require('../controllers/examController');
 const { protect, isTeacher, isStudent } = require('../middleware/auth');
 const upload = require('../middleware/upload');
@@ -173,6 +177,27 @@ router.get('/group/:groupNumber', getExamsByGroup);
 // @desc    Get student's review exams
 // @access  Private (Student only)
 router.get('/review', isStudent, getStudentReviewExams);
+
+// Free Exam Routes
+// @route   GET /api/exams/free
+// @desc    Get free exams for home page
+// @access  Public
+router.get('/free', getFreeExams);
+
+// @route   GET /api/exams/free/manage
+// @desc    Get free exams for teacher management
+// @access  Private (Teacher only)
+router.get('/free/manage', isTeacher, getFreeExamsForManagement);
+
+// @route   PUT /api/exams/:id/set-free
+// @desc    Set exam as free exam
+// @access  Private (Teacher only)
+router.put('/:id/set-free', isTeacher, setExamAsFree);
+
+// @route   PUT /api/exams/:id/remove-free
+// @desc    Remove exam from free exams
+// @access  Private (Teacher only)
+router.put('/:id/remove-free', isTeacher, removeExamFromFree);
 
 // @route   GET /api/exams/review/:reviewExamId
 // @desc    Get review exam
