@@ -388,31 +388,6 @@ const StudentProfile = () => {
               </div>
             </div>
 
-            {/* Exam Status Summary */}
-            <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4">
-              <h4 className="text-md font-semibold text-green-900 mb-3 flex items-center space-x-2 rtl:space-x-reverse">
-                <BookOpen className="h-5 w-5" />
-                <span>إحصائيات الامتحانات</span>
-              </h4>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-700">إجمالي الامتحانات:</span>
-                  <span className="font-semibold text-gray-900">{exams.length}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-700">المجموعات المفتوحة:</span>
-                  <span className="font-semibold text-green-600">
-                    {Object.values(groupStatus).filter(status => status === 'unlocked').length} / 8
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-700">المجموعات المقفلة:</span>
-                  <span className="font-semibold text-red-600">
-                    {Object.values(groupStatus).filter(status => status === 'locked').length} / 8
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
