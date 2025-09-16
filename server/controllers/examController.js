@@ -984,6 +984,43 @@ const getMySubmission = async (req, res) => {
   }
 };
 
+// @desc    Get single exam by ID (public for free exams)
+// @route   GET /api/exams/public/:id
+// @access  Public
+const getPublicExam = async (req, res) => {
+  try {
+    const exam = await Exam.findById(req.params.id)
+      .select('-statistics -createdBy')
+      .populate('createdBy', 'name');
+
+    if (!exam) {
+      return res.status(404).json({
+        success: false,
+        message: 'Exam not found'
+      });
+    }
+
+    // Only allow access to free exams
+    if (!exam.isFreeExam) {
+      return res.status(403).json({
+        success: false,
+        message: 'This exam is not available for public access'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: exam
+    });
+  } catch (error) {
+    console.error('Get public exam error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching exam'
+    });
+  }
+};
+
 // @desc    Get free exams for home page
 // @route   GET /api/exams/free
 // @access  Public
@@ -1135,6 +1172,7 @@ module.exports = {
   getStudentMistakes,
   getStudentSubmission,
   getMySubmission,
+  getPublicExam,
   getFreeExams,
   getFreeExamsForManagement,
   setExamAsFree,

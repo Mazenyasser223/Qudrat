@@ -6,7 +6,9 @@ const ExamResults = ({
   results, 
   answers, 
   onRetake, 
-  onBackToDashboard 
+  onBackToDashboard,
+  isPublicExam = false,
+  onBackToHome
 }) => {
   const { score, percentage, correctAnswers, totalQuestions, wrongAnswers } = results;
 
@@ -143,12 +145,21 @@ const ExamResults = ({
 
       {/* Actions */}
       <div className="flex justify-center">
-        <button
-          onClick={onBackToDashboard}
-          className="btn-secondary flex items-center space-x-2 rtl:space-x-reverse"
-        >
-          <span>العودة للوحة التحكم</span>
-        </button>
+        {isPublicExam ? (
+          <button
+            onClick={onBackToHome}
+            className="btn-primary flex items-center space-x-2 rtl:space-x-reverse"
+          >
+            <span>العودة للصفحة الرئيسية</span>
+          </button>
+        ) : (
+          <button
+            onClick={onBackToDashboard}
+            className="btn-secondary flex items-center space-x-2 rtl:space-x-reverse"
+          >
+            <span>العودة للوحة التحكم</span>
+          </button>
+        )}
       </div>
     </div>
   );

@@ -21,6 +21,7 @@ import StudentDashboard from './pages/Student/Dashboard';
 import TakeExam from './pages/Student/TakeExam';
 import TakeReviewExam from './pages/Student/TakeReviewExam';
 import ExamHistory from './pages/Student/ExamHistory';
+import PublicExam from './pages/PublicExam';
 
 // Unauthorized page
 const Unauthorized = () => (
@@ -49,6 +50,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/public-exam/:examId" element={<PublicExam />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
 
             {/* Teacher Routes */}

@@ -15,6 +15,7 @@ const {
   getStudentMistakes,
   getStudentSubmission,
   getMySubmission,
+  getPublicExam,
   getFreeExams,
   getFreeExamsForManagement,
   setExamAsFree,
@@ -177,6 +178,12 @@ router.get('/group/:groupNumber', getExamsByGroup);
 // @desc    Get student's review exams
 // @access  Private (Student only)
 router.get('/review', isStudent, getStudentReviewExams);
+
+// Public Exam Routes
+// @route   GET /api/exams/public/:id
+// @desc    Get single exam by ID (public for free exams)
+// @access  Public
+router.get('/public/:id', getPublicExam);
 
 // Free Exam Routes
 // @route   GET /api/exams/free

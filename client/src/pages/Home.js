@@ -77,16 +77,8 @@ const Home = () => {
   };
 
   const handleFreeExamClick = (examId) => {
-    if (user && user.role === 'student') {
-      // User is authenticated as student, go directly to exam
-      navigate(`/student/exam/${examId}`);
-    } else if (user && (user.role === 'teacher' || user.role === 'admin')) {
-      // User is teacher/admin, redirect to student dashboard
-      navigate('/student');
-    } else {
-      // User is not authenticated, redirect to login with return URL
-      navigate(`/login?returnUrl=/student/exam/${examId}`);
-    }
+    // Always go to public exam route for free exams
+    navigate(`/public-exam/${examId}`);
   };
 
   // Always show the landing page first, regardless of authentication status
