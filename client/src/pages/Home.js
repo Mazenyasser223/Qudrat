@@ -15,13 +15,10 @@ const Home = () => {
 
   const fetchFreeExams = async () => {
     try {
-      console.log('Fetching free exams...');
       const res = await axios.get('/api/exams/free');
-      console.log('Free exams response:', res.data);
       setFreeExams(res.data.data || []);
     } catch (error) {
       console.error('Error fetching free exams:', error);
-      console.error('Error details:', error.response?.data);
     } finally {
       setLoading(false);
     }
@@ -126,9 +123,7 @@ const Home = () => {
               ))
             ) : freeExams.length > 0 ? (
               // Dynamic free exams
-              (() => {
-                console.log('Rendering dynamic free exams:', freeExams);
-                return freeExams.map((exam) => (
+              freeExams.map((exam) => (
                 <div key={exam._id} className={`card p-8 text-center bg-gradient-to-br ${getFreeExamGradient(exam.freeExamOrder)} text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}>
                   <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                     <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,13 +143,9 @@ const Home = () => {
                     ابدأ الامتحان
                   </button>
                 </div>
-                ));
-              })()
+              ))
             ) : (
               // Fallback static content if no free exams are set
-              (() => {
-                console.log('Using fallback static content. freeExams.length:', freeExams.length);
-                return (
               <>
                 <div className="card p-8 text-center bg-gradient-to-br from-green-500 to-green-600 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                   <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
@@ -204,8 +195,6 @@ const Home = () => {
                   </button>
                 </div>
               </>
-                );
-              })()
             )}
           </div>
         </section>
