@@ -26,7 +26,18 @@ const upload = require('../middleware/upload');
 
 const router = express.Router();
 
-// All routes are protected
+// Public routes (no authentication required)
+// @route   GET /api/exams/public/:id
+// @desc    Get single exam by ID (public for free exams)
+// @access  Public
+router.get('/public/:id', getPublicExam);
+
+// @route   GET /api/exams/free
+// @desc    Get free exams for home page
+// @access  Public
+router.get('/free', getFreeExams);
+
+// All other routes are protected
 router.use(protect);
 
 // Validation rules
@@ -179,17 +190,7 @@ router.get('/group/:groupNumber', getExamsByGroup);
 // @access  Private (Student only)
 router.get('/review', isStudent, getStudentReviewExams);
 
-// Public Exam Routes
-// @route   GET /api/exams/public/:id
-// @desc    Get single exam by ID (public for free exams)
-// @access  Public
-router.get('/public/:id', getPublicExam);
-
-// Free Exam Routes
-// @route   GET /api/exams/free
-// @desc    Get free exams for home page
-// @access  Public
-router.get('/free', getFreeExams);
+// Free Exam Management Routes (protected)
 
 // @route   GET /api/exams/free/manage
 // @desc    Get free exams for teacher management
