@@ -458,7 +458,7 @@ const CreateExam = () => {
                             <img
                               src={watch(`questions.${index}.questionImage`)}
                               alt={`Question ${index + 1}`}
-                              className="w-full h-32 object-cover rounded-lg border"
+                              className="w-full max-h-96 object-contain rounded-lg border bg-gray-50"
                               onError={(e) => {
                                 console.error('Image load error:', e.target.src);
                                 console.error('Available image URL:', watch(`questions.${index}.questionImage`));
