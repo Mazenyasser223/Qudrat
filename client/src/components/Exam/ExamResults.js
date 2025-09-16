@@ -74,9 +74,9 @@ const ExamResults = ({
         <div className="card-body">
           <div className="space-y-4">
             {exam.questions.map((question, index) => {
-              const answer = answers[index];
-              const isCorrect = answer.isCorrect;
-              const isAnswered = answer.selectedAnswer && answer.selectedAnswer.trim() !== '';
+              const answer = answers && answers[index] ? answers[index] : null;
+              const isCorrect = answer ? answer.isCorrect : false;
+              const isAnswered = answer && answer.selectedAnswer && answer.selectedAnswer.trim() !== '';
               const isNotAnswered = !isAnswered;
               
               return (
@@ -120,7 +120,7 @@ const ExamResults = ({
                           ? 'bg-gray-200 text-gray-800'
                           : 'bg-red-200 text-red-800'
                       }`}>
-                        {isNotAnswered ? 'لم تجب' : answer.selectedAnswer}
+                        {isNotAnswered ? 'لم تجب' : (answer ? answer.selectedAnswer : 'لم تجب')}
                       </span>
                     </div>
                     <div>

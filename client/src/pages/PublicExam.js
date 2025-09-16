@@ -198,6 +198,7 @@ const PublicExam = () => {
           <ExamResults
             results={results}
             exam={exam}
+            answers={results.answers}
             onBackToHome={handleBackToHome}
             isPublicExam={true}
           />
