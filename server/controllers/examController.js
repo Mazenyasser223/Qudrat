@@ -462,7 +462,7 @@ const createReviewExam = async (studentId, originalExamId, wrongQuestions, allQu
       title: `امتحان مراجعة - ${originalExam.title}`,
       description: `امتحان مراجعة للأسئلة الخاطئة من ${originalExam.title}`,
       questions: reviewQuestions,
-      timeLimit: Math.max(15, Math.ceil(wrongQuestions.length * 2)) // 2 minutes per question, minimum 15 minutes
+      timeLimit: wrongQuestions.length // 1 minute per question
     });
 
     await reviewExam.save();

@@ -303,7 +303,7 @@ const TakeReviewExam = () => {
                 المحاولة: {reviewExam.currentAttemptNumber}
               </div>
               <ExamTimer
-                timeLimit={reviewExam.timeLimit}
+                timeLimit={reviewExam.questions.length}
                 onTimeUp={handleTimeUp}
                 onWarning={handleTimeWarning}
               />
