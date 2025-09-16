@@ -402,8 +402,8 @@ const StudentProfile = () => {
           <div className="overflow-x-auto">
             <table className="w-full divide-y divide-gray-200" style={{ 
               tableLayout: 'fixed',
-              width: '1590px',
-              minWidth: '1590px'
+              width: '1710px',
+              minWidth: '1710px'
             }}>
               <thead className="bg-gray-50 sticky top-0 z-20">
                 <tr>
@@ -462,6 +462,13 @@ const StudentProfile = () => {
                     maxWidth: '150px'
                   }}>
                     تاريخ الإرسال
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
+                    width: '120px',
+                    minWidth: '120px',
+                    maxWidth: '120px'
+                  }}>
+                    أفضل درجة مراجعة
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider" style={{ 
                     width: '180px',
@@ -598,6 +605,15 @@ const StudentProfile = () => {
             </div>
                             ) : '-'}
                           </td>
+                          <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                            {progress && progress.bestReviewScore ? (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                {progress.bestReviewScore}%
+                              </span>
+                            ) : (
+                              <span className="text-gray-400 text-xs">-</span>
+                            )}
+                          </td>
                           <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                             {progress && (progress.status === 'completed' || progress.status === 'in_progress') ? (
                               <div className="flex flex-col space-y-2">
@@ -703,6 +719,15 @@ const StudentProfile = () => {
                                   </div>
                                 </div>
                               ) : '-'}
+                            </td>
+                            <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                              {progress && progress.bestReviewScore ? (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                  {progress.bestReviewScore}%
+                                </span>
+                              ) : (
+                                <span className="text-gray-400 text-xs">-</span>
+                              )}
                             </td>
                             <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                               {progress && (progress.status === 'completed' || progress.status === 'in_progress') ? (
