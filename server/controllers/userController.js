@@ -48,6 +48,24 @@ const getStudent = async (req, res) => {
       );
     }
 
+    // Add best review score for each exam progress
+    const ReviewExam = require('../models/ReviewExam');
+    for (let progress of student.examProgress) {
+      if (progress.reviewExamId) {
+        try {
+          const reviewExam = await ReviewExam.findById(progress.reviewExamId);
+          if (reviewExam) {
+            progress.bestReviewScore = reviewExam.bestPercentage || 0;
+          }
+        } catch (error) {
+          console.error('Error fetching review exam:', error);
+          progress.bestReviewScore = 0;
+        }
+      } else {
+        progress.bestReviewScore = 0;
+      }
+    }
+
     res.json({
       success: true,
       data: student

@@ -445,64 +445,6 @@ const Exams = () => {
         </div>
       )}
 
-      {/* Statistics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">إجمالي الامتحانات</p>
-              <p className="text-3xl font-bold text-gray-900">{exams.length}</p>
-            </div>
-            <div className="p-3 bg-primary-100 rounded-lg">
-              <BookOpen className="h-6 w-6 text-primary-600" />
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">إجمالي المحاولات</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {exams.reduce((sum, exam) => sum + exam.statistics.totalAttempts, 0)}
-              </p>
-            </div>
-            <div className="p-3 bg-green-100 rounded-lg">
-              <Users className="h-6 w-6 text-green-600" />
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">متوسط الدرجات</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {exams.length > 0 
-                  ? Math.round(exams.reduce((sum, exam) => sum + exam.statistics.averageScore, 0) / exams.length)
-                  : 0}%
-              </p>
-            </div>
-            <div className="p-3 bg-purple-100 rounded-lg">
-              <TrendingUp className="h-6 w-6 text-purple-600" />
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-xl shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">المجموعات النشطة</p>
-              <p className="text-3xl font-bold text-gray-900">
-                {Object.keys(groupedExams).length}
-              </p>
-            </div>
-            <div className="p-3 bg-orange-100 rounded-lg">
-              <BarChart3 className="h-6 w-6 text-orange-600" />
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

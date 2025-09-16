@@ -360,15 +360,19 @@ const StudentDashboard = () => {
       {/* Exam History Section */}
       <div className="card">
         <div className="card-header">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 rtl:space-x-reverse">
-            <History className="h-5 w-5 text-blue-600" />
-            <span>سجل الامتحانات</span>
-          </h3>
-          <p className="text-gray-600 mt-1">عرض نتائج الامتحانات السابقة وتفاصيل الإجابات</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 rtl:space-x-reverse">
+                <History className="h-5 w-5 text-primary-600" />
+                <span>سجل الامتحانات</span>
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">عرض نتائج الامتحانات السابقة وتفاصيل الإجابات</p>
+            </div>
+          </div>
         </div>
         <div className="card-body">
           {studentProgress.filter(p => p.status === 'completed').length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {studentProgress
                 .filter(p => p.status === 'completed')
                 .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt))
@@ -379,77 +383,78 @@ const StudentDashboard = () => {
                   return (
                     <div
                       key={progress._id}
-                      className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg hover:shadow-md transition-shadow"
+                      className="bg-gradient-to-r from-white to-gray-50 border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300"
                     >
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                          <div className="p-2 bg-blue-100 rounded-lg">
-                            <BookOpen className="h-5 w-5 text-blue-600" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900">
-                              {exam.title}
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                              {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} • امتحان {exam.order}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className={`text-2xl font-bold ${
-                            progress.percentage >= 80 ? 'text-green-600' :
-                            progress.percentage >= 60 ? 'text-blue-600' :
-                            'text-orange-600'
-                          }`}>
-                            {progress.percentage}%
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {new Date(progress.completedAt).toLocaleDateString('ar-SA')}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        <div className="text-center p-2 bg-white rounded-lg">
-                          <div className="text-lg font-semibold text-gray-900">{progress.score}</div>
-                          <div className="text-xs text-gray-600">الدرجة</div>
-                        </div>
-                        <div className="text-center p-2 bg-white rounded-lg">
-                          <div className="text-lg font-semibold text-green-600">{progress.correctAnswers}</div>
-                          <div className="text-xs text-gray-600">صحيح</div>
-                        </div>
-                        <div className="text-center p-2 bg-white rounded-lg">
-                          <div className="text-lg font-semibold text-red-600">{progress.wrongAnswers}</div>
-                          <div className="text-xs text-gray-600">خطأ</div>
-                        </div>
-                        <div className="text-center p-2 bg-white rounded-lg">
-                          <div className="text-lg font-semibold text-gray-900">{progress.totalQuestions}</div>
-                          <div className="text-xs text-gray-600">إجمالي</div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                          {progress.timeSpent && (
-                            <div className="flex items-center space-x-1 rtl:space-x-reverse text-sm text-gray-600">
-                              <Clock className="h-4 w-4" />
-                              <span>{Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}</span>
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 rtl:space-x-reverse mb-4">
+                            <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                              <div className="p-2 bg-primary-100 rounded-lg">
+                                <BookOpen className="h-4 w-4 text-primary-600" />
+                              </div>
+                              <div>
+                                <h4 className="font-bold text-gray-900 text-lg">{exam.title}</h4>
+                                <p className="text-sm text-gray-600">
+                                  {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} • امتحان {exam.order}
+                                </p>
+                              </div>
                             </div>
-                          )}
-                          {progress.submittedAt && (
-                            <div className="flex items-center space-x-1 rtl:space-x-reverse text-sm text-gray-600">
-                              <span>{new Date(progress.submittedAt).toLocaleTimeString('ar-SA', { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                              })}</span>
+                          </div>
+                          
+                          {/* Score Display */}
+                          <div className="flex items-center space-x-6 rtl:space-x-reverse mb-4">
+                            <div className="text-center">
+                              <div className={`text-3xl font-bold ${
+                                progress.percentage >= 80 ? 'text-green-600' :
+                                progress.percentage >= 60 ? 'text-blue-600' :
+                                'text-orange-600'
+                              }`}>
+                                {progress.percentage}%
+                              </div>
+                              <div className="text-xs text-gray-500">الدرجة النهائية</div>
                             </div>
-                          )}
+                            
+                            <div className="flex-1">
+                              <div className="grid grid-cols-4 gap-4">
+                                <div className="text-center p-3 bg-blue-50 rounded-lg">
+                                  <div className="text-xl font-bold text-blue-600">{progress.score}</div>
+                                  <div className="text-xs text-gray-600">الدرجة</div>
+                                </div>
+                                <div className="text-center p-3 bg-green-50 rounded-lg">
+                                  <div className="text-xl font-bold text-green-600">{progress.correctAnswers}</div>
+                                  <div className="text-xs text-gray-600">صحيح</div>
+                                </div>
+                                <div className="text-center p-3 bg-red-50 rounded-lg">
+                                  <div className="text-xl font-bold text-red-600">{progress.wrongAnswers}</div>
+                                  <div className="text-xs text-gray-600">خطأ</div>
+                                </div>
+                                <div className="text-center p-3 bg-purple-50 rounded-lg">
+                                  <div className="text-xl font-bold text-purple-600">{progress.totalQuestions}</div>
+                                  <div className="text-xs text-gray-600">إجمالي</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-4 rtl:space-x-reverse text-sm text-gray-500">
+                            {progress.timeSpent && (
+                              <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                                <Clock className="h-4 w-4" />
+                                <span>الوقت المستغرق: {Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}</span>
+                              </div>
+                            )}
+                            {progress.submittedAt && (
+                              <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                                <span>تاريخ الإرسال: {new Date(progress.submittedAt).toLocaleDateString('ar-SA')}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                         
-                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                        <div className="flex flex-col space-y-3">
                           <button
                             onClick={() => navigate(`/student/exam-history/${exam._id}`)}
-                            className="flex items-center space-x-1 rtl:space-x-reverse text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors"
+                            className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-sm bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg"
                           >
                             <Eye className="h-4 w-4" />
                             <span>عرض التفاصيل</span>
@@ -458,13 +463,13 @@ const StudentDashboard = () => {
                           {progress.reviewExamId && (
                             <button
                               onClick={() => navigate(`/student/review-exam/${progress.reviewExamId}`)}
-                              className="flex items-center space-x-1 rtl:space-x-reverse text-sm bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-lg transition-colors"
+                              className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-sm bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg relative"
                               title={`أفضل درجة: ${progress.bestReviewScore || 0}%`}
                             >
                               <RotateCcw className="h-4 w-4" />
                               <span>امتحان المراجعة</span>
                               {progress.bestReviewScore && (
-                                <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full mr-1">
+                                <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-bold">
                                   {progress.bestReviewScore}%
                                 </span>
                               )}
@@ -477,9 +482,11 @@ const StudentDashboard = () => {
                 })}
             </div>
           ) : (
-            <div className="text-center py-8">
-              <History className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">لا توجد امتحانات مكتملة</h3>
+            <div className="text-center py-12">
+              <div className="p-4 bg-gray-100 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                <History className="h-10 w-10 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">لا توجد امتحانات مكتملة</h3>
               <p className="text-gray-600">ابدأ بحل الامتحانات لترى سجل النتائج هنا</p>
             </div>
           )}

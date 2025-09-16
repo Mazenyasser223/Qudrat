@@ -45,49 +45,59 @@ const Home = () => {
               </Link>
             </div>
             
-            <div className="card p-8 text-center bg-gradient-to-br from-blue-500 to-blue-600 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="card p-8 text-center bg-gradient-to-br from-green-600 to-green-700 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                 <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
               <h3 className="text-2xl font-bold mb-2">الامتحان المجاني الأول</h3>
-              <p className="text-blue-100 mb-4">اختبار تجريبي للمستوى المتوسط</p>
-              <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-blue-600 font-semibold hover:bg-gray-100 transition shadow-md">
+              <p className="text-green-100 mb-4">اختبار تجريبي للمستوى المتوسط</p>
+              <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-700 font-semibold hover:bg-gray-100 transition shadow-md">
                 ابدأ الامتحان
               </Link>
             </div>
             
-            <div className="card p-8 text-center bg-gradient-to-br from-purple-500 to-purple-600 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="card p-8 text-center bg-gradient-to-br from-green-700 to-green-800 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                 <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
               <h3 className="text-2xl font-bold mb-2">الامتحان المجاني الثاني</h3>
-              <p className="text-purple-100 mb-4">اختبار متقدم للمستوى العالي</p>
-              <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-purple-600 font-semibold hover:bg-gray-100 transition shadow-md">
+              <p className="text-green-100 mb-4">اختبار متقدم للمستوى العالي</p>
+              <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-800 font-semibold hover:bg-gray-100 transition shadow-md">
                 ابدأ الامتحان
               </Link>
             </div>
           </div>
         </section>
 
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="card p-8 text-center bg-[#214C3A] text-white border-none">
-            <img src="/icons/basics.png" alt="تأسيس" className="mx-auto h-16 w-16 mb-4 opacity-90" />
-            <h3 className="text-2xl font-bold mb-2">تأسيس</h3>
-            <a href="/( تبسيط قدرات (مستر علاء وهبه.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-4 py-2 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition">تأسيس</a>
+        {/* PDFs Section - مذكرات و قوانين */}
+        <section className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-green-900 mb-2">مذكرات و قوانين</h2>
+            <p className="text-green-700 text-lg">مواد تعليمية مجانية لمساعدتك في التحضير</p>
           </div>
-          <div className="card p-8 text-center bg-[#214C3A] text-white border-none">
-            <img src="/icons/rules.png" alt="قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" />
-            <h3 className="text-2xl font-bold mb-2">قوانين</h3>
-            <a href="/ملف القوانين 2025.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-4 py-2 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition">قوانين</a>
-          </div>
-          <div className="card p-8 text-center bg-[#214C3A] text-white border-none">
-            <img src="/icons/rules.png" alt="تسميع قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" />
-            <h3 className="text-2xl font-bold mb-2">تسميع قوانين</h3>
-            <a href="/___اختبار قوانين القدرات.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-4 py-2 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition">تسميع قوانين</a>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="card p-8 text-center bg-[#214C3A] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <img src="/icons/basics.png" alt="تأسيس" className="mx-auto h-16 w-16 mb-4 opacity-90" />
+              <h3 className="text-2xl font-bold mb-2">تأسيس</h3>
+              <p className="text-gray-200 mb-4">مذكرة تأسيس شاملة للمفاهيم الأساسية</p>
+              <a href="/( تبسيط قدرات (مستر علاء وهبه.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition shadow-md">تحميل المذكرة</a>
+            </div>
+            <div className="card p-8 text-center bg-[#214C3A] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <img src="/icons/rules.png" alt="قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" />
+              <h3 className="text-2xl font-bold mb-2">قوانين</h3>
+              <p className="text-gray-200 mb-4">ملف شامل لقوانين القدرات الكمي</p>
+              <a href="/ملف القوانين 2025.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition shadow-md">تحميل القوانين</a>
+            </div>
+            <div className="card p-8 text-center bg-[#214C3A] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <img src="/icons/rules.png" alt="تسميع قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" />
+              <h3 className="text-2xl font-bold mb-2">تسميع قوانين</h3>
+              <p className="text-gray-200 mb-4">اختبار قوانين القدرات للتدريب</p>
+              <a href="/___اختبار قوانين القدرات.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition shadow-md">تحميل الاختبار</a>
+            </div>
           </div>
         </section>
 

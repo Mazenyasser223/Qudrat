@@ -141,6 +141,26 @@ const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     
+    // Add best review score for each exam progress if user is a student
+    if (user.role === 'student' && user.examProgress) {
+      const ReviewExam = require('../models/ReviewExam');
+      for (let progress of user.examProgress) {
+        if (progress.reviewExamId) {
+          try {
+            const reviewExam = await ReviewExam.findById(progress.reviewExamId);
+            if (reviewExam) {
+              progress.bestReviewScore = reviewExam.bestPercentage || 0;
+            }
+          } catch (error) {
+            console.error('Error fetching review exam:', error);
+            progress.bestReviewScore = 0;
+          }
+        } else {
+          progress.bestReviewScore = 0;
+        }
+      }
+    }
+    
     res.json({
       success: true,
       user
