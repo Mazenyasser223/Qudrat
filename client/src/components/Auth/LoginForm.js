@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { login, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl');
 
   const {
     register,
@@ -19,11 +21,16 @@ const LoginForm = () => {
     const result = await login(data.email, data.password);
     console.log(result);
     if (result.success) {
-      // Redirect based on user role after successful login
-      if (result.user?.role === 'admin' || result.user?.role === 'teacher') {
-        navigate('/teacher');
-      } else if (result.user?.role === 'student') {
-        navigate('/student');
+      // If there's a return URL, navigate to it (for free exam access)
+      if (returnUrl) {
+        navigate(returnUrl);
+      } else {
+        // Redirect based on user role after successful login
+        if (result.user?.role === 'admin' || result.user?.role === 'teacher') {
+          navigate('/teacher');
+        } else if (result.user?.role === 'student') {
+          navigate('/student');
+        }
       }
     }
   };

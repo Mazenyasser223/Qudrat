@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 const Home = () => {
   const [freeExams, setFreeExams] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchFreeExams();
@@ -73,6 +76,19 @@ const Home = () => {
     }
   };
 
+  const handleFreeExamClick = (examId) => {
+    if (user && user.role === 'student') {
+      // User is authenticated as student, go directly to exam
+      navigate(`/student/exam/${examId}`);
+    } else if (user && (user.role === 'teacher' || user.role === 'admin')) {
+      // User is teacher/admin, redirect to student dashboard
+      navigate('/student');
+    } else {
+      // User is not authenticated, redirect to login with return URL
+      navigate(`/login?returnUrl=/student/exam/${examId}`);
+    }
+  };
+
   // Always show the landing page first, regardless of authentication status
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
@@ -127,13 +143,13 @@ const Home = () => {
                   <div className="text-green-100 text-sm mb-4">
                     {exam.totalQuestions} سؤال • {exam.timeLimit} دقيقة
                   </div>
-                  <Link 
-                    to={`/student/exam/${exam._id}`} 
+                  <button 
+                    onClick={() => handleFreeExamClick(exam._id)}
                     className="mt-4 inline-block px-6 py-3 rounded-lg bg-white font-semibold hover:bg-gray-100 transition shadow-md"
                     style={{ color: getFreeExamButtonColor(exam.freeExamOrder) }}
                   >
                     ابدأ الامتحان
-                  </Link>
+                  </button>
                 </div>
               ))
             ) : (
@@ -147,9 +163,12 @@ const Home = () => {
                   </div>
                   <h3 className="text-2xl font-bold mb-2">الامتحان التأسيسي المجاني</h3>
                   <p className="text-green-100 mb-4">اختبار تأسيسي شامل للمفاهيم الأساسية</p>
-                  <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-600 font-semibold hover:bg-gray-100 transition shadow-md">
+                  <button 
+                    onClick={() => handleFreeExamClick('fallback-1')}
+                    className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-600 font-semibold hover:bg-gray-100 transition shadow-md"
+                  >
                     ابدأ الامتحان
-                  </Link>
+                  </button>
                 </div>
                 
                 <div className="card p-8 text-center bg-gradient-to-br from-green-600 to-green-700 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
@@ -160,9 +179,12 @@ const Home = () => {
                   </div>
                   <h3 className="text-2xl font-bold mb-2">الامتحان المجاني الأول</h3>
                   <p className="text-green-100 mb-4">اختبار تجريبي للمستوى المتوسط</p>
-                  <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-700 font-semibold hover:bg-gray-100 transition shadow-md">
+                  <button 
+                    onClick={() => handleFreeExamClick('fallback-2')}
+                    className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-700 font-semibold hover:bg-gray-100 transition shadow-md"
+                  >
                     ابدأ الامتحان
-                  </Link>
+                  </button>
                 </div>
                 
                 <div className="card p-8 text-center bg-gradient-to-br from-green-700 to-green-800 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
@@ -173,9 +195,12 @@ const Home = () => {
                   </div>
                   <h3 className="text-2xl font-bold mb-2">الامتحان المجاني الثاني</h3>
                   <p className="text-green-100 mb-4">اختبار متقدم للمستوى العالي</p>
-                  <Link to="/student/exams" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-800 font-semibold hover:bg-gray-100 transition shadow-md">
+                  <button 
+                    onClick={() => handleFreeExamClick('fallback-3')}
+                    className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-800 font-semibold hover:bg-gray-100 transition shadow-md"
+                  >
                     ابدأ الامتحان
-                  </Link>
+                  </button>
                 </div>
               </>
             )}
