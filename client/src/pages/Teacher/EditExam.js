@@ -80,26 +80,19 @@ const EditExam = () => {
         return;
       }
       
-      // Create FormData for file upload
-      const formData = new FormData();
-      formData.append('title', data.title);
-      formData.append('description', data.description || '');
-      formData.append('examGroup', data.examGroup);
-      formData.append('order', data.order);
-      formData.append('timeLimit', data.timeLimit);
-      formData.append('questions', JSON.stringify(data.questions));
+      // Send exam data as JSON (images are already Base64 in data.questions)
+      const examData = {
+        title: data.title,
+        description: data.description || '',
+        examGroup: parseInt(data.examGroup),
+        order: parseInt(data.order),
+        timeLimit: parseInt(data.timeLimit),
+        questions: data.questions
+      };
 
-      // Add uploaded files
-      const fileInputs = document.querySelectorAll('input[type="file"]');
-      fileInputs.forEach((input, index) => {
-        if (input.files && input.files[0]) {
-          formData.append('questionImages', input.files[0]);
-        }
-      });
-
-      await axios.put(`/api/exams/${examId}`, formData, {
+      await axios.put(`/api/exams/${examId}`, examData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
         },
       });
       
@@ -125,8 +118,31 @@ const EditExam = () => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Update the form value
-    setValue(`questions.${questionIndex}.questionImage`, URL.createObjectURL(file));
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('يرجى اختيار ملف صورة صحيح');
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('حجم الصورة يجب أن يكون أقل من 5 ميجابايت');
+      return;
+    }
+
+    try {
+      // Convert file to Base64
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageData = e.target.result;
+        setValue(`questions.${questionIndex}.questionImage`, imageData);
+        toast.success('تم رفع الصورة بنجاح');
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error reading file:', error);
+      toast.error('حدث خطأ أثناء قراءة الملف');
+    }
   };
 
   if (loading) {
@@ -312,7 +328,11 @@ const EditExam = () => {
                             <img
                               src={watch(`questions.${index}.questionImage`)}
                               alt={`Question ${index + 1}`}
-                              className="w-full h-32 object-cover rounded-lg border"
+                              className="max-w-full h-auto rounded-lg border bg-gray-50"
+                              style={{
+                                maxHeight: 'none',
+                                objectFit: 'contain'
+                              }}
                             />
                           </div>
                         )}
