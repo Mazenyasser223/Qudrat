@@ -402,8 +402,8 @@ const StudentProfile = () => {
           <div className="overflow-x-auto">
             <table className="w-full divide-y divide-gray-200" style={{ 
               tableLayout: 'fixed',
-              width: '1200px',
-              minWidth: '1200px'
+              width: '1590px',
+              minWidth: '1590px'
             }}>
               <thead className="bg-gray-50 sticky top-0 z-20">
                 <tr>
@@ -448,6 +448,20 @@ const StudentProfile = () => {
                     maxWidth: '120px'
                   }}>
                     الحالة
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
+                    width: '120px',
+                    minWidth: '120px',
+                    maxWidth: '120px'
+                  }}>
+                    الوقت المستغرق
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
+                    width: '150px',
+                    minWidth: '150px',
+                    maxWidth: '150px'
+                  }}>
+                    تاريخ الإرسال
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider" style={{ 
                     width: '180px',
@@ -562,6 +576,28 @@ const StudentProfile = () => {
                               </span>
                             )}
                           </td>
+                          <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                            {progress && progress.timeSpent ? (
+                              <span className="font-medium text-blue-600">
+                                {Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}
+                              </span>
+                            ) : '-'}
+                          </td>
+                          <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '150px', minWidth: '150px', maxWidth: '150px' }}>
+                            {progress && progress.submittedAt ? (
+                              <div className="text-xs">
+                                <div className="font-medium text-gray-900">
+                                  {new Date(progress.submittedAt).toLocaleDateString('ar-SA')}
+                                </div>
+                                <div className="text-gray-500">
+                                  {new Date(progress.submittedAt).toLocaleTimeString('ar-SA', { 
+                                    hour: '2-digit', 
+                                    minute: '2-digit' 
+                                  })}
+                                </div>
+                              </div>
+                            ) : '-'}
+                          </td>
                           <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                             {progress && (progress.status === 'completed' || progress.status === 'in_progress') ? (
                               <div className="flex flex-col space-y-2">
@@ -645,6 +681,28 @@ const StudentProfile = () => {
                                   غير محدد
                                 </span>
                               )}
+                            </td>
+                            <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                              {progress && progress.timeSpent ? (
+                                <span className="font-medium text-blue-600">
+                                  {Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}
+                                </span>
+                              ) : '-'}
+                            </td>
+                            <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '150px', minWidth: '150px', maxWidth: '150px' }}>
+                              {progress && progress.submittedAt ? (
+                                <div className="text-xs">
+                                  <div className="font-medium text-gray-900">
+                                    {new Date(progress.submittedAt).toLocaleDateString('ar-SA')}
+                                  </div>
+                                  <div className="text-gray-500">
+                                    {new Date(progress.submittedAt).toLocaleTimeString('ar-SA', { 
+                                      hour: '2-digit', 
+                                      minute: '2-digit' 
+                                    })}
+                                  </div>
+                                </div>
+                              ) : '-'}
                             </td>
                             <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                               {progress && (progress.status === 'completed' || progress.status === 'in_progress') ? (
