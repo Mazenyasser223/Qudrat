@@ -261,7 +261,7 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
         </div>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-center">
               <BookOpen className="w-5 h-5 text-blue-600 ml-2" />
@@ -278,26 +278,6 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
             </div>
             <div className="text-2xl font-bold text-green-900 mt-1">
               {filteredExams.filter(exam => exam.status === 'completed').length}
-            </div>
-          </div>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div className="flex items-center">
-              <Clock className="w-5 h-5 text-yellow-600 ml-2" />
-              <span className="text-yellow-800 font-medium">قيد التنفيذ</span>
-            </div>
-            <div className="text-2xl font-bold text-yellow-900 mt-1">
-              {filteredExams.filter(exam => exam.status === 'in_progress').length}
-            </div>
-          </div>
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-            <div className="flex items-center">
-              <TrendingUp className="w-5 h-5 text-purple-600 ml-2" />
-              <span className="text-purple-800 font-medium">متوسط الدرجات</span>
-            </div>
-            <div className="text-2xl font-bold text-purple-900 mt-1">
-              {filteredExams.length > 0 
-                ? Math.round(filteredExams.reduce((sum, exam) => sum + (exam.percentage || 0), 0) / filteredExams.length)
-                : 0}%
             </div>
           </div>
         </div>
