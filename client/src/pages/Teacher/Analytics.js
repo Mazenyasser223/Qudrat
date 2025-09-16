@@ -89,60 +89,77 @@ const Analytics = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">التقارير والتحليلات</h1>
-        <p className="text-gray-600">متابعة أداء الطلاب وتقدمهم في الامتحانات</p>
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-xl p-6 text-white">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">التقارير والتحليلات</h1>
+            <p className="text-purple-100">متابعة أداء الطلاب وتقدمهم في الامتحانات</p>
+          </div>
+          <div className="p-4 bg-white bg-opacity-20 rounded-lg">
+            <BarChart3 className="h-8 w-8 text-white" />
+          </div>
+        </div>
       </div>
 
       {/* Overall Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="card">
-          <div className="card-body text-center">
-            <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mx-auto mb-3">
+        <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">إجمالي الطلاب</p>
+              <p className="text-3xl font-bold text-gray-900">{analytics.overallStats.totalStudents}</p>
+            </div>
+            <div className="p-3 bg-blue-100 rounded-lg">
               <Users className="h-6 w-6 text-blue-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{analytics.overallStats.totalStudents}</div>
-            <div className="text-sm text-gray-600">إجمالي الطلاب</div>
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-body text-center">
-            <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mx-auto mb-3">
+        <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">إجمالي الامتحانات</p>
+              <p className="text-3xl font-bold text-gray-900">{analytics.overallStats.totalExams}</p>
+            </div>
+            <div className="p-3 bg-green-100 rounded-lg">
               <BookOpen className="h-6 w-6 text-green-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{analytics.overallStats.totalExams}</div>
-            <div className="text-sm text-gray-600">إجمالي الامتحانات</div>
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-body text-center">
-            <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg mx-auto mb-3">
+        <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">امتحانات مكتملة</p>
+              <p className="text-3xl font-bold text-gray-900">{analytics.overallStats.completedExams}</p>
+            </div>
+            <div className="p-3 bg-purple-100 rounded-lg">
               <BarChart3 className="h-6 w-6 text-purple-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{analytics.overallStats.completedExams}</div>
-            <div className="text-sm text-gray-600">امتحانات مكتملة</div>
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-body text-center">
-            <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg mx-auto mb-3">
+        <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">متوسط الدرجات</p>
+              <p className="text-3xl font-bold text-gray-900">{analytics.overallStats.averageScore}%</p>
+            </div>
+            <div className="p-3 bg-orange-100 rounded-lg">
               <TrendingUp className="h-6 w-6 text-orange-600" />
             </div>
-            <div className="text-2xl font-bold text-gray-900">{analytics.overallStats.averageScore}%</div>
-            <div className="text-sm text-gray-600">متوسط الدرجات</div>
           </div>
         </div>
       </div>
 
       {/* Students Performance */}
-      <div className="card">
-        <div className="card-header">
-          <h3 className="text-lg font-semibold text-gray-900">أداء الطلاب</h3>
+      <div className="bg-white rounded-xl shadow-sm border">
+        <div className="p-6 border-b border-gray-200">
+          <h3 className="text-xl font-semibold text-gray-900">أداء الطلاب</h3>
+          <p className="text-gray-600 mt-1">نظرة عامة على أداء جميع الطلاب</p>
         </div>
-        <div className="card-body p-0">
+        <div className="p-0">
           {analytics.students.length === 0 ? (
             <div className="text-center py-8">
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -228,22 +245,26 @@ const Analytics = () => {
       {/* Student Detail Modal */}
       {selectedStudent && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  تفاصيل أداء {selectedStudent.name}
-                </h3>
+          <div className="relative top-10 mx-auto p-0 border-0 w-11/12 md:w-3/4 lg:w-2/3 shadow-2xl rounded-xl bg-white">
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 rounded-t-xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-bold text-white">
+                    تفاصيل أداء {selectedStudent.name}
+                  </h3>
+                  <p className="text-blue-100 mt-1">عرض تفصيلي لنتائج الامتحانات</p>
+                </div>
                 <button
                   onClick={() => setSelectedStudent(null)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-white hover:text-blue-200 p-2 rounded-lg hover:bg-white hover:bg-opacity-20 transition-colors"
                 >
-                  <span className="sr-only">إغلاق</span>
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
+            </div>
+            <div className="p-6">
 
               <div className="space-y-4">
                 {selectedStudent.examProgress.map((progress, index) => {
@@ -253,23 +274,42 @@ const Analytics = () => {
                   return (
                     <div
                       key={index}
-                      className={`p-4 rounded-lg border ${
+                      className={`p-6 rounded-xl border-2 transition-all hover:shadow-md ${
                         progress.status === 'completed'
-                          ? 'bg-green-50 border-green-200'
+                          ? 'bg-gradient-to-r from-green-50 to-green-100 border-green-200'
                           : progress.status === 'unlocked'
-                          ? 'bg-blue-50 border-blue-200'
-                          : 'bg-gray-50 border-gray-200'
+                          ? 'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200'
+                          : 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium text-gray-900">{exam.title}</h4>
-                          <p className="text-sm text-gray-600">
-                            المجموعة {exam.examGroup} - امتحان {exam.order}
-                          </p>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 rtl:space-x-reverse mb-2">
+                            <div className={`p-2 rounded-lg ${
+                              progress.status === 'completed'
+                                ? 'bg-green-200'
+                                : progress.status === 'unlocked'
+                                ? 'bg-blue-200'
+                                : 'bg-gray-200'
+                            }`}>
+                              <BookOpen className={`h-5 w-5 ${
+                                progress.status === 'completed'
+                                  ? 'text-green-700'
+                                  : progress.status === 'unlocked'
+                                  ? 'text-blue-700'
+                                  : 'text-gray-700'
+                              }`} />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-gray-900 text-lg">{exam.title}</h4>
+                              <p className="text-sm text-gray-600">
+                                {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} - امتحان {exam.order}
+                              </p>
+                            </div>
+                          </div>
                         </div>
                         <div className="text-right">
-                          <div className={`text-sm font-medium ${
+                          <div className={`text-2xl font-bold ${
                             progress.status === 'completed'
                               ? 'text-green-700'
                               : progress.status === 'unlocked'
@@ -281,8 +321,8 @@ const Analytics = () => {
                             {progress.status === 'locked' && 'مقفل'}
                           </div>
                           {progress.status === 'completed' && (
-                            <div className="text-xs text-gray-500">
-                              {progress.score}/{exam.totalQuestions}
+                            <div className="text-sm text-gray-600 mt-1">
+                              {progress.score}/{exam.totalQuestions} نقطة
                             </div>
                           )}
                         </div>

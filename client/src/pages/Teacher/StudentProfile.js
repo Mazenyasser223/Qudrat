@@ -388,7 +388,7 @@ const StudentProfile = () => {
               </div>
             </div>
 
-          </div>
+                </div>
         </div>
       </div>
 
@@ -536,9 +536,9 @@ const StudentProfile = () => {
                                 {cumulativeData.completedExams > 0 && (
                                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                     {cumulativeData.cumulativePercentage}%
-                                  </span>
+                  </span>
                                 )}
-                              </div>
+                </div>
                             )}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-900 border-r border-gray-200" style={{ width: '300px', minWidth: '300px', maxWidth: '300px' }}>
@@ -569,7 +569,7 @@ const StudentProfile = () => {
                                 {progress.status === 'completed' ? 'مكتمل' : 
                                  progress.status === 'in_progress' ? 'قيد التنفيذ' :
                                  progress.status === 'unlocked' ? 'متاح' : 'مقفل'}
-                              </span>
+                  </span>
                             ) : (
                               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                 غير محدد
@@ -588,14 +588,14 @@ const StudentProfile = () => {
                               <div className="text-xs">
                                 <div className="font-medium text-gray-900">
                                   {new Date(progress.submittedAt).toLocaleDateString('ar-SA')}
-                                </div>
+                </div>
                                 <div className="text-gray-500">
                                   {new Date(progress.submittedAt).toLocaleTimeString('ar-SA', { 
                                     hour: '2-digit', 
                                     minute: '2-digit' 
                                   })}
-                                </div>
-                              </div>
+              </div>
+            </div>
                             ) : '-'}
                           </td>
                           <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
@@ -615,7 +615,7 @@ const StudentProfile = () => {
                                   <AlertTriangle className="w-3 h-3 ml-1" />
                                   عرض الأخطاء
                                 </button>
-                              </div>
+          </div>
                             ) : (
                               <span className="text-gray-400 text-xs">غير متاح</span>
                             )}
@@ -644,7 +644,7 @@ const StudentProfile = () => {
                                       {cumulativeData.cumulativePercentage}%
                                     </span>
                                   )}
-                                </div>
+        </div>
                               )}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-900 border-r border-gray-200" style={{ width: '300px', minWidth: '300px', maxWidth: '300px' }}>
@@ -1120,21 +1120,21 @@ const StudentProfile = () => {
                           ? 'border-blue-200 bg-blue-50'
                           : 'border-gray-200 bg-gray-50'
                       }`}>
-                        <input
-                          type="checkbox"
-                          checked={selectedExams.includes(exam._id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedExams([...selectedExams, exam._id]);
-                            } else {
-                              setSelectedExams(selectedExams.filter(id => id !== exam._id));
-                            }
-                          }}
-                          className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                        <div className="flex-1">
+                      <input
+                        type="checkbox"
+                        checked={selectedExams.includes(exam._id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedExams([...selectedExams, exam._id]);
+                          } else {
+                            setSelectedExams(selectedExams.filter(id => id !== exam._id));
+                          }
+                        }}
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <div className="flex-1">
                           <div className="flex items-center justify-between">
-                            <div className="text-sm font-medium text-gray-900">{exam.title}</div>
+                        <div className="text-sm font-medium text-gray-900">{exam.title}</div>
                             <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                               examStatus === 'completed' 
                                 ? 'bg-green-100 text-green-800'
@@ -1149,14 +1149,14 @@ const StudentProfile = () => {
                                examStatus === 'unlocked' ? 'متاح' : 'مقفل'}
                             </span>
                           </div>
-                          <div className="text-sm text-gray-500 mt-1">
+                        <div className="text-sm text-gray-500 mt-1">
                             {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} • {exam.questions.length} أسئلة
                             {progress && progress.percentage > 0 && (
                               <span className="mr-2">• {progress.percentage}%</span>
                             )}
-                          </div>
                         </div>
-                      </label>
+                      </div>
+                    </label>
                     );
                   })
                 ) : (
