@@ -47,15 +47,21 @@ const Home = () => {
           <h2 className="text-3xl font-bold text-center mb-8">About me</h2>
           <div className="grid grid-cols-1 md:grid-cols-[220px,1fr] gap-8 items-start">
             <div className="flex flex-col items-center">
-              <img 
-                src="/mazen.jpg" 
-                alt="مستر علاء وهبة" 
-                className="h-56 w-56 object-cover rounded-lg shadow-lg border-4 border-green-200"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'block';
-                }}
-              />
+              <div className="h-56 w-56 rounded-lg shadow-lg border-4 border-green-200 overflow-hidden">
+                <img 
+                  src="/mazen.jpg" 
+                  alt="مستر علاء وهبة" 
+                  className="w-full h-full object-cover object-center"
+                  style={{
+                    objectFit: 'cover',
+                    objectPosition: 'center center'
+                  }}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.parentElement.nextSibling.style.display = 'block';
+                  }}
+                />
+              </div>
               <div 
                 className="h-56 w-56 bg-gradient-to-br from-green-100 to-green-200 rounded-lg shadow-lg border-4 border-green-200 flex items-center justify-center text-green-700 font-semibold text-center p-4"
                 style={{display: 'none'}}
