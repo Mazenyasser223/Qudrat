@@ -142,47 +142,6 @@ const ExamHistory = () => {
         </div>
       </div>
 
-      {/* Results Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="card">
-          <div className="card-body text-center">
-            <div className="text-3xl font-bold text-green-600 mb-2">
-              {studentSubmission.correctAnswers}
-            </div>
-            <div className="text-sm text-gray-600">إجابات صحيحة</div>
-          </div>
-        </div>
-        
-        <div className="card">
-          <div className="card-body text-center">
-            <div className="text-3xl font-bold text-red-600 mb-2">
-              {studentSubmission.wrongAnswers}
-            </div>
-            <div className="text-sm text-gray-600">إجابات خاطئة</div>
-          </div>
-        </div>
-        
-        <div className="card">
-          <div className="card-body text-center">
-            <div className="text-3xl font-bold text-gray-600 mb-2">
-              {studentSubmission.totalQuestions - studentSubmission.correctAnswers - studentSubmission.wrongAnswers}
-            </div>
-            <div className="text-sm text-gray-600">غير مجاب</div>
-          </div>
-        </div>
-        
-        <div className="card">
-          <div className="card-body text-center">
-            <div className="text-3xl font-bold text-blue-600 mb-2">
-              {studentSubmission.timeSpent ? 
-                `${Math.floor(studentSubmission.timeSpent / 60)}:${(studentSubmission.timeSpent % 60).toString().padStart(2, '0')}` :
-                '-'
-              }
-            </div>
-            <div className="text-sm text-gray-600">الوقت المستغرق</div>
-          </div>
-        </div>
-      </div>
 
       {/* Exam Details */}
       <div className="card">
@@ -196,17 +155,33 @@ const ExamHistory = () => {
                 <Calendar className="h-4 w-4 text-gray-500" />
                 <span className="text-sm text-gray-600">تاريخ الإكمال:</span>
                 <span className="text-sm font-medium">
-                  {new Date(studentSubmission.completedAt).toLocaleDateString('ar-SA')}
+                  {studentSubmission.completedAt ? 
+                    new Date(studentSubmission.completedAt).toLocaleDateString('en-GB') : 
+                    'غير محدد'
+                  }
                 </span>
               </div>
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <Clock className="h-4 w-4 text-gray-500" />
                 <span className="text-sm text-gray-600">وقت الإرسال:</span>
                 <span className="text-sm font-medium">
-                  {new Date(studentSubmission.submittedAt).toLocaleTimeString('ar-SA', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                  })}
+                  {studentSubmission.submittedAt && !isNaN(new Date(studentSubmission.submittedAt).getTime()) ? 
+                    new Date(studentSubmission.submittedAt).toLocaleTimeString('ar-SA', { 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    }) : 
+                    'غير محدد'
+                  }
+                </span>
+              </div>
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                <Clock className="h-4 w-4 text-gray-500" />
+                <span className="text-sm text-gray-600">الوقت المستغرق:</span>
+                <span className="text-sm font-medium">
+                  {studentSubmission.timeSpent ? 
+                    `${Math.floor(studentSubmission.timeSpent / 60)}:${(studentSubmission.timeSpent % 60).toString().padStart(2, '0')}` :
+                    'غير محدد'
+                  }
                 </span>
               </div>
             </div>
