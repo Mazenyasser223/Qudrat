@@ -522,10 +522,10 @@ const Exams = () => {
                       </div>
                     </div>
 
-                      {exam.statistics.averageScore > 0 && (
+                      {exam.statistics?.averageScore > 0 && (
                         <div className="flex items-center justify-end space-x-1 rtl:space-x-reverse text-sm text-green-600">
                           <TrendingUp className="h-4 w-4" />
-                          <span>{exam.statistics.averageScore}%</span>
+                          <span>{exam.statistics?.averageScore}%</span>
                         </div>
                       )}
           </div>
@@ -613,10 +613,10 @@ const Exams = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                          {exam.statistics.averageScore > 0 ? (
+                          {exam.statistics?.averageScore > 0 ? (
                             <div className="flex items-center justify-end space-x-1 rtl:space-x-reverse text-green-600">
                               <TrendingUp className="h-4 w-4" />
-                              <span>{exam.statistics.averageScore}%</span>
+                              <span>{exam.statistics?.averageScore}%</span>
                             </div>
                           ) : (
                             <span className="text-gray-400">-</span>
