@@ -784,7 +784,7 @@ const StudentProfile = () => {
           <p className="text-sm text-gray-600 mt-1">قفل أو فتح امتحانات محددة أو مجموعات كاملة للطالب</p>
         </div>
         <div className="card-body">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex justify-center">
             {/* Lock/Unlock Specific Exams */}
             <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-6 hover:shadow-md transition-shadow">
               <div className="flex items-center space-x-3 rtl:space-x-reverse mb-4">
@@ -820,99 +820,6 @@ const StudentProfile = () => {
               </div>
             </div>
 
-            {/* Lock/Unlock Groups */}
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center space-x-3 rtl:space-x-reverse mb-4">
-                <div className="h-12 w-12 rounded-full bg-purple-500 flex items-center justify-center">
-                  <Filter className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h4 className="text-lg font-semibold text-purple-900">قفل/فتح مجموعات كاملة</h4>
-                  <p className="text-sm text-purple-700">قفل أو فتح جميع امتحانات مجموعة معينة</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-5 gap-2">
-                {/* Group 0 - اختبارات التأسيس */}
-                <div className="flex flex-col space-y-1">
-                  <div className="text-center text-sm font-medium text-gray-700 flex items-center justify-center space-x-1 rtl:space-x-reverse">
-                    <span>اختبارات التأسيس</span>
-                    {groupStatus[0] === 'unlocked' ? (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full" title="مفتوحة"></div>
-                    ) : (
-                      <div className="w-2 h-2 bg-gray-500 rounded-full" title="مقفلة"></div>
-                    )}
-                  </div>
-                  <div className="flex space-x-1 rtl:space-x-reverse">
-                    <button
-                      onClick={() => handleToggleGroup(0, 'lock')}
-                      className={`flex-1 px-2 py-1 rounded text-xs transition-colors ${
-                        groupStatus[0] === 'unlocked' 
-                          ? 'bg-red-500 hover:bg-red-600 text-white' 
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      }`}
-                      title="قفل اختبارات التأسيس"
-                      disabled={groupStatus[0] !== 'unlocked'}
-                    >
-                      <Lock className="h-3 w-3 mx-auto" />
-                    </button>
-                    <button
-                      onClick={() => handleToggleGroup(0, 'unlock')}
-                      className={`flex-1 px-2 py-1 rounded text-xs transition-colors ${
-                        groupStatus[0] !== 'unlocked' 
-                          ? 'bg-green-500 hover:bg-green-600 text-white' 
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      }`}
-                      title="فتح اختبارات التأسيس"
-                      disabled={groupStatus[0] === 'unlocked'}
-                    >
-                      <Unlock className="h-3 w-3 mx-auto" />
-                    </button>
-                  </div>
-                </div>
-                {/* Groups 1-8 */}
-                {Array.from({ length: 8 }, (_, i) => i + 1).map((groupNum) => {
-                  const isUnlocked = groupStatus[groupNum] === 'unlocked';
-                  return (
-                    <div key={groupNum} className="flex flex-col space-y-1">
-                      <div className="text-center text-sm font-medium text-gray-700 flex items-center justify-center space-x-1 rtl:space-x-reverse">
-                        <span>المجموعة {groupNum}</span>
-                        {isUnlocked ? (
-                          <div className="w-2 h-2 bg-green-500 rounded-full" title="مفتوحة"></div>
-                        ) : (
-                          <div className="w-2 h-2 bg-red-500 rounded-full" title="مقفلة"></div>
-                        )}
-                      </div>
-                      <div className="flex space-x-1 rtl:space-x-reverse">
-                        <button
-                          onClick={() => handleToggleGroup(groupNum, 'lock')}
-                          className={`flex-1 px-2 py-1 rounded text-xs transition-colors ${
-                            isUnlocked 
-                              ? 'bg-red-500 hover:bg-red-600 text-white' 
-                              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          }`}
-                          title={`قفل المجموعة ${groupNum}`}
-                          disabled={!isUnlocked}
-                        >
-                          <Lock className="h-3 w-3 mx-auto" />
-                        </button>
-                        <button
-                          onClick={() => handleToggleGroup(groupNum, 'unlock')}
-                          className={`flex-1 px-2 py-1 rounded text-xs transition-colors ${
-                            !isUnlocked 
-                              ? 'bg-green-500 hover:bg-green-600 text-white' 
-                              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          }`}
-                          title={`فتح المجموعة ${groupNum}`}
-                          disabled={isUnlocked}
-                        >
-                          <Unlock className="h-3 w-3 mx-auto" />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
           </div>
         </div>
       </div>
