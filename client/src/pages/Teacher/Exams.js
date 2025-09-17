@@ -473,17 +473,17 @@ const Exams = () => {
                   {Object.entries(groupedExams).map(([groupNumber, groupExams]) =>
                     groupExams.map((exam) => (
                       <tr key={exam._id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
                           <div>
                             <div className="text-sm font-medium text-gray-900">
                               {exam.title}
                             </div>
                             <div className="text-sm text-gray-500">
                               ترتيب {exam.order}
-          </div>
-        </div>
+                            </div>
+                          </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             groupNumber === '0' 
                               ? 'bg-primary-100 text-primary-800' 
@@ -492,27 +492,27 @@ const Exams = () => {
                             {groupNumber === '0' ? 'التأسيس' : `المجموعة ${groupNumber}`}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                          <div className="flex items-center justify-end space-x-1 rtl:space-x-reverse">
                             <BookOpen className="h-4 w-4 text-gray-400" />
                             <span>{exam.totalQuestions}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                          <div className="flex items-center justify-end space-x-1 rtl:space-x-reverse">
                             <Clock className="h-4 w-4 text-gray-400" />
                             <span>{exam.timeLimit} دقيقة</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                          <div className="flex items-center justify-end space-x-1 rtl:space-x-reverse">
                             <Users className="h-4 w-4 text-gray-400" />
                             <span>{exam.statistics.totalAttempts}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
                           {exam.statistics.averageScore > 0 ? (
-                            <div className="flex items-center space-x-1 rtl:space-x-reverse text-green-600">
+                            <div className="flex items-center justify-end space-x-1 rtl:space-x-reverse text-green-600">
                               <TrendingUp className="h-4 w-4" />
                               <span>{exam.statistics.averageScore}%</span>
                             </div>
@@ -520,8 +520,8 @@ const Exams = () => {
                             <span className="text-gray-400">-</span>
                           )}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
+                          <div className="flex items-center justify-end space-x-2 rtl:space-x-reverse">
                             <button
                               onClick={() => handleView(exam._id)}
                               className="text-primary-600 hover:text-primary-900 p-1 rounded"
