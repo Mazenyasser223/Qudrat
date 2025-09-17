@@ -15,10 +15,11 @@ const Exams = () => {
   const [freeExams, setFreeExams] = useState([]);
   const [showFreeExamModal, setShowFreeExamModal] = useState(false);
   const [selectedExamForFree, setSelectedExamForFree] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    fetchExams();
-    fetchFreeExams();
+    // Check backend health first
+    checkBackendHealth();
     
     // Add timeout to prevent infinite loading
     const timeout = setTimeout(() => {
@@ -31,24 +32,65 @@ const Exams = () => {
     return () => clearTimeout(timeout);
   }, []);
 
+  const checkBackendHealth = async () => {
+    try {
+      console.log('Checking backend health...');
+      const response = await axios.get('/api/health', { timeout: 5000 });
+      console.log('Backend is healthy:', response.data);
+      // If backend is healthy, fetch data
+      fetchExams();
+      fetchFreeExams();
+    } catch (error) {
+      console.error('Backend health check failed:', error);
+      // Try to fetch anyway, but with better error handling
+      fetchExams();
+      fetchFreeExams();
+    }
+  };
+
+  const retryFetch = () => {
+    setRetryCount(prev => prev + 1);
+    setLoading(true);
+    checkBackendHealth();
+  };
+
   const fetchExams = async () => {
     try {
       setLoading(true);
+      console.log('Fetching exams from:', axios.defaults.baseURL + '/api/exams');
+      console.log('Token:', localStorage.getItem('token') ? 'Present' : 'Missing');
+      
       const res = await axios.get('/api/exams', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        },
+        timeout: 10000 // 10 second timeout
       });
+      
+      console.log('Exams response:', res.data);
       setExams(res.data.data || []);
     } catch (error) {
       console.error('Error fetching exams:', error);
-      if (error.response?.status === 401) {
+      console.error('Error details:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data
+      });
+      
+      if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+        toast.error('انتهت مهلة الاتصال بالخادم، يرجى المحاولة مرة أخرى');
+      } else if (error.response?.status === 401) {
         toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
         localStorage.removeItem('token');
         navigate('/login');
       } else if (error.response?.status === 403) {
         toast.error('ليس لديك صلاحية للوصول إلى هذه الصفحة');
         navigate('/student');
+      } else if (error.response?.status >= 500) {
+        toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
+      } else if (!error.response) {
+        toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
       } else {
         toast.error('حدث خطأ أثناء تحميل الامتحانات');
       }
@@ -172,8 +214,20 @@ const Exams = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <div className="spinner"></div>
+        <p className="text-gray-600">جاري تحميل الامتحانات...</p>
+        {retryCount > 0 && (
+          <div className="text-center">
+            <p className="text-sm text-gray-500 mb-2">محاولة {retryCount}</p>
+            <button
+              onClick={retryFetch}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            >
+              إعادة المحاولة
+            </button>
+          </div>
+        )}
       </div>
     );
   }
