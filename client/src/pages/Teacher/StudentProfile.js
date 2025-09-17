@@ -915,7 +915,7 @@ const StudentProfile = () => {
       {/* Lock/Unlock Modal */}
       {showLockUnlockModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
             <div className={`${lockUnlockAction === 'lock' ? 'bg-red-600' : 'bg-green-600'} text-white px-6 py-4`}>
               <div className="flex items-center space-x-3 rtl:space-x-reverse">
                 {lockUnlockAction === 'lock' ? <Lock className="h-6 w-6" /> : <Unlock className="h-6 w-6" />}
@@ -934,7 +934,7 @@ const StudentProfile = () => {
                 </div>
               </div>
             </div>
-            <div className="p-6">
+            <div className="p-6 flex-1 overflow-y-auto">
               {/* Bulk Selection Controls */}
               <div className="mb-6 space-y-4">
                 <div className="flex flex-wrap gap-2">
@@ -1184,28 +1184,29 @@ const StudentProfile = () => {
                   </div>
                 )}
               </div>
-              <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
-                <div className="text-sm text-gray-600">
-                  {selectedExams.length > 0 && `تم اختيار ${selectedExams.length} امتحان`}
-                </div>
-                <div className="flex space-x-3 rtl:space-x-reverse">
-                  <button
-                    onClick={() => {
-                      setShowLockUnlockModal(false);
-                      setSelectedExams([]);
-                    }}
-                    className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
-                  >
-                    إلغاء
-                  </button>
-                  <button
-                    onClick={handleToggleMultipleExams}
-                    disabled={selectedExams.length === 0}
-                    className={`px-4 py-2 ${lockUnlockAction === 'lock' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors`}
-                  >
-                    {lockUnlockAction === 'lock' ? 'قفل الامتحانات المحددة' : 'فتح الامتحانات المحددة'} ({selectedExams.length})
-                  </button>
-                </div>
+            </div>
+            {/* Fixed Footer with Buttons */}
+            <div className="flex justify-between items-center px-6 py-4 border-t border-gray-200 bg-gray-50">
+              <div className="text-sm text-gray-600">
+                {selectedExams.length > 0 && `تم اختيار ${selectedExams.length} امتحان`}
+              </div>
+              <div className="flex space-x-3 rtl:space-x-reverse">
+                <button
+                  onClick={() => {
+                    setShowLockUnlockModal(false);
+                    setSelectedExams([]);
+                  }}
+                  className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                >
+                  إلغاء
+                </button>
+                <button
+                  onClick={handleToggleMultipleExams}
+                  disabled={selectedExams.length === 0}
+                  className={`px-4 py-2 ${lockUnlockAction === 'lock' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors`}
+                >
+                  {lockUnlockAction === 'lock' ? 'قفل الامتحانات المحددة' : 'فتح الامتحانات المحددة'} ({selectedExams.length})
+                </button>
               </div>
             </div>
           </div>
