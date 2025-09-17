@@ -375,6 +375,8 @@ const lockExamForStudent = async (req, res) => {
 const toggleMultipleExams = async (req, res) => {
   try {
     const { examIds, action } = req.body; // action: 'lock' or 'unlock'
+    
+    console.log('Toggle multiple exams request:', { examIds, action, studentId: req.params.id });
 
     if (!Array.isArray(examIds) || examIds.length === 0) {
       return res.status(400).json({
@@ -400,6 +402,8 @@ const toggleMultipleExams = async (req, res) => {
 
     let updatedCount = 0;
     const newStatus = action === 'lock' ? 'locked' : 'unlocked';
+    
+    console.log('Student exam progress before update:', student.examProgress.map(p => ({ examId: p.examId, status: p.status })));
 
     for (const examId of examIds) {
       const examProgress = student.examProgress.find(
@@ -407,14 +411,20 @@ const toggleMultipleExams = async (req, res) => {
       );
 
       if (examProgress) {
+        console.log(`Updating exam ${examId} from ${examProgress.status} to ${newStatus}`);
         examProgress.status = newStatus;
         updatedCount++;
+      } else {
+        console.log(`Exam ${examId} not found in student progress`);
       }
     }
 
     if (updatedCount > 0) {
       await student.save();
+      console.log('Student saved successfully');
     }
+
+    console.log('Toggle multiple exams result:', { updatedCount, newStatus });
 
     res.json({
       success: true,

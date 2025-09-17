@@ -171,7 +171,9 @@ const StudentProfile = () => {
 
   const handleToggleMultipleExams = async () => {
     try {
-      await axios.put(`/api/users/students/${studentId}/toggle-exams`, {
+      console.log('Toggling exams:', { examIds: selectedExams, action: lockUnlockAction, studentId });
+      
+      const response = await axios.put(`/api/users/students/${studentId}/toggle-exams`, {
         examIds: selectedExams,
         action: lockUnlockAction
       }, {
@@ -180,13 +182,16 @@ const StudentProfile = () => {
         }
       });
       
+      console.log('Toggle exams response:', response.data);
+      
       toast.success(`تم ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الامتحانات المحددة بنجاح`);
       setShowLockUnlockModal(false);
       setSelectedExams([]);
       fetchStudentData();
     } catch (error) {
       console.error('Error toggling exams:', error);
-      toast.error(`حدث خطأ أثناء ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الامتحانات`);
+      console.error('Error response:', error.response?.data);
+      toast.error(`حدث خطأ أثناء ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الامتحانات: ${error.response?.data?.message || error.message}`);
     }
   };
 
