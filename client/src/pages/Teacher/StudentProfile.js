@@ -14,7 +14,8 @@ import {
   Filter,
   AlertTriangle,
   Eye,
-  RefreshCw
+  RefreshCw,
+  List
 } from 'lucide-react';
 import StudentMistakes from '../../components/Exam/StudentMistakes';
 import StudentAnswersViewer from '../../components/Exam/StudentAnswersViewer';
@@ -396,14 +397,13 @@ const StudentProfile = () => {
               <span>الوصول السريع للمجموعات والامتحانات</span>
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {Object.keys(examGroups).map(groupKey => {
-                const groupNum = parseInt(groupKey);
-                const groupExams = examGroups[groupKey] || [];
+              {Array.from({ length: 9 }, (_, i) => i).map(groupNum => {
+                const groupExams = exams.filter(exam => exam.examGroup === groupNum);
                 
                 if (groupExams.length === 0) return null;
                 
                 return (
-                  <div key={groupKey} className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-md transition-shadow">
+                  <div key={groupNum} className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-md transition-shadow">
                     <h5 className="font-semibold text-gray-900 mb-2 flex items-center space-x-2 rtl:space-x-reverse">
                       <div className="w-5 h-5 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xs font-bold">
                         {groupNum}
@@ -412,7 +412,7 @@ const StudentProfile = () => {
                     </h5>
                     <div className="space-y-1">
                       {groupExams.slice(0, 3).map(exam => {
-                        const progress = studentData?.examProgress?.find(p => p.examId === exam._id);
+                        const progress = student?.examProgress?.find(p => p.examId === exam._id);
                         return (
                           <button
                             key={exam._id}
