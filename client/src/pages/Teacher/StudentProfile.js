@@ -280,18 +280,6 @@ const StudentProfile = () => {
             </div>
             <div className="flex items-center space-x-3 rtl:space-x-reverse">
               <button
-                onClick={() => {
-                  fetchStudentData(true);
-                  fetchExams();
-                }}
-                disabled={refreshing}
-                className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                title="تحديث بيانات الطالب"
-              >
-                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                <span>تحديث</span>
-              </button>
-              <button
                 onClick={handleViewAllAnswers}
                 className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 title="عرض جميع إجابات الطالب"
@@ -553,16 +541,16 @@ const StudentProfile = () => {
                               {exam.title}
                             </div>
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                          <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                             {progress ? `${progress.score || 0}/${progress.totalQuestions || exam.questions.length}` : '-'}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                          <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                             {progress ? `${progress.percentage || 0}%` : '-'}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
+                          <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                             {isFirstInGroup && cumulativeData.completedExams > 0 ? `${cumulativeData.cumulativePercentage}%` : '-'}
                           </td>
-                          <td className="px-4 py-4 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                          <td className="px-4 py-4 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                             {progress ? (
                               <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                                 progress.status === 'completed' 

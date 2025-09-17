@@ -405,18 +405,12 @@ const Exams = () => {
                       </div>
                     </div>
 
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2 rtl:space-x-reverse text-sm text-gray-500">
-                          <Users className="h-4 w-4" />
-                          <span>{exam.statistics.totalAttempts} محاولة</span>
-                </div>
-                        {exam.statistics.averageScore > 0 && (
-                          <div className="flex items-center space-x-1 rtl:space-x-reverse text-sm text-green-600">
-                            <TrendingUp className="h-4 w-4" />
-                            <span>{exam.statistics.averageScore}%</span>
-                </div>
-              )}
-            </div>
+                      {exam.statistics.averageScore > 0 && (
+                        <div className="flex items-center justify-end space-x-1 rtl:space-x-reverse text-sm text-green-600">
+                          <TrendingUp className="h-4 w-4" />
+                          <span>{exam.statistics.averageScore}%</span>
+                        </div>
+                      )}
           </div>
         ))}
       </div>
@@ -459,9 +453,6 @@ const Exams = () => {
                       الوقت
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      المحاولات
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       متوسط الدرجات
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -502,12 +493,6 @@ const Exams = () => {
                           <div className="flex items-center justify-end space-x-1 rtl:space-x-reverse">
                             <Clock className="h-4 w-4 text-gray-400" />
                             <span>{exam.timeLimit} دقيقة</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                          <div className="flex items-center justify-end space-x-1 rtl:space-x-reverse">
-                            <Users className="h-4 w-4 text-gray-400" />
-                            <span>{exam.statistics.totalAttempts}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
