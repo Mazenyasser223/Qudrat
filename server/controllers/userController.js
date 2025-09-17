@@ -304,9 +304,24 @@ const unlockExamForStudent = async (req, res) => {
         message: 'Exam unlocked successfully for student'
       });
     } else {
-      res.status(404).json({
-        success: false,
-        message: 'Exam progress not found for this student'
+      // Create new progress entry if it doesn't exist
+      student.examProgress.push({
+        examId: examId,
+        status: 'unlocked',
+        percentage: 0,
+        score: 0,
+        totalQuestions: 0,
+        correctAnswers: 0,
+        wrongAnswers: 0,
+        timeSpent: 0,
+        submittedAt: null,
+        answers: []
+      });
+      await student.save();
+
+      res.json({
+        success: true,
+        message: 'Exam unlocked successfully for student'
       });
     }
   } catch (error) {
@@ -355,9 +370,24 @@ const lockExamForStudent = async (req, res) => {
         message: 'Exam locked successfully for student'
       });
     } else {
-      res.status(404).json({
-        success: false,
-        message: 'Exam progress not found for this student'
+      // Create new progress entry if it doesn't exist
+      student.examProgress.push({
+        examId: examId,
+        status: 'locked',
+        percentage: 0,
+        score: 0,
+        totalQuestions: 0,
+        correctAnswers: 0,
+        wrongAnswers: 0,
+        timeSpent: 0,
+        submittedAt: null,
+        answers: []
+      });
+      await student.save();
+
+      res.json({
+        success: true,
+        message: 'Exam locked successfully for student'
       });
     }
   } catch (error) {
@@ -415,7 +445,25 @@ const toggleMultipleExams = async (req, res) => {
         examProgress.status = newStatus;
         updatedCount++;
       } else {
-        console.log(`Exam ${examId} not found in student progress`);
+        // If no progress exists and we're unlocking, create a new progress entry
+        if (action === 'unlock') {
+          console.log(`Creating new progress entry for exam ${examId} with status ${newStatus}`);
+          student.examProgress.push({
+            examId: examId,
+            status: newStatus,
+            percentage: 0,
+            score: 0,
+            totalQuestions: 0,
+            correctAnswers: 0,
+            wrongAnswers: 0,
+            timeSpent: 0,
+            submittedAt: null,
+            answers: []
+          });
+          updatedCount++;
+        } else {
+          console.log(`Exam ${examId} not found in student progress and action is lock`);
+        }
       }
     }
 
