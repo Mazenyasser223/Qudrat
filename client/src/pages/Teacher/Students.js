@@ -344,20 +344,22 @@ const Students = () => {
                         {student.phoneNumber || '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                        <div className="flex items-center justify-center space-x-2 rtl:space-x-reverse">
+                        <div className="flex items-center justify-center space-x-3 rtl:space-x-reverse">
                           <button
                             onClick={() => handleViewProfile(student._id)}
-                            className="text-green-600 hover:text-green-900"
+                            className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-2 bg-green-100 hover:bg-green-200 text-green-700 hover:text-green-800 rounded-lg transition-colors text-sm font-medium"
                             title="عرض الملف الشخصي"
                           >
                             <Eye className="h-4 w-4" />
+                            <span>عرض</span>
                           </button>
                           <button
                             onClick={() => handleDelete(student._id)}
-                            className="text-red-600 hover:text-red-900"
-                            title="حذف"
+                            className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 hover:text-red-800 rounded-lg transition-colors text-sm font-medium"
+                            title="حذف الطالب"
                           >
                             <Trash2 className="h-4 w-4" />
+                            <span>حذف</span>
                           </button>
                         </div>
                       </td>
