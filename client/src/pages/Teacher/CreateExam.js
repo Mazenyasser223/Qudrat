@@ -436,7 +436,28 @@ const CreateExam = () => {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Question Image */}
+                    {/* Correct Answer - Left Side */}
+                    <div className="form-group">
+                      <label className="form-label">الإجابة الصحيحة</label>
+                      <select
+                        className={`input-field ${errors.questions?.[index]?.correctAnswer ? 'border-red-500' : ''}`}
+                        {...register(`questions.${index}.correctAnswer`, {
+                          required: 'الإجابة الصحيحة مطلوبة'
+                        })}
+                      >
+                        <option value="A">الخيار A</option>
+                        <option value="B">الخيار B</option>
+                        <option value="C">الخيار C</option>
+                        <option value="D">الخيار D</option>
+                      </select>
+                      {errors.questions?.[index]?.correctAnswer && (
+                        <p className="error-message">
+                          {errors.questions[index].correctAnswer.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Question Image - Right Side */}
                     <div className="form-group">
                       <label className="form-label">صورة السؤال</label>
                       <div className="space-y-2">
@@ -454,14 +475,15 @@ const CreateExam = () => {
                           </div>
                         )}
                         {watch(`questions.${index}.questionImage`) && !uploading && (
-                          <div className="mt-2">
+                          <div className="mt-2 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
                             <img
                               src={watch(`questions.${index}.questionImage`)}
                               alt={`Question ${index + 1}`}
-                              className="max-w-full h-auto rounded-lg border bg-gray-50"
+                              className="w-full h-auto rounded-lg border bg-white shadow-sm"
                               style={{
-                                maxHeight: 'none',
-                                objectFit: 'contain'
+                                maxHeight: '500px',
+                                objectFit: 'contain',
+                                minHeight: '200px'
                               }}
                               onError={(e) => {
                                 console.error('Image load error:', e.target.src);
@@ -469,34 +491,13 @@ const CreateExam = () => {
                                 // Don't set fallback image, let it show broken image icon
                               }}
                             />
-                            <p className="text-xs text-green-600 mt-1">✓ تم رفع الصورة بنجاح</p>
+                            <p className="text-xs text-green-600 mt-2 text-center">✓ تم رفع الصورة بنجاح</p>
                           </div>
                         )}
                       </div>
                       {errors.questions?.[index]?.questionImage && (
                         <p className="error-message">
                           {errors.questions[index].questionImage.message}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Correct Answer */}
-                    <div className="form-group">
-                      <label className="form-label">الإجابة الصحيحة</label>
-                      <select
-                        className={`input-field ${errors.questions?.[index]?.correctAnswer ? 'border-red-500' : ''}`}
-                        {...register(`questions.${index}.correctAnswer`, {
-                          required: 'الإجابة الصحيحة مطلوبة'
-                        })}
-                      >
-                        <option value="A">الخيار A</option>
-                        <option value="B">الخيار B</option>
-                        <option value="C">الخيار C</option>
-                        <option value="D">الخيار D</option>
-                      </select>
-                      {errors.questions?.[index]?.correctAnswer && (
-                        <p className="error-message">
-                          {errors.questions[index].correctAnswer.message}
                         </p>
                       )}
                     </div>

@@ -228,6 +228,7 @@ const EditExam = () => {
                     valueAsNumber: true 
                   })}
                 >
+                  <option value={0}>اختبارات التأسيس</option>
                   {Array.from({ length: 8 }, (_, i) => i + 1).map(num => (
                     <option key={num} value={num}>المجموعة {num}</option>
                   ))}
@@ -313,33 +314,7 @@ const EditExam = () => {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Question Image */}
-                    <div className="form-group">
-                      <label className="form-label">صورة السؤال</label>
-                      <div className="space-y-2">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleImageUpload(e, index)}
-                          className="input-field"
-                        />
-                        {watch(`questions.${index}.questionImage`) && (
-                          <div className="mt-2">
-                            <img
-                              src={watch(`questions.${index}.questionImage`)}
-                              alt={`Question ${index + 1}`}
-                              className="max-w-full h-auto rounded-lg border bg-gray-50"
-                              style={{
-                                maxHeight: 'none',
-                                objectFit: 'contain'
-                              }}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Correct Answer */}
+                    {/* Correct Answer - Left Side */}
                     <div className="form-group">
                       <label className="form-label">الإجابة الصحيحة</label>
                       <select
@@ -358,6 +333,33 @@ const EditExam = () => {
                           {errors.questions[index].correctAnswer.message}
                         </p>
                       )}
+                    </div>
+
+                    {/* Question Image - Right Side */}
+                    <div className="form-group">
+                      <label className="form-label">صورة السؤال</label>
+                      <div className="space-y-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageUpload(e, index)}
+                          className="input-field"
+                        />
+                        {watch(`questions.${index}.questionImage`) && (
+                          <div className="mt-2 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                            <img
+                              src={watch(`questions.${index}.questionImage`)}
+                              alt={`Question ${index + 1}`}
+                              className="w-full h-auto rounded-lg border bg-white shadow-sm"
+                              style={{
+                                maxHeight: '500px',
+                                objectFit: 'contain',
+                                minHeight: '200px'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
