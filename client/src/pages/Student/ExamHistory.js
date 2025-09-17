@@ -180,8 +180,13 @@ const ExamHistory = () => {
                 <Clock className="h-4 w-4 text-gray-500" />
                 <span className="text-sm text-gray-600">الوقت المستغرق:</span>
                 <span className="text-sm font-medium">
-                  {(studentSubmission.timeSpent || studentSubmission.timeTaken) ? 
-                    `${Math.floor((studentSubmission.timeSpent || studentSubmission.timeTaken) / 60)}:${((studentSubmission.timeSpent || studentSubmission.timeTaken) % 60).toString().padStart(2, '0')}` :
+                  {studentSubmission.timeSpent && studentSubmission.timeSpent > 0 ? 
+                    `${Math.floor(studentSubmission.timeSpent / 60)}:${(studentSubmission.timeSpent % 60).toString().padStart(2, '0')}` :
+                    studentSubmission.timeTaken && studentSubmission.timeTaken > 0 ?
+                    `${Math.floor(studentSubmission.timeTaken / 60)}:${(studentSubmission.timeTaken % 60).toString().padStart(2, '0')}` :
+                    // Fallback: try to calculate from exam time limit if available
+                    exam && exam.timeLimit ? 
+                    `${exam.timeLimit}:00 (تقديري)` :
                     'غير محدد'
                   }
                 </span>

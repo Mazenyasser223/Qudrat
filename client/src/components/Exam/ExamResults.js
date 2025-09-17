@@ -39,10 +39,14 @@ const ExamResults = ({
         </div>
         <div className="card-body">
 
-          <div className="text-center">
+          <div className="text-center space-y-4">
             <div className={`inline-flex items-center px-6 py-3 rounded-lg ${getGradeColor(percentage)}`}>
               <span className="text-2xl font-bold">{percentage.toFixed(1)}%</span>
               <span className="mr-3 text-lg font-medium">{getGradeText(percentage)}</span>
+            </div>
+            <div className="text-lg text-gray-700">
+              <span className="font-semibold">الدرجة: </span>
+              <span className="text-blue-600 font-bold">{score}/{totalQuestions}</span>
             </div>
           </div>
         </div>
