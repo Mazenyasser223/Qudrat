@@ -57,8 +57,10 @@ const Exams = () => {
   const fetchExams = async () => {
     try {
       setLoading(true);
-      console.log('Fetching exams from:', axios.defaults.baseURL + '/api/exams');
-      console.log('Token:', localStorage.getItem('token') ? 'Present' : 'Missing');
+      console.log('=== FETCHING EXAMS ===');
+      console.log('API URL:', axios.defaults.baseURL + '/api/exams');
+      console.log('Token present:', !!localStorage.getItem('token'));
+      console.log('Token value:', localStorage.getItem('token')?.substring(0, 20) + '...');
       
       const res = await axios.get('/api/exams', {
         headers: {
@@ -67,15 +69,34 @@ const Exams = () => {
         timeout: 10000 // 10 second timeout
       });
       
-      console.log('Exams response:', res.data);
-      setExams(res.data.data || []);
+      console.log('=== EXAMS RESPONSE ===');
+      console.log('Status:', res.status);
+      console.log('Headers:', res.headers);
+      console.log('Data:', res.data);
+      console.log('Data type:', typeof res.data);
+      console.log('Data.data:', res.data?.data);
+      console.log('Data.data length:', res.data?.data?.length);
+      
+      const examsData = res.data?.data || [];
+      console.log('Setting exams:', examsData);
+      setExams(examsData);
+      
+      if (examsData.length === 0) {
+        console.warn('No exams returned from API');
+        toast.error('لا توجد امتحانات في النظام');
+      }
     } catch (error) {
-      console.error('Error fetching exams:', error);
+      console.error('=== EXAMS ERROR ===');
+      console.error('Error object:', error);
+      console.error('Error message:', error.message);
+      console.error('Error code:', error.code);
+      console.error('Error response:', error.response);
       console.error('Error details:', {
         message: error.message,
         status: error.response?.status,
         statusText: error.response?.statusText,
-        data: error.response?.data
+        data: error.response?.data,
+        headers: error.response?.headers
       });
       
       if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
@@ -102,14 +123,29 @@ const Exams = () => {
 
   const fetchFreeExams = async () => {
     try {
+      console.log('=== FETCHING FREE EXAMS ===');
+      console.log('API URL:', axios.defaults.baseURL + '/api/exams/free/manage');
+      
       const res = await axios.get('/api/exams/free/manage', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setFreeExams(res.data.data || []);
+      
+      console.log('=== FREE EXAMS RESPONSE ===');
+      console.log('Status:', res.status);
+      console.log('Data:', res.data);
+      console.log('Data.data:', res.data?.data);
+      console.log('Data.data length:', res.data?.data?.length);
+      
+      const freeExamsData = res.data?.data || [];
+      console.log('Setting free exams:', freeExamsData);
+      setFreeExams(freeExamsData);
     } catch (error) {
-      console.error('Error fetching free exams:', error);
+      console.error('=== FREE EXAMS ERROR ===');
+      console.error('Error:', error);
+      console.error('Error response:', error.response);
+      
       if (error.response?.status === 401) {
         // Don't show error for free exams if auth fails, just set empty array
         setFreeExams([]);
