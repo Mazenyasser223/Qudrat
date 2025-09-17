@@ -320,13 +320,8 @@ const Students = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredStudents.map((student) => (
                     <tr key={student._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0">
-                            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
-                              <User className="h-5 w-5 text-primary-600" />
-                            </div>
-                          </div>
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <div className="flex items-center justify-end">
                           <div className="mr-4">
                             <div className="text-sm font-medium text-gray-900">
                               {student.name}
@@ -335,16 +330,21 @@ const Students = () => {
                               {new Date(student.createdAt).toLocaleDateString('en-GB')}
                             </div>
                           </div>
+                          <div className="h-10 w-10 flex-shrink-0">
+                            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                              <User className="h-5 w-5 text-primary-600" />
+                            </div>
+                          </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
                         {student.email}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
                         {student.phoneNumber || '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                        <div className="flex items-center justify-center space-x-2 rtl:space-x-reverse">
                           <button
                             onClick={() => handleViewProfile(student._id)}
                             className="text-green-600 hover:text-green-900"

@@ -20,6 +20,7 @@ const PublicExam = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState(null);
+  const [examForResults, setExamForResults] = useState(null);
   const [timeUp, setTimeUp] = useState(false);
   const [startTime, setStartTime] = useState(null);
 
@@ -131,8 +132,15 @@ const PublicExam = () => {
           submittedAt: new Date().toISOString(),
           isPublicExam: true
         };
+
+        // Create exam object with shuffled questions for results display
+        const examForResults = {
+          ...exam,
+          questions: shuffledQuestions
+        };
         
         setResults(examResults);
+        setExamForResults(examForResults);
         setShowResults(true);
         
         toast.success('تم إرسال الإجابات بنجاح!');
@@ -197,7 +205,7 @@ const PublicExam = () => {
           
           <ExamResults
             results={results}
-            exam={exam}
+            exam={examForResults}
             answers={results.answers}
             onBackToHome={handleBackToHome}
             isPublicExam={true}
@@ -275,44 +283,6 @@ const PublicExam = () => {
           />
         )}
 
-        {/* Navigation */}
-        <div className="bg-white rounded-xl shadow-sm border p-4 mt-6">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={handlePrevious}
-              disabled={currentQuestion === 0}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              السابق
-            </button>
-            
-            <div className="flex space-x-2 rtl:space-x-reverse">
-              {shuffledQuestions.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentQuestion(index)}
-                  className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
-                    index === currentQuestion
-                      ? 'bg-primary-600 text-white'
-                      : answers[index]
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
-            </div>
-            
-            <button
-              onClick={currentQuestion === shuffledQuestions.length - 1 ? handleSubmit : handleNext}
-              disabled={submitting}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {currentQuestion === shuffledQuestions.length - 1 ? 'إرسال الإجابات' : 'التالي'}
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

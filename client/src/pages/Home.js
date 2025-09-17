@@ -124,7 +124,7 @@ const Home = () => {
             ) : freeExams.length > 0 ? (
               // Dynamic free exams
               freeExams.map((exam) => (
-                <div key={exam._id} className={`card p-8 text-center bg-gradient-to-br ${getFreeExamGradient(exam.freeExamOrder)} text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}>
+                <div key={exam._id} className={`card p-8 text-center bg-gradient-to-br ${getFreeExamGradient(exam.freeExamOrder)} text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer`} onClick={() => handleFreeExamClick(exam._id)}>
                   <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                     <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -135,19 +135,12 @@ const Home = () => {
                   <div className="text-green-100 text-sm mb-4">
                     {exam.totalQuestions} سؤال • {exam.timeLimit} دقيقة
                   </div>
-                  <button 
-                    onClick={() => handleFreeExamClick(exam._id)}
-                    className="mt-4 inline-block px-6 py-3 rounded-lg bg-white font-semibold hover:bg-gray-100 transition shadow-md"
-                    style={{ color: getFreeExamButtonColor(exam.freeExamOrder) }}
-                  >
-                    ابدأ الامتحان
-                  </button>
                 </div>
               ))
             ) : (
               // Fallback static content if no free exams are set
               <>
-                <div className="card p-8 text-center bg-gradient-to-br from-green-500 to-green-600 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="card p-8 text-center bg-gradient-to-br from-green-500 to-green-600 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer" onClick={() => handleFreeExamClick('fallback-1')}>
                   <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                     <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -155,15 +148,9 @@ const Home = () => {
                   </div>
                   <h3 className="text-2xl font-bold mb-2">الامتحان التأسيسي المجاني</h3>
                   <p className="text-green-100 mb-4">اختبار تأسيسي شامل للمفاهيم الأساسية</p>
-                  <button 
-                    onClick={() => handleFreeExamClick('fallback-1')}
-                    className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-600 font-semibold hover:bg-gray-100 transition shadow-md"
-                  >
-                    ابدأ الامتحان
-                  </button>
                 </div>
                 
-                <div className="card p-8 text-center bg-gradient-to-br from-green-600 to-green-700 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="card p-8 text-center bg-gradient-to-br from-green-600 to-green-700 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer" onClick={() => handleFreeExamClick('fallback-2')}>
                   <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                     <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -171,15 +158,9 @@ const Home = () => {
                   </div>
                   <h3 className="text-2xl font-bold mb-2">الامتحان المجاني الأول</h3>
                   <p className="text-green-100 mb-4">اختبار تجريبي للمستوى المتوسط</p>
-                  <button 
-                    onClick={() => handleFreeExamClick('fallback-2')}
-                    className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-700 font-semibold hover:bg-gray-100 transition shadow-md"
-                  >
-                    ابدأ الامتحان
-                  </button>
                 </div>
                 
-                <div className="card p-8 text-center bg-gradient-to-br from-green-700 to-green-800 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="card p-8 text-center bg-gradient-to-br from-green-700 to-green-800 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer" onClick={() => handleFreeExamClick('fallback-3')}>
                   <div className="bg-white/20 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                     <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -187,12 +168,6 @@ const Home = () => {
                   </div>
                   <h3 className="text-2xl font-bold mb-2">الامتحان المجاني الثاني</h3>
                   <p className="text-green-100 mb-4">اختبار متقدم للمستوى العالي</p>
-                  <button 
-                    onClick={() => handleFreeExamClick('fallback-3')}
-                    className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-green-800 font-semibold hover:bg-gray-100 transition shadow-md"
-                  >
-                    ابدأ الامتحان
-                  </button>
                 </div>
               </>
             )}
