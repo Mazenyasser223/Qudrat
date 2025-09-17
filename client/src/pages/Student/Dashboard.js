@@ -398,14 +398,6 @@ const StudentDashboard = () => {
                         </div>
 
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2 rtl:space-x-reverse text-sm text-gray-500">
-                            {status === 'completed' && progress && (
-                              <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                                <TrendingUp className="h-4 w-4" />
-                                <span>{progress.percentage}%</span>
-                              </div>
-                            )}
-                          </div>
                           
                           <button
                             onClick={() => handleStartExam(exam)}
