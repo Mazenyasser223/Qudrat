@@ -19,6 +19,16 @@ const Exams = () => {
   useEffect(() => {
     fetchExams();
     fetchFreeExams();
+    
+    // Add timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      if (loading) {
+        setLoading(false);
+        toast.error('انتهت مهلة التحميل، يرجى المحاولة مرة أخرى');
+      }
+    }, 30000); // 30 seconds timeout
+    
+    return () => clearTimeout(timeout);
   }, []);
 
   const fetchExams = async () => {
@@ -29,10 +39,20 @@ const Exams = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setExams(res.data.data);
+      setExams(res.data.data || []);
     } catch (error) {
       console.error('Error fetching exams:', error);
-      toast.error('حدث خطأ أثناء تحميل الامتحانات');
+      if (error.response?.status === 401) {
+        toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        localStorage.removeItem('token');
+        navigate('/login');
+      } else if (error.response?.status === 403) {
+        toast.error('ليس لديك صلاحية للوصول إلى هذه الصفحة');
+        navigate('/student');
+      } else {
+        toast.error('حدث خطأ أثناء تحميل الامتحانات');
+      }
+      setExams([]);
     } finally {
       setLoading(false);
     }
@@ -45,9 +65,16 @@ const Exams = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setFreeExams(res.data.data);
+      setFreeExams(res.data.data || []);
     } catch (error) {
       console.error('Error fetching free exams:', error);
+      if (error.response?.status === 401) {
+        // Don't show error for free exams if auth fails, just set empty array
+        setFreeExams([]);
+      } else {
+        toast.error('حدث خطأ أثناء تحميل الامتحانات المجانية');
+        setFreeExams([]);
+      }
     }
   };
 
