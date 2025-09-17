@@ -11,7 +11,7 @@ const getExams = async (req, res) => {
   try {
     // For list view, only fetch basic exam info without questions to improve performance
     const exams = await Exam.find({ isActive: true })
-      .select('title description examGroup order timeLimit isFreeExam createdAt updatedAt')
+      .select('title description examGroup order timeLimit isFreeExam totalQuestions createdAt updatedAt')
       .populate('createdBy', 'name email')
       .sort({ examGroup: 1, order: 1 });
 

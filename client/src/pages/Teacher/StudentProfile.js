@@ -565,7 +565,7 @@ const StudentProfile = () => {
                       
                       if (progress.status === 'completed') {
                         groupCumulative[groupNum].totalScore += progress.score || 0;
-                        groupCumulative[groupNum].totalQuestions += progress.totalQuestions || exam.questions.length;
+                        groupCumulative[groupNum].totalQuestions += progress.totalQuestions || exam.totalQuestions || 0;
                         groupCumulative[groupNum].completedExams += 1;
                       }
                     } else {
@@ -618,7 +618,7 @@ const StudentProfile = () => {
                             </div>
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
-                            {progress ? `${progress.score || 0}/${progress.totalQuestions || exam.questions.length}` : '-'}
+                            {progress ? `${progress.score || 0}/${progress.totalQuestions || exam.totalQuestions || 0}` : '-'}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                             {progress ? `${progress.percentage || 0}%` : '-'}
@@ -733,7 +733,7 @@ const StudentProfile = () => {
                               </div>
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
-                              {progress ? `${progress.score || 0}/${progress.totalQuestions || exam.questions.length}` : '-'}
+                              {progress ? `${progress.score || 0}/${progress.totalQuestions || exam.totalQuestions || 0}` : '-'}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                               {progress ? `${progress.percentage || 0}%` : '-'}
@@ -1037,7 +1037,7 @@ const StudentProfile = () => {
                             </span>
                           </div>
                         <div className="text-sm text-gray-500 mt-1">
-                            {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} • {exam.questions.length} أسئلة
+                            {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} • {exam.totalQuestions || 0} أسئلة
                             {progress && progress.percentage > 0 && (
                               <span className="mr-2">• {progress.percentage}%</span>
                             )}
