@@ -29,7 +29,8 @@ const StudentProfile = () => {
   const [loading, setLoading] = useState(true);
   const [showLockUnlockModal, setShowLockUnlockModal] = useState(false);
   const [selectedExams, setSelectedExams] = useState([]);
-  const [lockUnlockAction, setLockUnlockAction] = useState('lock'); // 'lock' or 'unlock'
+  const [lockUnlockAction, setLockUnlockAction] = useState('lock');
+  const [expandedGroups, setExpandedGroups] = useState({}); // 'lock' or 'unlock'
   const [studentProgress, setStudentProgress] = useState([]);
   const [groupStatus, setGroupStatus] = useState({});
   const [showMistakes, setShowMistakes] = useState(false);
@@ -201,6 +202,13 @@ const StudentProfile = () => {
       console.error('Error response:', error.response?.data);
       toast.error(`حدث خطأ أثناء ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الامتحانات: ${error.response?.data?.message || error.message}`);
     }
+  };
+
+  const toggleGroupExpansion = (groupNum) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [groupNum]: !prev[groupNum]
+    }));
   };
 
   const handleToggleGroup = async (groupNumber, action) => {
@@ -450,7 +458,7 @@ const StudentProfile = () => {
                     
                     {/* Exams List */}
                     <div className="space-y-2">
-                      {groupExams.slice(0, 3).map(exam => {
+                      {(expandedGroups[groupNum] ? groupExams : groupExams.slice(0, 3)).map(exam => {
                         const progress = student?.examProgress?.find(p => p.examId === exam._id);
                         const hasTimeData = progress && (progress.timeSpent || progress.submittedAt);
                         
@@ -532,9 +540,25 @@ const StudentProfile = () => {
                       
                       {groupExams.length > 3 && (
                         <div className="text-center pt-2">
-                          <div className="text-xs text-gray-500 bg-gray-100 rounded-full px-3 py-1 inline-block">
-                            +{groupExams.length - 3} امتحانات أخرى
-                          </div>
+                          <button
+                            onClick={() => toggleGroupExpansion(groupNum)}
+                            className="text-xs text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-full px-3 py-1 inline-block transition-colors duration-200 flex items-center space-x-1 rtl:space-x-reverse mx-auto"
+                          >
+                            <span>
+                              {expandedGroups[groupNum] 
+                                ? 'إخفاء الامتحانات' 
+                                : `+${groupExams.length - 3} امتحانات أخرى`
+                              }
+                            </span>
+                            <svg 
+                              className={`w-3 h-3 transition-transform duration-200 ${expandedGroups[groupNum] ? 'rotate-180' : ''}`} 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
                         </div>
                       )}
                     </div>
