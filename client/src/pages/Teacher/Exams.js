@@ -66,7 +66,7 @@ const Exams = () => {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        timeout: 10000 // 10 second timeout
+        timeout: 30000 // 30 second timeout for main exams (they have more data)
       });
       
       console.log('=== EXAMS RESPONSE ===');
