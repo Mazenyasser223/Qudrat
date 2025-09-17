@@ -21,6 +21,7 @@ const TakeExam = () => {
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState(null);
   const [timeUp, setTimeUp] = useState(false);
+  const [timeSpent, setTimeSpent] = useState(0);
 
   useEffect(() => {
     fetchExam();
@@ -105,7 +106,9 @@ const TakeExam = () => {
         });
 
         const res = await axios.post(`/api/exams/${examId}/submit`, {
-          answers: answersArray
+          answers: answersArray,
+          timeSpent: timeSpent,
+          submittedAt: new Date().toISOString()
         }, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -209,6 +212,7 @@ const TakeExam = () => {
                 timeLimit={exam.timeLimit}
                 onTimeUp={handleTimeUp}
                 onWarning={handleTimeWarning}
+                onTimeUpdate={setTimeSpent}
               />
             </div>
           </div>

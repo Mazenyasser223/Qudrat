@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, AlertTriangle } from 'lucide-react';
 
-const ExamTimer = ({ timeLimit, onTimeUp, onWarning }) => {
+const ExamTimer = ({ timeLimit, onTimeUp, onWarning, onTimeUpdate }) => {
   const [timeLeft, setTimeLeft] = useState(timeLimit * 60); // Convert minutes to seconds
   const [warningShown, setWarningShown] = useState(false);
 
@@ -18,7 +18,15 @@ const ExamTimer = ({ timeLimit, onTimeUp, onWarning }) => {
     }
 
     const timer = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
+      setTimeLeft(prev => {
+        const newTimeLeft = prev - 1;
+        // Calculate time spent and notify parent component
+        if (onTimeUpdate) {
+          const timeSpent = (timeLimit * 60) - newTimeLeft;
+          onTimeUpdate(timeSpent);
+        }
+        return newTimeLeft;
+      });
     }, 1000);
 
     return () => clearInterval(timer);

@@ -292,7 +292,7 @@ const getExamsByGroup = async (req, res) => {
 // @access  Private (Student only)
 const submitExam = async (req, res) => {
   try {
-    const { answers } = req.body;
+    const { answers, timeSpent, submittedAt } = req.body;
 
     const exam = await Exam.findById(req.params.id);
     if (!exam) {
@@ -360,6 +360,8 @@ const submitExam = async (req, res) => {
     examProgress.score = score;
     examProgress.percentage = percentage;
     examProgress.completedAt = new Date();
+    examProgress.submittedAt = submittedAt ? new Date(submittedAt) : new Date();
+    examProgress.timeSpent = timeSpent || 0;
     examProgress.answers = detailedAnswers;
     examProgress.wrongQuestions = wrongQuestions;
 
@@ -424,6 +426,8 @@ const submitExam = async (req, res) => {
         correctAnswers,
         totalQuestions: exam.questions.length,
         wrongAnswers: exam.questions.length - correctAnswers,
+        timeSpent: timeSpent || 0,
+        submittedAt: examProgress.submittedAt,
         hasReviewExam: wrongQuestions.length > 0,
         reviewExamId: reviewExam ? reviewExam._id : null
       }

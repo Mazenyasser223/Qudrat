@@ -390,29 +390,70 @@ const StudentProfile = () => {
             <p className="text-sm text-gray-600 mt-1">تفاصيل كاملة عن أداء الطالب في جميع الامتحانات</p>
           </div>
           
-          {/* Toggle List for Groups and Exams */}
-          <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200">
-            <h4 className="text-md font-semibold text-gray-900 mb-3 flex items-center space-x-2 rtl:space-x-reverse">
-              <List className="h-4 w-4 text-primary-600" />
-              <span>الوصول السريع للمجموعات والامتحانات</span>
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {/* Enhanced Quick Access Section */}
+          <div className="px-6 py-6 bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-6">
+              <h4 className="text-lg font-bold text-gray-900 flex items-center space-x-3 rtl:space-x-reverse">
+                <div className="p-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg">
+                  <List className="h-5 w-5 text-white" />
+                </div>
+                <span>الوصول السريع للمجموعات والامتحانات</span>
+              </h4>
+              <div className="text-sm text-gray-600 bg-white px-3 py-1 rounded-full border">
+                {exams.length} امتحان متاح
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 9 }, (_, i) => i).map(groupNum => {
                 const groupExams = exams.filter(exam => exam.examGroup === groupNum);
                 
                 if (groupExams.length === 0) return null;
                 
+                // Calculate group statistics
+                const groupProgress = groupExams.map(exam => 
+                  student?.examProgress?.find(p => p.examId === exam._id)
+                ).filter(Boolean);
+                
+                const completedExams = groupProgress.filter(p => p.status === 'completed').length;
+                const avgScore = groupProgress.length > 0 
+                  ? Math.round(groupProgress.reduce((sum, p) => sum + (p.percentage || 0), 0) / groupProgress.length)
+                  : 0;
+                
                 return (
-                  <div key={groupNum} className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-md transition-shadow">
-                    <h5 className="font-semibold text-gray-900 mb-2 flex items-center space-x-2 rtl:space-x-reverse">
-                      <div className="w-5 h-5 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xs font-bold">
-                        {groupNum}
+                  <div key={groupNum} className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg hover:border-green-300 transition-all duration-300 group">
+                    {/* Group Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                        <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                          {groupNum}
+                        </div>
+                        <div>
+                          <h5 className="font-bold text-gray-900 text-sm">
+                            {groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}
+                          </h5>
+                          <p className="text-xs text-gray-500">
+                            {completedExams}/{groupExams.length} مكتمل
+                          </p>
+                        </div>
                       </div>
-                      <span className="text-sm">{groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}</span>
-                    </h5>
-                    <div className="space-y-1">
+                      {avgScore > 0 && (
+                        <div className={`px-2 py-1 rounded-full text-xs font-bold ${
+                          avgScore >= 80 ? 'bg-green-100 text-green-700' :
+                          avgScore >= 60 ? 'bg-blue-100 text-blue-700' :
+                          'bg-orange-100 text-orange-700'
+                        }`}>
+                          {avgScore}%
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Exams List */}
+                    <div className="space-y-2">
                       {groupExams.slice(0, 3).map(exam => {
                         const progress = student?.examProgress?.find(p => p.examId === exam._id);
+                        const hasTimeData = progress && (progress.timeSpent || progress.submittedAt);
+                        
                         return (
                           <button
                             key={exam._id}
@@ -421,38 +462,79 @@ const StudentProfile = () => {
                               const examRow = document.querySelector(`[data-exam-id="${exam._id}"]`);
                               if (examRow) {
                                 examRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                examRow.classList.add('bg-yellow-50');
-                                setTimeout(() => examRow.classList.remove('bg-yellow-50'), 2000);
+                                examRow.classList.add('bg-yellow-50', 'ring-2', 'ring-yellow-300');
+                                setTimeout(() => {
+                                  examRow.classList.remove('bg-yellow-50', 'ring-2', 'ring-yellow-300');
+                                }, 3000);
                               }
                             }}
-                            className="w-full text-right p-2 bg-gray-50 hover:bg-primary-50 rounded border border-gray-200 hover:border-primary-200 transition-all duration-200 group"
+                            className="w-full text-right p-3 bg-gray-50 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 rounded-lg border border-gray-200 hover:border-green-300 transition-all duration-200 group/exam"
                           >
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1">
-                                <div className="font-medium text-gray-900 group-hover:text-primary-700 text-xs">
-                                  امتحان {exam.order}
+                            <div className="space-y-2">
+                              {/* Exam Title and Score */}
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <div className="font-semibold text-gray-900 group-hover/exam:text-green-700 text-sm">
+                                    امتحان {exam.order}
+                                  </div>
+                                  <div className="text-xs text-gray-600">
+                                    {progress ? `${progress.score || 0}/${exam.totalQuestions || 0}` : 'غير مكتمل'}
+                                  </div>
                                 </div>
-                                <div className="text-xs text-gray-600">
-                                  {progress ? `${progress.percentage}%` : 'غير مكتمل'}
+                                <div className={`px-2 py-1 rounded-full text-xs font-bold ${
+                                  progress?.percentage >= 80 ? 'bg-green-100 text-green-700' :
+                                  progress?.percentage >= 60 ? 'bg-blue-100 text-blue-700' :
+                                  progress?.percentage > 0 ? 'bg-orange-100 text-orange-700' :
+                                  'bg-gray-100 text-gray-700'
+                                }`}>
+                                  {progress?.percentage >= 80 ? 'ممتاز' :
+                                   progress?.percentage >= 60 ? 'جيد' :
+                                   progress?.percentage > 0 ? 'مقبول' : 'غير مكتمل'}
                                 </div>
                               </div>
-                              <div className={`px-1 py-0.5 rounded text-xs font-medium ${
-                                progress?.percentage >= 80 ? 'bg-green-100 text-green-700' :
-                                progress?.percentage >= 60 ? 'bg-blue-100 text-blue-700' :
-                                progress?.percentage > 0 ? 'bg-orange-100 text-orange-700' :
-                                'bg-gray-100 text-gray-700'
-                              }`}>
-                                {progress?.percentage >= 80 ? 'ممتاز' :
-                                 progress?.percentage >= 60 ? 'جيد' :
-                                 progress?.percentage > 0 ? 'مقبول' : 'غير مكتمل'}
-                              </div>
+                              
+                              {/* Time and Date Information */}
+                              {hasTimeData && (
+                                <div className="space-y-1 pt-2 border-t border-gray-200">
+                                  {progress.timeSpent && (
+                                    <div className="flex items-center justify-between text-xs">
+                                      <span className="text-gray-500">الوقت المستغرق:</span>
+                                      <span className="font-medium text-blue-600">
+                                        {Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {progress.submittedAt && (
+                                    <div className="flex items-center justify-between text-xs">
+                                      <span className="text-gray-500">تاريخ الإرسال:</span>
+                                      <span className="font-medium text-green-600">
+                                        {new Date(progress.submittedAt).toLocaleDateString('ar-SA')}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {progress.submittedAt && (
+                                    <div className="flex items-center justify-between text-xs">
+                                      <span className="text-gray-500">وقت الإرسال:</span>
+                                      <span className="font-medium text-purple-600">
+                                        {new Date(progress.submittedAt).toLocaleTimeString('ar-SA', { 
+                                          hour: '2-digit', 
+                                          minute: '2-digit' 
+                                        })}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           </button>
                         );
                       })}
+                      
                       {groupExams.length > 3 && (
-                        <div className="text-xs text-gray-500 text-center py-1">
-                          +{groupExams.length - 3} امتحانات أخرى
+                        <div className="text-center pt-2">
+                          <div className="text-xs text-gray-500 bg-gray-100 rounded-full px-3 py-1 inline-block">
+                            +{groupExams.length - 3} امتحانات أخرى
+                          </div>
                         </div>
                       )}
                     </div>

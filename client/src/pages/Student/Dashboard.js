@@ -594,12 +594,20 @@ const StudentDashboard = () => {
         <div className="card-body">
           {studentProgress.filter(p => p.status === 'completed').length > 0 ? (
             <div className="space-y-6">
-              {/* Toggle List for Groups and Exams */}
-              <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-6 border border-gray-200">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2 rtl:space-x-reverse">
-                  <List className="h-5 w-5 text-primary-600" />
-                  <span>الوصول السريع للامتحانات</span>
-                </h4>
+              {/* Enhanced Quick Access Section */}
+              <div className="bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 rounded-xl p-6 border border-gray-200">
+                <div className="flex items-center justify-between mb-6">
+                  <h4 className="text-lg font-bold text-gray-900 flex items-center space-x-3 rtl:space-x-reverse">
+                    <div className="p-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg">
+                      <List className="h-5 w-5 text-white" />
+                    </div>
+                    <span>الوصول السريع للامتحانات</span>
+                  </h4>
+                  <div className="text-sm text-gray-600 bg-white px-3 py-1 rounded-full border">
+                    {studentProgress.filter(p => p.status === 'completed').length} امتحان مكتمل
+                  </div>
+                </div>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {Object.keys(examGroups).map(groupKey => {
                     const groupNum = parseInt(groupKey);
@@ -611,40 +619,108 @@ const StudentDashboard = () => {
                     
                     if (completedExams.length === 0) return null;
                     
+                    // Calculate group statistics
+                    const groupProgress = completedExams.map(exam => 
+                      studentProgress.find(p => p.examId === exam._id && p.status === 'completed')
+                    );
+                    
+                    const avgScore = groupProgress.length > 0 
+                      ? Math.round(groupProgress.reduce((sum, p) => sum + (p.percentage || 0), 0) / groupProgress.length)
+                      : 0;
+                    
                     return (
-                      <div key={groupKey} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
-                        <h5 className="font-semibold text-gray-900 mb-3 flex items-center space-x-2 rtl:space-x-reverse">
-                          <div className="w-6 h-6 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-sm font-bold">
-                            {groupNum}
+                      <div key={groupKey} className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-lg hover:border-green-300 transition-all duration-300 group">
+                        {/* Group Header */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                            <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                              {groupNum}
+                            </div>
+                            <div>
+                              <h5 className="font-bold text-gray-900 text-sm">
+                                {groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}
+                              </h5>
+                              <p className="text-xs text-gray-500">
+                                {completedExams.length} امتحان مكتمل
+                              </p>
+                            </div>
                           </div>
-                          <span>{groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}</span>
-                        </h5>
+                          {avgScore > 0 && (
+                            <div className={`px-2 py-1 rounded-full text-xs font-bold ${
+                              avgScore >= 80 ? 'bg-green-100 text-green-700' :
+                              avgScore >= 60 ? 'bg-blue-100 text-blue-700' :
+                              'bg-orange-100 text-orange-700'
+                            }`}>
+                              {avgScore}%
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Exams List */}
                         <div className="space-y-2">
                           {completedExams.map(exam => {
                             const progress = studentProgress.find(p => p.examId === exam._id && p.status === 'completed');
+                            const hasTimeData = progress && (progress.timeSpent || progress.submittedAt);
+                            
                             return (
                               <button
                                 key={exam._id}
                                 onClick={() => navigate(`/student/exam-history/${exam._id}`)}
-                                className="w-full text-right p-3 bg-gray-50 hover:bg-primary-50 rounded-lg border border-gray-200 hover:border-primary-200 transition-all duration-200 group"
+                                className="w-full text-right p-3 bg-gray-50 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 rounded-lg border border-gray-200 hover:border-green-300 transition-all duration-200 group/exam"
                               >
-                                <div className="flex items-center justify-between">
-                                  <div className="flex-1">
-                                    <div className="font-medium text-gray-900 group-hover:text-primary-700">
-                                      امتحان {exam.order}
+                                <div className="space-y-2">
+                                  {/* Exam Title and Score */}
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex-1">
+                                      <div className="font-semibold text-gray-900 group-hover/exam:text-green-700 text-sm">
+                                        امتحان {exam.order}
+                                      </div>
+                                      <div className="text-xs text-gray-600">
+                                        {progress.percentage}% • {progress.score}/{exam.totalQuestions}
+                                      </div>
                                     </div>
-                                    <div className="text-sm text-gray-600">
-                                      {progress.percentage}% • {progress.score}/{exam.totalQuestions}
+                                    <div className={`px-2 py-1 rounded-full text-xs font-bold ${
+                                      progress.percentage >= 80 ? 'bg-green-100 text-green-700' :
+                                      progress.percentage >= 60 ? 'bg-blue-100 text-blue-700' :
+                                      'bg-orange-100 text-orange-700'
+                                    }`}>
+                                      {progress.percentage >= 80 ? 'ممتاز' :
+                                       progress.percentage >= 60 ? 'جيد' : 'مقبول'}
                                     </div>
                                   </div>
-                                  <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    progress.percentage >= 80 ? 'bg-green-100 text-green-700' :
-                                    progress.percentage >= 60 ? 'bg-blue-100 text-blue-700' :
-                                    'bg-orange-100 text-orange-700'
-                                  }`}>
-                                    {progress.percentage >= 80 ? 'ممتاز' :
-                                     progress.percentage >= 60 ? 'جيد' : 'مقبول'}
-                                  </div>
+                                  
+                                  {/* Time and Date Information */}
+                                  {hasTimeData && (
+                                    <div className="space-y-1 pt-2 border-t border-gray-200">
+                                      {progress.timeSpent && (
+                                        <div className="flex items-center justify-between text-xs">
+                                          <span className="text-gray-500">الوقت المستغرق:</span>
+                                          <span className="font-medium text-blue-600">
+                                            {Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}
+                                          </span>
+                                        </div>
+                                      )}
+                                      {progress.submittedAt && (
+                                        <div className="flex items-center justify-between text-xs">
+                                          <span className="text-gray-500">تاريخ الإرسال:</span>
+                                          <span className="font-medium text-green-600">
+                                            {new Date(progress.submittedAt).toLocaleDateString('ar-SA')}
+                                          </span>
+                                        </div>
+                                      )}
+                                      {progress.submittedAt && (
+                                        <div className="flex items-center justify-between text-xs">
+                                          <span className="text-gray-500">وقت الإرسال:</span>
+                                          <span className="font-medium text-purple-600">
+                                            {new Date(progress.submittedAt).toLocaleTimeString('ar-SA', { 
+                                              hour: '2-digit', 
+                                              minute: '2-digit' 
+                                            })}
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
                                 </div>
                               </button>
                             );
