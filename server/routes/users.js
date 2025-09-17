@@ -181,7 +181,13 @@ router.put('/students/:id/lock-exam', isTeacher, lockExamValidation, lockExamFor
 // @route   PUT /api/users/students/:id/toggle-exams
 // @desc    Lock/Unlock multiple exams for student
 // @access  Private (Teacher only)
-router.put('/students/:id/toggle-exams', isTeacher, toggleExamsValidation, toggleMultipleExams);
+router.put('/students/:id/toggle-exams', isTeacher, (req, res, next) => {
+  console.log('=== TOGGLE EXAMS MIDDLEWARE ===');
+  console.log('Request body:', req.body);
+  console.log('Request params:', req.params);
+  console.log('User:', req.user);
+  next();
+}, toggleExamsValidation, toggleMultipleExams);
 
 // @route   PUT /api/users/students/:id/toggle-group
 // @desc    Lock/Unlock entire group for student

@@ -404,6 +404,11 @@ const lockExamForStudent = async (req, res) => {
 // @access  Private (Teacher only)
 const toggleMultipleExams = async (req, res) => {
   try {
+    console.log('=== TOGGLE MULTIPLE EXAMS REQUEST ===');
+    console.log('Request body:', req.body);
+    console.log('Request params:', req.params);
+    console.log('Request headers:', req.headers);
+    
     const { examIds, action } = req.body; // action: 'lock' or 'unlock'
     
     console.log('Toggle multiple exams request:', { examIds, action, studentId: req.params.id });
