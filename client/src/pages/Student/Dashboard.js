@@ -62,7 +62,7 @@ const StudentDashboard = () => {
 
   const fetchStudentProgress = async () => {
     try {
-      const res = await axios.get('/api/users/me', {
+      const res = await axios.get('/api/auth/me', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
