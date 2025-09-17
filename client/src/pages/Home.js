@@ -91,9 +91,9 @@ const Home = () => {
             <span className="text-xl font-bold text-white">Qudrat</span>
           </div>
           <nav className="flex items-center space-x-3 rtl:space-x-reverse">
-            <a href="#contact" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">Contact me</a>
-            <a href="#about" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">About me</a>
-            <Link to="/login" className="px-4 py-1.5 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition">Login</Link>
+            <a href="#contact" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">تواصل معي</a>
+            <a href="#about" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">من أنا</a>
+            <Link to="/login" className="px-4 py-1.5 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition">تسجيل الدخول</Link>
           </nav>
         </div>
       </header>
@@ -203,7 +203,7 @@ const Home = () => {
         </section>
 
         <section id="about" className="card p-8 mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">About me</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">من أنا</h2>
           <div className="grid grid-cols-1 md:grid-cols-[220px,1fr] gap-8 items-start">
             <div className="flex flex-col items-center">
               <div className="h-56 w-56 rounded-lg shadow-lg border-4 border-green-200 overflow-hidden">
@@ -264,7 +264,7 @@ const Home = () => {
         </section>
 
         <section id="contact" className="card p-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Contact me</h2>
+          <h2 className="text-3xl font-bold mb-4">تواصل معي</h2>
           <a href="https://wa.me/966546894479" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 transition">
             <img src="/icons/whatsapp.svg" alt="WhatsApp" className="h-6 w-6 mr-2 rtl:ml-2 rtl:mr-0" />
             +966546894479
