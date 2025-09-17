@@ -110,6 +110,31 @@ const ExamResults = ({
                     </div>
                   </div>
                   
+                  {/* Question Image */}
+                  {question.questionImage && (
+                    <div className="mb-4">
+                      <div className="relative bg-gray-50 rounded-lg p-4 min-h-[200px] flex items-center justify-center">
+                        <img
+                          src={question.questionImage}
+                          alt={`السؤال ${index + 1}`}
+                          className="max-w-full max-h-96 rounded-lg shadow-sm"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'block';
+                          }}
+                        />
+                        <div 
+                          className="hidden w-full max-w-md mx-auto h-32 bg-gray-100 rounded-lg border flex items-center justify-center text-gray-500"
+                        >
+                          <div className="text-center">
+                            <XCircle className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                            <p className="text-sm">فشل في تحميل الصورة</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div>
                       <span className="font-medium text-gray-600">إجابتك:</span>
