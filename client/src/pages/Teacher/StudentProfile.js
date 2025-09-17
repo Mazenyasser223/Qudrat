@@ -183,6 +183,8 @@ const StudentProfile = () => {
       });
       
       console.log('Toggle exams response:', response.data);
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
       
       toast.success(`تم ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الامتحانات المحددة بنجاح`);
       setShowLockUnlockModal(false);
