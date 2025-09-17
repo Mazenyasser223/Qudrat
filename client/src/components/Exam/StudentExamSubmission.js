@@ -55,12 +55,12 @@ const StudentExamSubmission = ({ studentId, studentName, examId, examTitle, onCl
   };
 
   const getAnswerStatus = (question, studentAnswer) => {
-    if (studentAnswer === question.correctAnswer) {
-      return { status: 'correct', icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-100' };
-    } else if (studentAnswer && studentAnswer !== question.correctAnswer) {
-      return { status: 'wrong', icon: XCircle, color: 'text-red-600', bgColor: 'bg-red-100' };
-    } else {
+    if (!studentAnswer || studentAnswer.trim() === '') {
       return { status: 'unanswered', icon: AlertCircle, color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
+    } else if (studentAnswer === question.correctAnswer) {
+      return { status: 'correct', icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-100' };
+    } else {
+      return { status: 'wrong', icon: XCircle, color: 'text-red-600', bgColor: 'bg-red-100' };
     }
   };
 

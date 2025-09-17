@@ -49,7 +49,9 @@ const ExamHistory = () => {
     if (!studentSubmission || !studentSubmission.answers) return 'unanswered';
     
     const answer = studentSubmission.answers[questionIndex];
-    if (!answer) return 'unanswered';
+    if (!answer || !answer.selectedAnswer || answer.selectedAnswer.trim() === '') {
+      return 'unanswered';
+    }
     
     const question = exam.questions[questionIndex];
     if (answer.selectedAnswer === question.correctAnswer) {

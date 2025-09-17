@@ -31,12 +31,12 @@ const StudentMistakes = ({ studentId, examId, examTitle, onClose }) => {
   };
 
   const getAnswerStatus = (question, studentAnswer) => {
-    if (studentAnswer === question.correctAnswer) {
-      return { status: 'correct', icon: CheckCircle, color: 'text-green-600' };
-    } else if (studentAnswer && studentAnswer !== question.correctAnswer) {
-      return { status: 'wrong', icon: XCircle, color: 'text-red-600' };
-    } else {
+    if (!studentAnswer || studentAnswer.trim() === '') {
       return { status: 'unanswered', icon: AlertCircle, color: 'text-yellow-600' };
+    } else if (studentAnswer === question.correctAnswer) {
+      return { status: 'correct', icon: CheckCircle, color: 'text-green-600' };
+    } else {
+      return { status: 'wrong', icon: XCircle, color: 'text-red-600' };
     }
   };
 
