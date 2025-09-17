@@ -117,30 +117,32 @@ const QuestionCard = ({
           ))}
         </div>
 
-        {/* Navigation */}
-        <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
-          <button
-            onClick={onPrevious}
-            disabled={questionNumber === 1}
-            className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <ChevronRight className="h-4 w-4" />
-            <span>السابق</span>
-          </button>
+        {/* Navigation - Only show if onNext and onPrevious are provided */}
+        {(onNext || onPrevious) && (
+          <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+            <button
+              onClick={onPrevious}
+              disabled={questionNumber === 1}
+              className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRight className="h-4 w-4" />
+              <span>السابق</span>
+            </button>
 
-          <div className="text-sm text-gray-500">
-            {questionNumber} / {totalQuestions}
+            <div className="text-sm text-gray-500">
+              {questionNumber} / {totalQuestions}
+            </div>
+
+            <button
+              onClick={onNext}
+              disabled={questionNumber === totalQuestions}
+              className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <span>التالي</span>
+              <ChevronLeft className="h-4 w-4" />
+            </button>
           </div>
-
-          <button
-            onClick={onNext}
-            disabled={questionNumber === totalQuestions}
-            className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <span>التالي</span>
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );

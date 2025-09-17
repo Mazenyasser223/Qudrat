@@ -215,74 +215,140 @@ const PublicExam = () => {
     );
   }
 
+  const getAnsweredCount = () => {
+    return Object.values(answers).filter(answer => answer !== null).length;
+  };
+
+  const getUnansweredQuestions = () => {
+    return Object.entries(answers)
+      .filter(([_, answer]) => answer === null)
+      .map(([index, _]) => parseInt(index) + 1);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-6 space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4 rtl:space-x-reverse">
-              <button
-                onClick={handleBackToHome}
-                className="flex items-center space-x-2 rtl:space-x-reverse text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>العودة</span>
-              </button>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">{exam.title}</h1>
-                <p className="text-gray-600">
-                  {exam.examGroup === 0 ? 'اختبار تأسيسي مجاني' : `امتحان مجاني - المجموعة ${exam.examGroup}`}
-                </p>
+        <div className="card">
+          <div className="card-body">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                <button
+                  onClick={handleBackToHome}
+                  className="flex items-center space-x-2 rtl:space-x-reverse text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  <span>العودة</span>
+                </button>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">{exam.title}</h1>
+                  <p className="text-gray-600">
+                    {exam.examGroup === 0 ? 'اختبار تأسيسي مجاني' : `امتحان مجاني - المجموعة ${exam.examGroup}`}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                <ExamTimer
+                  timeLimit={exam.timeLimit}
+                  onTimeUp={handleTimeUp}
+                  isActive={!timeUp && !showResults}
+                />
               </div>
             </div>
-            
-            <div className="text-center">
-              <div className="text-sm text-gray-500 mb-1">الوقت المتبقي</div>
-              <ExamTimer
-                timeLimit={exam.timeLimit}
-                onTimeUp={handleTimeUp}
-                isActive={!timeUp && !showResults}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Question Navigation */}
+          <div className="lg:col-span-1">
+            <div className="card sticky top-6">
+              <div className="card-header">
+                <h3 className="text-lg font-semibold text-gray-900">الأسئلة</h3>
+              </div>
+              <div className="card-body">
+                <div className="grid grid-cols-4 gap-2 mb-4">
+                  {shuffledQuestions.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentQuestion(index)}
+                      className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
+                        currentQuestion === index
+                          ? 'bg-primary-600 text-white'
+                          : answers[index]
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                </div>
+                
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">تم الإجابة:</span>
+                    <span className="font-medium text-green-600">
+                      {getAnsweredCount()} / {shuffledQuestions.length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">غير مجاب:</span>
+                    <span className="font-medium text-red-600">
+                      {shuffledQuestions.length - getAnsweredCount()}
+                    </span>
+                  </div>
+                </div>
+
+                {getUnansweredQuestions().length > 0 && (
+                  <div className="mt-4 p-3 bg-yellow-50 rounded-lg">
+                    <p className="text-sm text-yellow-800 mb-2">أسئلة غير مجابة:</p>
+                    <p className="text-xs text-yellow-700">
+                      {getUnansweredQuestions().join(', ')}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Question Content */}
+          <div className="lg:col-span-3">
+            {shuffledQuestions.length > 0 && (
+              <QuestionCard
+                question={shuffledQuestions[currentQuestion]}
+                questionNumber={currentQuestion + 1}
+                totalQuestions={shuffledQuestions.length}
+                selectedAnswer={answers[currentQuestion]}
+                onAnswerSelect={(answer) => handleAnswerSelect(currentQuestion, answer)}
+                onNext={handleNext}
+                onPrevious={handlePrevious}
+                isAnswered={answers[currentQuestion] !== null}
               />
+            )}
+
+            {/* Submit Button */}
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={handleSubmit}
+                disabled={submitting || timeUp}
+                className="btn-primary flex items-center space-x-2 rtl:space-x-reverse px-8 py-3 text-lg"
+              >
+                {submitting ? (
+                  <>
+                    <div className="spinner"></div>
+                    <span>جاري التسليم...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-5 w-5" />
+                    <span>تسليم الامتحان</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
-
-        {/* Progress Bar */}
-        <div className="bg-white rounded-xl shadow-sm border p-4 mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">
-              السؤال {currentQuestion + 1} من {shuffledQuestions.length}
-            </span>
-            <span className="text-sm text-gray-500">
-              {Math.round(((currentQuestion + 1) / shuffledQuestions.length) * 100)}%
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-primary-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${((currentQuestion + 1) / shuffledQuestions.length) * 100}%` }}
-            ></div>
-          </div>
-        </div>
-
-        {/* Question Card */}
-        {shuffledQuestions.length > 0 && (
-          <QuestionCard
-            question={shuffledQuestions[currentQuestion]}
-            questionNumber={currentQuestion + 1}
-            totalQuestions={shuffledQuestions.length}
-            selectedAnswer={answers[currentQuestion]}
-            onAnswerSelect={(answer) => handleAnswerSelect(currentQuestion, answer)}
-            onNext={handleNext}
-            onPrevious={handlePrevious}
-            onSubmit={handleSubmit}
-            isLastQuestion={currentQuestion === shuffledQuestions.length - 1}
-            isFirstQuestion={currentQuestion === 0}
-            submitting={submitting}
-          />
-        )}
-
       </div>
     </div>
   );
