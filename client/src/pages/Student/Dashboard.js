@@ -18,6 +18,13 @@ const StudentDashboard = () => {
     fetchExamGroups();
     fetchStudentProgress();
     fetchReviewExams();
+    
+    // Refresh data every 30 seconds to catch updates from teachers
+    const interval = setInterval(() => {
+      fetchStudentProgress();
+    }, 30000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const fetchExamGroups = async () => {

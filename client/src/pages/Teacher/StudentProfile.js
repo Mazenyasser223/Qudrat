@@ -189,7 +189,12 @@ const StudentProfile = () => {
       toast.success(`تم ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الامتحانات المحددة بنجاح`);
       setShowLockUnlockModal(false);
       setSelectedExams([]);
-      fetchStudentData();
+      
+      // Refresh student data to show updated status
+      await fetchStudentData();
+      
+      // Also refresh the exams list to show updated status
+      await fetchExams();
     } catch (error) {
       console.error('Error toggling exams:', error);
       console.error('Error response:', error.response?.data);
@@ -996,115 +1001,6 @@ const StudentProfile = () => {
                   })}
                 </div>
                 
-                {/* Select by Status */}
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => {
-                      const lockedExams = exams.filter(exam => {
-                        const progress = studentProgress.find(p => p.examId === exam._id);
-                        return !progress || progress.status === 'locked';
-                      });
-                      const lockedIds = lockedExams.map(exam => exam._id);
-                      setSelectedExams([...new Set([...selectedExams, ...lockedIds])]);
-                    }}
-                    className="px-3 py-2 rounded-lg text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
-                  >
-                    تحديد المقفلة
-                  </button>
-                  
-                  <button
-                    onClick={() => {
-                      const unlockedExams = exams.filter(exam => {
-                        const progress = studentProgress.find(p => p.examId === exam._id);
-                        return progress && progress.status === 'unlocked';
-                      });
-                      const unlockedIds = unlockedExams.map(exam => exam._id);
-                      setSelectedExams([...new Set([...selectedExams, ...unlockedIds])]);
-                    }}
-                    className="px-3 py-2 rounded-lg text-sm font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
-                  >
-                    تحديد المفتوحة
-                  </button>
-                  
-                  <button
-                    onClick={() => {
-                      const completedExams = exams.filter(exam => {
-                        const progress = studentProgress.find(p => p.examId === exam._id);
-                        return progress && progress.status === 'completed';
-                      });
-                      const completedIds = completedExams.map(exam => exam._id);
-                      setSelectedExams([...new Set([...selectedExams, ...completedIds])]);
-                    }}
-                    className="px-3 py-2 rounded-lg text-sm font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
-                  >
-                    تحديد المكتملة
-                  </button>
-                  
-                  <button
-                    onClick={() => {
-                      const inProgressExams = exams.filter(exam => {
-                        const progress = studentProgress.find(p => p.examId === exam._id);
-                        return progress && progress.status === 'in_progress';
-                      });
-                      const inProgressIds = inProgressExams.map(exam => exam._id);
-                      setSelectedExams([...new Set([...selectedExams, ...inProgressIds])]);
-                    }}
-                    className="px-3 py-2 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors"
-                  >
-                    تحديد قيد التنفيذ
-                  </button>
-                </div>
-                
-                {/* Quick Selection Patterns */}
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => {
-                      // Select first exam of each group (usually the starting exams)
-                      const firstExams = [];
-                      for (let groupNum = 0; groupNum <= 8; groupNum++) {
-                        const groupExams = exams.filter(exam => exam.examGroup === groupNum);
-                        if (groupExams.length > 0) {
-                          const firstExam = groupExams.sort((a, b) => a.order - b.order)[0];
-                          firstExams.push(firstExam._id);
-                        }
-                      }
-                      setSelectedExams([...new Set([...selectedExams, ...firstExams])]);
-                    }}
-                    className="px-3 py-2 rounded-lg text-sm font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
-                  >
-                    تحديد أول امتحان في كل مجموعة
-                  </button>
-                  
-                  <button
-                    onClick={() => {
-                      // Select exams with low scores (for review)
-                      const lowScoreExams = exams.filter(exam => {
-                        const progress = studentProgress.find(p => p.examId === exam._id);
-                        return progress && progress.status === 'completed' && progress.percentage < 60;
-                      });
-                      const lowScoreIds = lowScoreExams.map(exam => exam._id);
-                      setSelectedExams([...new Set([...selectedExams, ...lowScoreIds])]);
-                    }}
-                    className="px-3 py-2 rounded-lg text-sm font-medium bg-orange-100 text-orange-700 hover:bg-orange-200 transition-colors"
-                  >
-                    تحديد الامتحانات منخفضة الدرجات
-                  </button>
-                  
-                  <button
-                    onClick={() => {
-                      // Select exams with high scores (for advanced students)
-                      const highScoreExams = exams.filter(exam => {
-                        const progress = studentProgress.find(p => p.examId === exam._id);
-                        return progress && progress.status === 'completed' && progress.percentage >= 80;
-                      });
-                      const highScoreIds = highScoreExams.map(exam => exam._id);
-                      setSelectedExams([...new Set([...selectedExams, ...highScoreIds])]);
-                    }}
-                    className="px-3 py-2 rounded-lg text-sm font-medium bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
-                  >
-                    تحديد الامتحانات عالية الدرجات
-                  </button>
-                </div>
                 
                 {/* Selection Summary */}
                 <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
