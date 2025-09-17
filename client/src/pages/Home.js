@@ -202,6 +202,91 @@ const Home = () => {
           </div>
         </section>
 
+        {/* Premium Groups Section - المجموعات المميزة */}
+        <section className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-green-900 mb-2">المجموعات المميزة</h2>
+            <p className="text-green-700 text-lg">8 مجموعات تدريبية متدرجة المستوى</p>
+            <div className="mt-4 inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full text-sm font-semibold">
+              🔒 محتوى مميز - يتطلب اشتراك
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {Array.from({ length: 8 }, (_, i) => i + 1).map((groupNum) => (
+              <div key={groupNum} className="relative group">
+                <div className="card p-6 text-center bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-75">
+                  {/* Lock overlay */}
+                  <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
+                    <div className="bg-white/90 rounded-full p-3 shadow-lg">
+                      <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  {/* Group content */}
+                  <div className="relative z-10">
+                    <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center opacity-50">
+                      <span className="text-2xl font-bold text-white">{groupNum}</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-700 mb-2">المجموعة {groupNum}</h3>
+                    <p className="text-gray-600 text-sm mb-3">25 اختبار إلكتروني متدرج</p>
+                    <div className="text-xs text-gray-500 space-y-1">
+                      <div>✓ تصحيح تلقائي</div>
+                      <div>✓ تحليل الأخطاء</div>
+                      <div>✓ متابعة التقدم</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Subscription CTA */}
+          <div className="bg-gradient-to-r from-green-600 via-green-700 to-green-800 rounded-2xl p-8 text-white text-center shadow-2xl">
+            <div className="max-w-4xl mx-auto">
+              <h3 className="text-3xl font-bold mb-4">🚀 انضم إلى المنصة المميزة</h3>
+              <p className="text-green-100 text-lg mb-6">
+                احصل على وصول كامل لجميع المجموعات التدريبية والامتحانات المتقدمة
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-2xl mb-2">📚</div>
+                  <h4 className="font-semibold mb-2">200+ اختبار</h4>
+                  <p className="text-sm text-green-100">8 مجموعات × 25 اختبار</p>
+                </div>
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-2xl mb-2">🎯</div>
+                  <h4 className="font-semibold mb-2">تحليل الأخطاء</h4>
+                  <p className="text-sm text-green-100">اختبارات مخصصة لأخطائك</p>
+                </div>
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-2xl mb-2">📊</div>
+                  <h4 className="font-semibold mb-2">متابعة التقدم</h4>
+                  <p className="text-sm text-green-100">إحصائيات مفصلة لتحسينك</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a 
+                  href="https://wa.me/966546894479?text=مرحباً، أريد الاشتراك في المنصة المميزة لاختبارات القدرات" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white text-green-700 font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  <img src="/icons/whatsapp.svg" alt="WhatsApp" className="h-6 w-6 mr-3" />
+                  اشترك الآن عبر واتساب
+                </a>
+                <div className="text-green-100 text-sm">
+                  💬 تواصل معنا للحصول على تفاصيل الاشتراك
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section id="about" className="card p-8 mb-16">
           <h2 className="text-3xl font-bold text-center mb-8">من أنا</h2>
           <div className="grid grid-cols-1 md:grid-cols-[220px,1fr] gap-8 items-start">
