@@ -602,6 +602,67 @@ const StudentDashboard = () => {
         <div className="card-body">
           {studentProgress.filter(p => p.status === 'completed').length > 0 ? (
             <div className="space-y-6">
+              {/* Toggle List for Groups and Exams */}
+              <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-6 border border-gray-200">
+                <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2 rtl:space-x-reverse">
+                  <List className="h-5 w-5 text-primary-600" />
+                  <span>الوصول السريع للامتحانات</span>
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Object.keys(examGroups).map(groupKey => {
+                    const groupNum = parseInt(groupKey);
+                    const groupExams = examGroups[groupKey] || [];
+                    const completedExams = groupExams.filter(exam => {
+                      const progress = studentProgress.find(p => p.examId === exam._id && p.status === 'completed');
+                      return progress;
+                    });
+                    
+                    if (completedExams.length === 0) return null;
+                    
+                    return (
+                      <div key={groupKey} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                        <h5 className="font-semibold text-gray-900 mb-3 flex items-center space-x-2 rtl:space-x-reverse">
+                          <div className="w-6 h-6 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-sm font-bold">
+                            {groupNum}
+                          </div>
+                          <span>{groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}</span>
+                        </h5>
+                        <div className="space-y-2">
+                          {completedExams.map(exam => {
+                            const progress = studentProgress.find(p => p.examId === exam._id && p.status === 'completed');
+                            return (
+                              <button
+                                key={exam._id}
+                                onClick={() => navigate(`/student/exam-history/${exam._id}`)}
+                                className="w-full text-right p-3 bg-gray-50 hover:bg-primary-50 rounded-lg border border-gray-200 hover:border-primary-200 transition-all duration-200 group"
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1">
+                                    <div className="font-medium text-gray-900 group-hover:text-primary-700">
+                                      امتحان {exam.order}
+                                    </div>
+                                    <div className="text-sm text-gray-600">
+                                      {progress.percentage}% • {progress.score}/{exam.totalQuestions}
+                                    </div>
+                                  </div>
+                                  <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    progress.percentage >= 80 ? 'bg-green-100 text-green-700' :
+                                    progress.percentage >= 60 ? 'bg-blue-100 text-blue-700' :
+                                    'bg-orange-100 text-orange-700'
+                                  }`}>
+                                    {progress.percentage >= 80 ? 'ممتاز' :
+                                     progress.percentage >= 60 ? 'جيد' : 'مقبول'}
+                                  </div>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
               {studentProgress
                 .filter(p => p.status === 'completed')
                 .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt))
@@ -643,26 +704,6 @@ const StudentDashboard = () => {
                               <div className="text-xs text-gray-500">الدرجة النهائية</div>
                             </div>
                             
-                            <div className="flex-1">
-                              <div className="grid grid-cols-4 gap-4">
-                                <div className="text-center p-3 bg-blue-50 rounded-lg">
-                                  <div className="text-xl font-bold text-blue-600">{progress.score}</div>
-                                  <div className="text-xs text-gray-600">الدرجة</div>
-                                </div>
-                                <div className="text-center p-3 bg-green-50 rounded-lg">
-                                  <div className="text-xl font-bold text-green-600">{progress.correctAnswers}</div>
-                                  <div className="text-xs text-gray-600">صحيح</div>
-                                </div>
-                                <div className="text-center p-3 bg-red-50 rounded-lg">
-                                  <div className="text-xl font-bold text-red-600">{progress.wrongAnswers}</div>
-                                  <div className="text-xs text-gray-600">خطأ</div>
-                                </div>
-                                <div className="text-center p-3 bg-purple-50 rounded-lg">
-                                  <div className="text-xl font-bold text-purple-600">{progress.totalQuestions}</div>
-                                  <div className="text-xs text-gray-600">إجمالي</div>
-                                </div>
-                              </div>
-                            </div>
                           </div>
                           
                           <div className="flex items-center space-x-4 rtl:space-x-reverse text-sm text-gray-500">

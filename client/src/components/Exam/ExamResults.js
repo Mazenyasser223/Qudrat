@@ -38,24 +38,6 @@ const ExamResults = ({
           <p className="text-gray-600 mt-2">{exam.title}</p>
         </div>
         <div className="card-body">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-3xl font-bold text-blue-600">{score}</div>
-              <div className="text-sm text-gray-600">الدرجة</div>
-            </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-3xl font-bold text-green-600">{correctAnswers}</div>
-              <div className="text-sm text-gray-600">إجابات صحيحة</div>
-            </div>
-            <div className="text-center p-4 bg-red-50 rounded-lg">
-              <div className="text-3xl font-bold text-red-600">{wrongAnswers}</div>
-              <div className="text-sm text-gray-600">إجابات خاطئة</div>
-            </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-3xl font-bold text-purple-600">{totalQuestions}</div>
-              <div className="text-sm text-gray-600">إجمالي الأسئلة</div>
-            </div>
-          </div>
 
           <div className="text-center">
             <div className={`inline-flex items-center px-6 py-3 rounded-lg ${getGradeColor(percentage)}`}>

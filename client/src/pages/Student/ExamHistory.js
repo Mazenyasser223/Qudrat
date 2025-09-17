@@ -167,8 +167,8 @@ const ExamHistory = () => {
                 <Clock className="h-4 w-4 text-gray-500" />
                 <span className="text-sm text-gray-600">وقت الإرسال:</span>
                 <span className="text-sm font-medium">
-                  {studentSubmission.submittedAt && !isNaN(new Date(studentSubmission.submittedAt).getTime()) ? 
-                    new Date(studentSubmission.submittedAt).toLocaleTimeString('ar-SA', { 
+                  {(studentSubmission.submittedAt || studentSubmission.completedAt) && !isNaN(new Date(studentSubmission.submittedAt || studentSubmission.completedAt).getTime()) ? 
+                    new Date(studentSubmission.submittedAt || studentSubmission.completedAt).toLocaleTimeString('ar-SA', { 
                       hour: '2-digit', 
                       minute: '2-digit' 
                     }) : 
@@ -180,8 +180,8 @@ const ExamHistory = () => {
                 <Clock className="h-4 w-4 text-gray-500" />
                 <span className="text-sm text-gray-600">الوقت المستغرق:</span>
                 <span className="text-sm font-medium">
-                  {studentSubmission.timeSpent ? 
-                    `${Math.floor(studentSubmission.timeSpent / 60)}:${(studentSubmission.timeSpent % 60).toString().padStart(2, '0')}` :
+                  {(studentSubmission.timeSpent || studentSubmission.timeTaken) ? 
+                    `${Math.floor((studentSubmission.timeSpent || studentSubmission.timeTaken) / 60)}:${((studentSubmission.timeSpent || studentSubmission.timeTaken) % 60).toString().padStart(2, '0')}` :
                     'غير محدد'
                   }
                 </span>
