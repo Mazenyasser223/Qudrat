@@ -290,16 +290,6 @@ const StudentProfile = () => {
                 <p className="text-gray-600">تتبع تقدم الطالب وإدارة امتحاناته</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3 rtl:space-x-reverse">
-              <button
-                onClick={handleViewAllAnswers}
-                className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                title="عرض جميع إجابات الطالب"
-              >
-                <Eye className="h-4 w-4" />
-                <span>عرض جميع الإجابات</span>
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -398,6 +388,80 @@ const StudentProfile = () => {
             <h3 className="text-lg font-semibold text-gray-900">جدول التقدم التفصيلي</h3>
             <p className="text-sm text-gray-600 mt-1">تفاصيل كاملة عن أداء الطالب في جميع الامتحانات</p>
           </div>
+          
+          {/* Toggle List for Groups and Exams */}
+          <div className="px-6 py-4 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200">
+            <h4 className="text-md font-semibold text-gray-900 mb-3 flex items-center space-x-2 rtl:space-x-reverse">
+              <List className="h-4 w-4 text-primary-600" />
+              <span>الوصول السريع للمجموعات والامتحانات</span>
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              {Object.keys(examGroups).map(groupKey => {
+                const groupNum = parseInt(groupKey);
+                const groupExams = examGroups[groupKey] || [];
+                
+                if (groupExams.length === 0) return null;
+                
+                return (
+                  <div key={groupKey} className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-md transition-shadow">
+                    <h5 className="font-semibold text-gray-900 mb-2 flex items-center space-x-2 rtl:space-x-reverse">
+                      <div className="w-5 h-5 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-xs font-bold">
+                        {groupNum}
+                      </div>
+                      <span className="text-sm">{groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}</span>
+                    </h5>
+                    <div className="space-y-1">
+                      {groupExams.slice(0, 3).map(exam => {
+                        const progress = studentData?.examProgress?.find(p => p.examId === exam._id);
+                        return (
+                          <button
+                            key={exam._id}
+                            onClick={() => {
+                              // Scroll to the exam in the table
+                              const examRow = document.querySelector(`[data-exam-id="${exam._id}"]`);
+                              if (examRow) {
+                                examRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                examRow.classList.add('bg-yellow-50');
+                                setTimeout(() => examRow.classList.remove('bg-yellow-50'), 2000);
+                              }
+                            }}
+                            className="w-full text-right p-2 bg-gray-50 hover:bg-primary-50 rounded border border-gray-200 hover:border-primary-200 transition-all duration-200 group"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="font-medium text-gray-900 group-hover:text-primary-700 text-xs">
+                                  امتحان {exam.order}
+                                </div>
+                                <div className="text-xs text-gray-600">
+                                  {progress ? `${progress.percentage}%` : 'غير مكتمل'}
+                                </div>
+                              </div>
+                              <div className={`px-1 py-0.5 rounded text-xs font-medium ${
+                                progress?.percentage >= 80 ? 'bg-green-100 text-green-700' :
+                                progress?.percentage >= 60 ? 'bg-blue-100 text-blue-700' :
+                                progress?.percentage > 0 ? 'bg-orange-100 text-orange-700' :
+                                'bg-gray-100 text-gray-700'
+                              }`}>
+                                {progress?.percentage >= 80 ? 'ممتاز' :
+                                 progress?.percentage >= 60 ? 'جيد' :
+                                 progress?.percentage > 0 ? 'مقبول' : 'غير مكتمل'}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                      {groupExams.length > 3 && (
+                        <div className="text-xs text-gray-500 text-center py-1">
+                          +{groupExams.length - 3} امتحانات أخرى
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
         <div className="card-body p-0">
           <div className="overflow-x-auto">
             <table className="w-full divide-y divide-gray-200" style={{ 
@@ -535,7 +599,7 @@ const StudentProfile = () => {
                       const cumulativeData = groupCumulative[0];
                       
                       rows.push(
-                        <tr key={exam._id} className={`${progress?.status === 'completed' ? 'bg-green-50' : progress?.status === 'in_progress' ? 'bg-yellow-50' : 'bg-gray-50'} hover:bg-gray-100 transition-colors`}>
+                        <tr key={exam._id} data-exam-id={exam._id} className={`${progress?.status === 'completed' ? 'bg-green-50' : progress?.status === 'in_progress' ? 'bg-yellow-50' : 'bg-gray-50'} hover:bg-gray-100 transition-colors`}>
                           <td className="px-4 py-4 text-sm font-medium text-gray-900 border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                             {isFirstInGroup && (
                               <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -650,7 +714,7 @@ const StudentProfile = () => {
                         const cumulativeData = groupCumulative[groupNum];
                         
                         rows.push(
-                          <tr key={exam._id} className={`${progress?.status === 'completed' ? 'bg-green-50' : progress?.status === 'in_progress' ? 'bg-yellow-50' : 'bg-gray-50'} hover:bg-gray-100 transition-colors`}>
+                          <tr key={exam._id} data-exam-id={exam._id} className={`${progress?.status === 'completed' ? 'bg-green-50' : progress?.status === 'in_progress' ? 'bg-yellow-50' : 'bg-gray-50'} hover:bg-gray-100 transition-colors`}>
                             <td className="px-4 py-4 text-sm font-medium text-gray-900 border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                               {isFirstInGroup && (
                                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
