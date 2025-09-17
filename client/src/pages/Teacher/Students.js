@@ -301,53 +301,57 @@ const Students = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gradient-to-r from-green-50 to-green-100">
                   <tr>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-sm font-semibold text-green-800 uppercase tracking-wider">
                       الطالب
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-sm font-semibold text-green-800 uppercase tracking-wider">
                       البريد الإلكتروني
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-right text-sm font-semibold text-green-800 uppercase tracking-wider">
                       رقم الجوال
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-sm font-semibold text-green-800 uppercase tracking-wider">
                       الإجراءات
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredStudents.map((student) => (
-                    <tr key={student._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <tr key={student._id} className="hover:bg-green-50 transition-colors duration-200">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center justify-end">
-                          <div className="mr-4">
-                            <div className="text-sm font-medium text-gray-900">
+                          <div className="mr-4 text-right">
+                            <div className="text-sm font-semibold text-gray-900">
                               {student.name}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-xs text-gray-500">
                               {new Date(student.createdAt).toLocaleDateString('en-GB')}
                             </div>
                           </div>
                           <div className="h-10 w-10 flex-shrink-0">
-                            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
-                              <User className="h-5 w-5 text-primary-600" />
+                            <div className="h-10 w-10 rounded-full bg-gradient-to-r from-green-100 to-green-200 flex items-center justify-center shadow-sm">
+                              <User className="h-5 w-5 text-green-600" />
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                        {student.email}
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <div className="text-sm text-gray-900 font-medium">
+                          {student.email}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                        {student.phoneNumber || '-'}
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <div className="text-sm text-gray-900 font-medium">
+                          {student.phoneNumber || '-'}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                        <div className="flex items-center justify-center space-x-3 rtl:space-x-reverse">
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <div className="flex items-center justify-center space-x-2 rtl:space-x-reverse">
                           <button
                             onClick={() => handleViewProfile(student._id)}
-                            className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-2 bg-green-100 hover:bg-green-200 text-green-700 hover:text-green-800 rounded-lg transition-colors text-sm font-medium"
+                            className="flex items-center space-x-1 rtl:space-x-reverse px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                             title="عرض الملف الشخصي"
                           >
                             <Eye className="h-4 w-4" />
@@ -355,7 +359,7 @@ const Students = () => {
                           </button>
                           <button
                             onClick={() => handleDelete(student._id)}
-                            className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 hover:text-red-800 rounded-lg transition-colors text-sm font-medium"
+                            className="flex items-center space-x-1 rtl:space-x-reverse px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                             title="حذف الطالب"
                           >
                             <Trash2 className="h-4 w-4" />
