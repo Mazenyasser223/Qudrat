@@ -110,8 +110,10 @@ const createExam = async (req, res) => {
       createdBy: req.user.id
     });
 
-    // Update all students' exam progress
-    await updateStudentsExamProgress();
+    // Update all students' exam progress asynchronously (don't block response)
+    updateStudentsExamProgress().catch(error => {
+      console.error('Error updating students exam progress:', error);
+    });
 
     res.status(201).json({
       success: true,
@@ -214,7 +216,7 @@ const updateExam = async (req, res) => {
       { 
         new: true, 
         runValidators: true,
-        maxTimeMS: 30000 // 30 second timeout for database operation
+        maxTimeMS: 45000 // 45 second timeout for database operation
       }
     );
 
@@ -547,16 +549,23 @@ const unlockNextExam = async (student, currentGroup, currentOrder) => {
 // Helper function to update all students' exam progress when new exam is created
 const updateStudentsExamProgress = async () => {
   try {
-    const students = await User.find({ role: 'student' });
-    const exams = await Exam.find({ isActive: true }).sort({ examGroup: 1, order: 1 });
+    console.log('Starting to update students exam progress...');
+    const students = await User.find({ role: 'student' }).select('_id examProgress');
+    const exams = await Exam.find({ isActive: true }).select('_id examGroup order').sort({ examGroup: 1, order: 1 });
 
+    console.log(`Found ${students.length} students and ${exams.length} exams`);
+
+    // Use bulk operations for better performance
+    const bulkOps = [];
+    
     for (const student of students) {
       const existingExamIds = student.examProgress.map(progress => progress.examId.toString());
+      const newProgressEntries = [];
       
       for (const exam of exams) {
         if (!existingExamIds.includes(exam._id.toString())) {
           const isFirstExam = exam.examGroup === 1 && exam.order === 1;
-          student.examProgress.push({
+          newProgressEntries.push({
             examGroup: exam.examGroup,
             examId: exam._id,
             status: isFirstExam ? 'unlocked' : 'locked'
@@ -564,7 +573,21 @@ const updateStudentsExamProgress = async () => {
         }
       }
       
-      await student.save();
+      if (newProgressEntries.length > 0) {
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: student._id },
+            update: { $push: { examProgress: { $each: newProgressEntries } } }
+          }
+        });
+      }
+    }
+    
+    if (bulkOps.length > 0) {
+      await User.bulkWrite(bulkOps);
+      console.log(`Updated exam progress for ${bulkOps.length} students`);
+    } else {
+      console.log('No students needed exam progress updates');
     }
   } catch (error) {
     console.error('Error updating students exam progress:', error);

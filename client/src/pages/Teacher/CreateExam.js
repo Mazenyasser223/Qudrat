@@ -94,6 +94,7 @@ const CreateExam = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        timeout: 45000, // 45 seconds for large exams
       });
       
       toast.success('تم إنشاء الامتحان بنجاح');

@@ -119,7 +119,7 @@ const EditExam = () => {
       // Try the request with retry mechanism
       let response;
       let retryCount = 0;
-      const maxRetries = 1; // Reduced to 1 retry to prevent getting stuck
+      const maxRetries = 2; // Allow 2 retries for better reliability
       
       while (retryCount <= maxRetries) {
         // Check if user wants to cancel
@@ -131,11 +131,16 @@ const EditExam = () => {
         }
         
         try {
+          // Show progress for large exams
+          if (examData.questions && examData.questions.length > 20) {
+            toast.loading(`جاري حفظ الامتحان (${examData.questions.length} سؤال)...`, { duration: 5000 });
+          }
+          
           response = await axios.put(`/api/exams/${examId}`, examData, {
             headers: {
               'Content-Type': 'application/json',
             },
-            timeout: 30000, // Reduced back to 30 seconds
+            timeout: 45000, // 45 seconds for large exams
           });
           break; // Success, exit retry loop
         } catch (error) {
@@ -146,8 +151,11 @@ const EditExam = () => {
             throw error; // Re-throw if all retries failed
           }
           
-          // Wait before retrying
-          await new Promise(resolve => setTimeout(resolve, 3000));
+          // Show retry message
+          toast.loading(`محاولة أخرى... (${retryCount}/${maxRetries})`, { duration: 2000 });
+          
+          // Wait before retrying (shorter wait)
+          await new Promise(resolve => setTimeout(resolve, 2000));
           console.log(`Retrying... (${retryCount}/${maxRetries})`);
         }
       }
