@@ -401,54 +401,65 @@ const EditExam = () => {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Correct Answer - Left Side */}
-                    <div className="form-group">
-                      <label className="form-label">الإجابة الصحيحة</label>
-                      <select
-                        className={`input-field ${errors.questions?.[index]?.correctAnswer ? 'border-red-500' : ''}`}
-                        {...register(`questions.${index}.correctAnswer`, {
-                          required: 'الإجابة الصحيحة مطلوبة'
-                        })}
-                      >
-                        <option value="A">الخيار A</option>
-                        <option value="B">الخيار B</option>
-                        <option value="C">الخيار C</option>
-                        <option value="D">الخيار D</option>
-                      </select>
-                      {errors.questions?.[index]?.correctAnswer && (
-                        <p className="error-message">
-                          {errors.questions[index].correctAnswer.message}
-                        </p>
+                  {/* Question Image - Full Width */}
+                  <div className="form-group">
+                    <label className="form-label">صورة السؤال</label>
+                    <div className="space-y-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, index)}
+                        className="input-field"
+                      />
+                      {watch(`questions.${index}.questionImage`) && (
+                        <div className="mt-2 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                          <img
+                            src={watch(`questions.${index}.questionImage`)}
+                            alt={`Question ${index + 1}`}
+                            className="w-full h-auto rounded-lg border bg-white shadow-sm"
+                            style={{
+                              maxHeight: '800px',
+                              maxWidth: '100%',
+                              objectFit: 'contain',
+                              minHeight: '400px',
+                              width: '100%'
+                            }}
+                          />
+                        </div>
                       )}
                     </div>
+                  </div>
 
-                    {/* Question Image - Right Side */}
-                    <div className="form-group">
-                      <label className="form-label">صورة السؤال</label>
-                      <div className="space-y-2">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleImageUpload(e, index)}
-                          className="input-field"
-                        />
-                        {watch(`questions.${index}.questionImage`) && (
-                          <div className="mt-2 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                            <img
-                              src={watch(`questions.${index}.questionImage`)}
-                              alt={`Question ${index + 1}`}
-                              className="w-full h-auto rounded-lg border bg-white shadow-sm"
-                              style={{
-                                maxHeight: '800px',
-                                objectFit: 'contain',
-                                minHeight: '400px'
-                              }}
-                            />
-                          </div>
-                        )}
-                      </div>
+                  {/* Answer Choices - Below Photo */}
+                  <div className="form-group">
+                    <label className="form-label">الإجابة الصحيحة</label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                      {['A', 'B', 'C', 'D'].map((choice) => (
+                        <label
+                          key={choice}
+                          className={`flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                            watch(`questions.${index}.correctAnswer`) === choice
+                              ? 'border-green-500 bg-green-50 text-green-700'
+                              : 'border-gray-300 bg-white hover:border-gray-400'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            value={choice}
+                            {...register(`questions.${index}.correctAnswer`, {
+                              required: 'الإجابة الصحيحة مطلوبة'
+                            })}
+                            className="sr-only"
+                          />
+                          <span className="text-lg font-semibold">الخيار {choice}</span>
+                        </label>
+                      ))}
                     </div>
+                    {errors.questions?.[index]?.correctAnswer && (
+                      <p className="error-message mt-2">
+                        {errors.questions[index].correctAnswer.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* Explanation */}
