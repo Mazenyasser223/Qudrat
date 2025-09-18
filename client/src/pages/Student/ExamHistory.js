@@ -168,9 +168,10 @@ const ExamHistory = () => {
                 <span className="text-sm text-gray-600">وقت الإرسال:</span>
                 <span className="text-sm font-medium">
                   {(studentSubmission.submittedAt || studentSubmission.completedAt) && !isNaN(new Date(studentSubmission.submittedAt || studentSubmission.completedAt).getTime()) ? 
-                    new Date(studentSubmission.submittedAt || studentSubmission.completedAt).toLocaleTimeString('ar-SA', { 
+                    new Date(studentSubmission.submittedAt || studentSubmission.completedAt).toLocaleTimeString('en-US', { 
                       hour: '2-digit', 
-                      minute: '2-digit' 
+                      minute: '2-digit',
+                      hour12: true
                     }) : 
                     'غير محدد'
                   }
@@ -180,12 +181,32 @@ const ExamHistory = () => {
                 <Clock className="h-4 w-4 text-gray-500" />
                 <span className="text-sm text-gray-600">الوقت المستغرق:</span>
                 <span className="text-sm font-medium">
-                  {studentSubmission.timeSpent && studentSubmission.timeSpent > 0 ? 
-                    `${Math.floor(studentSubmission.timeSpent / 60)}:${(studentSubmission.timeSpent % 60).toString().padStart(2, '0')}` :
-                    studentSubmission.timeTaken && studentSubmission.timeTaken > 0 ?
-                    `${Math.floor(studentSubmission.timeTaken / 60)}:${(studentSubmission.timeTaken % 60).toString().padStart(2, '0')}` :
-                    'غير محدد'
-                  }
+                  {(() => {
+                    // Debug: log the time values
+                    console.log('Time Debug:', {
+                      timeSpent: studentSubmission.timeSpent,
+                      timeTaken: studentSubmission.timeTaken,
+                      typeTimeSpent: typeof studentSubmission.timeSpent,
+                      typeTimeTaken: typeof studentSubmission.timeTaken
+                    });
+                    
+                    // Check timeSpent first
+                    if (studentSubmission.timeSpent && studentSubmission.timeSpent > 0) {
+                      const minutes = Math.floor(studentSubmission.timeSpent / 60);
+                      const seconds = studentSubmission.timeSpent % 60;
+                      return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                    
+                    // Check timeTaken as fallback
+                    if (studentSubmission.timeTaken && studentSubmission.timeTaken > 0) {
+                      const minutes = Math.floor(studentSubmission.timeTaken / 60);
+                      const seconds = studentSubmission.timeTaken % 60;
+                      return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                    
+                    // If no time data, show "غير محدد"
+                    return 'غير محدد';
+                  })()}
                 </span>
               </div>
             </div>
