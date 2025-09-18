@@ -751,7 +751,7 @@ const StudentProfile = () => {
                                     امتحان {exam.order}
                                   </div>
                                   <div className="text-xs text-gray-600">
-                                    {progress ? `${progress.score || 0}/${exam.totalQuestions || 0}` : 'غير مكتمل'}
+                                    {progress ? `${progress.score || 0}/${exam.totalQuestions || 0}` : '-'}
                                   </div>
                                 </div>
                                 <div className={`px-2 py-1 rounded-full text-xs font-bold ${
@@ -762,7 +762,7 @@ const StudentProfile = () => {
                                 }`}>
                                   {progress?.percentage >= 80 ? 'ممتاز' :
                                    progress?.percentage >= 60 ? 'جيد' :
-                                   progress?.percentage > 0 ? 'مقبول' : 'غير مكتمل'}
+                                   progress?.percentage > 0 ? 'مقبول' : '-'}
                                 </div>
                               </div>
                               
@@ -1149,9 +1149,10 @@ const StudentProfile = () => {
                                     {new Date(progress.submittedAt).toLocaleDateString('en-GB')}
                                   </div>
                                   <div className="text-gray-500">
-                                    {new Date(progress.submittedAt).toLocaleTimeString('ar-SA', { 
+                                    {new Date(progress.submittedAt).toLocaleTimeString('en-US', { 
                                       hour: '2-digit', 
-                                      minute: '2-digit' 
+                                      minute: '2-digit',
+                                      hour12: true
                                     })}
                                   </div>
                                 </div>
@@ -1295,24 +1296,71 @@ const StudentProfile = () => {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => {
-                      if (selectedExams.length === exams.length) {
+                      const filteredExams = exams.filter((exam) => {
+                        const progress = studentProgress.find(p => p.examId === exam._id);
+                        const examStatus = progress ? progress.status : 'locked';
+                        
+                        if (lockUnlockAction === 'unlock') {
+                          return examStatus === 'locked';
+                        } else if (lockUnlockAction === 'lock') {
+                          return examStatus === 'unlocked';
+                        }
+                        return true;
+                      });
+                      
+                      if (selectedExams.length === filteredExams.length) {
                         setSelectedExams([]);
                       } else {
-                        setSelectedExams(exams.map(exam => exam._id));
+                        setSelectedExams(filteredExams.map(exam => exam._id));
                       }
                     }}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedExams.length === exams.length
+                      selectedExams.length === exams.filter((exam) => {
+                        const progress = studentProgress.find(p => p.examId === exam._id);
+                        const examStatus = progress ? progress.status : 'locked';
+                        
+                        if (lockUnlockAction === 'unlock') {
+                          return examStatus === 'locked';
+                        } else if (lockUnlockAction === 'lock') {
+                          return examStatus === 'unlocked';
+                        }
+                        return true;
+                      }).length
                         ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                     }`}
                   >
-                    {selectedExams.length === exams.length ? 'إلغاء الكل' : 'تحديد الكل'}
+                    {selectedExams.length === exams.filter((exam) => {
+                      const progress = studentProgress.find(p => p.examId === exam._id);
+                      const examStatus = progress ? progress.status : 'locked';
+                      
+                      if (lockUnlockAction === 'unlock') {
+                        return examStatus === 'locked';
+                      } else if (lockUnlockAction === 'lock') {
+                        return examStatus === 'unlocked';
+                      }
+                      return true;
+                    }).length ? 'إلغاء الكل' : 'تحديد الكل'}
                   </button>
                   
                   {/* Select by Group */}
                   {Array.from({ length: 9 }, (_, i) => i).map(groupNum => {
-                    const groupExams = exams.filter(exam => exam.examGroup === groupNum);
+                    const groupExams = exams.filter(exam => {
+                      // First filter by group
+                      if (exam.examGroup !== groupNum) return false;
+                      
+                      // Then filter by status based on modal action
+                      const progress = studentProgress.find(p => p.examId === exam._id);
+                      const examStatus = progress ? progress.status : 'locked';
+                      
+                      if (lockUnlockAction === 'unlock') {
+                        return examStatus === 'locked';
+                      } else if (lockUnlockAction === 'lock') {
+                        return examStatus === 'unlocked';
+                      }
+                      return true;
+                    });
+                    
                     const groupSelected = groupExams.filter(exam => selectedExams.includes(exam._id));
                     const isAllSelected = groupExams.length > 0 && groupSelected.length === groupExams.length;
                     const isPartiallySelected = groupSelected.length > 0 && groupSelected.length < groupExams.length;
@@ -1353,7 +1401,17 @@ const StudentProfile = () => {
                 {/* Selection Summary */}
                 <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
                   <div className="flex items-center justify-between">
-                    <span>تم تحديد: {selectedExams.length} من {exams.length} امتحان</span>
+                    <span>تم تحديد: {selectedExams.length} من {exams.filter((exam) => {
+                      const progress = studentProgress.find(p => p.examId === exam._id);
+                      const examStatus = progress ? progress.status : 'locked';
+                      
+                      if (lockUnlockAction === 'unlock') {
+                        return examStatus === 'locked';
+                      } else if (lockUnlockAction === 'lock') {
+                        return examStatus === 'unlocked';
+                      }
+                      return true;
+                    }).length} امتحان</span>
                     {selectedExams.length > 0 && (
                       <button
                         onClick={() => setSelectedExams([])}
@@ -1368,7 +1426,22 @@ const StudentProfile = () => {
               
               <div className="max-h-96 overflow-y-auto space-y-3">
                 {exams.length > 0 ? (
-                  exams.map((exam) => {
+                  exams
+                    .filter((exam) => {
+                      const progress = studentProgress.find(p => p.examId === exam._id);
+                      const examStatus = progress ? progress.status : 'locked';
+                      
+                      // Filter logic: 
+                      // For 'unlock' action: only show locked exams
+                      // For 'lock' action: only show unlocked exams
+                      if (lockUnlockAction === 'unlock') {
+                        return examStatus === 'locked';
+                      } else if (lockUnlockAction === 'lock') {
+                        return examStatus === 'unlocked';
+                      }
+                      return true; // fallback
+                    })
+                    .map((exam) => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
                     const examStatus = progress ? progress.status : 'locked';
                     
@@ -1378,7 +1451,8 @@ const StudentProfile = () => {
                       examTitle: exam.title,
                       progress: progress,
                       examStatus: examStatus,
-                      studentProgress: studentProgress.length
+                      studentProgress: studentProgress.length,
+                      lockUnlockAction: lockUnlockAction
                     });
                     
                     return (
