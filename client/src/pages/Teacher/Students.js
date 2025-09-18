@@ -128,10 +128,10 @@ const Students = () => {
         // Clear the form fields that have duplicates and show helpful message
         if (duplicateField === 'البريد الإلكتروني') {
           reset({ email: '' });
-          toast.info('يرجى استخدام بريد إلكتروني مختلف');
+          toast('يرجى استخدام بريد إلكتروني مختلف', { icon: 'ℹ️' });
         } else if (duplicateField === 'رقم الجوال') {
           reset({ phoneNumber: '' });
-          toast.info('يرجى استخدام رقم جوال مختلف');
+          toast('يرجى استخدام رقم جوال مختلف', { icon: 'ℹ️' });
         }
       } else {
         toast.error(error.response?.data?.message || 'حدث خطأ أثناء إنشاء الطالب');

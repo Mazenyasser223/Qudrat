@@ -181,30 +181,41 @@ const createStudent = async (req, res) => {
     });
 
     // Initialize exam progress for all existing exams
-    const exams = await Exam.find({ isActive: true }).sort({ examGroup: 1, order: 1 });
-    const examProgress = exams.map((exam, index) => ({
-      examGroup: exam.examGroup,
-      examId: exam._id,
-      status: index === 0 ? 'unlocked' : 'locked' // First exam is unlocked
-    }));
+    try {
+      const exams = await Exam.find({ isActive: true }).sort({ examGroup: 1, order: 1 });
+      const examProgress = exams.map((exam, index) => ({
+        examGroup: exam.examGroup,
+        examId: exam._id,
+        status: index === 0 ? 'unlocked' : 'locked' // First exam is unlocked
+      }));
 
-    student.examProgress = examProgress;
-    await student.save();
+      student.examProgress = examProgress;
+      await student.save();
+      console.log('Student exam progress initialized successfully');
+    } catch (examProgressError) {
+      console.error('Error initializing exam progress:', examProgressError);
+      // Continue without exam progress - student is still created successfully
+    }
 
-    // Emit real-time update to teachers
-    const io = req.app.get('io');
-    if (io) {
-      // Get all teachers to notify them of the new student
-      const teachers = await User.find({ role: 'teacher' });
-      teachers.forEach(teacher => {
-        io.to(`teacher-${teacher._id}`).emit('student-added', {
-          studentId: student._id,
-          studentName: student.name,
-          studentEmail: student.email,
-          studentPhoneNumber: student.phoneNumber,
-          timestamp: new Date()
+    // Emit real-time update to teachers (wrapped in try-catch to prevent errors)
+    try {
+      const io = req.app.get('io');
+      if (io) {
+        // Get all teachers to notify them of the new student
+        const teachers = await User.find({ role: 'teacher' });
+        teachers.forEach(teacher => {
+          io.to(`teacher-${teacher._id}`).emit('student-added', {
+            studentId: student._id,
+            studentName: student.name,
+            studentEmail: student.email,
+            studentPhoneNumber: student.phoneNumber,
+            timestamp: new Date()
+          });
         });
-      });
+      }
+    } catch (socketError) {
+      console.error('Error emitting student-added event:', socketError);
+      // Don't fail the entire request if socket emission fails
     }
 
     console.log('Student created successfully:', { id: student._id, name: student.name, email: student.email });
