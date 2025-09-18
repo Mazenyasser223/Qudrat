@@ -1025,7 +1025,8 @@ const getMySubmission = async (req, res) => {
         timeSpent: examProgress.timeSpent,
         completedAt: examProgress.completedAt,
         submittedAt: examProgress.submittedAt,
-        answers: examProgress.answers
+        answers: examProgress.answers,
+        bestReviewScore: examProgress.bestReviewScore
       }
     });
   } catch (error) {
