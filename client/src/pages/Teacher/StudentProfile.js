@@ -1426,8 +1426,8 @@ const StudentProfile = () => {
               
               <div className="max-h-96 overflow-y-auto space-y-3">
                 {exams.length > 0 ? (
-                  exams
-                    .filter((exam) => {
+                  (() => {
+                    const filteredExams = exams.filter((exam) => {
                       const progress = studentProgress.find(p => p.examId === exam._id);
                       const examStatus = progress ? progress.status : 'locked';
                       
@@ -1440,7 +1440,17 @@ const StudentProfile = () => {
                         return examStatus === 'unlocked';
                       }
                       return true; // fallback
-                    })
+                    });
+                    
+                    console.log('Modal filtering summary:', {
+                      totalExams: exams.length,
+                      filteredExams: filteredExams.length,
+                      lockUnlockAction: lockUnlockAction,
+                      actionDescription: lockUnlockAction === 'unlock' ? 'فتح الاختبارات (should show locked)' : 'قفل الاختبارات (should show unlocked)'
+                    });
+                    
+                    return filteredExams;
+                  })()
                     .map((exam) => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
                     const examStatus = progress ? progress.status : 'locked';
@@ -1452,7 +1462,8 @@ const StudentProfile = () => {
                       progress: progress,
                       examStatus: examStatus,
                       studentProgress: studentProgress.length,
-                      lockUnlockAction: lockUnlockAction
+                      lockUnlockAction: lockUnlockAction,
+                      shouldShow: lockUnlockAction === 'unlock' ? examStatus === 'locked' : examStatus === 'unlocked'
                     });
                     
                     return (
