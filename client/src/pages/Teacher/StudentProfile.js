@@ -1474,9 +1474,22 @@ const StudentProfile = () => {
                   // Get all exams with their status
                   const examsWithStatus = exams.map(exam => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
+                    // Determine status based on progress data
+                    let status = 'locked';
+                    if (progress) {
+                      if (progress.status) {
+                        status = progress.status;
+                      } else if (progress.isUnlocked !== undefined) {
+                        status = progress.isUnlocked ? 'unlocked' : 'locked';
+                      } else if (progress.completed) {
+                        status = 'completed';
+                      } else if (progress.started) {
+                        status = 'in_progress';
+                      }
+                    }
                     return {
                       ...exam,
-                      status: progress ? progress.status : 'locked'
+                      status: status
                     };
                   });
                   
@@ -1497,6 +1510,7 @@ const StudentProfile = () => {
                   console.log('Should Show:', lockUnlockAction === 'unlock' ? 'Locked Exams' : 'Unlocked Exams');
                   console.log('Student Progress Length:', studentProgress.length);
                   console.log('First few exam statuses:', examsWithStatus.slice(0, 5).map(e => ({ title: e.title, status: e.status })));
+                  console.log('First few progress entries:', studentProgress.slice(0, 3).map(p => ({ examId: p.examId, status: p.status, isUnlocked: p.isUnlocked })));
                   
                   // Show empty state if no exams match
                   if (filteredExams.length === 0) {
