@@ -130,6 +130,8 @@ const StudentProfile = () => {
       console.log('=== STUDENT DATA RESPONSE ===');
       console.log('Status:', response.status);
       console.log('Data:', response.data);
+      console.log('Student exam progress:', response.data.data?.examProgress?.length);
+      console.log('First few progress entries:', response.data.data?.examProgress?.slice(0, 3));
       console.log('Student data:', response.data.data);
       
       if (response.data && response.data.data) {
@@ -353,6 +355,8 @@ const StudentProfile = () => {
   const handleToggleMultipleExams = async () => {
     try {
       console.log('Toggling exams:', { examIds: selectedExams, action: lockUnlockAction, studentId });
+      console.log('Before toggle - student progress:', studentProgress.length);
+      console.log('Before toggle - first few progress entries:', studentProgress.slice(0, 3));
       
       const response = await axios.put(`/api/users/students/${studentId}/toggle-exams`, {
         examIds: selectedExams,
@@ -372,10 +376,19 @@ const StudentProfile = () => {
       setSelectedExams([]);
       
       // Refresh student data to show updated status
+      console.log('=== REFRESHING DATA AFTER TOGGLE ===');
+      console.log('Before refresh - student progress:', studentProgress.length);
       await fetchStudentData();
+      console.log('After refresh - student progress:', studentProgress.length);
       
       // Also refresh the exams list to show updated status
       await fetchExams();
+      
+      // Force a re-render by updating state
+      setStudentProgress(prev => {
+        console.log('Force re-render - new progress length:', prev.length);
+        return [...prev];
+      });
     } catch (error) {
       console.error('=== TOGGLE MULTIPLE EXAMS ERROR ===');
       console.error('Error object:', error);
@@ -1482,6 +1495,8 @@ const StudentProfile = () => {
                   console.log('Total Exams:', exams.length);
                   console.log('Filtered Exams:', filteredExams.length);
                   console.log('Should Show:', lockUnlockAction === 'unlock' ? 'Locked Exams' : 'Unlocked Exams');
+                  console.log('Student Progress Length:', studentProgress.length);
+                  console.log('First few exam statuses:', examsWithStatus.slice(0, 5).map(e => ({ title: e.title, status: e.status })));
                   
                   // Show empty state if no exams match
                   if (filteredExams.length === 0) {
