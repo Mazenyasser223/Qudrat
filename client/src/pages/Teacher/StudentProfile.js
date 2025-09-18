@@ -214,14 +214,14 @@ const StudentProfile = () => {
         // Validate exams data
         if (!Array.isArray(response.data.data)) {
           console.error('Invalid exams data structure - not an array');
-          toast.error('بيانات الامتحانات غير صحيحة');
+          toast.error('بيانات الاختبارات غير صحيحة');
           setExams([]);
           return;
         }
       } else {
         console.error('No exams data in response');
         console.error('Response structure:', response.data);
-        toast.error('لم يتم العثور على امتحانات');
+        toast.error('لم يتم العثور على اختبارات');
         setExams([]);
       }
     } catch (error) {
@@ -235,13 +235,13 @@ const StudentProfile = () => {
         localStorage.removeItem('token');
         navigate('/login');
       } else if (error.response?.status === 403) {
-        toast.error('ليس لديك صلاحية للوصول إلى الامتحانات');
+        toast.error('ليس لديك صلاحية للوصول إلى الاختبارات');
       } else if (error.response?.status >= 500) {
         toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
       } else if (!error.response) {
         toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
       } else {
-        toast.error(`حدث خطأ أثناء تحميل الامتحانات: ${error.response?.data?.message || error.message}`);
+        toast.error(`حدث خطأ أثناء تحميل الاختبارات: ${error.response?.data?.message || error.message}`);
       }
       setExams([]);
     } finally {
@@ -324,7 +324,7 @@ const StudentProfile = () => {
       
       console.log('Lock/Unlock response:', response.data);
       
-      toast.success(`تم ${action === 'lock' ? 'قفل' : 'فتح'} الامتحان بنجاح`);
+      toast.success(`تم ${action === 'lock' ? 'قفل' : 'فتح'} الاختبار بنجاح`);
       await fetchStudentData();
     } catch (error) {
       console.error('=== LOCK/UNLOCK EXAM ERROR ===');
@@ -333,7 +333,7 @@ const StudentProfile = () => {
       console.error('Error response:', error.response);
       
       if (error.response?.status === 404) {
-        toast.error('الامتحان أو الطالب غير موجود');
+        toast.error('الاختبار أو الطالب غير موجود');
       } else if (error.response?.status === 401) {
         toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
         localStorage.removeItem('token');
@@ -345,7 +345,7 @@ const StudentProfile = () => {
       } else if (!error.response) {
         toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
       } else {
-        toast.error(`حدث خطأ أثناء ${action === 'lock' ? 'قفل' : 'فتح'} الامتحان: ${error.response?.data?.message || error.message}`);
+        toast.error(`حدث خطأ أثناء ${action === 'lock' ? 'قفل' : 'فتح'} الاختبار: ${error.response?.data?.message || error.message}`);
       }
     }
   };
@@ -367,7 +367,7 @@ const StudentProfile = () => {
       console.log('Response status:', response.status);
       console.log('Response headers:', response.headers);
       
-      toast.success(`تم ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الامتحانات المحددة بنجاح`);
+      toast.success(`تم ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الاختبارات المحددة بنجاح`);
       setShowLockUnlockModal(false);
       setSelectedExams([]);
       
@@ -395,7 +395,7 @@ const StudentProfile = () => {
       } else if (!error.response) {
         toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
       } else {
-        toast.error(`حدث خطأ أثناء ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الامتحانات: ${error.response?.data?.message || error.message}`);
+        toast.error(`حدث خطأ أثناء ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الاختبارات: ${error.response?.data?.message || error.message}`);
       }
     }
   };
@@ -458,7 +458,7 @@ const StudentProfile = () => {
     
     if (!exam) {
       console.error('No exam provided');
-      toast.error('لم يتم العثور على الامتحان');
+      toast.error('لم يتم العثور على الاختبار');
       return;
     }
     
@@ -503,7 +503,7 @@ const StudentProfile = () => {
     
     if (!exam) {
       console.error('No exam provided');
-      toast.error('لم يتم العثور على الامتحان');
+      toast.error('لم يتم العثور على الاختبار');
       return;
     }
     
@@ -561,7 +561,7 @@ const StudentProfile = () => {
               </button>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">ملف الطالب</h1>
-                <p className="text-gray-600">تتبع تقدم الطالب وإدارة امتحاناته</p>
+                <p className="text-gray-600">تتبع تقدم الطالب وإدارة اختباراته</p>
               </div>
             </div>
           </div>
@@ -610,8 +610,8 @@ const StudentProfile = () => {
       {/* Status Summary */}
       <div className="card">
         <div className="card-header">
-          <h3 className="text-lg font-semibold text-gray-900">حالة الامتحانات الحالية</h3>
-          <p className="text-sm text-gray-600 mt-1">نظرة عامة على حالة المجموعات والامتحانات للطالب</p>
+          <h3 className="text-lg font-semibold text-gray-900">حالة الاختبارات الحالية</h3>
+          <p className="text-sm text-gray-600 mt-1">نظرة عامة على حالة المجموعات والاختبارات للطالب</p>
         </div>
         <div className="card-body">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -660,7 +660,7 @@ const StudentProfile = () => {
         <div className="card">
           <div className="card-header">
             <h3 className="text-lg font-semibold text-gray-900">جدول التقدم التفصيلي</h3>
-            <p className="text-sm text-gray-600 mt-1">تفاصيل كاملة عن أداء الطالب في جميع الامتحانات</p>
+            <p className="text-sm text-gray-600 mt-1">تفاصيل كاملة عن أداء الطالب في جميع الاختبارات</p>
           </div>
           
           {/* Enhanced Quick Access Section */}
@@ -670,10 +670,10 @@ const StudentProfile = () => {
                 <div className="p-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg">
                   <List className="h-5 w-5 text-white" />
                 </div>
-                <span>الوصول السريع للمجموعات والامتحانات</span>
+                <span>الوصول السريع للمجموعات والاختبارات</span>
               </h4>
               <div className="text-sm text-gray-600 bg-white px-3 py-1 rounded-full border">
-                {exams.length} امتحان متاح
+                {exams.length} اختبار متاح
               </div>
             </div>
             
@@ -748,7 +748,7 @@ const StudentProfile = () => {
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
                                   <div className="font-semibold text-gray-900 group-hover/exam:text-green-700 text-sm">
-                                    امتحان {exam.order}
+                                    اختبار {exam.order}
                                   </div>
                                   <div className="text-xs text-gray-600">
                                     {progress ? `${progress.score || 0}/${exam.totalQuestions || 0}` : '-'}
@@ -812,8 +812,8 @@ const StudentProfile = () => {
                           >
                             <span>
                               {expandedGroups[groupNum] 
-                                ? 'إخفاء الامتحانات' 
-                                : `+${groupExams.length - 3} امتحانات أخرى`
+                                ? 'إخفاء الاختبارات' 
+                                : `+${groupExams.length - 3} اختبارات أخرى`
                               }
                             </span>
                             <svg 
@@ -855,7 +855,7 @@ const StudentProfile = () => {
                     minWidth: '300px',
                     maxWidth: '300px'
                   }}>
-                    اسم الامتحان
+                    اسم الاختبار
                   </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
                     width: '120px',
@@ -1200,9 +1200,9 @@ const StudentProfile = () => {
                       <td colSpan="7" className="px-4 py-8 text-center text-sm text-gray-500 bg-gray-50">
                         <div className="flex flex-col items-center">
                           <BookOpen className="w-8 h-8 text-gray-400 mb-2" />
-                          <span>لا توجد امتحانات متاحة</span>
+                          <span>لا توجد اختبارات متاحة</span>
                           <span className="text-xs text-gray-400 mt-1">
-                            {exams.length === 0 ? 'لم يتم إنشاء أي امتحانات بعد' : 'لا توجد امتحانات في قاعدة البيانات'}
+                            {exams.length === 0 ? 'لم يتم إنشاء أي اختبارات بعد' : 'لا توجد اختبارات في قاعدة البيانات'}
                           </span>
                         </div>
                       </td>
@@ -1218,8 +1218,8 @@ const StudentProfile = () => {
       {/* Lock/Unlock Controls */}
       <div className="card">
         <div className="card-header">
-          <h3 className="text-lg font-semibold text-gray-900">إدارة قفل وفتح الامتحانات</h3>
-          <p className="text-sm text-gray-600 mt-1">قفل أو فتح امتحانات محددة أو مجموعات كاملة للطالب</p>
+          <h3 className="text-lg font-semibold text-gray-900">إدارة قفل وفتح الاختبارات</h3>
+          <p className="text-sm text-gray-600 mt-1">قفل أو فتح اختبارات محددة أو مجموعات كاملة للطالب</p>
         </div>
         <div className="card-body">
           <div className="flex justify-center">
@@ -1230,8 +1230,8 @@ const StudentProfile = () => {
                   <Settings className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-orange-900">قفل/فتح امتحانات محددة</h4>
-                  <p className="text-sm text-orange-700">اختر امتحانات معينة لقفلها أو فتحها للطالب</p>
+                  <h4 className="text-lg font-semibold text-orange-900">قفل/فتح اختبارات محددة</h4>
+                  <p className="text-sm text-orange-700">اختر اختبارات معينة لقفلها أو فتحها للطالب</p>
                 </div>
               </div>
               <div className="flex space-x-2 rtl:space-x-reverse">
@@ -1245,7 +1245,7 @@ const StudentProfile = () => {
                   className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 rtl:space-x-reverse"
                 >
                   <Lock className="h-4 w-4" />
-                  <span>قفل امتحانات</span>
+                  <span>قفل اختبارات</span>
                 </button>
                 <button
                   onClick={async () => {
@@ -1257,7 +1257,7 @@ const StudentProfile = () => {
                   className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 rtl:space-x-reverse"
                 >
                   <Unlock className="h-4 w-4" />
-                  <span>فتح امتحانات</span>
+                  <span>فتح اختبارات</span>
                 </button>
               </div>
             </div>
@@ -1277,7 +1277,7 @@ const StudentProfile = () => {
                 {lockUnlockAction === 'lock' ? <Lock className="h-6 w-6" /> : <Unlock className="h-6 w-6" />}
                 <div>
                   <h3 className="text-lg font-semibold">
-                    {lockUnlockAction === 'lock' ? 'قفل الامتحانات المحددة' : 'فتح الامتحانات المحددة'}
+                    {lockUnlockAction === 'lock' ? 'قفل الاختبارات المحددة' : 'فتح الاختبارات المحددة'}
                     {selectedExams.length > 0 && (
                       <span className="mr-2 text-sm font-normal">
                         ({selectedExams.length} محدد)
@@ -1285,7 +1285,7 @@ const StudentProfile = () => {
                     )}
                   </h3>
                   <p className={`${lockUnlockAction === 'lock' ? 'text-red-100' : 'text-green-100'} text-sm`}>
-                    اختر الامتحانات التي تريد {lockUnlockAction === 'lock' ? 'قفلها' : 'فتحها'} للطالب
+                    اختر الاختبارات التي تريد {lockUnlockAction === 'lock' ? 'قفلها' : 'فتحها'} للطالب
                   </p>
                 </div>
               </div>
@@ -1411,7 +1411,7 @@ const StudentProfile = () => {
                         return examStatus === 'unlocked';
                       }
                       return true;
-                    }).length} امتحان</span>
+                    }).length} اختبار</span>
                     {selectedExams.length > 0 && (
                       <button
                         onClick={() => setSelectedExams([])}
@@ -1432,8 +1432,8 @@ const StudentProfile = () => {
                       const examStatus = progress ? progress.status : 'locked';
                       
                       // Filter logic: 
-                      // For 'unlock' action: only show locked exams
-                      // For 'lock' action: only show unlocked exams
+                      // For 'unlock' action: only show locked exams (so we can unlock them)
+                      // For 'lock' action: only show unlocked exams (so we can lock them)
                       if (lockUnlockAction === 'unlock') {
                         return examStatus === 'locked';
                       } else if (lockUnlockAction === 'lock') {
@@ -1493,7 +1493,7 @@ const StudentProfile = () => {
                             }`}>
                               {examStatus === 'completed' ? 'مكتمل' : 
                                examStatus === 'in_progress' ? 'قيد التنفيذ' :
-                               examStatus === 'unlocked' ? 'متاح' : 'مقفل'}
+                               examStatus === 'unlocked' ? 'متاح' : ''}
                             </span>
                           </div>
                         <div className="text-sm text-gray-500 mt-1">
@@ -1509,7 +1509,7 @@ const StudentProfile = () => {
                 ) : (
                   <div className="text-center py-8">
                     <BookOpen className="mx-auto h-12 w-12 text-gray-400" />
-                    <p className="text-gray-500 mt-2">لا توجد امتحانات متاحة</p>
+                    <p className="text-gray-500 mt-2">لا توجد اختبارات متاحة</p>
                   </div>
                 )}
               </div>
@@ -1517,7 +1517,7 @@ const StudentProfile = () => {
             {/* Fixed Footer with Buttons */}
             <div className="flex justify-between items-center px-6 py-4 border-t border-gray-200 bg-gray-50">
               <div className="text-sm text-gray-600">
-                {selectedExams.length > 0 && `تم اختيار ${selectedExams.length} امتحان`}
+                {selectedExams.length > 0 && `تم اختيار ${selectedExams.length} اختبار`}
               </div>
               <div className="flex space-x-3 rtl:space-x-reverse">
                 <button
@@ -1536,7 +1536,7 @@ const StudentProfile = () => {
                   disabled={selectedExams.length === 0}
                   className={`px-4 py-2 ${lockUnlockAction === 'lock' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors`}
                 >
-                  {lockUnlockAction === 'lock' ? 'قفل الامتحانات المحددة' : 'فتح الامتحانات المحددة'} ({selectedExams.length})
+                  {lockUnlockAction === 'lock' ? 'قفل الاختبارات المحددة' : 'فتح الاختبارات المحددة'} ({selectedExams.length})
                 </button>
               </div>
             </div>
