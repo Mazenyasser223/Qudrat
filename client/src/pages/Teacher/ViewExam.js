@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Edit, BookOpen, Clock, Users, TrendingUp, Eye } from 'lucide-react';
+import { ArrowLeft, Edit, BookOpen, Clock, Eye } from 'lucide-react';
 
 const ViewExam = () => {
   const { examId } = useParams();
@@ -106,25 +106,6 @@ const ViewExam = () => {
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-body text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Users className="h-8 w-8 text-purple-600" />
-            </div>
-            <div className="text-2xl font-bold text-purple-600">{exam.statistics.totalAttempts}</div>
-            <div className="text-sm text-gray-600">إجمالي المحاولات</div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-body text-center">
-            <div className="flex items-center justify-center mb-2">
-              <TrendingUp className="h-8 w-8 text-orange-600" />
-            </div>
-            <div className="text-2xl font-bold text-orange-600">{exam.statistics.averageScore.toFixed(1)}%</div>
-            <div className="text-sm text-gray-600">متوسط الدرجات</div>
-          </div>
-        </div>
       </div>
 
       {/* Exam Details */}
@@ -160,27 +141,6 @@ const ViewExam = () => {
               </div>
             </div>
 
-            <div>
-              <h4 className="font-medium text-gray-900 mb-2">إحصائيات</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">معدل النجاح:</span>
-                  <span className="font-medium">
-                    {exam.statistics.totalAttempts > 0 
-                      ? ((exam.statistics.passRate / exam.statistics.totalAttempts) * 100).toFixed(1)
-                      : 0}%
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">عدد الناجحين:</span>
-                  <span className="font-medium">{exam.statistics.passRate}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">متوسط الدرجات:</span>
-                  <span className="font-medium">{exam.statistics.averageScore.toFixed(1)}%</span>
-                </div>
-              </div>
-            </div>
           </div>
 
           {exam.description && (
