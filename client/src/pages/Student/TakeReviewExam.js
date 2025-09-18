@@ -188,7 +188,6 @@ const TakeReviewExam = () => {
             <h2 className="text-2xl font-bold text-gray-900">نتائج امتحان المراجعة</h2>
             <p className="text-gray-600 mt-2">{reviewExam.title}</p>
             <div className="mt-4 flex items-center justify-center space-x-4 rtl:space-x-reverse">
-              <span className="text-sm text-gray-600">المحاولة رقم: {results.attemptNumber}</span>
               {results.isBestScore && (
                 <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">
                   أفضل نتيجة!
@@ -299,9 +298,6 @@ const TakeReviewExam = () => {
             </div>
             
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
-              <div className="text-sm text-gray-600">
-                المحاولة: {reviewExam.currentAttemptNumber}
-              </div>
               <ExamTimer
                 timeLimit={reviewExam.questions.length}
                 onTimeUp={handleTimeUp}
