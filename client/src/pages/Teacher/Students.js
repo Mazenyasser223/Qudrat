@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { Plus, Search, Trash2, User, Mail, Phone, Eye } from 'lucide-react';
 import ValidationErrors from '../../components/ValidationErrors';
 import { useSocket } from '../../contexts/SocketContext';
+import ConfirmationDialog from '../../components/ConfirmationDialog';
 
 const Students = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const Students = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [validationErrors, setValidationErrors] = useState([]);
+  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, studentId: null, studentName: '' });
   const { socket } = useSocket();
 
   const {
@@ -93,17 +95,29 @@ const Students = () => {
     }
   };
 
-  const handleDelete = async (studentId) => {
-    if (window.confirm('هل أنت متأكد من حذف هذا الطالب؟')) {
-      try {
-        await axios.delete(`/api/users/students/${studentId}`);
-        toast.success('تم حذف الطالب بنجاح');
-        fetchStudents();
-      } catch (error) {
-        console.error('Error deleting student:', error);
-        toast.error('حدث خطأ أثناء حذف الطالب');
-      }
+  const handleDelete = (studentId, studentName) => {
+    setDeleteDialog({
+      isOpen: true,
+      studentId: studentId,
+      studentName: studentName
+    });
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(`/api/users/students/${deleteDialog.studentId}`);
+      toast.success('تم حذف الطالب بنجاح');
+      fetchStudents();
+      setDeleteDialog({ isOpen: false, studentId: null, studentName: '' });
+    } catch (error) {
+      console.error('Error deleting student:', error);
+      toast.error('حدث خطأ أثناء حذف الطالب');
+      setDeleteDialog({ isOpen: false, studentId: null, studentName: '' });
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteDialog({ isOpen: false, studentId: null, studentName: '' });
   };
 
   const handleViewProfile = (studentId) => {
@@ -358,7 +372,7 @@ const Students = () => {
                             <span>عرض</span>
                           </button>
                           <button
-                            onClick={() => handleDelete(student._id)}
+                            onClick={() => handleDelete(student._id, student.name)}
                             className="flex items-center space-x-1 rtl:space-x-reverse px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                             title="حذف الطالب"
                           >
@@ -375,6 +389,18 @@ const Students = () => {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={cancelDelete}
+        onConfirm={confirmDelete}
+        title="حذف الطالب"
+        message={`هل أنت متأكد من حذف الطالب "${deleteDialog.studentName}"؟`}
+        confirmText="حذف الطالب"
+        cancelText="إلغاء"
+        type="danger"
+      />
     </div>
   );
 };

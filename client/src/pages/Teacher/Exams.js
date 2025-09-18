@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Plus, BookOpen, Clock, Users, Edit, Trash2, Eye, Search, Filter, Grid, List, MoreVertical, BarChart3, TrendingUp, Award } from 'lucide-react';
+import ConfirmationDialog from '../../components/ConfirmationDialog';
 
 const Exams = () => {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const Exams = () => {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [freeExams, setFreeExams] = useState([]);
   const [showFreeExamModal, setShowFreeExamModal] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, examId: null, examTitle: '' });
+  const [removeFromFreeDialog, setRemoveFromFreeDialog] = useState({ isOpen: false, examId: null, examTitle: '' });
   const [selectedExamForFree, setSelectedExamForFree] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
 
@@ -161,9 +164,17 @@ const Exams = () => {
     setShowFreeExamModal(true);
   };
 
-  const handleRemoveFromFree = async (examId) => {
+  const handleRemoveFromFree = (examId, examTitle) => {
+    setRemoveFromFreeDialog({
+      isOpen: true,
+      examId: examId,
+      examTitle: examTitle
+    });
+  };
+
+  const confirmRemoveFromFree = async () => {
     try {
-      await axios.put(`/api/exams/${examId}/remove-free`, {}, {
+      await axios.put(`/api/exams/${removeFromFreeDialog.examId}/remove-free`, {}, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -171,10 +182,16 @@ const Exams = () => {
       toast.success('تم إزالة الامتحان من الامتحانات المجانية');
       fetchFreeExams();
       fetchExams(); // Refresh exams list to update free exam status
+      setRemoveFromFreeDialog({ isOpen: false, examId: null, examTitle: '' });
     } catch (error) {
       console.error('Error removing exam from free:', error);
       toast.error('حدث خطأ أثناء إزالة الامتحان من المجانية');
+      setRemoveFromFreeDialog({ isOpen: false, examId: null, examTitle: '' });
     }
+  };
+
+  const cancelRemoveFromFree = () => {
+    setRemoveFromFreeDialog({ isOpen: false, examId: null, examTitle: '' });
   };
 
   const handleConfirmSetAsFree = async (freeExamOrder) => {
@@ -198,21 +215,33 @@ const Exams = () => {
     }
   };
 
-  const handleDelete = async (examId) => {
-    if (window.confirm('هل أنت متأكد من حذف هذا الامتحان؟')) {
-      try {
-        await axios.delete(`/api/exams/${examId}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        toast.success('تم حذف الامتحان بنجاح');
-        fetchExams();
-      } catch (error) {
-        console.error('Error deleting exam:', error);
-        toast.error('حدث خطأ أثناء حذف الامتحان');
-      }
+  const handleDelete = (examId, examTitle) => {
+    setDeleteDialog({
+      isOpen: true,
+      examId: examId,
+      examTitle: examTitle
+    });
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(`/api/exams/${deleteDialog.examId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      toast.success('تم حذف الامتحان بنجاح');
+      fetchExams();
+      setDeleteDialog({ isOpen: false, examId: null, examTitle: '' });
+    } catch (error) {
+      console.error('Error deleting exam:', error);
+      toast.error('حدث خطأ أثناء حذف الامتحان');
+      setDeleteDialog({ isOpen: false, examId: null, examTitle: '' });
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteDialog({ isOpen: false, examId: null, examTitle: '' });
   };
 
   const handleEdit = (examId) => {
@@ -376,7 +405,7 @@ const Exams = () => {
                       الامتحان المجاني #{exam.freeExamOrder}
                     </h4>
                     <button
-                      onClick={() => handleRemoveFromFree(exam._id)}
+                      onClick={() => handleRemoveFromFree(exam._id, exam.title)}
                       className="text-red-600 hover:text-red-800 text-sm"
                     >
                       إزالة
@@ -502,7 +531,7 @@ const Exams = () => {
                             </button>
                           )}
                           <button
-                            onClick={() => handleDelete(exam._id)}
+                            onClick={() => handleDelete(exam._id, exam.title)}
                             className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
                             title="حذف"
                           >
@@ -648,7 +677,7 @@ const Exams = () => {
                               </button>
                             )}
                             <button
-                              onClick={() => handleDelete(exam._id)}
+                              onClick={() => handleDelete(exam._id, exam.title)}
                               className="text-red-600 hover:text-red-900 p-1 rounded"
                               title="حذف"
                             >
@@ -721,6 +750,30 @@ const Exams = () => {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={cancelDelete}
+        onConfirm={confirmDelete}
+        title="حذف الامتحان"
+        message={`هل أنت متأكد من حذف الامتحان "${deleteDialog.examTitle}"؟`}
+        confirmText="حذف الامتحان"
+        cancelText="إلغاء"
+        type="danger"
+      />
+
+      {/* Remove from Free Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={removeFromFreeDialog.isOpen}
+        onClose={cancelRemoveFromFree}
+        onConfirm={confirmRemoveFromFree}
+        title="إزالة من الامتحانات المجانية"
+        message={`هل أنت متأكد من إزالة الامتحان "${removeFromFreeDialog.examTitle}" من الامتحانات المجانية؟`}
+        confirmText="إزالة"
+        cancelText="إلغاء"
+        type="warning"
+      />
 
     </div>
   );
