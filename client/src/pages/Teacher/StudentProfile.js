@@ -1235,8 +1235,10 @@ const StudentProfile = () => {
               </div>
               <div className="flex space-x-2 rtl:space-x-reverse">
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     setLockUnlockAction('lock');
+                    // Refresh data before opening modal
+                    await fetchStudentData();
                     setShowLockUnlockModal(true);
                   }}
                   className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 rtl:space-x-reverse"
@@ -1245,8 +1247,10 @@ const StudentProfile = () => {
                   <span>قفل امتحانات</span>
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     setLockUnlockAction('unlock');
+                    // Refresh data before opening modal
+                    await fetchStudentData();
                     setShowLockUnlockModal(true);
                   }}
                   className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 rtl:space-x-reverse"
@@ -1368,6 +1372,15 @@ const StudentProfile = () => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
                     const examStatus = progress ? progress.status : 'locked';
                     
+                    // Debug logging
+                    console.log('Exam status debug:', {
+                      examId: exam._id,
+                      examTitle: exam.title,
+                      progress: progress,
+                      examStatus: examStatus,
+                      studentProgress: studentProgress.length
+                    });
+                    
                     return (
                       <label key={exam._id} className={`flex items-center space-x-3 rtl:space-x-reverse p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer ${
                         selectedExams.includes(exam._id) 
@@ -1434,9 +1447,11 @@ const StudentProfile = () => {
               </div>
               <div className="flex space-x-3 rtl:space-x-reverse">
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     setShowLockUnlockModal(false);
                     setSelectedExams([]);
+                    // Refresh data when modal is closed
+                    await fetchStudentData();
                   }}
                   className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
                 >
