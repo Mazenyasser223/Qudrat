@@ -42,8 +42,25 @@ const StudentProfile = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    fetchStudentData();
-    fetchExams();
+    console.log('=== STUDENT PROFILE MOUNTED ===');
+    console.log('Student ID from URL:', studentId);
+    
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        await Promise.all([
+          fetchStudentData(),
+          fetchExams()
+        ]);
+      } catch (error) {
+        console.error('Error loading initial data:', error);
+        toast.error('حدث خطأ أثناء تحميل البيانات');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
   }, [studentId]);
 
   // Update progress when student data changes
@@ -86,19 +103,73 @@ const StudentProfile = () => {
         setRefreshing(true);
       }
       
+      console.log('=== FETCHING STUDENT DATA ===');
+      console.log('Student ID:', studentId);
+      console.log('API URL:', `/api/users/students/${studentId}`);
+      console.log('Token present:', !!localStorage.getItem('token'));
+      
       const response = await axios.get(`/api/users/students/${studentId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setStudent(response.data.data);
+      
+      console.log('=== STUDENT DATA RESPONSE ===');
+      console.log('Status:', response.status);
+      console.log('Data:', response.data);
+      console.log('Student data:', response.data.data);
+      
+      if (response.data && response.data.data) {
+        setStudent(response.data.data);
+        console.log('Student set successfully:', response.data.data);
+        
+        // Validate student data
+        if (!response.data.data._id || !response.data.data.name) {
+          console.error('Invalid student data structure');
+          toast.error('بيانات الطالب غير صحيحة');
+          navigate('/teacher/students');
+          return;
+        }
+      } else {
+        console.error('No student data in response');
+        console.error('Response structure:', response.data);
+        toast.error('لم يتم العثور على بيانات الطالب');
+        navigate('/teacher/students');
+        return;
+      }
       
       if (isRefresh) {
         toast.success('تم تحديث بيانات الطالب بنجاح');
       }
     } catch (error) {
-      console.error('Error fetching student:', error);
-      toast.error('حدث خطأ أثناء تحميل بيانات الطالب');
+      console.error('=== STUDENT DATA ERROR ===');
+      console.error('Error object:', error);
+      console.error('Error message:', error.message);
+      console.error('Error response:', error.response);
+      console.error('Error details:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.headers
+      });
+      
+      if (error.response?.status === 404) {
+        toast.error('الطالب غير موجود');
+      } else if (error.response?.status === 401) {
+        toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        localStorage.removeItem('token');
+        navigate('/login');
+      } else if (error.response?.status === 403) {
+        toast.error('ليس لديك صلاحية للوصول إلى بيانات هذا الطالب');
+      } else if (error.response?.status >= 500) {
+        toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
+      } else if (!error.response) {
+        toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
+      } else {
+        toast.error(`حدث خطأ أثناء تحميل بيانات الطالب: ${error.response?.data?.message || error.message}`);
+      }
+      
       navigate('/teacher/students');
     } finally {
       if (isRefresh) {
@@ -109,29 +180,82 @@ const StudentProfile = () => {
 
   const fetchExams = async () => {
     try {
+      console.log('=== FETCHING EXAMS ===');
+      console.log('API URL:', '/api/exams');
+      
       const response = await axios.get('/api/exams', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setExams(response.data.data);
+      
+      console.log('=== EXAMS RESPONSE ===');
+      console.log('Status:', response.status);
+      console.log('Data:', response.data);
+      console.log('Exams data:', response.data.data);
+      
+      if (response.data && response.data.data) {
+        setExams(response.data.data);
+        console.log('Exams set successfully:', response.data.data.length, 'exams');
+        
+        // Validate exams data
+        if (!Array.isArray(response.data.data)) {
+          console.error('Invalid exams data structure - not an array');
+          toast.error('بيانات الامتحانات غير صحيحة');
+          setExams([]);
+          return;
+        }
+      } else {
+        console.error('No exams data in response');
+        console.error('Response structure:', response.data);
+        toast.error('لم يتم العثور على امتحانات');
+        setExams([]);
+      }
     } catch (error) {
-      console.error('Error fetching exams:', error);
-      toast.error('حدث خطأ أثناء تحميل الامتحانات');
+      console.error('=== EXAMS ERROR ===');
+      console.error('Error object:', error);
+      console.error('Error message:', error.message);
+      console.error('Error response:', error.response);
+      
+      if (error.response?.status === 401) {
+        toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        localStorage.removeItem('token');
+        navigate('/login');
+      } else if (error.response?.status === 403) {
+        toast.error('ليس لديك صلاحية للوصول إلى الامتحانات');
+      } else if (error.response?.status >= 500) {
+        toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
+      } else if (!error.response) {
+        toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
+      } else {
+        toast.error(`حدث خطأ أثناء تحميل الامتحانات: ${error.response?.data?.message || error.message}`);
+      }
+      setExams([]);
     } finally {
       setLoading(false);
     }
   };
 
   const fetchStudentProgress = () => {
+    console.log('=== FETCHING STUDENT PROGRESS ===');
+    console.log('Student:', !!student);
+    console.log('Student exam progress:', student?.examProgress);
+    
     // Student progress is already available in the student data
     if (student && student.examProgress) {
+      console.log('Setting student progress:', student.examProgress.length, 'progress entries');
       setStudentProgress(student.examProgress);
       calculateGroupStatus(student.examProgress);
+    } else {
+      console.log('No student or exam progress available');
+      setStudentProgress([]);
     }
   };
 
   const calculateGroupStatus = (progress) => {
+    console.log('=== CALCULATING GROUP STATUS ===');
+    console.log('Progress data:', progress);
+    
     const status = {};
     
     // Initialize groups 0-8 as locked
@@ -139,14 +263,27 @@ const StudentProfile = () => {
       status[i] = 'locked';
     }
     
+    if (!progress || !Array.isArray(progress)) {
+      console.log('No valid progress data, all groups locked');
+      setGroupStatus(status);
+      return;
+    }
+    
     // Check each exam progress
     progress.forEach(progressItem => {
-      const groupNum = progressItem.examId ? progressItem.examId.examGroup : progressItem.examGroup;
-      if (progressItem.status === 'unlocked' || progressItem.status === 'in_progress' || progressItem.status === 'completed') {
-        status[groupNum] = 'unlocked';
+      try {
+        const groupNum = progressItem.examId ? progressItem.examId.examGroup : progressItem.examGroup;
+        if (groupNum !== undefined && groupNum !== null) {
+          if (progressItem.status === 'unlocked' || progressItem.status === 'in_progress' || progressItem.status === 'completed') {
+            status[groupNum] = 'unlocked';
+          }
+        }
+      } catch (error) {
+        console.error('Error processing progress item:', error, progressItem);
       }
     });
     
+    console.log('Final group status:', status);
     setGroupStatus(status);
   };
 
@@ -154,8 +291,17 @@ const StudentProfile = () => {
 
   const handleLockUnlockExam = async (examId, action) => {
     try {
+      console.log('=== HANDLING LOCK/UNLOCK EXAM ===');
+      console.log('Exam ID:', examId);
+      console.log('Action:', action);
+      console.log('Student ID:', studentId);
+      
       const endpoint = action === 'lock' ? 'lock-exam' : 'unlock-exam';
-      await axios.put(`/api/users/students/${studentId}/${endpoint}`, {
+      const url = `/api/users/students/${studentId}/${endpoint}`;
+      
+      console.log('API URL:', url);
+      
+      const response = await axios.put(url, {
         examId
       }, {
         headers: {
@@ -163,11 +309,31 @@ const StudentProfile = () => {
         }
       });
       
+      console.log('Lock/Unlock response:', response.data);
+      
       toast.success(`تم ${action === 'lock' ? 'قفل' : 'فتح'} الامتحان بنجاح`);
-      fetchStudentData();
+      await fetchStudentData();
     } catch (error) {
-      console.error(`Error ${action}ing exam:`, error);
-      toast.error(`حدث خطأ أثناء ${action === 'lock' ? 'قفل' : 'فتح'} الامتحان`);
+      console.error('=== LOCK/UNLOCK EXAM ERROR ===');
+      console.error('Error object:', error);
+      console.error('Error message:', error.message);
+      console.error('Error response:', error.response);
+      
+      if (error.response?.status === 404) {
+        toast.error('الامتحان أو الطالب غير موجود');
+      } else if (error.response?.status === 401) {
+        toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        localStorage.removeItem('token');
+        navigate('/login');
+      } else if (error.response?.status === 403) {
+        toast.error('ليس لديك صلاحية لإجراء هذا الإجراء');
+      } else if (error.response?.status >= 500) {
+        toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
+      } else if (!error.response) {
+        toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
+      } else {
+        toast.error(`حدث خطأ أثناء ${action === 'lock' ? 'قفل' : 'فتح'} الامتحان: ${error.response?.data?.message || error.message}`);
+      }
     }
   };
 
@@ -198,9 +364,26 @@ const StudentProfile = () => {
       // Also refresh the exams list to show updated status
       await fetchExams();
     } catch (error) {
-      console.error('Error toggling exams:', error);
-      console.error('Error response:', error.response?.data);
-      toast.error(`حدث خطأ أثناء ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الامتحانات: ${error.response?.data?.message || error.message}`);
+      console.error('=== TOGGLE MULTIPLE EXAMS ERROR ===');
+      console.error('Error object:', error);
+      console.error('Error message:', error.message);
+      console.error('Error response:', error.response);
+      
+      if (error.response?.status === 404) {
+        toast.error('الطالب غير موجود');
+      } else if (error.response?.status === 401) {
+        toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        localStorage.removeItem('token');
+        navigate('/login');
+      } else if (error.response?.status === 403) {
+        toast.error('ليس لديك صلاحية لإجراء هذا الإجراء');
+      } else if (error.response?.status >= 500) {
+        toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
+      } else if (!error.response) {
+        toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
+      } else {
+        toast.error(`حدث خطأ أثناء ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الامتحانات: ${error.response?.data?.message || error.message}`);
+      }
     }
   };
 
@@ -213,7 +396,12 @@ const StudentProfile = () => {
 
   const handleToggleGroup = async (groupNumber, action) => {
     try {
-      await axios.put(`/api/users/students/${studentId}/toggle-group`, {
+      console.log('=== TOGGLING GROUP ===');
+      console.log('Group number:', groupNumber);
+      console.log('Action:', action);
+      console.log('Student ID:', studentId);
+      
+      const response = await axios.put(`/api/users/students/${studentId}/toggle-group`, {
         groupNumber: parseInt(groupNumber),
         action
       }, {
@@ -222,38 +410,102 @@ const StudentProfile = () => {
         }
       });
       
+      console.log('Toggle group response:', response.data);
+      
       toast.success(`تم ${action === 'lock' ? 'قفل' : 'فتح'} المجموعة ${groupNumber} بنجاح`);
-      fetchStudentData();
+      await fetchStudentData();
     } catch (error) {
-      console.error('Error toggling group:', error);
-      toast.error(`حدث خطأ أثناء ${action === 'lock' ? 'قفل' : 'فتح'} المجموعة`);
+      console.error('=== TOGGLE GROUP ERROR ===');
+      console.error('Error object:', error);
+      console.error('Error message:', error.message);
+      console.error('Error response:', error.response);
+      
+      if (error.response?.status === 404) {
+        toast.error('الطالب غير موجود');
+      } else if (error.response?.status === 401) {
+        toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        localStorage.removeItem('token');
+        navigate('/login');
+      } else if (error.response?.status === 403) {
+        toast.error('ليس لديك صلاحية لإجراء هذا الإجراء');
+      } else if (error.response?.status >= 500) {
+        toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
+      } else if (!error.response) {
+        toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
+      } else {
+        toast.error(`حدث خطأ أثناء ${action === 'lock' ? 'قفل' : 'فتح'} المجموعة: ${error.response?.data?.message || error.message}`);
+      }
     }
   };
 
   const handleViewMistakes = (exam) => {
+    console.log('=== VIEWING MISTAKES ===');
+    console.log('Exam:', exam);
+    console.log('Student:', student);
+    
+    if (!exam) {
+      console.error('No exam provided');
+      toast.error('لم يتم العثور على الامتحان');
+      return;
+    }
+    
+    if (!student) {
+      console.error('No student data available');
+      toast.error('لم يتم العثور على بيانات الطالب');
+      return;
+    }
+    
     setSelectedExamForMistakes(exam);
     setShowMistakes(true);
   };
 
   const handleCloseMistakes = () => {
+    console.log('=== CLOSING MISTAKES ===');
     setShowMistakes(false);
     setSelectedExamForMistakes(null);
   };
 
   const handleViewAllAnswers = () => {
+    console.log('=== VIEWING ALL ANSWERS ===');
+    console.log('Student:', student);
+    
+    if (!student) {
+      console.error('No student data available');
+      toast.error('لم يتم العثور على بيانات الطالب');
+      return;
+    }
+    
     setShowAllAnswers(true);
   };
 
   const handleCloseAllAnswers = () => {
+    console.log('=== CLOSING ALL ANSWERS ===');
     setShowAllAnswers(false);
   };
 
   const handleViewSubmission = (exam) => {
+    console.log('=== VIEWING SUBMISSION ===');
+    console.log('Exam:', exam);
+    console.log('Student:', student);
+    
+    if (!exam) {
+      console.error('No exam provided');
+      toast.error('لم يتم العثور على الامتحان');
+      return;
+    }
+    
+    if (!student) {
+      console.error('No student data available');
+      toast.error('لم يتم العثور على بيانات الطالب');
+      return;
+    }
+    
     setSelectedExamForSubmission(exam);
     setShowSubmission(true);
   };
 
   const handleCloseSubmission = () => {
+    console.log('=== CLOSING SUBMISSION ===');
     setShowSubmission(false);
     setSelectedExamForSubmission(null);
   };

@@ -30,11 +30,19 @@ const getStudents = async (req, res) => {
 // @access  Private (Teacher only)
 const getStudent = async (req, res) => {
   try {
+    console.log('=== GET STUDENT REQUEST ===');
+    console.log('Student ID:', req.params.id);
+    console.log('User:', req.user);
+    
     const student = await User.findById(req.params.id)
       .select('-password')
       .populate('examProgress.examId', 'title examGroup order isActive');
 
+    console.log('Student found:', !!student);
+    console.log('Student role:', student?.role);
+
     if (!student || student.role !== 'student') {
+      console.log('Student not found or not a student');
       return res.status(404).json({
         success: false,
         message: 'Student not found'
@@ -66,15 +74,23 @@ const getStudent = async (req, res) => {
       }
     }
 
+    console.log('=== STUDENT DATA PREPARED ===');
+    console.log('Student exam progress count:', student.examProgress?.length || 0);
+    
     res.json({
       success: true,
       data: student
     });
   } catch (error) {
-    console.error('Get student error:', error);
+    console.error('=== GET STUDENT ERROR ===');
+    console.error('Error object:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    
     res.status(500).json({
       success: false,
-      message: 'Server error while fetching student'
+      message: 'Server error while fetching student',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
