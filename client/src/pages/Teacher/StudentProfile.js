@@ -781,7 +781,7 @@ const StudentProfile = () => {
                                     <div className="flex items-center justify-between text-xs">
                                       <span className="text-gray-500">تاريخ الإرسال:</span>
                                       <span className="font-medium text-green-600">
-                                        {new Date(progress.submittedAt).toLocaleDateString('ar-SA')}
+                                        {new Date(progress.submittedAt).toLocaleDateString('en-GB')}
                                       </span>
                                     </div>
                                   )}
@@ -789,9 +789,10 @@ const StudentProfile = () => {
                                     <div className="flex items-center justify-between text-xs">
                                       <span className="text-gray-500">وقت الإرسال:</span>
                                       <span className="font-medium text-purple-600">
-                                        {new Date(progress.submittedAt).toLocaleTimeString('ar-SA', { 
+                                        {new Date(progress.submittedAt).toLocaleTimeString('en-US', { 
                                           hour: '2-digit', 
-                                          minute: '2-digit' 
+                                          minute: '2-digit',
+                                          hour12: true
                                         })}
                                       </span>
                                     </div>
@@ -1029,12 +1030,13 @@ const StudentProfile = () => {
                             {progress && progress.submittedAt ? (
                               <div className="text-xs">
                                 <div className="font-medium text-gray-900">
-                                  {new Date(progress.submittedAt).toLocaleDateString('ar-SA')}
+                                  {new Date(progress.submittedAt).toLocaleDateString('en-GB')}
                 </div>
                                 <div className="text-gray-500">
-                                  {new Date(progress.submittedAt).toLocaleTimeString('ar-SA', { 
+                                  {new Date(progress.submittedAt).toLocaleTimeString('en-US', { 
                                     hour: '2-digit', 
-                                    minute: '2-digit' 
+                                    minute: '2-digit',
+                                    hour12: true
                                   })}
               </div>
             </div>
@@ -1144,7 +1146,7 @@ const StudentProfile = () => {
                               {progress && progress.submittedAt ? (
                                 <div className="text-xs">
                                   <div className="font-medium text-gray-900">
-                                    {new Date(progress.submittedAt).toLocaleDateString('ar-SA')}
+                                    {new Date(progress.submittedAt).toLocaleDateString('en-GB')}
                                   </div>
                                   <div className="text-gray-500">
                                     {new Date(progress.submittedAt).toLocaleTimeString('ar-SA', { 

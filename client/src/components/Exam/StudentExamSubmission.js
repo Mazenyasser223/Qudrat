@@ -432,13 +432,13 @@ const StudentExamSubmission = ({ studentId, studentName, examId, examTitle, onCl
               {startTime && (
                 <div className="flex items-center space-x-2 rtl:space-x-reverse text-sm text-gray-600">
                   <Clock className="w-4 h-4 text-blue-500" />
-                  <span>وقت البداية: {new Date(startTime).toLocaleString('ar-SA')}</span>
+                  <span>وقت البداية: {new Date(startTime).toLocaleString('en-US')}</span>
                 </div>
               )}
               {endTime && (
                 <div className="flex items-center space-x-2 rtl:space-x-reverse text-sm text-gray-600">
                   <Clock className="w-4 h-4 text-green-500" />
-                  <span>وقت الانتهاء: {new Date(endTime).toLocaleString('ar-SA')}</span>
+                  <span>وقت الانتهاء: {new Date(endTime).toLocaleString('en-US')}</span>
                 </div>
               )}
             </div>
