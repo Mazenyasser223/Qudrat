@@ -460,26 +460,60 @@ const toggleMultipleExams = async (req, res) => {
     
     console.log('Toggle multiple exams request:', { examIds, action, studentId: req.params.id });
 
-    if (!Array.isArray(examIds) || examIds.length === 0) {
+    // Validate request body
+    if (!examIds || !Array.isArray(examIds) || examIds.length === 0) {
+      console.error('Invalid examIds:', examIds);
       return res.status(400).json({
         success: false,
         message: 'Please provide exam IDs array'
       });
     }
 
-    if (!['lock', 'unlock'].includes(action)) {
+    if (!action || !['lock', 'unlock'].includes(action)) {
+      console.error('Invalid action:', action);
       return res.status(400).json({
         success: false,
         message: 'Action must be either "lock" or "unlock"'
       });
     }
 
+    // Validate student ID format
+    if (!req.params.id || req.params.id.length < 10) {
+      console.error('Invalid student ID:', req.params.id);
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid student ID format'
+      });
+    }
+
+    console.log('Looking for student with ID:', req.params.id);
     const student = await User.findById(req.params.id);
-    if (!student || student.role !== 'student') {
+    
+    if (!student) {
+      console.error('Student not found with ID:', req.params.id);
       return res.status(404).json({
         success: false,
         message: 'Student not found'
       });
+    }
+
+    if (student.role !== 'student') {
+      console.error('User is not a student:', student.role);
+      return res.status(400).json({
+        success: false,
+        message: 'User is not a student'
+      });
+    }
+
+    console.log('Student found:', { id: student._id, name: student.name, role: student.role });
+
+    // Test database connection
+    try {
+      await User.findOne({ _id: student._id });
+      console.log('Database connection test successful');
+    } catch (dbError) {
+      console.error('Database connection test failed:', dbError);
+      throw new Error('Database connection failed');
     }
 
     let updatedCount = 0;
@@ -532,10 +566,17 @@ const toggleMultipleExams = async (req, res) => {
       updatedCount
     });
   } catch (error) {
-    console.error('Toggle multiple exams error:', error);
+    console.error('=== TOGGLE MULTIPLE EXAMS ERROR ===');
+    console.error('Error object:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Request params:', req.params);
+    console.error('Request body:', req.body);
+    
     res.status(500).json({
       success: false,
-      message: 'Server error while toggling exams'
+      message: 'Server error while toggling exams',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };

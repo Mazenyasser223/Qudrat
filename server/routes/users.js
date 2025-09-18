@@ -187,7 +187,15 @@ router.put('/students/:id/toggle-exams', isTeacher, (req, res, next) => {
   console.log('Request params:', req.params);
   console.log('User:', req.user);
   next();
-}, toggleExamsValidation, toggleMultipleExams);
+}, (req, res, next) => {
+  console.log('=== VALIDATION MIDDLEWARE ===');
+  console.log('Validating request body:', req.body);
+  next();
+}, toggleExamsValidation, (req, res, next) => {
+  console.log('=== AFTER VALIDATION ===');
+  console.log('Validation passed, proceeding to controller');
+  next();
+}, toggleMultipleExams);
 
 // @route   PUT /api/users/students/:id/toggle-group
 // @desc    Lock/Unlock entire group for student
