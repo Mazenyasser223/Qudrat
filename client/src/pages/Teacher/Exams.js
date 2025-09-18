@@ -23,16 +23,6 @@ const Exams = () => {
   useEffect(() => {
     // Check backend health first
     checkBackendHealth();
-    
-    // Add timeout to prevent infinite loading
-    const timeout = setTimeout(() => {
-      if (loading) {
-        setLoading(false);
-        toast.error('انتهت مهلة التحميل، يرجى المحاولة مرة أخرى');
-      }
-    }, 30000); // 30 seconds timeout
-    
-    return () => clearTimeout(timeout);
   }, []);
 
   const checkBackendHealth = async () => {
