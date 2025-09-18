@@ -94,13 +94,47 @@ const EditExam = () => {
         questions: data.questions
       };
 
+      // Check backend health first
+      console.log('Checking backend health...');
+      try {
+        const healthResponse = await axios.get('/api/health', { timeout: 10000 });
+        console.log('Backend health check:', healthResponse.data);
+      } catch (healthError) {
+        console.error('Backend health check failed:', healthError.message);
+        toast.error('الخادم غير متاح حالياً، يرجى المحاولة لاحقاً');
+        setSubmitting(false);
+        return;
+      }
+      
       console.log('Sending exam data to backend...');
-      const response = await axios.put(`/api/exams/${examId}`, examData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        timeout: 30000, // 30 second timeout
-      });
+      
+      // Try the request with retry mechanism
+      let response;
+      let retryCount = 0;
+      const maxRetries = 2;
+      
+      while (retryCount <= maxRetries) {
+        try {
+          response = await axios.put(`/api/exams/${examId}`, examData, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            timeout: 60000, // Increased to 60 seconds
+          });
+          break; // Success, exit retry loop
+        } catch (error) {
+          retryCount++;
+          console.log(`Attempt ${retryCount} failed:`, error.message);
+          
+          if (retryCount > maxRetries) {
+            throw error; // Re-throw if all retries failed
+          }
+          
+          // Wait before retrying
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          console.log(`Retrying... (${retryCount}/${maxRetries})`);
+        }
+      }
       
       console.log('Exam update response:', response.data);
       toast.success('تم تحديث الامتحان بنجاح');

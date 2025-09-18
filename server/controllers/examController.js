@@ -187,6 +187,9 @@ const updateExam = async (req, res) => {
     }
 
     // Questions already contain Base64 image data, no need to map files
+    console.log('Processing questions with images...');
+    console.log('Questions count:', parsedQuestions.length);
+    
     const questionsWithImages = parsedQuestions.map((question) => {
       return {
         ...question,
@@ -194,7 +197,8 @@ const updateExam = async (req, res) => {
       };
     });
 
-    // Update exam
+    console.log('Starting database update...');
+    // Update exam with timeout
     const updatedExam = await Exam.findByIdAndUpdate(
       req.params.id,
       { 
@@ -207,7 +211,11 @@ const updateExam = async (req, res) => {
         totalQuestions: questionsWithImages.length,
         isActive 
       },
-      { new: true, runValidators: true }
+      { 
+        new: true, 
+        runValidators: true,
+        maxTimeMS: 30000 // 30 second timeout for database operation
+      }
     );
 
     console.log('=== EXAM UPDATE SUCCESS ===');
