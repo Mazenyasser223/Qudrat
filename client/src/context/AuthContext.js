@@ -1,16 +1,22 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { safeLocalStorage } from '../utils/storage';
 
 // Configure axios base URL
 axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const AuthContext = createContext();
 
+// Safe localStorage getter with error handling
+const getStoredToken = () => {
+  return safeLocalStorage.getItem('token');
+};
+
 const initialState = {
   user: null,
-  token: localStorage.getItem('token'),
-  isAuthenticated: !!localStorage.getItem('token'),
+  token: getStoredToken(),
+  isAuthenticated: !!getStoredToken(),
   loading: true,
   error: null
 };
@@ -101,7 +107,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Load user error:', error);
       dispatch({ type: 'AUTH_FAIL', payload: null });
-      localStorage.removeItem('token');
+      safeLocalStorage.removeItem('token');
     }
   };
 
@@ -111,7 +117,7 @@ export const AuthProvider = ({ children }) => {
       const res = await axios.post('/api/auth/login', { email, password });
       
       const { token, user } = res.data;
-      localStorage.setItem('token', token);
+      safeLocalStorage.setItem('token', token);
       
       dispatch({
         type: 'AUTH_SUCCESS',
@@ -134,7 +140,7 @@ export const AuthProvider = ({ children }) => {
       const res = await axios.post('/api/auth/register', { name, email, password });
       
       const { token, user } = res.data;
-      localStorage.setItem('token', token);
+      safeLocalStorage.setItem('token', token);
       
       dispatch({
         type: 'AUTH_SUCCESS',
@@ -152,7 +158,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    try {
+        localStorage.removeItem('token');
+      } catch (error) {
+        console.warn('Error removing token from localStorage:', error);
+      }
     dispatch({ type: 'LOGOUT' });
     toast.success('تم تسجيل الخروج بنجاح');
   };

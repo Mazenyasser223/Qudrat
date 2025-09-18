@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { SocketProvider } from './contexts/SocketContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Pages
 import Home from './pages/Home';
@@ -41,10 +42,11 @@ const Unauthorized = () => (
 
 function App() {
   return (
-    <AuthProvider>
-      <SocketProvider>
-        <Router>
-          <div className="App">
+    <ErrorBoundary>
+      <AuthProvider>
+        <SocketProvider>
+          <Router>
+            <div className="App">
             <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
@@ -184,6 +186,7 @@ function App() {
         </Router>
       </SocketProvider>
     </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
