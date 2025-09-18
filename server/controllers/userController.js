@@ -550,6 +550,22 @@ const toggleMultipleExams = async (req, res) => {
     const newStatus = action === 'lock' ? 'locked' : 'unlocked';
     
     console.log('Student exam progress before update:', student.examProgress.map(p => ({ examId: p.examId, status: p.status })));
+    console.log('Student exam progress length:', student.examProgress.length);
+
+    // If student has no exam progress, initialize it first
+    if (student.examProgress.length === 0) {
+      console.log('Student has no exam progress, initializing...');
+      const Exam = require('../models/Exam');
+      const allExams = await Exam.find({ isActive: true }).sort({ examGroup: 1, order: 1 });
+      const examProgress = allExams.map((exam, index) => ({
+        examGroup: exam.examGroup,
+        examId: exam._id,
+        status: index === 0 ? 'unlocked' : 'locked' // First exam is unlocked
+      }));
+      student.examProgress = examProgress;
+      await student.save();
+      console.log('Student exam progress initialized with', examProgress.length, 'entries');
+    }
 
     // Fetch exam data to get examGroup for new progress entries
     const Exam = require('../models/Exam');
@@ -560,15 +576,17 @@ const toggleMultipleExams = async (req, res) => {
     });
 
     for (const examId of examIds) {
+      console.log(`Processing exam ${examId} for action ${action}`);
       const examProgress = student.examProgress.find(
         progress => progress.examId.toString() === examId
       );
 
       if (examProgress) {
-        console.log(`Updating exam ${examId} from ${examProgress.status} to ${newStatus}`);
+        console.log(`Found existing progress for exam ${examId}: ${examProgress.status} -> ${newStatus}`);
         examProgress.status = newStatus;
         updatedCount++;
       } else {
+        console.log(`No existing progress found for exam ${examId}`);
         // If no progress exists and we're unlocking, create a new progress entry
         if (action === 'unlock') {
           const examGroup = examGroupMap[examId];
@@ -601,6 +619,10 @@ const toggleMultipleExams = async (req, res) => {
     if (updatedCount > 0) {
       await student.save();
       console.log('Student saved successfully');
+      
+      // Verify the changes were applied
+      const updatedStudent = await User.findById(student._id);
+      console.log('Student exam progress after update:', updatedStudent.examProgress.map(p => ({ examId: p.examId, status: p.status })));
     }
 
     console.log('Toggle multiple exams result:', { updatedCount, newStatus });
