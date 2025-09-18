@@ -346,11 +346,6 @@ const CreateExam = () => {
                     min: { value: 1, message: 'الترتيب يجب أن يكون 1 أو أكثر' }
                   })}
                 />
-                {existingExams.length > 0 && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    💡 التالي المتاح للمجموعة {watchedGroup}: {getNextAvailableOrder(watchedGroup)}
-                  </p>
-                )}
                 {errors.order && (
                   <p className="error-message">{errors.order.message}</p>
                 )}
