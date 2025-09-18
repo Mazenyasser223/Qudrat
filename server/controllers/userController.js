@@ -155,9 +155,19 @@ const createStudent = async (req, res) => {
     
     if (existingUser) {
       console.error('User already exists:', { email, phoneNumber, existingUser: existingUser._id });
+      
+      // Check which field is duplicated for more specific error message
+      let duplicateField = '';
+      if (existingUser.email === email) {
+        duplicateField = 'البريد الإلكتروني';
+      } else if (existingUser.phoneNumber === phoneNumber) {
+        duplicateField = 'رقم الجوال';
+      }
+      
       return res.status(400).json({
         success: false,
-        message: 'User already exists with this email or phone number'
+        message: `يوجد طالب مسجل بالفعل بهذا ${duplicateField}`,
+        duplicateField: duplicateField
       });
     }
 

@@ -101,6 +101,38 @@ const Students = () => {
       // Handle validation errors
       if (error.response?.data?.errors) {
         setValidationErrors(error.response.data.errors);
+      } else if (error.response?.data?.message && error.response.data.message.includes('يوجد طالب مسجل بالفعل')) {
+        // Handle duplicate user error specifically
+        const errorMessage = error.response.data.message;
+        toast.error(errorMessage);
+        
+        // Set validation error on the appropriate field
+        const duplicateField = error.response.data.duplicateField;
+        if (duplicateField === 'البريد الإلكتروني') {
+          setValidationErrors([{
+            field: 'email',
+            message: errorMessage
+          }]);
+        } else if (duplicateField === 'رقم الجوال') {
+          setValidationErrors([{
+            field: 'phoneNumber',
+            message: errorMessage
+          }]);
+        } else {
+          setValidationErrors([{
+            field: 'email',
+            message: errorMessage
+          }]);
+        }
+        
+        // Clear the form fields that have duplicates and show helpful message
+        if (duplicateField === 'البريد الإلكتروني') {
+          reset({ email: '' });
+          toast.info('يرجى استخدام بريد إلكتروني مختلف');
+        } else if (duplicateField === 'رقم الجوال') {
+          reset({ phoneNumber: '' });
+          toast.info('يرجى استخدام رقم جوال مختلف');
+        }
       } else {
         toast.error(error.response?.data?.message || 'حدث خطأ أثناء إنشاء الطالب');
       }
