@@ -72,11 +72,15 @@ const EditExam = () => {
   const onSubmit = async (data) => {
     try {
       setSubmitting(true);
+      console.log('=== UPDATING EXAM ===');
+      console.log('Exam ID:', examId);
+      console.log('Exam data:', data);
       
       // Validate that all questions have correct answers
       const invalidQuestions = data.questions.filter(q => !q.correctAnswer || !['A', 'B', 'C', 'D'].includes(q.correctAnswer));
       if (invalidQuestions.length > 0) {
         toast.error('يرجى تحديد الإجابة الصحيحة لجميع الأسئلة');
+        setSubmitting(false);
         return;
       }
       
@@ -90,19 +94,45 @@ const EditExam = () => {
         questions: data.questions
       };
 
-      await axios.put(`/api/exams/${examId}`, examData, {
+      console.log('Sending exam data to backend...');
+      const response = await axios.put(`/api/exams/${examId}`, examData, {
         headers: {
           'Content-Type': 'application/json',
         },
+        timeout: 30000, // 30 second timeout
       });
       
+      console.log('Exam update response:', response.data);
       toast.success('تم تحديث الامتحان بنجاح');
-      navigate('/teacher/exams');
-    } catch (error) {
-      console.error('Error updating exam:', error);
       
-      // Handle validation errors
-      if (error.response?.data?.errors) {
+      // Small delay to ensure the success message is seen
+      setTimeout(() => {
+        navigate('/teacher/exams');
+      }, 1000);
+      
+    } catch (error) {
+      console.error('=== EXAM UPDATE ERROR ===');
+      console.error('Error object:', error);
+      console.error('Error message:', error.message);
+      console.error('Error response:', error.response);
+      
+      // Handle timeout errors
+      if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+        toast.error('انتهت مهلة التحميل، يرجى المحاولة مرة أخرى');
+      } else if (error.response?.status === 404) {
+        toast.error('الامتحان غير موجود');
+      } else if (error.response?.status === 401) {
+        toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
+        localStorage.removeItem('token');
+        navigate('/login');
+      } else if (error.response?.status === 403) {
+        toast.error('ليس لديك صلاحية لتعديل هذا الامتحان');
+      } else if (error.response?.status >= 500) {
+        toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
+      } else if (!error.response) {
+        toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
+      } else if (error.response?.data?.errors) {
+        // Handle validation errors
         const validationErrors = error.response.data.errors;
         const errorMessages = validationErrors.map(err => err.msg).join(', ');
         toast.error(`خطأ في التحقق: ${errorMessages}`);

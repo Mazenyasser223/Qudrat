@@ -132,8 +132,14 @@ const createExam = async (req, res) => {
 // @access  Private (Teacher only)
 const updateExam = async (req, res) => {
   try {
+    console.log('=== UPDATE EXAM REQUEST ===');
+    console.log('Exam ID:', req.params.id);
+    console.log('Request body keys:', Object.keys(req.body));
+    console.log('Questions count:', req.body.questions?.length);
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('Validation errors:', errors.array());
       return res.status(400).json({
         success: false,
         message: 'Validation errors',
@@ -204,16 +210,26 @@ const updateExam = async (req, res) => {
       { new: true, runValidators: true }
     );
 
+    console.log('=== EXAM UPDATE SUCCESS ===');
+    console.log('Updated exam ID:', updatedExam._id);
+    console.log('Updated exam title:', updatedExam.title);
+    console.log('Questions count:', updatedExam.questions.length);
+    
     res.json({
       success: true,
       message: 'Exam updated successfully',
       data: updatedExam
     });
   } catch (error) {
-    console.error('Update exam error:', error);
+    console.error('=== UPDATE EXAM ERROR ===');
+    console.error('Error object:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    
     res.status(500).json({
       success: false,
-      message: 'Server error while updating exam'
+      message: 'Server error while updating exam',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
