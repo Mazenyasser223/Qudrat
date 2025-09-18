@@ -440,9 +440,9 @@ const EditExam = () => {
                               alt={`Question ${index + 1}`}
                               className="w-full h-auto rounded-lg border bg-white shadow-sm"
                               style={{
-                                maxHeight: '500px',
+                                maxHeight: '800px',
                                 objectFit: 'contain',
-                                minHeight: '200px'
+                                minHeight: '400px'
                               }}
                             />
                           </div>
