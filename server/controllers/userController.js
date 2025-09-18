@@ -556,12 +556,25 @@ const toggleMultipleExams = async (req, res) => {
     if (student.examProgress.length === 0) {
       console.log('Student has no exam progress, initializing...');
       const Exam = require('../models/Exam');
-      const allExams = await Exam.find({ isActive: true }).sort({ examGroup: 1, order: 1 });
+      
+      // Fetch exams without sorting to avoid memory limit issues
+      // We'll sort them in memory instead
+      const allExams = await Exam.find({ isActive: true }).select('_id examGroup order');
+      
+      // Sort in memory to avoid MongoDB memory limit
+      allExams.sort((a, b) => {
+        if (a.examGroup !== b.examGroup) {
+          return a.examGroup - b.examGroup;
+        }
+        return a.order - b.order;
+      });
+      
       const examProgress = allExams.map((exam, index) => ({
         examGroup: exam.examGroup,
         examId: exam._id,
         status: index === 0 ? 'unlocked' : 'locked' // First exam is unlocked
       }));
+      
       student.examProgress = examProgress;
       await student.save();
       console.log('Student exam progress initialized with', examProgress.length, 'entries');
