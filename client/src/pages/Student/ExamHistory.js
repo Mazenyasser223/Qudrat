@@ -221,13 +221,22 @@ const ExamHistory = () => {
                 <span className="text-sm text-gray-600">الدرجة:</span>
                 <span className="text-sm font-medium">{studentSubmission.score}/{exam.totalQuestions}</span>
               </div>
-              {studentSubmission.bestReviewScore && (
-                <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                  <TrendingUp className="h-4 w-4 text-orange-500" />
-                  <span className="text-sm text-gray-600">أفضل درجة في المراجعة:</span>
-                  <span className="text-sm font-medium text-orange-600">{studentSubmission.bestReviewScore}%</span>
-                </div>
-              )}
+              {(() => {
+                // Debug: log the bestReviewScore value
+                console.log('Best Review Score Debug:', {
+                  bestReviewScore: studentSubmission.bestReviewScore,
+                  type: typeof studentSubmission.bestReviewScore,
+                  studentSubmission: studentSubmission
+                });
+                
+                return studentSubmission.bestReviewScore && studentSubmission.bestReviewScore > 0 ? (
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                    <TrendingUp className="h-4 w-4 text-orange-500" />
+                    <span className="text-sm text-gray-600">أفضل درجة في المراجعة:</span>
+                    <span className="text-sm font-medium text-orange-600">{studentSubmission.bestReviewScore}%</span>
+                  </div>
+                ) : null;
+              })()}
             </div>
           </div>
         </div>

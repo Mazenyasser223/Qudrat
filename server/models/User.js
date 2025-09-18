@@ -95,6 +95,25 @@ const userSchema = new mongoose.Schema({
     reviewExamId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'ReviewExam'
+    },
+    bestReviewScore: {
+      type: Number,
+      default: 0
+    },
+    timeSpent: {
+      type: Number,
+      default: 0
+    },
+    submittedAt: {
+      type: Date
+    },
+    correctAnswers: {
+      type: Number,
+      default: 0
+    },
+    wrongAnswers: {
+      type: Number,
+      default: 0
     }
   }],
   totalScore: {

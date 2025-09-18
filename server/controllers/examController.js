@@ -1013,6 +1013,21 @@ const getMySubmission = async (req, res) => {
       });
     }
 
+    // Populate bestReviewScore from ReviewExam if available
+    let bestReviewScore = 0;
+    if (examProgress.reviewExamId) {
+      try {
+        const ReviewExam = require('../models/ReviewExam');
+        const reviewExam = await ReviewExam.findById(examProgress.reviewExamId);
+        if (reviewExam) {
+          bestReviewScore = reviewExam.bestPercentage || 0;
+        }
+      } catch (error) {
+        console.error('Error fetching review exam for bestReviewScore:', error);
+        bestReviewScore = 0;
+      }
+    }
+
     res.json({
       success: true,
       data: {
@@ -1026,7 +1041,7 @@ const getMySubmission = async (req, res) => {
         completedAt: examProgress.completedAt,
         submittedAt: examProgress.submittedAt,
         answers: examProgress.answers,
-        bestReviewScore: examProgress.bestReviewScore
+        bestReviewScore: bestReviewScore
       }
     });
   } catch (error) {
