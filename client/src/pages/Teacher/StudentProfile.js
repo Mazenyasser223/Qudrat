@@ -44,14 +44,27 @@ const StudentProfile = () => {
   useEffect(() => {
     console.log('=== STUDENT PROFILE MOUNTED ===');
     console.log('Student ID from URL:', studentId);
+    console.log('Student ID type:', typeof studentId);
+    console.log('Student ID length:', studentId?.length);
+    console.log('Current URL:', window.location.href);
+    
+    // Validate student ID format
+    if (!studentId || studentId.length < 10) {
+      console.error('Invalid student ID format:', studentId);
+      toast.error('معرف الطالب غير صحيح');
+      navigate('/teacher/students');
+      return;
+    }
     
     const loadData = async () => {
       try {
         setLoading(true);
+        console.log('Starting to load data for student:', studentId);
         await Promise.all([
           fetchStudentData(),
           fetchExams()
         ]);
+        console.log('Data loading completed successfully');
       } catch (error) {
         console.error('Error loading initial data:', error);
         toast.error('حدث خطأ أثناء تحميل البيانات');

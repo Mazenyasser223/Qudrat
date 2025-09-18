@@ -7,9 +7,16 @@ const { validationResult } = require('express-validator');
 // @access  Private (Teacher only)
 const getStudents = async (req, res) => {
   try {
+    console.log('=== GET STUDENTS REQUEST ===');
+    console.log('User:', req.user);
+    console.log('User role:', req.user?.role);
+    
     const students = await User.find({ role: 'student' })
       .select('-password')
       .sort({ createdAt: -1 });
+
+    console.log('Found students:', students.length);
+    console.log('Student IDs:', students.map(s => ({ id: s._id, name: s.name, email: s.email })));
 
     res.json({
       success: true,
@@ -32,17 +39,41 @@ const getStudent = async (req, res) => {
   try {
     console.log('=== GET STUDENT REQUEST ===');
     console.log('Student ID:', req.params.id);
+    console.log('Student ID type:', typeof req.params.id);
+    console.log('Student ID length:', req.params.id?.length);
     console.log('User:', req.user);
+    console.log('User role:', req.user?.role);
+    console.log('User ID:', req.user?.id);
     
+    // Validate student ID format
+    if (!req.params.id || req.params.id.length < 10) {
+      console.log('Invalid student ID format');
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid student ID format'
+      });
+    }
+    
+    console.log('Searching for student with ID:', req.params.id);
     const student = await User.findById(req.params.id)
       .select('-password')
       .populate('examProgress.examId', 'title examGroup order isActive');
 
     console.log('Student found:', !!student);
     console.log('Student role:', student?.role);
+    console.log('Student name:', student?.name);
+    console.log('Student email:', student?.email);
 
-    if (!student || student.role !== 'student') {
-      console.log('Student not found or not a student');
+    if (!student) {
+      console.log('Student not found in database');
+      return res.status(404).json({
+        success: false,
+        message: 'Student not found'
+      });
+    }
+    
+    if (student.role !== 'student') {
+      console.log('User found but not a student, role:', student.role);
       return res.status(404).json({
         success: false,
         message: 'Student not found'
