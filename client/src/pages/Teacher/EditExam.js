@@ -11,6 +11,7 @@ const EditExam = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [exam, setExam] = useState(null);
+  const [cancelRequest, setCancelRequest] = useState(false);
 
   const {
     register,
@@ -69,6 +70,13 @@ const EditExam = () => {
     fetchExam();
   }, [fetchExam]);
 
+  // Cleanup function
+  useEffect(() => {
+    return () => {
+      setCancelRequest(false);
+    };
+  }, []);
+
   const onSubmit = async (data) => {
     try {
       setSubmitting(true);
@@ -111,15 +119,23 @@ const EditExam = () => {
       // Try the request with retry mechanism
       let response;
       let retryCount = 0;
-      const maxRetries = 2;
+      const maxRetries = 1; // Reduced to 1 retry to prevent getting stuck
       
       while (retryCount <= maxRetries) {
+        // Check if user wants to cancel
+        if (cancelRequest) {
+          console.log('Operation cancelled by user');
+          setSubmitting(false);
+          setCancelRequest(false);
+          return;
+        }
+        
         try {
           response = await axios.put(`/api/exams/${examId}`, examData, {
             headers: {
               'Content-Type': 'application/json',
             },
-            timeout: 60000, // Increased to 60 seconds
+            timeout: 30000, // Reduced back to 30 seconds
           });
           break; // Success, exit retry loop
         } catch (error) {
@@ -131,7 +147,7 @@ const EditExam = () => {
           }
           
           // Wait before retrying
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, 3000));
           console.log(`Retrying... (${retryCount}/${maxRetries})`);
         }
       }
@@ -445,30 +461,42 @@ const EditExam = () => {
 
         {/* Submit Button */}
         <div className="flex justify-end space-x-4 rtl:space-x-reverse">
-          <button
-            type="button"
-            onClick={() => navigate('/teacher/exams')}
-            className="btn-secondary"
-          >
-            إلغاء
-          </button>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="btn-primary flex items-center space-x-2 rtl:space-x-reverse"
-          >
-            {submitting ? (
-              <>
+          {submitting ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setCancelRequest(true)}
+                className="btn-secondary bg-red-500 hover:bg-red-600 text-white"
+              >
+                إلغاء العملية
+              </button>
+              <button
+                type="button"
+                disabled
+                className="btn-primary flex items-center space-x-2 rtl:space-x-reverse opacity-50"
+              >
                 <div className="spinner"></div>
                 <span>جاري الحفظ...</span>
-              </>
-            ) : (
-              <>
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => navigate('/teacher/exams')}
+                className="btn-secondary"
+              >
+                إلغاء
+              </button>
+              <button
+                type="submit"
+                className="btn-primary flex items-center space-x-2 rtl:space-x-reverse"
+              >
                 <Save className="h-4 w-4" />
                 <span>حفظ التغييرات</span>
-              </>
-            )}
-          </button>
+              </button>
+            </>
+          )}
         </div>
       </form>
     </div>
