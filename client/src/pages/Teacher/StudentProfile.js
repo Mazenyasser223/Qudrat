@@ -1296,16 +1296,21 @@ const StudentProfile = () => {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => {
-                      const filteredExams = exams.filter((exam) => {
+                      const examsWithStatus = exams.map(exam => {
                         const progress = studentProgress.find(p => p.examId === exam._id);
-                        const examStatus = progress ? progress.status : 'locked';
-                        
+                        return {
+                          ...exam,
+                          status: progress ? progress.status : 'locked'
+                        };
+                      });
+                      
+                      const filteredExams = examsWithStatus.filter(exam => {
                         if (lockUnlockAction === 'unlock') {
-                          return examStatus === 'locked';
+                          return exam.status === 'locked';
                         } else if (lockUnlockAction === 'lock') {
-                          return examStatus === 'unlocked';
+                          return exam.status === 'unlocked';
                         }
-                        return true;
+                        return false;
                       });
                       
                       if (selectedExams.length === filteredExams.length) {
@@ -1315,32 +1320,50 @@ const StudentProfile = () => {
                       }
                     }}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedExams.length === exams.filter((exam) => {
-                        const progress = studentProgress.find(p => p.examId === exam._id);
-                        const examStatus = progress ? progress.status : 'locked';
+                      (() => {
+                        const examsWithStatus = exams.map(exam => {
+                          const progress = studentProgress.find(p => p.examId === exam._id);
+                          return {
+                            ...exam,
+                            status: progress ? progress.status : 'locked'
+                          };
+                        });
                         
-                        if (lockUnlockAction === 'unlock') {
-                          return examStatus === 'locked';
-                        } else if (lockUnlockAction === 'lock') {
-                          return examStatus === 'unlocked';
-                        }
-                        return true;
-                      }).length
+                        const filteredExams = examsWithStatus.filter(exam => {
+                          if (lockUnlockAction === 'unlock') {
+                            return exam.status === 'locked';
+                          } else if (lockUnlockAction === 'lock') {
+                            return exam.status === 'unlocked';
+                          }
+                          return false;
+                        });
+                        
+                        return selectedExams.length === filteredExams.length;
+                      })()
                         ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                     }`}
                   >
-                    {selectedExams.length === exams.filter((exam) => {
-                      const progress = studentProgress.find(p => p.examId === exam._id);
-                      const examStatus = progress ? progress.status : 'locked';
+                    {(() => {
+                      const examsWithStatus = exams.map(exam => {
+                        const progress = studentProgress.find(p => p.examId === exam._id);
+                        return {
+                          ...exam,
+                          status: progress ? progress.status : 'locked'
+                        };
+                      });
                       
-                      if (lockUnlockAction === 'unlock') {
-                        return examStatus === 'locked';
-                      } else if (lockUnlockAction === 'lock') {
-                        return examStatus === 'unlocked';
-                      }
-                      return true;
-                    }).length ? 'إلغاء الكل' : 'تحديد الكل'}
+                      const filteredExams = examsWithStatus.filter(exam => {
+                        if (lockUnlockAction === 'unlock') {
+                          return exam.status === 'locked';
+                        } else if (lockUnlockAction === 'lock') {
+                          return exam.status === 'unlocked';
+                        }
+                        return false;
+                      });
+                      
+                      return selectedExams.length === filteredExams.length ? 'إلغاء الكل' : 'تحديد الكل';
+                    })()}
                   </button>
                   
                   {/* Select by Group */}
@@ -1358,7 +1381,7 @@ const StudentProfile = () => {
                       } else if (lockUnlockAction === 'lock') {
                         return examStatus === 'unlocked';
                       }
-                      return true;
+                      return false;
                     });
                     
                     const groupSelected = groupExams.filter(exam => selectedExams.includes(exam._id));
@@ -1401,17 +1424,26 @@ const StudentProfile = () => {
                 {/* Selection Summary */}
                 <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
                   <div className="flex items-center justify-between">
-                    <span>تم تحديد: {selectedExams.length} من {exams.filter((exam) => {
-                      const progress = studentProgress.find(p => p.examId === exam._id);
-                      const examStatus = progress ? progress.status : 'locked';
+                    <span>تم تحديد: {selectedExams.length} من {(() => {
+                      const examsWithStatus = exams.map(exam => {
+                        const progress = studentProgress.find(p => p.examId === exam._id);
+                        return {
+                          ...exam,
+                          status: progress ? progress.status : 'locked'
+                        };
+                      });
                       
-                      if (lockUnlockAction === 'unlock') {
-                        return examStatus === 'locked';
-                      } else if (lockUnlockAction === 'lock') {
-                        return examStatus === 'unlocked';
-                      }
-                      return true;
-                    }).length} اختبار</span>
+                      const filteredExams = examsWithStatus.filter(exam => {
+                        if (lockUnlockAction === 'unlock') {
+                          return exam.status === 'locked';
+                        } else if (lockUnlockAction === 'lock') {
+                          return exam.status === 'unlocked';
+                        }
+                        return false;
+                      });
+                      
+                      return filteredExams.length;
+                    })()} اختبار</span>
                     {selectedExams.length > 0 && (
                       <button
                         onClick={() => setSelectedExams([])}
@@ -1426,32 +1458,33 @@ const StudentProfile = () => {
               
               <div className="max-h-96 overflow-y-auto space-y-3">
                 {(() => {
-                  const filteredExams = exams.filter((exam) => {
+                  // Get all exams with their status
+                  const examsWithStatus = exams.map(exam => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
-                    const examStatus = progress ? progress.status : 'locked';
-                    
-                    // Filter logic: 
-                    // For 'unlock' action: only show locked exams (so we can unlock them)
-                    // For 'lock' action: only show unlocked exams (so we can lock them)
+                    return {
+                      ...exam,
+                      status: progress ? progress.status : 'locked'
+                    };
+                  });
+                  
+                  // Filter based on modal action
+                  const filteredExams = examsWithStatus.filter(exam => {
                     if (lockUnlockAction === 'unlock') {
-                      return examStatus === 'locked';
+                      return exam.status === 'locked';
                     } else if (lockUnlockAction === 'lock') {
-                      return examStatus === 'unlocked';
+                      return exam.status === 'unlocked';
                     }
-                    return true; // fallback
+                    return false;
                   });
                   
-                  console.log('Modal filtering summary:', {
-                    totalExams: exams.length,
-                    filteredExams: filteredExams.length,
-                    lockUnlockAction: lockUnlockAction,
-                    actionDescription: lockUnlockAction === 'unlock' ? 'فتح الاختبارات (should show locked)' : 'قفل الاختبارات (should show unlocked)',
-                    filteredExamIds: filteredExams.map(e => e._id)
-                  });
+                  console.log('=== MODAL FILTERING DEBUG ===');
+                  console.log('Modal Action:', lockUnlockAction);
+                  console.log('Total Exams:', exams.length);
+                  console.log('Filtered Exams:', filteredExams.length);
+                  console.log('Should Show:', lockUnlockAction === 'unlock' ? 'Locked Exams' : 'Unlocked Exams');
                   
-                  // If no filtered exams, show empty message
+                  // Show empty state if no exams match
                   if (filteredExams.length === 0) {
-                    console.log('No exams to show in modal - showing empty message');
                     return (
                       <div className="text-center py-8">
                         <BookOpen className="mx-auto h-12 w-12 text-gray-400" />
@@ -1465,6 +1498,7 @@ const StudentProfile = () => {
                     );
                   }
                   
+                  // Render filtered exams
                   return filteredExams.map((exam) => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
                     const examStatus = progress ? progress.status : 'locked';
