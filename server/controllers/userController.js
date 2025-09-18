@@ -521,6 +521,14 @@ const toggleMultipleExams = async (req, res) => {
     
     console.log('Student exam progress before update:', student.examProgress.map(p => ({ examId: p.examId, status: p.status })));
 
+    // Fetch exam data to get examGroup for new progress entries
+    const Exam = require('../models/Exam');
+    const exams = await Exam.find({ _id: { $in: examIds } }).select('_id examGroup');
+    const examGroupMap = {};
+    exams.forEach(exam => {
+      examGroupMap[exam._id.toString()] = exam.examGroup;
+    });
+
     for (const examId of examIds) {
       const examProgress = student.examProgress.find(
         progress => progress.examId.toString() === examId
@@ -533,8 +541,15 @@ const toggleMultipleExams = async (req, res) => {
       } else {
         // If no progress exists and we're unlocking, create a new progress entry
         if (action === 'unlock') {
-          console.log(`Creating new progress entry for exam ${examId} with status ${newStatus}`);
+          const examGroup = examGroupMap[examId];
+          if (!examGroup) {
+            console.error(`Exam group not found for exam ${examId}`);
+            continue;
+          }
+          
+          console.log(`Creating new progress entry for exam ${examId} with status ${newStatus} and group ${examGroup}`);
           student.examProgress.push({
+            examGroup: examGroup,
             examId: examId,
             status: newStatus,
             percentage: 0,
