@@ -1425,33 +1425,47 @@ const StudentProfile = () => {
               </div>
               
               <div className="max-h-96 overflow-y-auto space-y-3">
-                {exams.length > 0 ? (
-                  (() => {
-                    const filteredExams = exams.filter((exam) => {
-                      const progress = studentProgress.find(p => p.examId === exam._id);
-                      const examStatus = progress ? progress.status : 'locked';
-                      
-                      // Filter logic: 
-                      // For 'unlock' action: only show locked exams (so we can unlock them)
-                      // For 'lock' action: only show unlocked exams (so we can lock them)
-                      if (lockUnlockAction === 'unlock') {
-                        return examStatus === 'locked';
-                      } else if (lockUnlockAction === 'lock') {
-                        return examStatus === 'unlocked';
-                      }
-                      return true; // fallback
-                    });
+                {(() => {
+                  const filteredExams = exams.filter((exam) => {
+                    const progress = studentProgress.find(p => p.examId === exam._id);
+                    const examStatus = progress ? progress.status : 'locked';
                     
-                    console.log('Modal filtering summary:', {
-                      totalExams: exams.length,
-                      filteredExams: filteredExams.length,
-                      lockUnlockAction: lockUnlockAction,
-                      actionDescription: lockUnlockAction === 'unlock' ? 'فتح الاختبارات (should show locked)' : 'قفل الاختبارات (should show unlocked)'
-                    });
-                    
-                    return filteredExams;
-                  })()
-                    .map((exam) => {
+                    // Filter logic: 
+                    // For 'unlock' action: only show locked exams (so we can unlock them)
+                    // For 'lock' action: only show unlocked exams (so we can lock them)
+                    if (lockUnlockAction === 'unlock') {
+                      return examStatus === 'locked';
+                    } else if (lockUnlockAction === 'lock') {
+                      return examStatus === 'unlocked';
+                    }
+                    return true; // fallback
+                  });
+                  
+                  console.log('Modal filtering summary:', {
+                    totalExams: exams.length,
+                    filteredExams: filteredExams.length,
+                    lockUnlockAction: lockUnlockAction,
+                    actionDescription: lockUnlockAction === 'unlock' ? 'فتح الاختبارات (should show locked)' : 'قفل الاختبارات (should show unlocked)',
+                    filteredExamIds: filteredExams.map(e => e._id)
+                  });
+                  
+                  // If no filtered exams, show empty message
+                  if (filteredExams.length === 0) {
+                    console.log('No exams to show in modal - showing empty message');
+                    return (
+                      <div className="text-center py-8">
+                        <BookOpen className="mx-auto h-12 w-12 text-gray-400" />
+                        <p className="text-gray-500 mt-2">
+                          {lockUnlockAction === 'unlock' 
+                            ? 'لا توجد اختبارات مقفلة لفتحها' 
+                            : 'لا توجد اختبارات مفتوحة لقفلها'
+                          }
+                        </p>
+                      </div>
+                    );
+                  }
+                  
+                  return filteredExams.map((exam) => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
                     const examStatus = progress ? progress.status : 'locked';
                     
@@ -1492,7 +1506,7 @@ const StudentProfile = () => {
                       />
                       <div className="flex-1">
                           <div className="flex items-center justify-between">
-                        <div className="text-sm font-medium text-gray-900">{exam.title}</div>
+                        <div className="text-sm font-medium text-gray-900">{exam.title.replace(/ - /g, ' ')}</div>
                             <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                               examStatus === 'completed' 
                                 ? 'bg-green-100 text-green-800'
@@ -1516,13 +1530,8 @@ const StudentProfile = () => {
                       </div>
                     </label>
                     );
-                  })
-                ) : (
-                  <div className="text-center py-8">
-                    <BookOpen className="mx-auto h-12 w-12 text-gray-400" />
-                    <p className="text-gray-500 mt-2">لا توجد اختبارات متاحة</p>
-                  </div>
-                )}
+                  });
+                })()}
               </div>
             </div>
             {/* Fixed Footer with Buttons */}
