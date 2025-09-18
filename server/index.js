@@ -87,7 +87,8 @@ app.get('/api/health', (req, res) => {
   res.json({
     success: true,
     message: 'Qudrat Educational Platform API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    version: '1.0.1'
   });
 });
 
