@@ -716,7 +716,7 @@ const StudentProfile = () => {
                           avgScore >= 60 ? 'bg-blue-100 text-blue-700' :
                           'bg-orange-100 text-orange-700'
                         }`}>
-                          {avgScore}%
+                          {avgScore.toFixed(2)}%
                         </div>
                       )}
                     </div>
@@ -977,7 +977,7 @@ const StudentProfile = () => {
                                 <span className="font-semibold text-blue-700">اختبارات التأسيس</span>
                                 {cumulativeData.completedExams > 0 && (
                                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    {cumulativeData.cumulativePercentage}%
+                                    {cumulativeData.cumulativePercentage.toFixed(2)}%
                   </span>
                                 )}
                 </div>
@@ -992,7 +992,7 @@ const StudentProfile = () => {
                             {progress ? `${progress.score || 0}/${progress.totalQuestions || exam.totalQuestions || 0}` : '-'}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
-                            {progress ? `${progress.percentage || 0}%` : '-'}
+                            {progress ? `${(progress.percentage || 0).toFixed(2)}%` : '-'}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                             {isFirstInGroup && cumulativeData.completedExams > 0 ? `${cumulativeData.cumulativePercentage}%` : '-'}
@@ -1043,7 +1043,7 @@ const StudentProfile = () => {
                           <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                             {progress && progress.bestReviewScore ? (
                               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                                {progress.bestReviewScore}%
+                                {progress.bestReviewScore.toFixed(2)}%
                               </span>
                             ) : (
                               <span className="text-gray-400 text-xs">-</span>
@@ -1092,7 +1092,7 @@ const StudentProfile = () => {
                                   <span className="font-semibold">المجموعة {groupNum}</span>
                                   {cumulativeData.completedExams > 0 && (
                                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                      {cumulativeData.cumulativePercentage}%
+                                      {cumulativeData.cumulativePercentage.toFixed(2)}%
                                     </span>
                                   )}
         </div>
@@ -1107,7 +1107,7 @@ const StudentProfile = () => {
                               {progress ? `${progress.score || 0}/${progress.totalQuestions || exam.totalQuestions || 0}` : '-'}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
-                              {progress ? `${progress.percentage || 0}%` : '-'}
+                              {progress ? `${(progress.percentage || 0).toFixed(2)}%` : '-'}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                               {isFirstInGroup && cumulativeData.completedExams > 0 ? `${cumulativeData.cumulativePercentage}%` : '-'}
@@ -1158,7 +1158,7 @@ const StudentProfile = () => {
                             <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                               {progress && progress.bestReviewScore ? (
                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                                  {progress.bestReviewScore}%
+                                  {progress.bestReviewScore.toFixed(2)}%
                                 </span>
                               ) : (
                                 <span className="text-gray-400 text-xs">-</span>
@@ -1410,7 +1410,7 @@ const StudentProfile = () => {
                         <div className="text-sm text-gray-500 mt-1">
                             {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} • {exam.totalQuestions || 0} أسئلة
                             {progress && progress.percentage > 0 && (
-                              <span className="mr-2">• {progress.percentage}%</span>
+                              <span className="mr-2">• {progress.percentage.toFixed(2)}%</span>
                             )}
                         </div>
                       </div>

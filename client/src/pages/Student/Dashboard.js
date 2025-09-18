@@ -416,7 +416,7 @@ const StudentDashboard = () => {
                                 <span>امتحان المراجعة</span>
                                 {progress?.bestReviewScore && (
                                   <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full mr-1">
-                                    {progress.bestReviewScore}%
+                                    {progress.bestReviewScore.toFixed(2)}%
                                   </span>
                                 )}
                               </>
@@ -529,7 +529,7 @@ const StudentDashboard = () => {
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {status === 'completed' && progress ? `${progress.percentage}%` : '-'}
+                              {status === 'completed' && progress ? `${progress.percentage.toFixed(2)}%` : '-'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                               <button
@@ -549,7 +549,7 @@ const StudentDashboard = () => {
                                     <span>امتحان المراجعة</span>
                                     {progress?.bestReviewScore && (
                                       <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full mr-1">
-                                        {progress.bestReviewScore}%
+                                        {progress.bestReviewScore.toFixed(2)}%
                                       </span>
                                     )}
                                   </>
@@ -676,7 +676,7 @@ const StudentDashboard = () => {
                                         امتحان {exam.order}
                                       </div>
                                       <div className="text-xs text-gray-600">
-                                        {progress.percentage}% • {progress.score}/{exam.totalQuestions}
+                                        {progress.percentage.toFixed(2)}% • {progress.score}/{exam.totalQuestions}
                                       </div>
                                     </div>
                                     <div className={`px-2 py-1 rounded-full text-xs font-bold ${
@@ -767,7 +767,7 @@ const StudentDashboard = () => {
                                 progress.percentage >= 60 ? 'text-blue-600' :
                                 'text-orange-600'
                               }`}>
-                                {progress.percentage}%
+                                {progress.percentage.toFixed(2)}%
                               </div>
                               <div className="text-xs text-gray-500">الدرجة النهائية</div>
                             </div>
@@ -802,13 +802,13 @@ const StudentDashboard = () => {
                             <button
                               onClick={() => navigate(`/student/review-exam/${progress.reviewExamId}`)}
                               className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-sm bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg relative"
-                              title={`أفضل درجة: ${progress.bestReviewScore || 0}%`}
+                              title={`أفضل درجة: ${(progress.bestReviewScore || 0).toFixed(2)}%`}
                             >
                               <RotateCcw className="h-4 w-4" />
                               <span>امتحان المراجعة</span>
                               {progress.bestReviewScore && (
                                 <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                                  {progress.bestReviewScore}%
+                                  {progress.bestReviewScore.toFixed(2)}%
                                 </span>
                               )}
                             </button>

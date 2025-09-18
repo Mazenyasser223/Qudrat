@@ -136,7 +136,7 @@ const ExamHistory = () => {
                 studentSubmission.percentage >= 60 ? 'text-blue-600' :
                 'text-orange-600'
               }`}>
-                {studentSubmission.percentage}%
+                {studentSubmission.percentage.toFixed(2)}%
               </div>
               <div className="text-sm text-gray-600">النتيجة النهائية</div>
             </div>
@@ -233,7 +233,7 @@ const ExamHistory = () => {
                   <div className="flex items-center space-x-2 rtl:space-x-reverse">
                     <TrendingUp className="h-4 w-4 text-orange-500" />
                     <span className="text-sm text-gray-600">أفضل درجة في المراجعة:</span>
-                    <span className="text-sm font-medium text-orange-600">{studentSubmission.bestReviewScore}%</span>
+                    <span className="text-sm font-medium text-orange-600">{studentSubmission.bestReviewScore.toFixed(2)}%</span>
                   </div>
                 ) : null;
               })()}

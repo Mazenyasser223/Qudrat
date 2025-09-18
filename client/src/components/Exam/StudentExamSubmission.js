@@ -307,7 +307,7 @@ const StudentExamSubmission = ({ studentId, studentName, examId, examTitle, onCl
                 </div>
                 <div>
                   <div className="text-sm text-gray-600 font-medium">النسبة المئوية</div>
-                  <div className="text-lg font-bold text-gray-900">{percentage}%</div>
+                  <div className="text-lg font-bold text-gray-900">{percentage.toFixed(2)}%</div>
                 </div>
               </div>
             </div>

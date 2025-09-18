@@ -222,7 +222,7 @@ const TakeReviewExam = () => {
                 results.percentage >= 60 ? 'text-blue-600 bg-blue-100' :
                 'text-orange-600 bg-orange-100'
               }`}>
-                <span className="text-2xl font-bold">{results.percentage.toFixed(1)}%</span>
+                <span className="text-2xl font-bold">{results.percentage.toFixed(2)}%</span>
                 <span className="mr-3 text-lg font-medium">
                   {results.percentage >= 80 ? 'ممتاز' :
                    results.percentage >= 60 ? 'جيد' : 'يحتاج تحسين'}

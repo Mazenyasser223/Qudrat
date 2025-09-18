@@ -144,7 +144,7 @@ const Analytics = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">متوسط الدرجات</p>
-              <p className="text-3xl font-bold text-gray-900">{analytics.overallStats.averageScore}%</p>
+              <p className="text-3xl font-bold text-gray-900">{analytics.overallStats.averageScore.toFixed(2)}%</p>
             </div>
             <div className="p-3 bg-orange-100 rounded-lg">
               <TrendingUp className="h-6 w-6 text-orange-600" />
@@ -316,7 +316,7 @@ const Analytics = () => {
                               ? 'text-primary-700'
                               : 'text-gray-700'
                           }`}>
-                            {progress.status === 'completed' && `${progress.percentage}%`}
+                            {progress.status === 'completed' && `${progress.percentage.toFixed(2)}%`}
                             {progress.status === 'unlocked' && 'متاح'}
                             {progress.status === 'locked' && 'مقفل'}
                           </div>

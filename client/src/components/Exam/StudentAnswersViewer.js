@@ -325,7 +325,7 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
                       {examData.score || 0}/{examData.totalQuestions || examData.exam.questions.length}
                     </div>
                     <div className="text-sm text-gray-600">
-                      {examData.percentage || 0}%
+                      {(examData.percentage || 0).toFixed(2)}%
                     </div>
                   </div>
                 </div>

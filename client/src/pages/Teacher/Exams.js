@@ -544,7 +544,7 @@ const Exams = () => {
                       {exam.statistics?.averageScore > 0 && (
                         <div className="flex items-center justify-end space-x-1 rtl:space-x-reverse text-sm text-green-600">
                           <TrendingUp className="h-4 w-4" />
-                          <span>{exam.statistics?.averageScore}%</span>
+                          <span>{exam.statistics?.averageScore.toFixed(2)}%</span>
                         </div>
                       )}
           </div>
@@ -635,7 +635,7 @@ const Exams = () => {
                           {exam.statistics?.averageScore > 0 ? (
                             <div className="flex items-center justify-end space-x-1 rtl:space-x-reverse text-green-600">
                               <TrendingUp className="h-4 w-4" />
-                              <span>{exam.statistics?.averageScore}%</span>
+                              <span>{exam.statistics?.averageScore.toFixed(2)}%</span>
                             </div>
                           ) : (
                             <span className="text-gray-400">-</span>
