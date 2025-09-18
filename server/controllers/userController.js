@@ -131,8 +131,13 @@ const getStudent = async (req, res) => {
 // @access  Private (Teacher only)
 const createStudent = async (req, res) => {
   try {
+    console.log('=== CREATE STUDENT REQUEST ===');
+    console.log('Request body:', req.body);
+    console.log('Request headers:', req.headers);
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.error('Validation errors:', errors.array());
       return res.status(400).json({
         success: false,
         message: 'Validation errors',
@@ -141,6 +146,7 @@ const createStudent = async (req, res) => {
     }
 
     const { name, email, password, phoneNumber } = req.body;
+    console.log('Creating student with data:', { name, email, phoneNumber });
 
     // Check if user already exists
     const existingUser = await User.findOne({ 
@@ -148,6 +154,7 @@ const createStudent = async (req, res) => {
     });
     
     if (existingUser) {
+      console.error('User already exists:', { email, phoneNumber, existingUser: existingUser._id });
       return res.status(400).json({
         success: false,
         message: 'User already exists with this email or phone number'
@@ -190,6 +197,8 @@ const createStudent = async (req, res) => {
       });
     }
 
+    console.log('Student created successfully:', { id: student._id, name: student.name, email: student.email });
+    
     res.status(201).json({
       success: true,
       message: 'Student created successfully',

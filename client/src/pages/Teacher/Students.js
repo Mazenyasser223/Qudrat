@@ -77,14 +77,26 @@ const Students = () => {
 
   const onSubmit = async (data) => {
     try {
+      console.log('=== CREATING STUDENT ===');
+      console.log('Student data:', data);
       setValidationErrors([]);
-      await axios.post('/api/users/students', data);
+      
+      const response = await axios.post('/api/users/students', data);
+      console.log('Student creation response:', response);
+      console.log('Response status:', response.status);
+      console.log('Response data:', response.data);
+      
       toast.success('تم إنشاء الطالب بنجاح');
       setShowAddForm(false);
       reset();
       fetchStudents();
     } catch (error) {
-      console.error('Error creating student:', error);
+      console.error('=== ERROR CREATING STUDENT ===');
+      console.error('Error object:', error);
+      console.error('Error response:', error.response);
+      console.error('Error message:', error.message);
+      console.error('Error status:', error.response?.status);
+      console.error('Error data:', error.response?.data);
       
       // Handle validation errors
       if (error.response?.data?.errors) {
