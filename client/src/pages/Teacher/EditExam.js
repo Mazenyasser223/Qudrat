@@ -109,7 +109,7 @@ const EditExam = () => {
         console.log('Backend health check:', healthResponse.data);
       } catch (healthError) {
         console.error('Backend health check failed:', healthError.message);
-        toast.error('الخادم غير متاح حالياً، يرجى المحاولة لاحقاً');
+        toast.error('الخادم غير متصل حالياً، يرجى المحاولة لاحقاً');
         setSubmitting(false);
         return;
       }

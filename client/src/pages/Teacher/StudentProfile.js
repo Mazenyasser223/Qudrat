@@ -1068,7 +1068,7 @@ const StudentProfile = () => {
                                 </button>
           </div>
                             ) : (
-                              <span className="text-gray-400 text-xs">غير متاح</span>
+                              <span className="text-gray-400 text-xs">-</span>
                             )}
                           </td>
                         </tr>
@@ -1183,7 +1183,7 @@ const StudentProfile = () => {
                                   </button>
                                 </div>
                               ) : (
-                                <span className="text-gray-400 text-xs">غير متاح</span>
+                                <span className="text-gray-400 text-xs">-</span>
                               )}
                             </td>
                           </tr>
