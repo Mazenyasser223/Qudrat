@@ -99,8 +99,29 @@ const Home = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <section className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-green-900 mb-4">تدريب احترافي لاختبارات القدرات الكمي</h1>
-          <p className="text-green-900/80 text-lg">منصة متخصصة في تدريب الطلاب على اختبارات القدرات الكمية</p>
+          <div className="relative max-w-4xl mx-auto">
+            <img 
+              src="/alaaa.jpg" 
+              alt="تدريب احترافي لاختبارات القدرات الكمي" 
+              className="w-full h-auto rounded-2xl shadow-2xl border-4 border-green-200 hover:shadow-3xl transition-all duration-500 transform hover:scale-105"
+              style={{
+                maxHeight: '400px',
+                objectFit: 'contain'
+              }}
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'block';
+              }}
+            />
+            <div 
+              className="hidden w-full h-64 bg-gradient-to-r from-green-100 to-green-200 rounded-2xl border-4 border-green-200 flex items-center justify-center text-green-700 font-semibold text-center p-8"
+            >
+              <div>
+                <h1 className="text-4xl sm:text-5xl font-extrabold text-green-900 mb-4">تدريب احترافي لاختبارات القدرات الكمي</h1>
+                <p className="text-green-900/80 text-lg">منصة متخصصة في تدريب الطلاب على اختبارات القدرات الكمية</p>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* PDFs Section - مذكرات و قوانين */}
