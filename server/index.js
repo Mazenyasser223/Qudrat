@@ -42,46 +42,26 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS - Enhanced configuration for Railway deployment
+// CORS - Temporary permissive configuration for Railway deployment
 app.use(cors({
-  origin: function (origin, callback) {
-    console.log('🔍 CORS Request from origin:', origin);
-    
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) {
-      console.log('✅ Allowing request with no origin');
-      return callback(null, true);
-    }
-    
-    // Allow localhost for development
-    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-      console.log('✅ Allowing localhost origin:', origin);
-      return callback(null, true);
-    }
-    
-    // Allow any Vercel domain (more specific patterns)
-    if (origin.includes('vercel.app') || 
-        origin.includes('qudrat-') || 
-        origin.includes('mazenyasser223s-projects')) {
-      console.log('✅ Allowing Vercel origin:', origin);
-      return callback(null, true);
-    }
-    
-    // Allow the specific client URL if set
-    if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) {
-      console.log('✅ Allowing configured client URL:', origin);
-      return callback(null, true);
-    }
-    
-    // Allow all origins for now (more permissive)
-    console.log('✅ Allowing all origins:', origin);
-    return callback(null, true);
-  },
+  origin: true, // Allow all origins temporarily
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  optionsSuccessStatus: 200
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  optionsSuccessStatus: 200,
+  preflightContinue: false
 }));
+
+// Additional CORS headers for all responses
+app.use((req, res, next) => {
+  console.log('🔍 Request from origin:', req.headers.origin || 'no origin');
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Max-Age', '86400'); // 24 hours
+  next();
+});
 
 // Handle preflight requests
 app.options('*', (req, res) => {
@@ -118,6 +98,17 @@ app.get('/api/health', (req, res) => {
       origin: req.headers.origin || 'no origin',
       userAgent: req.headers['user-agent'] || 'no user agent'
     }
+  });
+});
+
+// Simple CORS test endpoint
+app.get('/api/cors-test', (req, res) => {
+  console.log('🧪 CORS test request from:', req.headers.origin || 'no origin');
+  res.json({
+    success: true,
+    message: 'CORS is working!',
+    origin: req.headers.origin || 'no origin',
+    timestamp: new Date().toISOString()
   });
 });
 
