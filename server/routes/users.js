@@ -6,8 +6,6 @@ const {
   createStudent,
   updateStudent,
   deleteStudent,
-  unlockExamForStudent,
-  lockExamForStudent,
   toggleMultipleExams,
   toggleGroupForStudent,
   searchStudents,
@@ -141,17 +139,6 @@ const updateStudentValidation = [
     .withMessage('حالة النشاط يجب أن تكون true أو false')
 ];
 
-const unlockExamValidation = [
-  body('examId')
-    .isMongoId()
-    .withMessage('يرجى إدخال معرف امتحان صحيح')
-];
-
-const lockExamValidation = [
-  body('examId')
-    .isMongoId()
-    .withMessage('يرجى إدخال معرف امتحان صحيح')
-];
 
 const toggleExamsValidation = [
   body('examIds')
@@ -233,53 +220,6 @@ router.put('/students/:id', isTeacher, updateStudentValidation, updateStudent);
 // @access  Private (Teacher only)
 router.delete('/students/:id', isTeacher, deleteStudent);
 
-// @route   PUT /api/users/students/:id/unlock-exam
-// @desc    Unlock exam for student
-// @access  Private (Teacher only)
-router.put('/students/:id/unlock-exam', isTeacher, (req, res, next) => {
-  console.log('=== UNLOCK EXAM VALIDATION MIDDLEWARE ===');
-  console.log('Request body:', req.body);
-  console.log('Request params:', req.params);
-  console.log('User:', req.user);
-  next();
-}, unlockExamValidation, (req, res, next) => {
-  console.log('=== AFTER UNLOCK EXAM VALIDATION ===');
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    console.log('Validation errors:', errors.array());
-    return res.status(400).json({
-      success: false,
-      message: 'Validation failed',
-      errors: errors.array()
-    });
-  }
-  console.log('Validation passed, proceeding to controller');
-  next();
-}, unlockExamForStudent);
-
-// @route   PUT /api/users/students/:id/lock-exam
-// @desc    Lock exam for student
-// @access  Private (Teacher only)
-router.put('/students/:id/lock-exam', isTeacher, (req, res, next) => {
-  console.log('=== LOCK EXAM VALIDATION MIDDLEWARE ===');
-  console.log('Request body:', req.body);
-  console.log('Request params:', req.params);
-  console.log('User:', req.user);
-  next();
-}, lockExamValidation, (req, res, next) => {
-  console.log('=== AFTER LOCK EXAM VALIDATION ===');
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    console.log('Validation errors:', errors.array());
-    return res.status(400).json({
-      success: false,
-      message: 'Validation failed',
-      errors: errors.array()
-    });
-  }
-  console.log('Validation passed, proceeding to controller');
-  next();
-}, lockExamForStudent);
 
 // @route   PUT /api/users/students/:id/toggle-exams
 // @desc    Lock/Unlock multiple exams for student

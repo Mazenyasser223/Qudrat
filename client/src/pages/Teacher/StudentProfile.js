@@ -8,8 +8,6 @@ import {
   Mail, 
   Hash, 
   BookOpen,
-  Lock,
-  Unlock,
   Settings,
   Filter,
   AlertTriangle,
@@ -298,61 +296,6 @@ const StudentProfile = () => {
 
 
 
-  const handleLockUnlockExam = async (examId, action) => {
-    try {
-      console.log('=== HANDLING LOCK/UNLOCK EXAM ===');
-      console.log('Exam ID:', examId);
-      console.log('Exam ID type:', typeof examId);
-      console.log('Exam ID length:', examId?.length);
-      console.log('Action:', action);
-      console.log('Student ID:', studentId);
-      console.log('Student ID type:', typeof studentId);
-      console.log('Student ID length:', studentId?.length);
-      
-      const endpoint = action === 'lock' ? 'lock-exam' : 'unlock-exam';
-      const url = `/api/users/students/${studentId}/${endpoint}`;
-      
-      console.log('API URL:', url);
-      console.log('Request body:', { examId });
-      console.log('Request headers:', {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      });
-      
-      const response = await axios.put(url, {
-        examId
-      }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      console.log('Lock/Unlock response:', response.data);
-      
-      toast.success(`تم ${action === 'lock' ? 'قفل' : 'فتح'} الاختبار بنجاح`);
-      await fetchStudentData();
-    } catch (error) {
-      console.error('=== LOCK/UNLOCK EXAM ERROR ===');
-      console.error('Error object:', error);
-      console.error('Error message:', error.message);
-      console.error('Error response:', error.response);
-      
-      if (error.response?.status === 404) {
-        toast.error('الاختبار أو الطالب غير موجود');
-      } else if (error.response?.status === 401) {
-        toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
-        localStorage.removeItem('token');
-        navigate('/login');
-      } else if (error.response?.status === 403) {
-        toast.error('ليس لديك صلاحية لإجراء هذا الإجراء');
-      } else if (error.response?.status >= 500) {
-        toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
-      } else if (!error.response) {
-        toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
-      } else {
-        toast.error(`حدث خطأ أثناء ${action === 'lock' ? 'قفل' : 'فتح'} الاختبار: ${error.response?.data?.message || error.message}`);
-      }
-    }
-  };
 
   const handleToggleMultipleExams = async () => {
     try {
@@ -1056,27 +999,6 @@ const StudentProfile = () => {
                           </td>
                           <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                             <div className="flex flex-col space-y-2">
-                              {/* Lock/Unlock Buttons */}
-                              <div className="flex space-x-1 rtl:space-x-reverse">
-                                {progress && progress.status === 'unlocked' ? (
-                                  <button
-                                    onClick={() => handleLockUnlockExam(exam._id, 'lock')}
-                                    className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-                                  >
-                                    <Lock className="w-3 h-3 ml-1" />
-                                    قفل
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => handleLockUnlockExam(exam._id, 'unlock')}
-                                    className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
-                                  >
-                                    <Unlock className="w-3 h-3 ml-1" />
-                                    فتح
-                                  </button>
-                                )}
-                              </div>
-                              
                               {/* View Answer Button */}
                               {progress && (progress.status === 'completed' || progress.status === 'in_progress') && (
                                 <div className="flex flex-col space-y-1">
@@ -1194,27 +1116,6 @@ const StudentProfile = () => {
                             </td>
                             <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                               <div className="flex flex-col space-y-2">
-                                {/* Lock/Unlock Buttons */}
-                                <div className="flex space-x-1 rtl:space-x-reverse">
-                                  {progress && progress.status === 'unlocked' ? (
-                                    <button
-                                      onClick={() => handleLockUnlockExam(exam._id, 'lock')}
-                                      className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-                                    >
-                                      <Lock className="w-3 h-3 ml-1" />
-                                      قفل
-                                    </button>
-                                  ) : (
-                                    <button
-                                      onClick={() => handleLockUnlockExam(exam._id, 'unlock')}
-                                      className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
-                                    >
-                                      <Unlock className="w-3 h-3 ml-1" />
-                                      فتح
-                                    </button>
-                                  )}
-                                </div>
-                                
                                 {/* View Answer Button */}
                                 {progress && (progress.status === 'completed' || progress.status === 'in_progress') && (
                                   <div className="flex flex-col space-y-1">
