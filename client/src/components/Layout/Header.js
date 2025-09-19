@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut, User, BookOpen, Users } from 'lucide-react';
+import { LogOut, User, BookOpen, Users, Star } from 'lucide-react';
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -49,6 +49,13 @@ const Header = () => {
                   >
                     <BookOpen className="h-4 w-4" />
                     <span>الامتحانات</span>
+                  </Link>
+                  <Link
+                    to="/teacher/reviews"
+                    className="flex items-center space-x-1 rtl:space-x-reverse text-gray-700 hover:text-green-600 transition-colors"
+                  >
+                    <Star className="h-4 w-4" />
+                    <span>التقييمات</span>
                   </Link>
                 </>
               )}

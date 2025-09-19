@@ -18,6 +18,7 @@ import CreateExam from './pages/Teacher/CreateExam';
 import EditExam from './pages/Teacher/EditExam';
 import ViewExam from './pages/Teacher/ViewExam';
 import TeacherAnalytics from './pages/Teacher/Analytics';
+import ManageReviews from './pages/Teacher/ManageReviews';
 import StudentDashboard from './pages/Student/Dashboard';
 import TakeExam from './pages/Student/TakeExam';
 import TakeReviewExam from './pages/Student/TakeReviewExam';
@@ -132,6 +133,16 @@ function App() {
                 <ProtectedRoute allowedRoles={['teacher', 'admin']}>
                   <Layout>
                     <TeacherAnalytics />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teacher/reviews"
+              element={
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
+                  <Layout>
+                    <ManageReviews />
                   </Layout>
                 </ProtectedRoute>
               }

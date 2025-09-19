@@ -5,12 +5,15 @@ import { useAuth } from '../context/AuthContext';
 
 const Home = () => {
   const [freeExams, setFreeExams] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
   const navigate = useNavigate();
   const { user } = useAuth();
 
   useEffect(() => {
     fetchFreeExams();
+    fetchReviews();
   }, []);
 
   const fetchFreeExams = async () => {
@@ -21,6 +24,17 @@ const Home = () => {
       console.error('Error fetching free exams:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const res = await axios.get('/api/reviews');
+      setReviews(res.data.data || []);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    } finally {
+      setReviewsLoading(false);
     }
   };
 
@@ -384,71 +398,64 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {/* Review Card 1 */}
-            <div className="card p-6 bg-gradient-to-br from-green-50 to-green-100 border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="flex items-center mb-4">
-                <div className="flex text-yellow-400 text-xl">
-                  ⭐⭐⭐⭐⭐
+            {reviewsLoading ? (
+              // Loading state
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="card p-6 bg-gray-200 border-none shadow-lg animate-pulse">
+                  <div className="bg-gray-300 rounded-lg w-full h-64 mb-4"></div>
+                  <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-300 rounded w-2/3"></div>
                 </div>
-                <span className="mr-2 text-sm text-gray-600">5.0</span>
+              ))
+            ) : reviews.length > 0 ? (
+              // Dynamic review images
+              reviews.map((review) => (
+                <div key={review._id} className="card p-4 bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="relative">
+                    <img 
+                      src={review.imageUrl} 
+                      alt={`تقييم ${review.studentName}`}
+                      className="w-full h-auto rounded-lg shadow-sm"
+                      style={{ maxHeight: '400px', objectFit: 'contain' }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'block';
+                      }}
+                    />
+                    <div 
+                      className="hidden w-full h-64 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-gray-500"
+                    >
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">📱</div>
+                        <div className="text-sm">صورة التقييم</div>
+                      </div>
+                    </div>
+                    
+                    {/* Rating overlay */}
+                    <div className="absolute top-2 left-2 bg-white/90 rounded-full px-3 py-1 flex items-center shadow-sm">
+                      <div className="flex text-yellow-400 text-sm">
+                        {Array.from({ length: review.rating }).map((_, i) => (
+                          <span key={i}>⭐</span>
+                        ))}
+                      </div>
+                      <span className="mr-1 text-xs text-gray-600">{review.rating}.0</span>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-3 text-center">
+                    <div className="font-semibold text-gray-900">{review.studentName}</div>
+                    <div className="text-sm text-gray-500">طالب</div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              // Fallback message when no reviews
+              <div className="col-span-full text-center py-12">
+                <div className="text-6xl mb-4">⭐</div>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">لا توجد تقييمات بعد</h3>
+                <p className="text-gray-500">سيتم عرض تقييمات الطلاب هنا قريباً</p>
               </div>
-              <p className="text-gray-700 mb-4 italic">
-                "المنصة رائعة جداً! الأسئلة متنوعة ومتدرجة، والتصحيح التلقائي ساعدني كثيراً في معرفة أخطائي"
-              </p>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                  أ.م
-                </div>
-                <div className="mr-3">
-                  <div className="font-semibold text-gray-900">أحمد محمد</div>
-                  <div className="text-sm text-gray-500">طالب</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Review Card 2 */}
-            <div className="card p-6 bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="flex items-center mb-4">
-                <div className="flex text-yellow-400 text-xl">
-                  ⭐⭐⭐⭐⭐
-                </div>
-                <span className="mr-2 text-sm text-gray-600">5.0</span>
-              </div>
-              <p className="text-gray-700 mb-4 italic">
-                "خاصية تحليل الأخطاء ممتازة! ساعدتني في التركيز على نقاط ضعفي وتحسينها"
-              </p>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                  ف.س
-                </div>
-                <div className="mr-3">
-                  <div className="font-semibold text-gray-900">فاطمة سعد</div>
-                  <div className="text-sm text-gray-500">طالبة</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Review Card 3 */}
-            <div className="card p-6 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="flex items-center mb-4">
-                <div className="flex text-yellow-400 text-xl">
-                  ⭐⭐⭐⭐⭐
-                </div>
-                <span className="mr-2 text-sm text-gray-600">5.0</span>
-              </div>
-              <p className="text-gray-700 mb-4 italic">
-                "التصميم جميل وسهل الاستخدام، والامتحانات تشبه اختبار قياس الفعلي تماماً"
-              </p>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                  م.ع
-                </div>
-                <div className="mr-3">
-                  <div className="font-semibold text-gray-900">محمد علي</div>
-                  <div className="text-sm text-gray-500">طالب</div>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Add Review CTA */}
