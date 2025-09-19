@@ -389,6 +389,7 @@ const unlockExamForStudent = async (req, res) => {
     } else {
       // Create new progress entry if it doesn't exist
       student.examProgress.push({
+        examGroup: exam.examGroup, // Add the required examGroup field
         examId: examId,
         status: 'unlocked',
         percentage: 0,
@@ -408,10 +409,16 @@ const unlockExamForStudent = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Unlock exam error:', error);
+    console.error('=== UNLOCK EXAM ERROR ===');
+    console.error('Error object:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Error response:', error.response);
+    
     res.status(500).json({
       success: false,
-      message: 'Server error while unlocking exam'
+      message: 'Server error while unlocking exam',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
@@ -461,6 +468,7 @@ const lockExamForStudent = async (req, res) => {
     } else {
       // Create new progress entry if it doesn't exist
       student.examProgress.push({
+        examGroup: exam.examGroup, // Add the required examGroup field
         examId: examId,
         status: 'locked',
         percentage: 0,
@@ -480,10 +488,16 @@ const lockExamForStudent = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Lock exam error:', error);
+    console.error('=== LOCK EXAM ERROR ===');
+    console.error('Error object:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Error response:', error.response);
+    
     res.status(500).json({
       success: false,
-      message: 'Server error while locking exam'
+      message: 'Server error while locking exam',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
