@@ -1210,39 +1210,6 @@ const StudentProfile = () => {
             </div>
           </div>
 
-      {/* Simple Exam Control */}
-      <div className="card">
-        <div className="card-header">
-          <h3 className="text-lg font-semibold text-gray-900">التحكم في الاختبارات</h3>
-          <p className="text-sm text-gray-600 mt-1">قفل أو فتح اختبارات للطالب</p>
-        </div>
-        <div className="card-body">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={async () => {
-                setLockUnlockAction('lock');
-                await fetchStudentData();
-                setShowLockUnlockModal(true);
-              }}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 rtl:space-x-reverse"
-            >
-              <Lock className="h-5 w-5" />
-              <span>قفل اختبارات</span>
-            </button>
-            <button
-              onClick={async () => {
-                setLockUnlockAction('unlock');
-                await fetchStudentData();
-                setShowLockUnlockModal(true);
-              }}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 rtl:space-x-reverse"
-            >
-              <Unlock className="h-5 w-5" />
-              <span>فتح اختبارات</span>
-            </button>
-          </div>
-        </div>
-      </div>
 
 
 
