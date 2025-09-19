@@ -1047,26 +1047,48 @@ const StudentProfile = () => {
                             )}
                           </td>
                           <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
-                            {progress && (progress.status === 'completed' || progress.status === 'in_progress') ? (
-                              <div className="flex flex-col space-y-2">
-                <button
-                                  onClick={() => handleViewSubmission(exam)}
-                                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                                >
-                                  <Eye className="w-3 h-3 ml-1" />
-                                  عرض الإجابة
-                </button>
-                <button
-                                  onClick={() => handleViewMistakes(exam)}
-                                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-                                >
-                                  <AlertTriangle className="w-3 h-3 ml-1" />
-                                  عرض الأخطاء
-                </button>
-              </div>
-                            ) : (
-                              <span className="text-gray-400 text-xs">-</span>
-                            )}
+                            <div className="flex flex-col space-y-2">
+                              {/* Lock/Unlock Buttons */}
+                              <div className="flex space-x-1 rtl:space-x-reverse">
+                                {progress && progress.status === 'unlocked' ? (
+                                  <button
+                                    onClick={() => handleLockUnlockExam(exam._id, 'lock')}
+                                    className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                                  >
+                                    <Lock className="w-3 h-3 ml-1" />
+                                    قفل
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => handleLockUnlockExam(exam._id, 'unlock')}
+                                    className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+                                  >
+                                    <Unlock className="w-3 h-3 ml-1" />
+                                    فتح
+                                  </button>
+                                )}
+                              </div>
+                              
+                              {/* View Answer Button */}
+                              {progress && (progress.status === 'completed' || progress.status === 'in_progress') && (
+                                <div className="flex flex-col space-y-1">
+                                  <button
+                                    onClick={() => handleViewSubmission(exam)}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                  >
+                                    <Eye className="w-3 h-3 ml-1" />
+                                    عرض الإجابة
+                                  </button>
+                                  <button
+                                    onClick={() => handleViewMistakes(exam)}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                                  >
+                                    <AlertTriangle className="w-3 h-3 ml-1" />
+                                    عرض الأخطاء
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );
@@ -1163,26 +1185,48 @@ const StudentProfile = () => {
                               )}
                             </td>
                             <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
-                              {progress && (progress.status === 'completed' || progress.status === 'in_progress') ? (
-                                <div className="flex flex-col space-y-2">
-                        <button
-                                    onClick={() => handleViewSubmission(exam)}
-                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                                  >
-                                    <Eye className="w-3 h-3 ml-1" />
-                                    عرض الإجابة
-                        </button>
-                        <button
-                                    onClick={() => handleViewMistakes(exam)}
-                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-                                  >
-                                    <AlertTriangle className="w-3 h-3 ml-1" />
-                                    عرض الأخطاء
-                        </button>
-                      </div>
-                              ) : (
-                                <span className="text-gray-400 text-xs">-</span>
-                              )}
+                              <div className="flex flex-col space-y-2">
+                                {/* Lock/Unlock Buttons */}
+                                <div className="flex space-x-1 rtl:space-x-reverse">
+                                  {progress && progress.status === 'unlocked' ? (
+                                    <button
+                                      onClick={() => handleLockUnlockExam(exam._id, 'lock')}
+                                      className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                                    >
+                                      <Lock className="w-3 h-3 ml-1" />
+                                      قفل
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={() => handleLockUnlockExam(exam._id, 'unlock')}
+                                      className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+                                    >
+                                      <Unlock className="w-3 h-3 ml-1" />
+                                      فتح
+                                    </button>
+                                  )}
+                                </div>
+                                
+                                {/* View Answer Button */}
+                                {progress && (progress.status === 'completed' || progress.status === 'in_progress') && (
+                                  <div className="flex flex-col space-y-1">
+                                    <button
+                                      onClick={() => handleViewSubmission(exam)}
+                                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                    >
+                                      <Eye className="w-3 h-3 ml-1" />
+                                      عرض الإجابة
+                                    </button>
+                                    <button
+                                      onClick={() => handleViewMistakes(exam)}
+                                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                                    >
+                                      <AlertTriangle className="w-3 h-3 ml-1" />
+                                      عرض الأخطاء
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
                             </td>
                           </tr>
                         );
