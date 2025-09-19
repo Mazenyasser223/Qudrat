@@ -826,9 +826,9 @@ const StudentProfile = () => {
                   </div>
                 );
               })}
-            </div>
-          </div>
-          
+        </div>
+      </div>
+
         <div className="card-body p-0">
           <div className="overflow-x-auto">
             <table className="w-full divide-y divide-gray-200" style={{ 
@@ -976,13 +976,13 @@ const StudentProfile = () => {
                                     {cumulativeData.cumulativePercentage.toFixed(2)}%
                   </span>
                                 )}
-                </div>
+        </div>
                             )}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-900 border-r border-gray-200" style={{ width: '300px', minWidth: '300px', maxWidth: '300px' }}>
                             <div className="truncate" title={exam.title}>
                               {exam.title}
-                            </div>
+                </div>
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                             {progress ? `${progress.score || 0}/${progress.totalQuestions || exam.totalQuestions || 0}` : '-'}
@@ -1049,21 +1049,21 @@ const StudentProfile = () => {
                           <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                             {progress && (progress.status === 'completed' || progress.status === 'in_progress') ? (
                               <div className="flex flex-col space-y-2">
-                                <button
+                <button
                                   onClick={() => handleViewSubmission(exam)}
                                   className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                                 >
                                   <Eye className="w-3 h-3 ml-1" />
                                   عرض الإجابة
-                                </button>
-                                <button
+                </button>
+                <button
                                   onClick={() => handleViewMistakes(exam)}
                                   className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
                                 >
                                   <AlertTriangle className="w-3 h-3 ml-1" />
                                   عرض الأخطاء
-                                </button>
-          </div>
+                </button>
+              </div>
                             ) : (
                               <span className="text-gray-400 text-xs">-</span>
                             )}
@@ -1092,13 +1092,13 @@ const StudentProfile = () => {
                                       {cumulativeData.cumulativePercentage.toFixed(2)}%
                                     </span>
                                   )}
-        </div>
+                </div>
                               )}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-900 border-r border-gray-200" style={{ width: '300px', minWidth: '300px', maxWidth: '300px' }}>
                               <div className="truncate" title={exam.title}>
                                 {exam.title}
-                              </div>
+                </div>
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                               {progress ? `${progress.score || 0}/${progress.totalQuestions || exam.totalQuestions || 0}` : '-'}
@@ -1142,7 +1142,7 @@ const StudentProfile = () => {
                                 <div className="text-xs">
                                   <div className="font-medium text-gray-900">
                                     {new Date(progress.submittedAt).toLocaleDateString('en-GB')}
-                                  </div>
+                      </div>
                                   <div className="text-gray-500">
                                     {new Date(progress.submittedAt).toLocaleTimeString('en-US', { 
                                       hour: '2-digit', 
@@ -1165,21 +1165,21 @@ const StudentProfile = () => {
                             <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                               {progress && (progress.status === 'completed' || progress.status === 'in_progress') ? (
                                 <div className="flex flex-col space-y-2">
-                                  <button
+                        <button
                                     onClick={() => handleViewSubmission(exam)}
                                     className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                                   >
                                     <Eye className="w-3 h-3 ml-1" />
                                     عرض الإجابة
-                                  </button>
-                                  <button
+                        </button>
+                        <button
                                     onClick={() => handleViewMistakes(exam)}
                                     className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
                                   >
                                     <AlertTriangle className="w-3 h-3 ml-1" />
                                     عرض الأخطاء
-                                  </button>
-                                </div>
+                        </button>
+                      </div>
                               ) : (
                                 <span className="text-gray-400 text-xs">-</span>
                               )}
@@ -1199,16 +1199,16 @@ const StudentProfile = () => {
                           <span className="text-xs text-gray-400 mt-1">
                             {exams.length === 0 ? 'لم يتم إنشاء أي اختبارات بعد' : 'لا توجد اختبارات في قاعدة البيانات'}
                           </span>
-                        </div>
+                    </div>
                       </td>
                     </tr>
                   );
                 })()}
               </tbody>
             </table>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
       {/* Simple Exam Control */}
       <div className="card">
@@ -1265,7 +1265,7 @@ const StudentProfile = () => {
                   <p className={`${lockUnlockAction === 'lock' ? 'text-red-100' : 'text-green-100'} text-sm`}>
                     اختر الاختبارات التي تريد {lockUnlockAction === 'lock' ? 'قفلها' : 'فتحها'} للطالب
                   </p>
-                      </div>
+                </div>
               </div>
             </div>
             <div className="p-6 flex-1 overflow-y-auto">
@@ -1374,21 +1374,6 @@ const StudentProfile = () => {
               </div>
                 
                 
-                {/* Selection Summary */}
-                <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <span>تم تحديد: {selectedExams.length} من {exams.slice(0, 50).length} اختبار</span>
-                    {selectedExams.length > 0 && (
-                      <button
-                        onClick={() => setSelectedExams([])}
-                        className="text-red-600 hover:text-red-800 font-medium"
-                      >
-                        مسح التحديد
-                      </button>
-                    )}
-          </div>
-        </div>
-      </div>
 
               <div className="max-h-96 overflow-y-auto space-y-3">
                 {(() => {
@@ -1422,33 +1407,30 @@ const StudentProfile = () => {
                           ? 'border-blue-300 bg-blue-50' 
                           : 'border-gray-200 bg-gray-50'
                       }`}>
-                        <input
-                          type="checkbox"
-                          checked={selectedExams.includes(exam._id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedExams([...selectedExams, exam._id]);
-                            } else {
-                              setSelectedExams(selectedExams.filter(id => id !== exam._id));
-                            }
-                          }}
-                          className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                        <div className="flex-1">
+                      <input
+                        type="checkbox"
+                        checked={selectedExams.includes(exam._id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedExams([...selectedExams, exam._id]);
+                          } else {
+                            setSelectedExams(selectedExams.filter(id => id !== exam._id));
+                          }
+                        }}
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <div className="flex-1">
                           <div className="flex items-center justify-between">
                             <div className="text-sm font-medium text-gray-900">{exam.title.replace(/ - /g, ' ')}</div>
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                              {progress ? `الحالة: ${progress.status || 'غير محدد'}` : 'بدون تقدم'}
-                            </span>
                           </div>
-                          <div className="text-sm text-gray-500 mt-1">
+                        <div className="text-sm text-gray-500 mt-1">
                             {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} • {exam.totalQuestions || 0} أسئلة
                             {progress && progress.percentage > 0 && (
                               <span className="mr-2">• {progress.percentage.toFixed(2)}%</span>
                             )}
-                          </div>
                         </div>
-                      </label>
+                      </div>
+                    </label>
                     );
                   });
                 })()}
