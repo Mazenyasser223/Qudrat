@@ -5,15 +5,19 @@ const fs = require('fs');
 // Get all active reviews
 const getReviews = async (req, res) => {
   try {
+    console.log('🔍 Fetching reviews...');
     const reviews = await Review.find({ isActive: true })
       .sort({ order: 1, createdAt: -1 });
+    
+    console.log('📊 Found reviews:', reviews.length);
+    console.log('📋 Reviews data:', reviews);
     
     res.json({
       success: true,
       data: reviews
     });
   } catch (error) {
-    console.error('Error fetching reviews:', error);
+    console.error('❌ Error fetching reviews:', error);
     res.status(500).json({
       success: false,
       message: 'حدث خطأ أثناء تحميل التقييمات'
@@ -43,9 +47,14 @@ const getAllReviews = async (req, res) => {
 // Create new review
 const createReview = async (req, res) => {
   try {
+    console.log('📝 Creating new review...');
+    console.log('📋 Request body:', req.body);
+    console.log('📁 Request file:', req.file);
+    
     const { studentName, rating, order } = req.body;
     
     if (!req.file) {
+      console.log('❌ No file uploaded');
       return res.status(400).json({
         success: false,
         message: 'يجب رفع صورة التقييم'
@@ -60,7 +69,9 @@ const createReview = async (req, res) => {
       order: order ? parseInt(order) : 0
     });
 
+    console.log('💾 Saving review:', review);
     await review.save();
+    console.log('✅ Review saved successfully');
 
     res.status(201).json({
       success: true,
@@ -68,7 +79,7 @@ const createReview = async (req, res) => {
       data: review
     });
   } catch (error) {
-    console.error('Error creating review:', error);
+    console.error('❌ Error creating review:', error);
     res.status(500).json({
       success: false,
       message: 'حدث خطأ أثناء إضافة التقييم'

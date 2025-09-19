@@ -29,10 +29,14 @@ const Home = () => {
 
   const fetchReviews = async () => {
     try {
+      console.log('🔍 Fetching reviews from API...');
       const res = await axios.get('/api/reviews');
+      console.log('📊 Reviews API response:', res.data);
       setReviews(res.data.data || []);
+      console.log('✅ Reviews set in state:', res.data.data || []);
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+      console.error('❌ Error fetching reviews:', error);
+      console.error('❌ Error response:', error.response);
     } finally {
       setReviewsLoading(false);
     }
