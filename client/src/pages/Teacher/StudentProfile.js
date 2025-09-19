@@ -1210,56 +1210,90 @@ const StudentProfile = () => {
         </div>
       </div>
 
-      {/* Lock/Unlock Controls */}
-      <div className="card">
-        <div className="card-header">
-          <h3 className="text-lg font-semibold text-gray-900">إدارة قفل وفتح الاختبارات</h3>
-          <p className="text-sm text-gray-600 mt-1">قفل أو فتح اختبارات محددة أو مجموعات كاملة للطالب</p>
+      {/* Exam Access Management */}
+      <div className="bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 rounded-2xl p-8 border border-green-200 shadow-lg">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mb-4">
+            <Settings className="h-8 w-8 text-white" />
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">إدارة وصول الطالب للاختبارات</h3>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            تحكم في وصول الطالب للاختبارات بسهولة - قفل أو فتح اختبارات محددة أو مجموعات كاملة
+          </p>
         </div>
-        <div className="card-body">
-          <div className="flex justify-center">
-            {/* Lock/Unlock Specific Exams */}
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center space-x-3 rtl:space-x-reverse mb-4">
-                <div className="h-12 w-12 rounded-full bg-orange-500 flex items-center justify-center">
-                  <Settings className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h4 className="text-lg font-semibold text-orange-900">قفل/فتح اختبارات محددة</h4>
-                  <p className="text-sm text-orange-700">اختر اختبارات معينة لقفلها أو فتحها للطالب</p>
-                </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Lock Exams Card */}
+          <div className="bg-white rounded-xl p-6 border border-red-200 hover:border-red-300 transition-all duration-300 hover:shadow-lg group">
+            <div className="flex items-center space-x-4 rtl:space-x-reverse mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                <Lock className="h-6 w-6 text-red-600" />
               </div>
-              <div className="flex space-x-2 rtl:space-x-reverse">
-                <button
-                  onClick={async () => {
-                    setLockUnlockAction('lock');
-                    // Refresh data before opening modal
-                    await fetchStudentData();
-                    setShowLockUnlockModal(true);
-                  }}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 rtl:space-x-reverse"
-                >
-                  <Lock className="h-4 w-4" />
-                  <span>قفل اختبارات</span>
-                </button>
-                <button
-                  onClick={async () => {
-                    setLockUnlockAction('unlock');
-                    // Refresh data before opening modal
-                    await fetchStudentData();
-                    setShowLockUnlockModal(true);
-                  }}
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 rtl:space-x-reverse"
-                >
-                  <Unlock className="h-4 w-4" />
-                  <span>فتح اختبارات</span>
-                </button>
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900">قفل الاختبارات</h4>
+                <p className="text-sm text-gray-600">منع الطالب من الوصول لاختبارات محددة</p>
               </div>
             </div>
+            <button
+              onClick={async () => {
+                setLockUnlockAction('lock');
+                await fetchStudentData();
+                setShowLockUnlockModal(true);
+              }}
+              className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center space-x-2 rtl:space-x-reverse shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            >
+              <Lock className="h-5 w-5" />
+              <span>قفل الاختبارات</span>
+            </button>
+          </div>
 
-                </div>
-                </div>
+          {/* Unlock Exams Card */}
+          <div className="bg-white rounded-xl p-6 border border-green-200 hover:border-green-300 transition-all duration-300 hover:shadow-lg group">
+            <div className="flex items-center space-x-4 rtl:space-x-reverse mb-4">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                <Unlock className="h-6 w-6 text-green-600" />
               </div>
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900">فتح الاختبارات</h4>
+                <p className="text-sm text-gray-600">السماح للطالب بالوصول لاختبارات محددة</p>
+              </div>
+            </div>
+            <button
+              onClick={async () => {
+                setLockUnlockAction('unlock');
+                await fetchStudentData();
+                setShowLockUnlockModal(true);
+              }}
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center space-x-2 rtl:space-x-reverse shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            >
+              <Unlock className="h-5 w-5" />
+              <span>فتح الاختبارات</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-gray-200">
+            <div className="text-2xl font-bold text-green-600">
+              {studentProgress.filter(p => p.status === 'unlocked').length}
+            </div>
+            <div className="text-sm text-gray-600">اختبارات مفتوحة</div>
+          </div>
+          <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-gray-200">
+            <div className="text-2xl font-bold text-red-600">
+              {studentProgress.filter(p => p.status === 'locked').length}
+            </div>
+            <div className="text-sm text-gray-600">اختبارات مقفلة</div>
+          </div>
+          <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-gray-200">
+            <div className="text-2xl font-bold text-blue-600">
+              {studentProgress.filter(p => p.status === 'completed').length}
+            </div>
+            <div className="text-sm text-gray-600">اختبارات مكتملة</div>
+          </div>
+        </div>
+      </div>
 
 
 
