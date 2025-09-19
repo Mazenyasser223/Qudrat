@@ -363,76 +363,12 @@ const StudentDashboard = () => {
                     return (
                       <div
                         key={exam._id}
-                        className="p-4 bg-gray-50 rounded-lg border hover:shadow-md transition-shadow"
+                        className="p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border hover:shadow-md transition-shadow cursor-pointer"
+                        onClick={() => handleStartExam(exam)}
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900 mb-1">
-                              {exam.title}
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                              ترتيب {exam.order}
-                            </p>
-                          </div>
-                          <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              status === 'completed' ? 'bg-green-100 text-green-800' :
-                              status === 'unlocked' ? 'bg-blue-100 text-blue-800' :
-                              status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                              {getStatusText(status)}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-3 text-sm text-gray-600 mb-3">
-                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                            <BookOpen className="h-4 w-4" />
-                            <span>{exam.totalQuestions} سؤال</span>
-                          </div>
-                          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                            <Clock className="h-4 w-4" />
-                            <span>{exam.timeLimit} دقيقة</span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                          
-                          <button
-                            onClick={() => handleStartExam(exam)}
-                            className={`flex items-center space-x-1 rtl:space-x-reverse text-sm px-3 py-2 rounded-lg transition-colors ${
-                              status === 'locked' 
-                                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                : status === 'completed'
-                                ? 'bg-orange-600 hover:bg-orange-700 text-white'
-                                : 'bg-primary-600 hover:bg-primary-700 text-white'
-                            }`}
-                            disabled={status === 'locked'}
-                          >
-                            {status === 'completed' ? (
-                              <>
-                                <RotateCcw className="h-4 w-4" />
-                                <span>امتحان المراجعة</span>
-                                {progress?.bestReviewScore && (
-                                  <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full mr-1">
-                                    {progress.bestReviewScore.toFixed(2)}%
-                                  </span>
-                                )}
-                              </>
-                            ) : status === 'unlocked' || status === 'in_progress' ? (
-                              <>
-                                <Play className="h-4 w-4" />
-                                <span>ابدأ الامتحان</span>
-                              </>
-                            ) : (
-                              <>
-                                <Lock className="h-4 w-4" />
-                                <span>مقفل</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
+                        <h4 className="font-semibold text-green-600 text-center">
+                          {exam.title}
+                        </h4>
                       </div>
                     );
                   })}
@@ -491,80 +427,13 @@ const StudentDashboard = () => {
                         const progress = studentProgress.find(p => p.examId === exam._id);
                         
                         return (
-                          <tr key={exam._id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                <div className="flex-shrink-0 h-10 w-10">
-                                  <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-                                    status === 'completed' ? 'bg-green-100' :
-                                    status === 'unlocked' ? 'bg-blue-100' :
-                                    status === 'in_progress' ? 'bg-yellow-100' :
-                                    'bg-gray-100'
-                                  }`}>
-                                    {getStatusIcon(status)}
-                                  </div>
-                                </div>
-                                <div className="mr-4">
-                                  <div className="text-sm font-medium text-gray-900">
-                                    {exam.title}
-                                  </div>
-                                  <div className="text-sm text-gray-500">
-                                    ترتيب {exam.order}
-                                  </div>
+                          <tr key={exam._id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleStartExam(exam)}>
+                            <td className="px-6 py-4 whitespace-nowrap" colSpan="5">
+                              <div className="text-center">
+                                <div className="text-lg font-semibold text-green-600">
+                                  {exam.title}
                                 </div>
                               </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">{exam.totalQuestions} سؤال</div>
-                              <div className="text-sm text-gray-500">{exam.timeLimit} دقيقة</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                status === 'completed' ? 'bg-green-100 text-green-800' :
-                                status === 'unlocked' ? 'bg-blue-100 text-blue-800' :
-                                status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-gray-100 text-gray-800'
-                              }`}>
-                                {getStatusText(status)}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {status === 'completed' && progress ? `${progress.percentage.toFixed(2)}%` : '-'}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              <button
-                                onClick={() => handleStartExam(exam)}
-                                className={`inline-flex items-center space-x-1 rtl:space-x-reverse px-3 py-2 rounded-lg text-sm transition-colors ${
-                                  status === 'locked' 
-                                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                    : status === 'completed'
-                                    ? 'bg-orange-600 hover:bg-orange-700 text-white'
-                                    : 'bg-primary-600 hover:bg-primary-700 text-white'
-                                }`}
-                                disabled={status === 'locked'}
-                              >
-                                {status === 'completed' ? (
-                                  <>
-                                    <RotateCcw className="h-4 w-4" />
-                                    <span>امتحان المراجعة</span>
-                                    {progress?.bestReviewScore && (
-                                      <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full mr-1">
-                                        {progress.bestReviewScore.toFixed(2)}%
-                                      </span>
-                                    )}
-                                  </>
-                                ) : status === 'unlocked' || status === 'in_progress' ? (
-                                  <>
-                                    <Play className="h-4 w-4" />
-                                    <span>ابدأ الامتحان</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Lock className="h-4 w-4" />
-                                    <span>مقفل</span>
-                                  </>
-                                )}
-                              </button>
                             </td>
                           </tr>
                         );
@@ -742,79 +611,11 @@ const StudentDashboard = () => {
                   return (
                     <div
                       key={progress._id}
-                      className="bg-gradient-to-r from-white to-gray-50 border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300"
+                      className="bg-gradient-to-r from-green-50 to-blue-50 border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300 cursor-pointer"
+                      onClick={() => navigate(`/student/exam-history/${exam._id}`)}
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 rtl:space-x-reverse mb-4">
-                            <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                              <div className="p-2 bg-primary-100 rounded-lg">
-                                <BookOpen className="h-4 w-4 text-primary-600" />
-                              </div>
-                              <div>
-                                <h4 className="font-bold text-gray-900 text-lg">{exam.title}</h4>
-                                <p className="text-sm text-gray-600">
-                                  {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} • امتحان {exam.order}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {/* Score Display */}
-                          <div className="flex items-center space-x-6 rtl:space-x-reverse mb-4">
-                            <div className="text-center">
-                              <div className={`text-3xl font-bold ${
-                                progress.percentage >= 80 ? 'text-green-600' :
-                                progress.percentage >= 60 ? 'text-blue-600' :
-                                'text-orange-600'
-                              }`}>
-                                {progress.percentage.toFixed(2)}%
-                              </div>
-                              <div className="text-xs text-gray-500">الدرجة النهائية</div>
-                            </div>
-                            
-                          </div>
-                          
-                          <div className="flex items-center space-x-4 rtl:space-x-reverse text-sm text-gray-500">
-                            {progress.timeSpent && (
-                              <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                                <Clock className="h-4 w-4" />
-                                <span>الوقت المستغرق: {Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}</span>
-                              </div>
-                            )}
-                            {progress.submittedAt && (
-                              <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                                <span>تاريخ الإرسال: {new Date(progress.submittedAt).toLocaleDateString('en-GB')}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col space-y-3">
-                          <button
-                            onClick={() => navigate(`/student/exam-history/${exam._id}`)}
-                            className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-sm bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg"
-                          >
-                            <Eye className="h-4 w-4" />
-                            <span>عرض التفاصيل</span>
-                          </button>
-                          
-                          {progress.reviewExamId && (
-                            <button
-                              onClick={() => navigate(`/student/review-exam/${progress.reviewExamId}`)}
-                              className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-sm bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg relative"
-                              title={`أفضل درجة: ${(progress.bestReviewScore || 0).toFixed(2)}%`}
-                            >
-                              <RotateCcw className="h-4 w-4" />
-                              <span>امتحان المراجعة</span>
-                              {progress.bestReviewScore && (
-                                <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                                  {progress.bestReviewScore.toFixed(2)}%
-                                </span>
-                              )}
-                            </button>
-                          )}
-                        </div>
+                      <div className="text-center">
+                        <h4 className="font-bold text-green-600 text-lg">{exam.title}</h4>
                       </div>
                     </div>
                   );
