@@ -303,4 +303,68 @@ router.get('/test-db', isTeacher, async (req, res) => {
   }
 });
 
+// @route   GET /api/users/test-specific/:studentId/:examId
+// @desc    Test specific student and exam lookup
+// @access  Private (Teacher only)
+router.get('/test-specific/:studentId/:examId', isTeacher, async (req, res) => {
+  try {
+    console.log('=== TESTING SPECIFIC STUDENT AND EXAM ===');
+    console.log('Student ID:', req.params.studentId);
+    console.log('Exam ID:', req.params.examId);
+    
+    const User = require('../models/User');
+    const Exam = require('../models/Exam');
+    
+    // Test finding the specific student
+    const student = await User.findById(req.params.studentId);
+    console.log('Student found:', !!student);
+    console.log('Student role:', student?.role);
+    console.log('Student name:', student?.name);
+    
+    // Test finding the specific exam
+    const exam = await Exam.findById(req.params.examId);
+    console.log('Exam found:', !!exam);
+    console.log('Exam title:', exam?.title);
+    console.log('Exam group:', exam?.examGroup);
+    console.log('Exam isActive:', exam?.isActive);
+    
+    // Test if student has progress for this exam
+    const existingProgress = student?.examProgress?.find(
+      progress => progress.examId.toString() === req.params.examId
+    );
+    console.log('Existing progress:', !!existingProgress);
+    console.log('Progress status:', existingProgress?.status);
+    
+    res.json({
+      success: true,
+      message: 'Specific test completed',
+      data: {
+        student: student ? {
+          id: student._id,
+          name: student.name,
+          role: student.role,
+          examProgressCount: student.examProgress?.length || 0
+        } : null,
+        exam: exam ? {
+          id: exam._id,
+          title: exam.title,
+          examGroup: exam.examGroup,
+          isActive: exam.isActive
+        } : null,
+        existingProgress: existingProgress ? {
+          status: existingProgress.status,
+          examGroup: existingProgress.examGroup
+        } : null
+      }
+    });
+  } catch (error) {
+    console.error('Specific test error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Specific test failed',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

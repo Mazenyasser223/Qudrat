@@ -397,8 +397,17 @@ const unlockExamForStudent = async (req, res) => {
     );
 
     if (examProgress) {
+      console.log('Updating existing progress:', examProgress);
       examProgress.status = 'unlocked';
-      await student.save();
+      console.log('Progress after update:', examProgress);
+      
+      try {
+        await student.save();
+        console.log('Student saved successfully');
+      } catch (saveError) {
+        console.error('Error saving student:', saveError);
+        throw saveError;
+      }
 
       res.json({
         success: true,
@@ -406,7 +415,8 @@ const unlockExamForStudent = async (req, res) => {
       });
     } else {
       // Create new progress entry if it doesn't exist
-      student.examProgress.push({
+      console.log('Creating new progress entry');
+      const newProgress = {
         examGroup: exam.examGroup, // Add the required examGroup field
         examId: examId,
         status: 'unlocked',
@@ -418,8 +428,19 @@ const unlockExamForStudent = async (req, res) => {
         timeSpent: 0,
         submittedAt: null,
         answers: []
-      });
-      await student.save();
+      };
+      console.log('New progress object:', newProgress);
+      
+      student.examProgress.push(newProgress);
+      console.log('Student examProgress after push:', student.examProgress.length);
+      
+      try {
+        await student.save();
+        console.log('Student saved successfully with new progress');
+      } catch (saveError) {
+        console.error('Error saving student with new progress:', saveError);
+        throw saveError;
+      }
 
       res.json({
         success: true,
