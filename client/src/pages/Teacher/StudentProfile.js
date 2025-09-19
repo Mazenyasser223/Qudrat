@@ -127,12 +127,6 @@ const StudentProfile = () => {
         }
       });
       
-      console.log('=== STUDENT DATA RESPONSE ===');
-      console.log('Status:', response.status);
-      console.log('Data:', response.data);
-      console.log('Student exam progress:', response.data.data?.examProgress?.length);
-      console.log('First few progress entries:', response.data.data?.examProgress?.slice(0, 3));
-      console.log('Student data:', response.data.data);
       
       if (response.data && response.data.data) {
         setStudent(response.data.data);
@@ -354,9 +348,6 @@ const StudentProfile = () => {
 
   const handleToggleMultipleExams = async () => {
     try {
-      console.log('Toggling exams:', { examIds: selectedExams, action: lockUnlockAction, studentId });
-      console.log('Before toggle - student progress:', studentProgress.length);
-      console.log('Before toggle - first few progress entries:', studentProgress.slice(0, 3));
       
       const response = await axios.put(`/api/users/students/${studentId}/toggle-exams`, {
         examIds: selectedExams,
@@ -367,28 +358,19 @@ const StudentProfile = () => {
         }
       });
       
-      console.log('Toggle exams response:', response.data);
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
       
       toast.success(`تم ${lockUnlockAction === 'lock' ? 'قفل' : 'فتح'} الاختبارات المحددة بنجاح`);
       setShowLockUnlockModal(false);
       setSelectedExams([]);
       
       // Refresh student data to show updated status
-      console.log('=== REFRESHING DATA AFTER TOGGLE ===');
-      console.log('Before refresh - student progress:', studentProgress.length);
       await fetchStudentData();
-      console.log('After refresh - student progress:', studentProgress.length);
       
       // Also refresh the exams list to show updated status
       await fetchExams();
       
       // Force a re-render by updating state
-      setStudentProgress(prev => {
-        console.log('Force re-render - new progress length:', prev.length);
-        return [...prev];
-      });
+      setStudentProgress(prev => [...prev]);
     } catch (error) {
       console.error('=== TOGGLE MULTIPLE EXAMS ERROR ===');
       console.error('Error object:', error);
@@ -1474,22 +1456,9 @@ const StudentProfile = () => {
                   // Get all exams with their status
                   const examsWithStatus = exams.map(exam => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
-                    // Determine status based on progress data
-                    let status = 'locked';
-                    if (progress) {
-                      if (progress.status) {
-                        status = progress.status;
-                      } else if (progress.isUnlocked !== undefined) {
-                        status = progress.isUnlocked ? 'unlocked' : 'locked';
-                      } else if (progress.completed) {
-                        status = 'completed';
-                      } else if (progress.started) {
-                        status = 'in_progress';
-                      }
-                    }
                     return {
                       ...exam,
-                      status: status
+                      status: progress ? progress.status : 'locked'
                     };
                   });
                   
@@ -1503,14 +1472,6 @@ const StudentProfile = () => {
                     return false;
                   });
                   
-                  console.log('=== MODAL FILTERING DEBUG ===');
-                  console.log('Modal Action:', lockUnlockAction);
-                  console.log('Total Exams:', exams.length);
-                  console.log('Filtered Exams:', filteredExams.length);
-                  console.log('Should Show:', lockUnlockAction === 'unlock' ? 'Locked Exams' : 'Unlocked Exams');
-                  console.log('Student Progress Length:', studentProgress.length);
-                  console.log('First few exam statuses:', examsWithStatus.slice(0, 5).map(e => ({ title: e.title, status: e.status })));
-                  console.log('First few progress entries:', studentProgress.slice(0, 3).map(p => ({ examId: p.examId, status: p.status, isUnlocked: p.isUnlocked })));
                   
                   // Show empty state if no exams match
                   if (filteredExams.length === 0) {
@@ -1532,16 +1493,6 @@ const StudentProfile = () => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
                     const examStatus = progress ? progress.status : 'locked';
                     
-                    // Debug logging
-                    console.log('Exam status debug:', {
-                      examId: exam._id,
-                      examTitle: exam.title,
-                      progress: progress,
-                      examStatus: examStatus,
-                      studentProgress: studentProgress.length,
-                      lockUnlockAction: lockUnlockAction,
-                      shouldShow: lockUnlockAction === 'unlock' ? examStatus === 'locked' : examStatus === 'unlocked'
-                    });
                     
                     return (
                       <label key={exam._id} className={`flex items-center space-x-3 rtl:space-x-reverse p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer ${
