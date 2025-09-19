@@ -281,7 +281,7 @@ const Students = () => {
                 <div className="form-group">
                   <label className="form-label">كلمة المرور</label>
                   <input
-                    type="password"
+                    type="text"
                     className={`input-field ${errors.password ? 'border-red-500' : ''}`}
                     placeholder="أدخل كلمة المرور"
                     {...register('password', {
