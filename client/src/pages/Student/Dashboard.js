@@ -706,7 +706,7 @@ const StudentDashboard = () => {
                             return (
                               <div
                                 key={exam._id}
-                                className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
+                                className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-4 hover:from-green-100 hover:to-blue-100 transition-all duration-200 cursor-pointer shadow-sm"
                                 onClick={() => navigate(`/student/exam-history/${exam._id}`)}
                               >
                                 <div className="flex items-center justify-between">
@@ -716,7 +716,7 @@ const StudentDashboard = () => {
                                         <CheckCircle className="h-4 w-4 text-green-600" />
                                       </div>
                                       <div>
-                                        <h5 className="font-semibold text-gray-900 text-sm">
+                                        <h5 className="font-bold text-gray-900 text-base">
                                           {exam.title}
                                         </h5>
                                         <p className="text-xs text-gray-600">
@@ -725,7 +725,7 @@ const StudentDashboard = () => {
                                       </div>
                                     </div>
                                     
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
                                       <div className="text-center">
                                         <div className="text-lg font-bold text-green-600">{progress.score}/{exam.totalQuestions}</div>
                                         <div className="text-xs text-gray-500">الدرجة</div>
@@ -735,22 +735,24 @@ const StudentDashboard = () => {
                                         <div className="text-xs text-gray-500">النسبة</div>
                                       </div>
                                       {progress.timeSpent && (
-                                        <div className="text-center">
+                                        <div className="text-center md:col-span-1">
                                           <div className="text-lg font-bold text-purple-600">
                                             {Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}
                                           </div>
                                           <div className="text-xs text-gray-500">الوقت المستغرق</div>
                                         </div>
                                       )}
-                                      {progress.submittedAt && (
-                                        <div className="text-center">
-                                          <div className="text-lg font-bold text-orange-600">
-                                            {new Date(progress.submittedAt).toLocaleDateString('en-GB')}
-                                          </div>
-                                          <div className="text-xs text-gray-500">تاريخ الإرسال</div>
-                                        </div>
-                                      )}
                                     </div>
+                                    
+                                    {/* Date and Time of Submission - Centered */}
+                                    {progress.submittedAt && (
+                                      <div className="text-center mt-3 pt-3 border-t border-gray-200">
+                                        <div className="text-sm font-bold text-orange-600">
+                                          {new Date(progress.submittedAt).toLocaleDateString('en-GB')} - {new Date(progress.submittedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                        </div>
+                                        <div className="text-xs text-gray-500">تاريخ الحل وساعة الإرسال</div>
+                                      </div>
+                                    )}
                                   </div>
                                   
                                   <div className="flex flex-col items-center space-y-2">
