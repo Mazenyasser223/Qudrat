@@ -418,7 +418,7 @@ const unlockExamForStudent = async (req, res) => {
       console.log('Creating new progress entry');
       const newProgress = {
         examGroup: exam.examGroup, // Add the required examGroup field
-        examId: examId,
+        examId: new require('mongoose').Types.ObjectId(examId), // Convert string to ObjectId
         status: 'unlocked',
         percentage: 0,
         score: 0,
@@ -526,7 +526,7 @@ const lockExamForStudent = async (req, res) => {
       // Create new progress entry if it doesn't exist
       student.examProgress.push({
         examGroup: exam.examGroup, // Add the required examGroup field
-        examId: examId,
+        examId: new require('mongoose').Types.ObjectId(examId), // Convert string to ObjectId
         status: 'locked',
         percentage: 0,
         score: 0,
@@ -694,7 +694,7 @@ const toggleMultipleExams = async (req, res) => {
           console.log(`Creating new progress entry for exam ${examId} with status ${newStatus} and group ${examGroup}`);
           student.examProgress.push({
             examGroup: examGroup,
-            examId: examId,
+            examId: new require('mongoose').Types.ObjectId(examId), // Convert string to ObjectId
             status: newStatus,
             percentage: 0,
             score: 0,
