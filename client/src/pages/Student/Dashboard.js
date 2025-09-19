@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { BookOpen, Lock, Unlock, CheckCircle, Clock, Play, RotateCcw, AlertCircle, Eye, TrendingUp, Search, Filter, Grid, List, Plus } from 'lucide-react';
+import { BookOpen, Lock, Unlock, CheckCircle, Clock, Play, RotateCcw, AlertCircle, Eye, TrendingUp, Search, Filter, Grid, List, Plus, History, ChevronDown, ChevronRight } from 'lucide-react';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ const StudentDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGroup, setSelectedGroup] = useState('all');
   const [viewMode, setViewMode] = useState('grid');
+  const [expandedGroups, setExpandedGroups] = useState({});
 
   useEffect(() => {
     fetchExamGroups();
@@ -203,6 +204,13 @@ const StudentDashboard = () => {
     
     // Default case - should not reach here
     toast.error('حالة الامتحان غير معروفة');
+  };
+
+  const toggleGroup = (groupKey) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [groupKey]: !prev[groupKey]
+    }));
   };
 
   const getStatusIcon = (status) => {
@@ -535,13 +543,13 @@ const StudentDashboard = () => {
                                 <div>
                                   <div className="text-sm font-medium text-gray-900">{exam.title}</div>
                                   <div className="text-sm text-gray-500">{exam.totalQuestions} أسئلة • {exam.timeLimit} دقيقة</div>
-                                </div>
-                              </div>
+                    </div>
+                    </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900">
                                 {groupNumber === '0' ? 'اختبارات التأسيس' : `المجموعة ${groupNumber}`}
-                              </div>
+                    </div>
                               <div className="text-sm text-gray-500">ترتيب: {exam.order}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
@@ -562,19 +570,19 @@ const StudentDashboard = () => {
                                 <div className="text-sm text-gray-900">
                                   <div className="font-medium">{progress.score}/{exam.totalQuestions}</div>
                                   <div className="text-xs text-gray-500">{progress.percentage.toFixed(2)}%</div>
-                                </div>
+                  </div>
                               ) : status === 'in_progress' && progress ? (
                                 <div className="text-sm text-gray-900">
                                   <div className="font-medium">{progress.score || 0}/{exam.totalQuestions}</div>
                                   <div className="text-xs text-gray-500">قيد التنفيذ</div>
-                                </div>
+                    </div>
                               ) : (
                                 <span className="text-sm text-gray-500">-</span>
-                              )}
+                  )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               {status === 'completed' && progress?.reviewExamId ? (
-                                <button
+                  <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     navigate(`/student/review-exam/${progress.reviewExamId}`);
@@ -588,7 +596,7 @@ const StudentDashboard = () => {
                                 <button className="text-blue-600 hover:text-blue-900 flex items-center space-x-1 rtl:space-x-reverse">
                                   <Play className="h-4 w-4" />
                                   <span>بدء</span>
-                                </button>
+                  </button>
                               ) : (
                                 <span className="text-gray-400 flex items-center space-x-1 rtl:space-x-reverse">
                                   <Lock className="h-4 w-4" />
@@ -607,6 +615,194 @@ const StudentDashboard = () => {
           )}
         </div>
       )}
+
+      {/* Exam History Section with Toggle Lists */}
+      <div className="card">
+        <div className="card-header">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 rtl:space-x-reverse">
+                <History className="h-5 w-5 text-primary-600" />
+                <span>سجل الامتحانات</span>
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">عرض نتائج الامتحانات السابقة مع إمكانية الوصول السريع</p>
+            </div>
+            <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+              {studentProgress.filter(p => p.status === 'completed').length} امتحان مكتمل
+            </div>
+          </div>
+        </div>
+        <div className="card-body">
+          {studentProgress.filter(p => p.status === 'completed').length > 0 ? (
+            <div className="space-y-4">
+              {/* Toggle List for Each Group */}
+              {Object.keys(examGroups).map(groupKey => {
+                const groupNum = parseInt(groupKey);
+                const groupExams = examGroups[groupKey] || [];
+                const completedExams = groupExams.filter(exam => {
+                  const progress = studentProgress.find(p => p.examId === exam._id && p.status === 'completed');
+                  return progress;
+                });
+                
+                if (completedExams.length === 0) return null;
+                
+                const isExpanded = expandedGroups[groupKey];
+                
+                // Calculate group statistics
+                const groupProgress = completedExams.map(exam => 
+                  studentProgress.find(p => p.examId === exam._id && p.status === 'completed')
+                );
+                
+                const avgScore = groupProgress.length > 0 
+                  ? Math.round(groupProgress.reduce((sum, p) => sum + (p.percentage || 0), 0) / groupProgress.length)
+                  : 0;
+                
+                return (
+                  <div key={groupKey} className="border border-gray-200 rounded-lg overflow-hidden">
+                    {/* Group Header - Clickable to Toggle */}
+                    <button
+                      onClick={() => toggleGroup(groupKey)}
+                      className="w-full p-4 bg-gradient-to-r from-green-50 to-blue-50 hover:from-green-100 hover:to-blue-100 transition-all duration-200 flex items-center justify-between"
+                    >
+                      <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                        <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                          {groupNum}
+                        </div>
+                        <div className="text-right">
+                          <h4 className="font-bold text-gray-900 text-sm">
+                            {groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}
+                          </h4>
+                          <p className="text-xs text-gray-600">
+                            {completedExams.length} امتحان مكتمل
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                        {avgScore > 0 && (
+                          <div className={`px-3 py-1 rounded-full text-sm font-bold ${
+                            avgScore >= 80 ? 'bg-green-100 text-green-700' :
+                            avgScore >= 60 ? 'bg-blue-100 text-blue-700' :
+                            'bg-orange-100 text-orange-700'
+                          }`}>
+                            {avgScore}%
+                          </div>
+                        )}
+                        {isExpanded ? (
+                          <ChevronDown className="h-5 w-5 text-gray-500" />
+                        ) : (
+                          <ChevronRight className="h-5 w-5 text-gray-500" />
+                        )}
+                      </div>
+                    </button>
+                    
+                    {/* Expandable Content */}
+                    {isExpanded && (
+                      <div className="p-4 bg-white border-t border-gray-200">
+                        <div className="space-y-3">
+                          {completedExams.map(exam => {
+                            const progress = studentProgress.find(p => p.examId === exam._id && p.status === 'completed');
+                            
+                            return (
+                              <div
+                                key={exam._id}
+                                className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
+                                onClick={() => navigate(`/student/exam-history/${exam._id}`)}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1">
+                                    <div className="flex items-center space-x-3 rtl:space-x-reverse mb-2">
+                                      <div className="p-2 bg-green-100 rounded-lg">
+                                        <CheckCircle className="h-4 w-4 text-green-600" />
+                                      </div>
+                                      <div>
+                                        <h5 className="font-semibold text-gray-900 text-sm">
+                                          {exam.title}
+                                        </h5>
+                                        <p className="text-xs text-gray-600">
+                                          {exam.totalQuestions} أسئلة
+                                        </p>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+                                      <div className="text-center">
+                                        <div className="text-lg font-bold text-green-600">{progress.score}/{exam.totalQuestions}</div>
+                                        <div className="text-xs text-gray-500">الدرجة</div>
+                                      </div>
+                                      <div className="text-center">
+                                        <div className="text-lg font-bold text-blue-600">{progress.percentage.toFixed(2)}%</div>
+                                        <div className="text-xs text-gray-500">النسبة</div>
+                                      </div>
+                                      {progress.timeSpent && (
+                                        <div className="text-center">
+                                          <div className="text-lg font-bold text-purple-600">
+                                            {Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}
+                                          </div>
+                                          <div className="text-xs text-gray-500">الوقت المستغرق</div>
+                                        </div>
+                                      )}
+                                      {progress.submittedAt && (
+                                        <div className="text-center">
+                                          <div className="text-lg font-bold text-orange-600">
+                                            {new Date(progress.submittedAt).toLocaleDateString('en-GB')}
+                                          </div>
+                                          <div className="text-xs text-gray-500">تاريخ الإرسال</div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="flex flex-col items-center space-y-2">
+                                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                      progress.percentage >= 80 ? 'bg-green-100 text-green-700' :
+                                      progress.percentage >= 60 ? 'bg-blue-100 text-blue-700' :
+                                      'bg-orange-100 text-orange-700'
+                                    }`}>
+                                      {progress.percentage >= 80 ? 'ممتاز' :
+                                       progress.percentage >= 60 ? 'جيد' : 'مقبول'}
+                                    </div>
+                                    
+                                    {progress.reviewExamId && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          navigate(`/student/review-exam/${progress.reviewExamId}`);
+                                        }}
+                                        className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium hover:bg-purple-200 transition-colors"
+                                      >
+                                        <RotateCcw className="h-3 w-3" />
+                                        <span>امتحان المراجعة</span>
+                                      </button>
+                                    )}
+                                    
+                                    <button className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium hover:bg-gray-200 transition-colors">
+                                      <Eye className="h-3 w-3" />
+                                      <span>عرض التفاصيل</span>
+                                    </button>
+                                  </div>
+              </div>
+            </div>
+                            );
+                          })}
+              </div>
+            </div>
+                    )}
+              </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="p-4 bg-gray-100 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                <History className="h-10 w-10 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">لا توجد امتحانات مكتملة</h3>
+              <p className="text-gray-600">ابدأ بحل الامتحانات لترى سجل النتائج هنا</p>
+            </div>
+          )}
+        </div>
+      </div>
 
     </div>
   );
