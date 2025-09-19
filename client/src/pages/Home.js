@@ -373,6 +373,110 @@ const Home = () => {
           </div>
         </section>
 
+        {/* Student Reviews Section - تقييمات الطلاب */}
+        <section className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-green-900 mb-2">تقييمات الطلاب</h2>
+            <p className="text-green-700 text-lg">آراء الطلاب في المنصة وتجربتهم التعليمية</p>
+            <div className="mt-4 inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full text-sm font-semibold">
+              ⭐ تقييمات حقيقية من طلابنا
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {/* Review Card 1 */}
+            <div className="card p-6 bg-gradient-to-br from-green-50 to-green-100 border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center mb-4">
+                <div className="flex text-yellow-400 text-xl">
+                  ⭐⭐⭐⭐⭐
+                </div>
+                <span className="mr-2 text-sm text-gray-600">5.0</span>
+              </div>
+              <p className="text-gray-700 mb-4 italic">
+                "المنصة رائعة جداً! الأسئلة متنوعة ومتدرجة، والتصحيح التلقائي ساعدني كثيراً في معرفة أخطائي"
+              </p>
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  أ.م
+                </div>
+                <div className="mr-3">
+                  <div className="font-semibold text-gray-900">أحمد محمد</div>
+                  <div className="text-sm text-gray-500">طالب</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Review Card 2 */}
+            <div className="card p-6 bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center mb-4">
+                <div className="flex text-yellow-400 text-xl">
+                  ⭐⭐⭐⭐⭐
+                </div>
+                <span className="mr-2 text-sm text-gray-600">5.0</span>
+              </div>
+              <p className="text-gray-700 mb-4 italic">
+                "خاصية تحليل الأخطاء ممتازة! ساعدتني في التركيز على نقاط ضعفي وتحسينها"
+              </p>
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  ف.س
+                </div>
+                <div className="mr-3">
+                  <div className="font-semibold text-gray-900">فاطمة سعد</div>
+                  <div className="text-sm text-gray-500">طالبة</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Review Card 3 */}
+            <div className="card p-6 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center mb-4">
+                <div className="flex text-yellow-400 text-xl">
+                  ⭐⭐⭐⭐⭐
+                </div>
+                <span className="mr-2 text-sm text-gray-600">5.0</span>
+              </div>
+              <p className="text-gray-700 mb-4 italic">
+                "التصميم جميل وسهل الاستخدام، والامتحانات تشبه اختبار قياس الفعلي تماماً"
+              </p>
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  م.ع
+                </div>
+                <div className="mr-3">
+                  <div className="font-semibold text-gray-900">محمد علي</div>
+                  <div className="text-sm text-gray-500">طالب</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Add Review CTA */}
+          <div className="bg-gradient-to-r from-green-600 via-green-700 to-green-800 rounded-2xl p-8 text-white text-center shadow-2xl">
+            <div className="max-w-4xl mx-auto">
+              <h3 className="text-3xl font-bold mb-4">💬 شاركنا رأيك</h3>
+              <p className="text-green-100 text-lg mb-6">
+                هل استفدت من المنصة؟ شاركنا تجربتك لنساعد المزيد من الطلاب
+              </p>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a 
+                  href="https://wa.me/966546894479?text=مرحباً، أريد إضافة تقييمي للمنصة التعليمية" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white text-green-700 font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  <img src="/icons/whatsapp.svg" alt="WhatsApp" className="h-6 w-6 mr-3" />
+                  أضف تقييمك عبر واتساب
+                </a>
+                <div className="text-green-100 text-sm">
+                  ⭐ تقييماتك تساعدنا في التحسين
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </main>
     </div>
   );
