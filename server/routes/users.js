@@ -171,12 +171,50 @@ router.delete('/students/:id', isTeacher, deleteStudent);
 // @route   PUT /api/users/students/:id/unlock-exam
 // @desc    Unlock exam for student
 // @access  Private (Teacher only)
-router.put('/students/:id/unlock-exam', isTeacher, unlockExamValidation, unlockExamForStudent);
+router.put('/students/:id/unlock-exam', isTeacher, (req, res, next) => {
+  console.log('=== UNLOCK EXAM VALIDATION MIDDLEWARE ===');
+  console.log('Request body:', req.body);
+  console.log('Request params:', req.params);
+  console.log('User:', req.user);
+  next();
+}, unlockExamValidation, (req, res, next) => {
+  console.log('=== AFTER UNLOCK EXAM VALIDATION ===');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log('Validation errors:', errors.array());
+    return res.status(400).json({
+      success: false,
+      message: 'Validation failed',
+      errors: errors.array()
+    });
+  }
+  console.log('Validation passed, proceeding to controller');
+  next();
+}, unlockExamForStudent);
 
 // @route   PUT /api/users/students/:id/lock-exam
 // @desc    Lock exam for student
 // @access  Private (Teacher only)
-router.put('/students/:id/lock-exam', isTeacher, lockExamValidation, lockExamForStudent);
+router.put('/students/:id/lock-exam', isTeacher, (req, res, next) => {
+  console.log('=== LOCK EXAM VALIDATION MIDDLEWARE ===');
+  console.log('Request body:', req.body);
+  console.log('Request params:', req.params);
+  console.log('User:', req.user);
+  next();
+}, lockExamValidation, (req, res, next) => {
+  console.log('=== AFTER LOCK EXAM VALIDATION ===');
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log('Validation errors:', errors.array());
+    return res.status(400).json({
+      success: false,
+      message: 'Validation failed',
+      errors: errors.array()
+    });
+  }
+  console.log('Validation passed, proceeding to controller');
+  next();
+}, lockExamForStudent);
 
 // @route   PUT /api/users/students/:id/toggle-exams
 // @desc    Lock/Unlock multiple exams for student

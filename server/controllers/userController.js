@@ -349,6 +349,12 @@ const deleteStudent = async (req, res) => {
 // @access  Private (Teacher only)
 const unlockExamForStudent = async (req, res) => {
   try {
+    console.log('=== UNLOCK EXAM FOR STUDENT ===');
+    console.log('Request body:', req.body);
+    console.log('Request params:', req.params);
+    console.log('Student ID:', req.params.id);
+    console.log('Exam ID from body:', req.body.examId);
+    
     const { examId } = req.body;
 
     const student = await User.findById(req.params.id);
@@ -415,6 +421,12 @@ const unlockExamForStudent = async (req, res) => {
 // @access  Private (Teacher only)
 const lockExamForStudent = async (req, res) => {
   try {
+    console.log('=== LOCK EXAM FOR STUDENT ===');
+    console.log('Request body:', req.body);
+    console.log('Request params:', req.params);
+    console.log('Student ID:', req.params.id);
+    console.log('Exam ID from body:', req.body.examId);
+    
     const { examId } = req.body;
 
     const student = await User.findById(req.params.id);
