@@ -129,7 +129,7 @@ const StudentProfile = () => {
       
       
       if (response.data && response.data.data) {
-        setStudent(response.data.data);
+      setStudent(response.data.data);
         console.log('Student set successfully:', response.data.data);
         
         // Validate student data
@@ -204,7 +204,7 @@ const StudentProfile = () => {
       console.log('Exams data:', response.data.data);
       
       if (response.data && response.data.data) {
-        setExams(response.data.data);
+      setExams(response.data.data);
         console.log('Exams set successfully:', response.data.data.length, 'exams');
         
         // Validate exams data
@@ -283,8 +283,8 @@ const StudentProfile = () => {
       try {
         const groupNum = progressItem.examId ? progressItem.examId.examGroup : progressItem.examGroup;
         if (groupNum !== undefined && groupNum !== null) {
-          if (progressItem.status === 'unlocked' || progressItem.status === 'in_progress' || progressItem.status === 'completed') {
-            status[groupNum] = 'unlocked';
+      if (progressItem.status === 'unlocked' || progressItem.status === 'in_progress' || progressItem.status === 'completed') {
+        status[groupNum] = 'unlocked';
           }
         }
       } catch (error) {
@@ -717,7 +717,7 @@ const StudentProfile = () => {
                     </div>
                     
                     {/* Exams List */}
-                    <div className="space-y-2">
+              <div className="space-y-2">
                       {(expandedGroups[groupNum] ? groupExams : groupExams.slice(0, 3)).map(exam => {
                         const progress = student?.examProgress?.find(p => p.examId === exam._id);
                         const hasTimeData = progress && (progress.timeSpent || progress.submittedAt);
@@ -744,7 +744,7 @@ const StudentProfile = () => {
                                 <div className="flex-1">
                                   <div className="font-semibold text-gray-900 group-hover/exam:text-green-700 text-sm">
                                     اختبار {exam.order}
-                                  </div>
+                </div>
                                   <div className="text-xs text-gray-600">
                                     {progress ? `${progress.score || 0}/${exam.totalQuestions || 0}` : '-'}
                                   </div>
@@ -769,16 +769,16 @@ const StudentProfile = () => {
                                       <span className="text-gray-500">الوقت المستغرق:</span>
                                       <span className="font-medium text-blue-600">
                                         {Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}
-                                      </span>
-                                    </div>
+                  </span>
+                </div>
                                   )}
                                   {progress.submittedAt && (
                                     <div className="flex items-center justify-between text-xs">
                                       <span className="text-gray-500">تاريخ الإرسال:</span>
                                       <span className="font-medium text-green-600">
                                         {new Date(progress.submittedAt).toLocaleDateString('en-GB')}
-                                      </span>
-                                    </div>
+                  </span>
+                </div>
                                   )}
                                   {progress.submittedAt && (
                                     <div className="flex items-center justify-between text-xs">
@@ -790,11 +790,11 @@ const StudentProfile = () => {
                                           hour12: true
                                         })}
                                       </span>
-                                    </div>
+              </div>
                                   )}
-                                </div>
+            </div>
                               )}
-                            </div>
+          </div>
                           </button>
                         );
                       })}
@@ -1257,9 +1257,9 @@ const StudentProfile = () => {
               </div>
             </div>
 
-          </div>
-        </div>
-      </div>
+                </div>
+                </div>
+              </div>
 
 
 
@@ -1282,14 +1282,14 @@ const StudentProfile = () => {
                   <p className={`${lockUnlockAction === 'lock' ? 'text-red-100' : 'text-green-100'} text-sm`}>
                     اختر الاختبارات التي تريد {lockUnlockAction === 'lock' ? 'قفلها' : 'فتحها'} للطالب
                   </p>
-                </div>
+                      </div>
               </div>
             </div>
             <div className="p-6 flex-1 overflow-y-auto">
               {/* Bulk Selection Controls */}
               <div className="mb-6 space-y-4">
                 <div className="flex flex-wrap gap-2">
-                  <button
+                        <button
                         onClick={() => {
                           const examsWithStatus = exams.map(exam => {
                             const progress = studentProgress.find(p => p.examId === exam._id);
@@ -1359,7 +1359,7 @@ const StudentProfile = () => {
                       
                       return selectedExams.length === filteredExams.length ? 'إلغاء الكل' : 'تحديد الكل';
                     })()}
-                  </button>
+                        </button>
                   
                   {/* Select by Group */}
                   {Array.from({ length: 9 }, (_, i) => i).map(groupNum => {
@@ -1386,7 +1386,7 @@ const StudentProfile = () => {
                     if (groupExams.length === 0) return null;
                     
                     return (
-                      <button
+                        <button
                         key={groupNum}
                         onClick={() => {
                           if (isAllSelected) {
@@ -1410,10 +1410,10 @@ const StudentProfile = () => {
                       >
                         {groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}
                         {isPartiallySelected && ` (${groupSelected.length}/${groupExams.length})`}
-                      </button>
-                    );
-                  })}
-                </div>
+                        </button>
+                  );
+                })}
+              </div>
                 
                 
                 {/* Selection Summary */}
@@ -1447,10 +1447,10 @@ const StudentProfile = () => {
                         مسح التحديد
                       </button>
                     )}
-                  </div>
-                </div>
-              </div>
-              
+          </div>
+        </div>
+      </div>
+
               <div className="max-h-96 overflow-y-auto space-y-3">
                 {(() => {
                   // Get all exams with their status
@@ -1472,6 +1472,19 @@ const StudentProfile = () => {
                     return false;
                   });
                   
+                  // Debug logging
+                  console.log('=== MODAL FILTERING DEBUG ===');
+                  console.log('Modal Action:', lockUnlockAction);
+                  console.log('Total Exams:', exams.length);
+                  console.log('Student Progress Length:', studentProgress.length);
+                  console.log('Exams with Status:', examsWithStatus.slice(0, 5).map(e => ({ 
+                    title: e.title, 
+                    status: e.status,
+                    progress: studentProgress.find(p => p.examId === e._id)
+                  })));
+                  console.log('Filtered Exams Count:', filteredExams.length);
+                  console.log('Filtered Exams:', filteredExams.map(e => ({ title: e.title, status: e.status })));
+                  
                   
                   // Show empty state if no exams match
                   if (filteredExams.length === 0) {
@@ -1483,8 +1496,8 @@ const StudentProfile = () => {
                             ? 'لا توجد اختبارات مقفلة لفتحها' 
                             : 'لا توجد اختبارات مفتوحة لقفلها'
                           }
-                        </p>
-                      </div>
+                  </p>
+                </div>
                     );
                   }
                   
@@ -1546,32 +1559,32 @@ const StudentProfile = () => {
                     );
                   });
                 })()}
+                  </div>
               </div>
-            </div>
             {/* Fixed Footer with Buttons */}
             <div className="flex justify-between items-center px-6 py-4 border-t border-gray-200 bg-gray-50">
-              <div className="text-sm text-gray-600">
+                <div className="text-sm text-gray-600">
                 {selectedExams.length > 0 && `تم اختيار ${selectedExams.length} اختبار`}
-              </div>
-              <div className="flex space-x-3 rtl:space-x-reverse">
-                <button
+                </div>
+                <div className="flex space-x-3 rtl:space-x-reverse">
+                  <button
                   onClick={async () => {
-                    setShowLockUnlockModal(false);
-                    setSelectedExams([]);
+                      setShowLockUnlockModal(false);
+                      setSelectedExams([]);
                     // Refresh data when modal is closed
                     await fetchStudentData();
-                  }}
-                  className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
-                >
-                  إلغاء
-                </button>
-                <button
-                  onClick={handleToggleMultipleExams}
-                  disabled={selectedExams.length === 0}
-                  className={`px-4 py-2 ${lockUnlockAction === 'lock' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors`}
-                >
+                    }}
+                    className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                  >
+                    إلغاء
+                  </button>
+                  <button
+                    onClick={handleToggleMultipleExams}
+                    disabled={selectedExams.length === 0}
+                    className={`px-4 py-2 ${lockUnlockAction === 'lock' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors`}
+                  >
                   {lockUnlockAction === 'lock' ? 'قفل الاختبارات المحددة' : 'فتح الاختبارات المحددة'} ({selectedExams.length})
-                </button>
+                  </button>
               </div>
             </div>
           </div>
