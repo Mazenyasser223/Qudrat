@@ -1293,23 +1293,9 @@ const StudentProfile = () => {
                         onClick={() => {
                           const examsWithStatus = exams.map(exam => {
                             const progress = studentProgress.find(p => p.examId === exam._id);
-                            let status = 'locked';
-                            
-                            if (progress) {
-                              if (progress.status) {
-                                status = progress.status;
-                              } else if (progress.isUnlocked !== undefined) {
-                                status = progress.isUnlocked ? 'unlocked' : 'locked';
-                              } else if (progress.completed) {
-                                status = 'completed';
-                              } else if (progress.started) {
-                                status = 'in_progress';
-                              }
-                            }
-                            
                             return {
                               ...exam,
-                              status: status
+                              status: progress ? progress.status : 'locked'
                             };
                           });
                           
@@ -1332,23 +1318,9 @@ const StudentProfile = () => {
                       (() => {
                         const examsWithStatus = exams.map(exam => {
                           const progress = studentProgress.find(p => p.examId === exam._id);
-                          let status = 'locked';
-                          
-                          if (progress) {
-                            if (progress.status) {
-                              status = progress.status;
-                            } else if (progress.isUnlocked !== undefined) {
-                              status = progress.isUnlocked ? 'unlocked' : 'locked';
-                            } else if (progress.completed) {
-                              status = 'completed';
-                            } else if (progress.started) {
-                              status = 'in_progress';
-                            }
-                          }
-                          
                           return {
                             ...exam,
-                            status: status
+                            status: progress ? progress.status : 'locked'
                           };
                         });
                         
@@ -1397,19 +1369,7 @@ const StudentProfile = () => {
                       
                       // Then filter by status based on modal action
                       const progress = studentProgress.find(p => p.examId === exam._id);
-                      let examStatus = 'locked';
-                      
-                      if (progress) {
-                        if (progress.status) {
-                          examStatus = progress.status;
-                        } else if (progress.isUnlocked !== undefined) {
-                          examStatus = progress.isUnlocked ? 'unlocked' : 'locked';
-                        } else if (progress.completed) {
-                          examStatus = 'completed';
-                        } else if (progress.started) {
-                          examStatus = 'in_progress';
-                        }
-                      }
+                      const examStatus = progress ? progress.status : 'locked';
                       
                       if (lockUnlockAction === 'unlock') {
                         return examStatus === 'locked';
@@ -1462,23 +1422,9 @@ const StudentProfile = () => {
                     <span>تم تحديد: {selectedExams.length} من {(() => {
                       const examsWithStatus = exams.map(exam => {
                         const progress = studentProgress.find(p => p.examId === exam._id);
-                        let status = 'locked';
-                        
-                        if (progress) {
-                          if (progress.status) {
-                            status = progress.status;
-                          } else if (progress.isUnlocked !== undefined) {
-                            status = progress.isUnlocked ? 'unlocked' : 'locked';
-                          } else if (progress.completed) {
-                            status = 'completed';
-                          } else if (progress.started) {
-                            status = 'in_progress';
-                          }
-                        }
-                        
                         return {
                           ...exam,
-                          status: status
+                          status: progress ? progress.status : 'locked'
                         };
                       });
                       
@@ -1510,38 +1456,11 @@ const StudentProfile = () => {
                   // Get all exams with their status
                   const examsWithStatus = exams.map(exam => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
-                    let status = 'locked';
-                    
-                    if (progress) {
-                      // Check multiple possible status fields
-                      if (progress.status) {
-                        status = progress.status;
-                      } else if (progress.isUnlocked !== undefined) {
-                        status = progress.isUnlocked ? 'unlocked' : 'locked';
-                      } else if (progress.completed) {
-                        status = 'completed';
-                      } else if (progress.started) {
-                        status = 'in_progress';
-                      }
-                    }
-                    
                     return {
                       ...exam,
-                      status: status
+                      status: progress ? progress.status : 'locked'
                     };
                   });
-                  
-                  // Debug logging
-                  console.log('=== MODAL FILTERING DEBUG ===');
-                  console.log('Modal Action:', lockUnlockAction);
-                  console.log('Total Exams:', exams.length);
-                  console.log('Student Progress Length:', studentProgress.length);
-                  console.log('First few progress entries:', studentProgress.slice(0, 3));
-                  console.log('First few exam statuses:', examsWithStatus.slice(0, 5).map(e => ({ 
-                    title: e.title, 
-                    status: e.status,
-                    progress: studentProgress.find(p => p.examId === e._id)
-                  })));
                   
                   // Filter based on modal action
                   const filteredExams = examsWithStatus.filter(exam => {
@@ -1552,9 +1471,6 @@ const StudentProfile = () => {
                     }
                     return false;
                   });
-                  
-                  console.log('Filtered Exams Count:', filteredExams.length);
-                  console.log('Filtered Exams:', filteredExams.map(e => ({ title: e.title, status: e.status })));
                   
                   
                   // Show empty state if no exams match
