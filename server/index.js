@@ -42,32 +42,56 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS
+// CORS - Enhanced configuration for Railway deployment
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    console.log('🔍 CORS Request from origin:', origin);
     
-    // Allow localhost for development
-    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      console.log('✅ Allowing request with no origin');
       return callback(null, true);
     }
     
-    // Allow any Vercel domain
-    if (origin.includes('vercel.app')) {
+    // Allow localhost for development
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      console.log('✅ Allowing localhost origin:', origin);
+      return callback(null, true);
+    }
+    
+    // Allow any Vercel domain (more specific patterns)
+    if (origin.includes('vercel.app') || 
+        origin.includes('qudrat-') || 
+        origin.includes('mazenyasser223s-projects')) {
+      console.log('✅ Allowing Vercel origin:', origin);
       return callback(null, true);
     }
     
     // Allow the specific client URL if set
     if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) {
+      console.log('✅ Allowing configured client URL:', origin);
       return callback(null, true);
     }
     
     // Allow all origins for now (more permissive)
+    console.log('✅ Allowing all origins:', origin);
     return callback(null, true);
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200
 }));
+
+// Handle preflight requests
+app.options('*', (req, res) => {
+  console.log('🔄 Handling preflight request for:', req.path);
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200);
+});
 
 // Body parser middleware
 app.use(express.json({ limit: '10mb' }));
@@ -84,11 +108,16 @@ app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
+  console.log('🏥 Health check request from:', req.headers.origin || 'no origin');
   res.json({
     success: true,
     message: 'Qudrat Educational Platform API is running',
     timestamp: new Date().toISOString(),
-    version: '1.0.1'
+    version: '1.0.1',
+    cors: {
+      origin: req.headers.origin || 'no origin',
+      userAgent: req.headers['user-agent'] || 'no user agent'
+    }
   });
 });
 
