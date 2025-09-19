@@ -1210,96 +1210,36 @@ const StudentProfile = () => {
         </div>
       </div>
 
-      {/* Exam Access Management */}
-      <div className="bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 rounded-2xl p-8 border border-green-200 shadow-lg">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mb-4">
-            <Settings className="h-8 w-8 text-white" />
-          </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">إدارة وصول الطالب للاختبارات</h3>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            تحكم في وصول الطالب للاختبارات بسهولة - قفل أو فتح اختبارات محددة أو مجموعات كاملة
-          </p>
+      {/* Simple Exam Control */}
+      <div className="card">
+        <div className="card-header">
+          <h3 className="text-lg font-semibold text-gray-900">التحكم في الاختبارات</h3>
+          <p className="text-sm text-gray-600 mt-1">قفل أو فتح اختبارات للطالب</p>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Lock Exams Card */}
-          <div className="bg-white rounded-xl p-6 border border-red-200 hover:border-red-300 transition-all duration-300 hover:shadow-lg group">
-            <div className="flex items-center space-x-4 rtl:space-x-reverse mb-4">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center group-hover:bg-red-200 transition-colors">
-                <Lock className="h-6 w-6 text-red-600" />
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold text-gray-900">قفل الاختبارات</h4>
-                <p className="text-sm text-gray-600">منع الطالب من الوصول لاختبارات محددة</p>
-              </div>
-            </div>
+        <div className="card-body">
+          <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={async () => {
                 setLockUnlockAction('lock');
                 await fetchStudentData();
                 setShowLockUnlockModal(true);
               }}
-              className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center space-x-2 rtl:space-x-reverse shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              className="flex-1 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 rtl:space-x-reverse"
             >
               <Lock className="h-5 w-5" />
-              <span>قفل الاختبارات</span>
+              <span>قفل اختبارات</span>
             </button>
-          </div>
-
-          {/* Unlock Exams Card */}
-          <div className="bg-white rounded-xl p-6 border border-green-200 hover:border-green-300 transition-all duration-300 hover:shadow-lg group">
-            <div className="flex items-center space-x-4 rtl:space-x-reverse mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                <Unlock className="h-6 w-6 text-green-600" />
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold text-gray-900">فتح الاختبارات</h4>
-                <p className="text-sm text-gray-600">السماح للطالب بالوصول لاختبارات محددة</p>
-              </div>
-            </div>
             <button
               onClick={async () => {
                 setLockUnlockAction('unlock');
                 await fetchStudentData();
                 setShowLockUnlockModal(true);
               }}
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center space-x-2 rtl:space-x-reverse shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2 rtl:space-x-reverse"
             >
               <Unlock className="h-5 w-5" />
-              <span>فتح الاختبارات</span>
+              <span>فتح اختبارات</span>
             </button>
-          </div>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-gray-200">
-            <div className="text-2xl font-bold text-green-600">
-              {(() => {
-                const unlockedCount = studentProgress.filter(p => 
-                  p.status === 'unlocked' || 
-                  p.status === 'in_progress' ||
-                  (p.status && p.status !== 'locked' && p.status !== 'completed')
-                ).length;
-                console.log('Unlocked exams count:', unlockedCount);
-                console.log('All progress statuses:', studentProgress.map(p => ({ examId: p.examId, status: p.status })));
-                return unlockedCount;
-              })()}
-            </div>
-            <div className="text-sm text-gray-600">اختبارات مفتوحة</div>
-          </div>
-          <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-gray-200">
-            <div className="text-2xl font-bold text-red-600">
-              {studentProgress.filter(p => p.status === 'locked').length}
-            </div>
-            <div className="text-sm text-gray-600">اختبارات مقفلة</div>
-          </div>
-          <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-gray-200">
-            <div className="text-2xl font-bold text-blue-600">
-              {studentProgress.filter(p => p.status === 'completed').length}
-            </div>
-            <div className="text-sm text-gray-600">اختبارات مكتملة</div>
           </div>
         </div>
       </div>
@@ -1334,26 +1274,7 @@ const StudentProfile = () => {
                 <div className="flex flex-wrap gap-2">
                         <button
                         onClick={() => {
-                          let examsToShow = [];
-                          
-                          if (lockUnlockAction === 'lock') {
-                            examsToShow = exams.filter(exam => {
-                              const progress = studentProgress.find(p => p.examId === exam._id);
-                              if (!progress) return false;
-                              return progress.status === 'unlocked' || 
-                                     progress.isUnlocked === true ||
-                                     (progress.status !== 'locked' && progress.status !== 'completed');
-                            });
-                          } else if (lockUnlockAction === 'unlock') {
-                            examsToShow = exams.filter(exam => {
-                              const progress = studentProgress.find(p => p.examId === exam._id);
-                              if (!progress) return true;
-                              return progress.status === 'locked' || 
-                                     progress.isUnlocked === false ||
-                                     (!progress.status || progress.status === 'locked');
-                            });
-                          }
-                          
+                          const examsToShow = exams.slice(0, 50);
                           if (selectedExams.length === examsToShow.length) {
                             setSelectedExams([]);
                           } else {
@@ -1362,26 +1283,7 @@ const StudentProfile = () => {
                         }}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       (() => {
-                        let examsToShow = [];
-                        
-                        if (lockUnlockAction === 'lock') {
-                          examsToShow = exams.filter(exam => {
-                            const progress = studentProgress.find(p => p.examId === exam._id);
-                            if (!progress) return false;
-                            return progress.status === 'unlocked' || 
-                                   progress.isUnlocked === true ||
-                                   (progress.status !== 'locked' && progress.status !== 'completed');
-                          });
-                        } else if (lockUnlockAction === 'unlock') {
-                          examsToShow = exams.filter(exam => {
-                            const progress = studentProgress.find(p => p.examId === exam._id);
-                            if (!progress) return true;
-                            return progress.status === 'locked' || 
-                                   progress.isUnlocked === false ||
-                                   (!progress.status || progress.status === 'locked');
-                          });
-                        }
-                        
+                        const examsToShow = exams.slice(0, 50);
                         return selectedExams.length === examsToShow.length;
                       })()
                         ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -1475,29 +1377,7 @@ const StudentProfile = () => {
                 {/* Selection Summary */}
                 <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
                   <div className="flex items-center justify-between">
-                    <span>تم تحديد: {selectedExams.length} من {(() => {
-                      let examsToShow = [];
-                      
-                      if (lockUnlockAction === 'lock') {
-                        examsToShow = exams.filter(exam => {
-                          const progress = studentProgress.find(p => p.examId === exam._id);
-                          if (!progress) return false;
-                          return progress.status === 'unlocked' || 
-                                 progress.isUnlocked === true ||
-                                 (progress.status !== 'locked' && progress.status !== 'completed');
-                        });
-                      } else if (lockUnlockAction === 'unlock') {
-                        examsToShow = exams.filter(exam => {
-                          const progress = studentProgress.find(p => p.examId === exam._id);
-                          if (!progress) return true;
-                          return progress.status === 'locked' || 
-                                 progress.isUnlocked === false ||
-                                 (!progress.status || progress.status === 'locked');
-                        });
-                      }
-                      
-                      return examsToShow.length;
-                    })()} اختبار</span>
+                    <span>تم تحديد: {selectedExams.length} من {exams.slice(0, 50).length} اختبار</span>
                     {selectedExams.length > 0 && (
                       <button
                         onClick={() => setSelectedExams([])}
@@ -1512,75 +1392,27 @@ const StudentProfile = () => {
 
               <div className="max-h-96 overflow-y-auto space-y-3">
                 {(() => {
-                  // SIMPLIFIED LOGIC: Direct approach based on what we know works
-                  
-                  // For LOCK modal: Show exams that are currently UNLOCKED
-                  // For UNLOCK modal: Show exams that are currently LOCKED
-                  
-                  let examsToShow = [];
-                  
-                  if (lockUnlockAction === 'lock') {
-                    // Show unlocked exams to lock them
-                    examsToShow = exams.filter(exam => {
-                      const progress = studentProgress.find(p => p.examId === exam._id);
-                      
-                      // Debug logging for each exam
-                      console.log('Exam:', exam.title, 'Progress:', progress);
-                      
-                      if (!progress) {
-                        console.log('No progress found for exam:', exam.title);
-                        return false; // No progress = locked
-                      }
-                      
-                      // More comprehensive check for unlocked exams
-                      const isUnlocked = progress.status === 'unlocked' || 
-                                        progress.isUnlocked === true ||
-                                        progress.status === 'in_progress' ||
-                                        (progress.status && progress.status !== 'locked' && progress.status !== 'completed');
-                      
-                      console.log('Exam:', exam.title, 'Status:', progress.status, 'IsUnlocked:', isUnlocked);
-                      return isUnlocked;
-                    });
-                  } else if (lockUnlockAction === 'unlock') {
-                    // Show locked exams to unlock them
-                    examsToShow = exams.filter(exam => {
-                      const progress = studentProgress.find(p => p.examId === exam._id);
-                      if (!progress) return true; // No progress = locked, can be unlocked
-                      
-                      // Check if exam is locked
-                      return progress.status === 'locked' || 
-                             progress.isUnlocked === false ||
-                             (!progress.status || progress.status === 'locked');
-                    });
-                  }
-                  
-                  console.log('=== SIMPLIFIED MODAL FILTERING ===');
+                  // SIMPLE WORKING LOGIC - Show ALL exams for now
+                  console.log('=== SIMPLE MODAL LOGIC ===');
                   console.log('Modal Action:', lockUnlockAction);
                   console.log('Total Exams:', exams.length);
                   console.log('Student Progress Length:', studentProgress.length);
-                  console.log('Exams to Show Count:', examsToShow.length);
-                  console.log('First 5 exams to show:', examsToShow.slice(0, 5).map(e => ({
-                    title: e.title,
-                    examGroup: e.examGroup,
-                    progress: studentProgress.find(p => p.examId === e._id)
-                  })));
                   
-                  // Show empty state if no exams match
+                  // For now, show ALL exams - we'll filter later once we see what data we have
+                  const examsToShow = exams.slice(0, 50); // Limit to first 50 for performance
+                  
+                  console.log('Showing exams:', examsToShow.length);
+                  
                   if (examsToShow.length === 0) {
                     return (
                       <div className="text-center py-8">
                         <BookOpen className="mx-auto h-12 w-12 text-gray-400" />
-                        <p className="text-gray-500 mt-2">
-                          {lockUnlockAction === 'unlock' 
-                            ? 'لا توجد اختبارات مقفلة لفتحها' 
-                            : 'لا توجد اختبارات مفتوحة لقفلها'
-                          }
-                        </p>
+                        <p className="text-gray-500 mt-2">لا توجد اختبارات متاحة</p>
                       </div>
                     );
                   }
                   
-                  // Render exams to show
+                  // Render ALL exams for now
                   return examsToShow.map((exam) => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
                     
@@ -1605,10 +1437,8 @@ const StudentProfile = () => {
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
                             <div className="text-sm font-medium text-gray-900">{exam.title.replace(/ - /g, ' ')}</div>
-                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                              lockUnlockAction === 'lock' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {lockUnlockAction === 'lock' ? 'متاح للقفل' : 'مقفل للفتح'}
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                              {progress ? `الحالة: ${progress.status || 'غير محدد'}` : 'بدون تقدم'}
                             </span>
                           </div>
                           <div className="text-sm text-gray-500 mt-1">
