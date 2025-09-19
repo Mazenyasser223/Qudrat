@@ -1293,9 +1293,23 @@ const StudentProfile = () => {
                         onClick={() => {
                           const examsWithStatus = exams.map(exam => {
                             const progress = studentProgress.find(p => p.examId === exam._id);
+                            let status = 'locked';
+                            
+                            if (progress) {
+                              if (progress.status) {
+                                status = progress.status;
+                              } else if (progress.isUnlocked !== undefined) {
+                                status = progress.isUnlocked ? 'unlocked' : 'locked';
+                              } else if (progress.completed) {
+                                status = 'completed';
+                              } else if (progress.started) {
+                                status = 'in_progress';
+                              }
+                            }
+                            
                             return {
                               ...exam,
-                              status: progress ? progress.status : 'locked'
+                              status: status
                             };
                           });
                           
@@ -1318,9 +1332,23 @@ const StudentProfile = () => {
                       (() => {
                         const examsWithStatus = exams.map(exam => {
                           const progress = studentProgress.find(p => p.examId === exam._id);
+                          let status = 'locked';
+                          
+                          if (progress) {
+                            if (progress.status) {
+                              status = progress.status;
+                            } else if (progress.isUnlocked !== undefined) {
+                              status = progress.isUnlocked ? 'unlocked' : 'locked';
+                            } else if (progress.completed) {
+                              status = 'completed';
+                            } else if (progress.started) {
+                              status = 'in_progress';
+                            }
+                          }
+                          
                           return {
                             ...exam,
-                            status: progress ? progress.status : 'locked'
+                            status: status
                           };
                         });
                         
@@ -1369,7 +1397,19 @@ const StudentProfile = () => {
                       
                       // Then filter by status based on modal action
                       const progress = studentProgress.find(p => p.examId === exam._id);
-                      const examStatus = progress ? progress.status : 'locked';
+                      let examStatus = 'locked';
+                      
+                      if (progress) {
+                        if (progress.status) {
+                          examStatus = progress.status;
+                        } else if (progress.isUnlocked !== undefined) {
+                          examStatus = progress.isUnlocked ? 'unlocked' : 'locked';
+                        } else if (progress.completed) {
+                          examStatus = 'completed';
+                        } else if (progress.started) {
+                          examStatus = 'in_progress';
+                        }
+                      }
                       
                       if (lockUnlockAction === 'unlock') {
                         return examStatus === 'locked';
@@ -1422,9 +1462,23 @@ const StudentProfile = () => {
                     <span>تم تحديد: {selectedExams.length} من {(() => {
                       const examsWithStatus = exams.map(exam => {
                         const progress = studentProgress.find(p => p.examId === exam._id);
+                        let status = 'locked';
+                        
+                        if (progress) {
+                          if (progress.status) {
+                            status = progress.status;
+                          } else if (progress.isUnlocked !== undefined) {
+                            status = progress.isUnlocked ? 'unlocked' : 'locked';
+                          } else if (progress.completed) {
+                            status = 'completed';
+                          } else if (progress.started) {
+                            status = 'in_progress';
+                          }
+                        }
+                        
                         return {
                           ...exam,
-                          status: progress ? progress.status : 'locked'
+                          status: status
                         };
                       });
                       
@@ -1456,9 +1510,24 @@ const StudentProfile = () => {
                   // Get all exams with their status
                   const examsWithStatus = exams.map(exam => {
                     const progress = studentProgress.find(p => p.examId === exam._id);
+                    let status = 'locked';
+                    
+                    if (progress) {
+                      // Check multiple possible status fields
+                      if (progress.status) {
+                        status = progress.status;
+                      } else if (progress.isUnlocked !== undefined) {
+                        status = progress.isUnlocked ? 'unlocked' : 'locked';
+                      } else if (progress.completed) {
+                        status = 'completed';
+                      } else if (progress.started) {
+                        status = 'in_progress';
+                      }
+                    }
+                    
                     return {
                       ...exam,
-                      status: progress ? progress.status : 'locked'
+                      status: status
                     };
                   });
                   
