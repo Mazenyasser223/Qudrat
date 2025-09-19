@@ -1276,7 +1276,16 @@ const StudentProfile = () => {
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 text-center border border-gray-200">
             <div className="text-2xl font-bold text-green-600">
-              {studentProgress.filter(p => p.status === 'unlocked').length}
+              {(() => {
+                const unlockedCount = studentProgress.filter(p => 
+                  p.status === 'unlocked' || 
+                  p.status === 'in_progress' ||
+                  (p.status && p.status !== 'locked' && p.status !== 'completed')
+                ).length;
+                console.log('Unlocked exams count:', unlockedCount);
+                console.log('All progress statuses:', studentProgress.map(p => ({ examId: p.examId, status: p.status })));
+                return unlockedCount;
+              })()}
             </div>
             <div className="text-sm text-gray-600">اختبارات مفتوحة</div>
           </div>
@@ -1514,12 +1523,23 @@ const StudentProfile = () => {
                     // Show unlocked exams to lock them
                     examsToShow = exams.filter(exam => {
                       const progress = studentProgress.find(p => p.examId === exam._id);
-                      if (!progress) return false; // No progress = locked
                       
-                      // Check if exam is unlocked (has any progress or is explicitly unlocked)
-                      return progress.status === 'unlocked' || 
-                             progress.isUnlocked === true ||
-                             (progress.status !== 'locked' && progress.status !== 'completed');
+                      // Debug logging for each exam
+                      console.log('Exam:', exam.title, 'Progress:', progress);
+                      
+                      if (!progress) {
+                        console.log('No progress found for exam:', exam.title);
+                        return false; // No progress = locked
+                      }
+                      
+                      // More comprehensive check for unlocked exams
+                      const isUnlocked = progress.status === 'unlocked' || 
+                                        progress.isUnlocked === true ||
+                                        progress.status === 'in_progress' ||
+                                        (progress.status && progress.status !== 'locked' && progress.status !== 'completed');
+                      
+                      console.log('Exam:', exam.title, 'Status:', progress.status, 'IsUnlocked:', isUnlocked);
+                      return isUnlocked;
                     });
                   } else if (lockUnlockAction === 'unlock') {
                     // Show locked exams to unlock them
