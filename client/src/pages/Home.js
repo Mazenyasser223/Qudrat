@@ -99,8 +99,8 @@ const Home = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <section className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-green-900 mb-4">مستر علاء وهبة</h1>
-          <p className="text-green-900/80 text-lg">تدريب احترافي لاختبارات القدرات الكمي</p>
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-green-900 mb-4">تدريب احترافي لاختبارات القدرات الكمي</h1>
+          <p className="text-green-900/80 text-lg">منصة متخصصة في تدريب الطلاب على اختبارات القدرات الكمية</p>
         </section>
 
         {/* PDFs Section - مذكرات و قوانين */}
@@ -293,7 +293,7 @@ const Home = () => {
               <div className="h-56 w-56 rounded-lg shadow-lg border-4 border-green-200 overflow-hidden">
                 <img 
                   src="/mazen.jpg" 
-                  alt="مستر علاء وهبة" 
+                  alt="تدريب احترافي لاختبارات القدرات الكمي" 
                   className="w-full h-full object-cover"
                   style={{
                     objectFit: 'cover',
@@ -309,7 +309,7 @@ const Home = () => {
                 className="h-56 w-56 bg-gradient-to-br from-green-100 to-green-200 rounded-lg shadow-lg border-4 border-green-200 flex items-center justify-center text-green-700 font-semibold text-center p-4"
                 style={{display: 'none'}}
               >
-                صورة مستر علاء وهبة
+                صورة تدريب احترافي لاختبارات القدرات الكمي
               </div>
             </div>
             <div className="text-green-900/80 space-y-4 pr-6">
