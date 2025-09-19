@@ -1401,7 +1401,7 @@ const StudentProfile = () => {
                     );
                   });
                 })()}
-                  </div>
+            </div>
             {/* Fixed Footer with Buttons */}
             <div className="flex justify-between items-center px-6 py-4 border-t border-gray-200 bg-gray-50">
                 <div className="text-sm text-gray-600">
