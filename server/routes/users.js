@@ -265,4 +265,42 @@ router.get('/dashboard-stats', isTeacher, getDashboardStats);
 // @access  Private (Teacher/Admin only)
 router.get('/analytics', isTeacher, getAnalytics);
 
+// @route   GET /api/users/test-db
+// @desc    Test database connection
+// @access  Private (Teacher only)
+router.get('/test-db', isTeacher, async (req, res) => {
+  try {
+    console.log('=== TESTING DATABASE CONNECTION ===');
+    
+    // Test User model
+    const userCount = await require('../models/User').countDocuments();
+    console.log('User count:', userCount);
+    
+    // Test Exam model
+    const examCount = await require('../models/Exam').countDocuments();
+    console.log('Exam count:', examCount);
+    
+    // Test finding a specific exam
+    const exam = await require('../models/Exam').findOne();
+    console.log('Sample exam:', exam ? { id: exam._id, title: exam.title, examGroup: exam.examGroup } : 'No exams found');
+    
+    res.json({
+      success: true,
+      message: 'Database connection working',
+      data: {
+        userCount,
+        examCount,
+        sampleExam: exam ? { id: exam._id, title: exam.title, examGroup: exam.examGroup } : null
+      }
+    });
+  } catch (error) {
+    console.error('Database test error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Database connection failed',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

@@ -302,13 +302,21 @@ const StudentProfile = () => {
     try {
       console.log('=== HANDLING LOCK/UNLOCK EXAM ===');
       console.log('Exam ID:', examId);
+      console.log('Exam ID type:', typeof examId);
+      console.log('Exam ID length:', examId?.length);
       console.log('Action:', action);
       console.log('Student ID:', studentId);
+      console.log('Student ID type:', typeof studentId);
+      console.log('Student ID length:', studentId?.length);
       
       const endpoint = action === 'lock' ? 'lock-exam' : 'unlock-exam';
       const url = `/api/users/students/${studentId}/${endpoint}`;
       
       console.log('API URL:', url);
+      console.log('Request body:', { examId });
+      console.log('Request headers:', {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      });
       
       const response = await axios.put(url, {
         examId

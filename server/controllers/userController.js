@@ -356,6 +356,24 @@ const unlockExamForStudent = async (req, res) => {
     console.log('Exam ID from body:', req.body.examId);
     
     const { examId } = req.body;
+    
+    // Validate examId format
+    if (!examId || typeof examId !== 'string' || examId.length !== 24) {
+      console.log('Invalid examId format:', examId);
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid exam ID format'
+      });
+    }
+    
+    // Validate studentId format
+    if (!req.params.id || typeof req.params.id !== 'string' || req.params.id.length !== 24) {
+      console.log('Invalid studentId format:', req.params.id);
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid student ID format'
+      });
+    }
 
     const student = await User.findById(req.params.id);
     if (!student || student.role !== 'student') {
@@ -435,6 +453,24 @@ const lockExamForStudent = async (req, res) => {
     console.log('Exam ID from body:', req.body.examId);
     
     const { examId } = req.body;
+    
+    // Validate examId format
+    if (!examId || typeof examId !== 'string' || examId.length !== 24) {
+      console.log('Invalid examId format:', examId);
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid exam ID format'
+      });
+    }
+    
+    // Validate studentId format
+    if (!req.params.id || typeof req.params.id !== 'string' || req.params.id.length !== 24) {
+      console.log('Invalid studentId format:', req.params.id);
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid student ID format'
+      });
+    }
 
     const student = await User.findById(req.params.id);
     if (!student || student.role !== 'student') {
