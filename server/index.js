@@ -163,6 +163,81 @@ app.get('/api/test-db/:studentId/:examId', async (req, res) => {
   }
 });
 
+// Test save operation endpoint (no auth required)
+app.post('/api/test-save/:studentId/:examId', async (req, res) => {
+  try {
+    console.log('=== TESTING SAVE OPERATION ===');
+    console.log('Student ID:', req.params.studentId);
+    console.log('Exam ID:', req.params.examId);
+    
+    const User = require('./models/User');
+    const Exam = require('./models/Exam');
+    
+    // Find student and exam
+    const student = await User.findById(req.params.studentId);
+    const exam = await Exam.findById(req.params.examId);
+    
+    if (!student || !exam) {
+      return res.status(404).json({
+        success: false,
+        message: 'Student or exam not found'
+      });
+    }
+    
+    console.log('Creating new progress entry...');
+    const newProgress = {
+      examGroup: exam.examGroup,
+      examId: req.params.examId,
+      status: 'unlocked',
+      percentage: 0,
+      score: 0,
+      totalQuestions: 0,
+      correctAnswers: 0,
+      wrongAnswers: 0,
+      timeSpent: 0,
+      submittedAt: null,
+      answers: []
+    };
+    
+    console.log('New progress object:', newProgress);
+    
+    // Add to student's examProgress array
+    student.examProgress.push(newProgress);
+    console.log('Student examProgress after push:', student.examProgress.length);
+    
+    // Try to save
+    console.log('Attempting to save student...');
+    await student.save();
+    console.log('Student saved successfully!');
+    
+    res.json({
+      success: true,
+      message: 'Save operation completed successfully',
+      data: {
+        studentId: student._id,
+        examId: exam._id,
+        newProgressCount: student.examProgress.length
+      }
+    });
+    
+  } catch (error) {
+    console.error('=== SAVE OPERATION ERROR ===');
+    console.error('Error object:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Error name:', error.name);
+    console.error('Error code:', error.code);
+    
+    res.status(500).json({
+      success: false,
+      message: 'Save operation failed',
+      error: error.message,
+      errorName: error.name,
+      errorCode: error.code
+    });
+  }
+});
+
 // Simple CORS test endpoint
 app.get('/api/cors-test', (req, res) => {
   console.log('🧪 CORS test request from:', req.headers.origin || 'no origin');
