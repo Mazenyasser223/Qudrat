@@ -207,24 +207,62 @@ const TakeExam = () => {
               </div>
             </div>
             
-            <div className="flex items-center space-x-4 rtl:space-x-reverse">
-              <ExamTimer
-                timeLimit={exam.timeLimit}
-                onTimeUp={handleTimeUp}
-                onWarning={handleTimeWarning}
-                onTimeUpdate={setTimeSpent}
-              />
-            </div>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Question Navigation */}
+        {/* Question Content */}
+        <div className="lg:col-span-3">
+          <QuestionCard
+            question={shuffledQuestions[currentQuestion]}
+            questionNumber={currentQuestion + 1}
+            totalQuestions={shuffledQuestions.length}
+            selectedAnswer={answers[currentQuestion]}
+            onAnswerSelect={handleAnswerSelect}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            isAnswered={answers[currentQuestion] !== null}
+          />
+
+          {/* Submit Button - Only show on last question */}
+          {currentQuestion === shuffledQuestions.length - 1 && (
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={handleSubmit}
+                disabled={submitting || timeUp}
+                className="btn-primary flex items-center space-x-2 rtl:space-x-reverse px-8 py-3 text-lg"
+              >
+                {submitting ? (
+                  <>
+                    <div className="spinner"></div>
+                    <span>جاري التسليم...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-5 w-5" />
+                    <span>تسليم الامتحان</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Question Navigation - Moved to Right Side */}
         <div className="lg:col-span-1">
           <div className="card sticky top-6">
             <div className="card-header">
-              <h3 className="text-lg font-semibold text-gray-900">الأسئلة</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900">الأسئلة</h3>
+                {/* Timer moved here */}
+                <ExamTimer
+                  timeLimit={exam.timeLimit}
+                  onTimeUp={handleTimeUp}
+                  onWarning={handleTimeWarning}
+                  onTimeUpdate={setTimeSpent}
+                />
+              </div>
             </div>
             <div className="card-body">
               <div className="grid grid-cols-4 gap-2 mb-4">
@@ -270,43 +308,6 @@ const TakeExam = () => {
               )}
             </div>
           </div>
-        </div>
-
-        {/* Question Content */}
-        <div className="lg:col-span-3">
-          <QuestionCard
-            question={shuffledQuestions[currentQuestion]}
-            questionNumber={currentQuestion + 1}
-            totalQuestions={shuffledQuestions.length}
-            selectedAnswer={answers[currentQuestion]}
-            onAnswerSelect={handleAnswerSelect}
-            onPrevious={handlePrevious}
-            onNext={handleNext}
-            isAnswered={answers[currentQuestion] !== null}
-          />
-
-          {/* Submit Button - Only show on last question */}
-          {currentQuestion === shuffledQuestions.length - 1 && (
-            <div className="mt-6 flex justify-center">
-              <button
-                onClick={handleSubmit}
-                disabled={submitting || timeUp}
-                className="btn-primary flex items-center space-x-2 rtl:space-x-reverse px-8 py-3 text-lg"
-              >
-                {submitting ? (
-                  <>
-                    <div className="spinner"></div>
-                    <span>جاري التسليم...</span>
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="h-5 w-5" />
-                    <span>تسليم الامتحان</span>
-                  </>
-                )}
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>
