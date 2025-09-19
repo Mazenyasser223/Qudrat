@@ -226,13 +226,41 @@ const Home = () => {
         <section className="mb-16">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-green-900 mb-2">المجموعات المميزة</h2>
-            <p className="text-green-700 text-lg">8 مجموعات تدريبية متدرجة المستوى</p>
+            <p className="text-green-700 text-lg">اختبارات التأسيس + 8 مجموعات تدريبية متدرجة المستوى</p>
             <div className="mt-4 inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full text-sm font-semibold">
               🔒 محتوى مميز - يتطلب اشتراك
             </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {/* Foundation Exams Card */}
+            <div className="relative group">
+              <div className="card p-6 text-center bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-75">
+                {/* Lock overlay */}
+                <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
+                  <div className="bg-white/90 rounded-full p-3 shadow-lg">
+                    <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                </div>
+                
+                {/* Foundation content */}
+                <div className="relative z-10">
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center opacity-50">
+                    <span className="text-2xl font-bold text-white">ت</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-700 mb-2">اختبارات التأسيس</h3>
+                  <p className="text-gray-600 text-sm mb-3">اختبارات تأسيسية شاملة</p>
+                  <div className="text-xs text-gray-500 space-y-1">
+                    <div>✓ تصحيح تلقائي</div>
+                    <div>✓ تحليل الأخطاء</div>
+                    <div>✓ متابعة التقدم</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {Array.from({ length: 8 }, (_, i) => i + 1).map((groupNum) => (
               <div key={groupNum} className="relative group">
                 <div className="card p-6 text-center bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-75">
@@ -309,31 +337,8 @@ const Home = () => {
 
         <section id="about" className="card p-8 mb-16">
           <h2 className="text-3xl font-bold text-center mb-8">نبذة عني</h2>
-          <div className="grid grid-cols-1 md:grid-cols-[220px,1fr] gap-8 items-start">
-            <div className="flex flex-col items-center">
-              <div className="h-56 w-56 rounded-lg shadow-lg border-4 border-green-200 overflow-hidden">
-                <img 
-                  src="/mazen.jpg" 
-                  alt="تدريب احترافي لاختبارات القدرات الكمي" 
-                  className="w-full h-full object-cover"
-                  style={{
-                    objectFit: 'cover',
-                    objectPosition: 'center 10%'
-                  }}
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.parentElement.nextSibling.style.display = 'block';
-                  }}
-                />
-              </div>
-              <div 
-                className="h-56 w-56 bg-gradient-to-br from-green-100 to-green-200 rounded-lg shadow-lg border-4 border-green-200 flex items-center justify-center text-green-700 font-semibold text-center p-4"
-                style={{display: 'none'}}
-              >
-                صورة تدريب احترافي لاختبارات القدرات الكمي
-              </div>
-            </div>
-            <div className="text-green-900/80 space-y-4 pr-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-green-900/80 space-y-4 text-center">
               <div className="text-lg font-semibold text-green-800">
                 🎯 منصتي التعليمية لتدريب الطلاب على اختبارات القدرات (القسم الكمي)
               </div>
