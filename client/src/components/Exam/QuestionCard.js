@@ -83,9 +83,14 @@ const QuestionCard = ({
               <img
                 src={question.questionImage}
                 alt={`سؤال ${questionNumber}`}
-                className={`max-w-full max-h-96 rounded-lg shadow-sm ${
+                className={`w-full h-auto rounded-lg shadow-lg ${
                   imageLoaded ? 'block' : 'hidden'
                 }`}
+                style={{
+                  maxHeight: '70vh',
+                  minHeight: '350px',
+                  objectFit: 'contain'
+                }}
                 onLoad={() => setImageLoaded(true)}
                 onError={() => setImageError(true)}
               />

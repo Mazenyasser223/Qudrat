@@ -175,19 +175,24 @@ const ViewExam = () => {
 
                 {/* Question Image */}
                 {question.questionImage && (
-                  <div className="mb-4">
+                  <div className="mb-6">
                     <div className="relative">
                       <img
                         src={question.questionImage}
                         alt={`السؤال ${index + 1}`}
-                        className="w-full max-w-md mx-auto rounded-lg border shadow-sm"
+                        className="w-full h-auto rounded-lg border shadow-lg"
+                        style={{
+                          maxHeight: '80vh',
+                          minHeight: '400px',
+                          objectFit: 'contain'
+                        }}
                         onError={(e) => {
                           e.target.style.display = 'none';
                           e.target.nextSibling.style.display = 'block';
                         }}
                       />
                       <div 
-                        className="hidden w-full max-w-md mx-auto h-32 bg-gray-100 rounded-lg border flex items-center justify-center text-gray-500"
+                        className="hidden w-full h-64 bg-gray-100 rounded-lg border flex items-center justify-center text-gray-500"
                       >
                         <div className="text-center">
                           <Eye className="h-8 w-8 mx-auto mb-2 text-gray-400" />
