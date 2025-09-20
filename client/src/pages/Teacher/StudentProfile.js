@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -48,6 +48,7 @@ const StudentProfile = () => {
   const [expandedControlGroups, setExpandedControlGroups] = useState({});
   const [togglingExam, setTogglingExam] = useState(null);
   const [togglingGroup, setTogglingGroup] = useState(null);
+  const [examControlData, setExamControlData] = useState(null);
 
   useEffect(() => {
     console.log('=== STUDENT PROFILE MOUNTED ===');
@@ -480,6 +481,28 @@ const StudentProfile = () => {
   };
 
   // Exam Control Functions
+  // Memoized function to process exam control data
+  const processExamControlData = useMemo(() => {
+    if (!exams.length || !studentProgress.length) return null;
+    
+    const groupedExams = {};
+    exams.forEach(exam => {
+      const groupNum = exam.examGroup || 0;
+      if (!groupedExams[groupNum]) {
+        groupedExams[groupNum] = [];
+      }
+      const progress = studentProgress.find(p => p.examId === exam._id);
+      groupedExams[groupNum].push({ exam, progress });
+    });
+    
+    // Sort exams within each group
+    Object.keys(groupedExams).forEach(group => {
+      groupedExams[group].sort((a, b) => a.exam.order - b.exam.order);
+    });
+    
+    return groupedExams;
+  }, [exams, studentProgress]);
+
   const toggleControlGroup = (groupKey) => {
     setExpandedControlGroups(prev => ({
       ...prev,
@@ -1269,31 +1292,21 @@ const StudentProfile = () => {
           <div className="card-body">
             <div className="space-y-4">
               {/* Group Controls */}
-              {(() => {
-                // Create groupedExams for exam control
-                const groupedExams = {};
-                exams.forEach(exam => {
-                  const groupNum = exam.examGroup || 0;
-                  if (!groupedExams[groupNum]) {
-                    groupedExams[groupNum] = [];
-                  }
-                  const progress = studentProgress.find(p => p.examId === exam._id);
-                  groupedExams[groupNum].push({ exam, progress });
-                });
-                
-                return Object.keys(groupedExams).map(groupKey => {
-                  const groupNum = parseInt(groupKey);
-                  const groupExams = groupedExams[groupKey] || [];
+              {!processExamControlData ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="spinner w-8 h-8"></div>
+                  <span className="mr-3 text-gray-600">جاري تحميل بيانات التحكم...</span>
+                </div>
+              ) : (
+                Object.keys(processExamControlData).map(groupKey => {
+                const groupNum = parseInt(groupKey);
+                const groupExams = processExamControlData[groupKey] || [];
                 const isExpanded = expandedControlGroups[groupKey];
                 
-                // Calculate group status
-                const groupProgress = groupExams.map(exam => 
-                  studentProgress.find(p => p.examId === exam._id)
-                );
-                
-                const unlockedCount = groupProgress.filter(p => p?.status === 'unlocked').length;
-                const lockedCount = groupProgress.filter(p => p?.status === 'locked' || !p).length;
-                const completedCount = groupProgress.filter(p => p?.status === 'completed').length;
+                // Calculate group status efficiently
+                const unlockedCount = groupExams.filter(item => item.progress?.status === 'unlocked').length;
+                const lockedCount = groupExams.filter(item => item.progress?.status === 'locked' || !item.progress).length;
+                const completedCount = groupExams.filter(item => item.progress?.status === 'completed').length;
                 
                 return (
                   <div key={groupKey} className="border border-gray-200 rounded-lg overflow-hidden">
@@ -1359,82 +1372,161 @@ const StudentProfile = () => {
                       </div>
                     </button>
                     
-                    {/* Expandable Content */}
+                    {/* Expandable Content - Lazy Loaded */}
                     {isExpanded && (
                       <div className="p-4 bg-white border-t border-gray-200">
-                        <div className="space-y-2">
-                          {groupExams.map(item => {
-                            const exam = item.exam;
-                            const progress = item.progress;
-                            const currentStatus = progress?.status || 'locked';
-                            const canToggle = currentStatus !== 'completed' && currentStatus !== 'in_progress';
-                            
-                            return (
-                              <div
-                                key={exam._id}
-                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                              >
-                                <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                                    currentStatus === 'completed' ? 'bg-green-100' :
-                                    currentStatus === 'in_progress' ? 'bg-yellow-100' :
-                                    currentStatus === 'unlocked' ? 'bg-blue-100' : 'bg-gray-100'
-                                  }`}>
-                                    {currentStatus === 'completed' ? (
-                                      <CheckCircle className="h-4 w-4 text-green-600" />
-                                    ) : currentStatus === 'in_progress' ? (
-                                      <div className="w-2 h-2 bg-yellow-600 rounded-full"></div>
-                                    ) : currentStatus === 'unlocked' ? (
-                                      <Unlock className="h-3 w-3 text-blue-600" />
-                                    ) : (
-                                      <Lock className="h-3 w-3 text-gray-600" />
-                                    )}
-                                  </div>
-                                  <div>
-                                    <h5 className="font-medium text-gray-900 text-sm">{exam.title}</h5>
-                                    <p className="text-xs text-gray-500">
-                                      {currentStatus === 'completed' ? 'مكتمل' :
-                                       currentStatus === 'in_progress' ? 'قيد التنفيذ' :
-                                       currentStatus === 'unlocked' ? 'مفتوح' : 'مقفل'}
-                                    </p>
-                                  </div>
-                                </div>
+                        <div className="space-y-2 max-h-96 overflow-y-auto">
+                          {groupExams.length > 20 ? (
+                            // Show first 20 exams with "Show More" button for large groups
+                            <>
+                              {groupExams.slice(0, 20).map(item => {
+                                const exam = item.exam;
+                                const progress = item.progress;
+                                const currentStatus = progress?.status || 'locked';
+                                const canToggle = currentStatus !== 'completed' && currentStatus !== 'in_progress';
                                 
-                                <div className="flex space-x-2 rtl:space-x-reverse">
-                                  <button
-                                    onClick={() => handleToggleExamAccess(exam._id, 'open')}
-                                    disabled={!canToggle || togglingExam === exam._id}
-                                    className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                return (
+                                  <div
+                                    key={exam._id}
+                                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                                   >
-                                    {togglingExam === exam._id ? (
-                                      <div className="spinner w-3 h-3"></div>
-                                    ) : (
-                                      <Unlock className="h-3 w-3" />
-                                    )}
-                                    <span>فتح</span>
-                                  </button>
-                                  <button
-                                    onClick={() => handleToggleExamAccess(exam._id, 'close')}
-                                    disabled={!canToggle || togglingExam === exam._id}
-                                    className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                  >
-                                    {togglingExam === exam._id ? (
-                                      <div className="spinner w-3 h-3"></div>
-                                    ) : (
-                                      <Lock className="h-3 w-3" />
-                                    )}
-                                    <span>قفل</span>
-                                  </button>
-                                </div>
+                                    <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                                        currentStatus === 'completed' ? 'bg-green-100' :
+                                        currentStatus === 'in_progress' ? 'bg-yellow-100' :
+                                        currentStatus === 'unlocked' ? 'bg-blue-100' : 'bg-gray-100'
+                                      }`}>
+                                        {currentStatus === 'completed' ? (
+                                          <CheckCircle className="h-4 w-4 text-green-600" />
+                                        ) : currentStatus === 'in_progress' ? (
+                                          <div className="w-2 h-2 bg-yellow-600 rounded-full"></div>
+                                        ) : currentStatus === 'unlocked' ? (
+                                          <Unlock className="h-3 w-3 text-blue-600" />
+                                        ) : (
+                                          <Lock className="h-3 w-3 text-gray-600" />
+                                        )}
+                                      </div>
+                                      <div>
+                                        <h5 className="font-medium text-gray-900 text-sm">{exam.title}</h5>
+                                        <p className="text-xs text-gray-500">
+                                          {currentStatus === 'completed' ? 'مكتمل' :
+                                           currentStatus === 'in_progress' ? 'قيد التنفيذ' :
+                                           currentStatus === 'unlocked' ? 'مفتوح' : 'مقفل'}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    
+                                    <div className="flex space-x-2 rtl:space-x-reverse">
+                                      <button
+                                        onClick={() => handleToggleExamAccess(exam._id, 'open')}
+                                        disabled={!canToggle || togglingExam === exam._id}
+                                        className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                      >
+                                        {togglingExam === exam._id ? (
+                                          <div className="spinner w-3 h-3"></div>
+                                        ) : (
+                                          <Unlock className="h-3 w-3" />
+                                        )}
+                                        <span>فتح</span>
+                                      </button>
+                                      <button
+                                        onClick={() => handleToggleExamAccess(exam._id, 'close')}
+                                        disabled={!canToggle || togglingExam === exam._id}
+                                        className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                      >
+                                        {togglingExam === exam._id ? (
+                                          <div className="spinner w-3 h-3"></div>
+                                        ) : (
+                                          <Lock className="h-3 w-3" />
+                                        )}
+                                        <span>قفل</span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                              <div className="text-center py-2">
+                                <span className="text-sm text-gray-500">
+                                  عرض {Math.min(20, groupExams.length)} من {groupExams.length} اختبار
+                                </span>
                               </div>
-                            );
-                          })}
+                            </>
+                          ) : (
+                            // Show all exams for smaller groups
+                            groupExams.map(item => {
+                              const exam = item.exam;
+                              const progress = item.progress;
+                              const currentStatus = progress?.status || 'locked';
+                              const canToggle = currentStatus !== 'completed' && currentStatus !== 'in_progress';
+                              
+                              return (
+                                <div
+                                  key={exam._id}
+                                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                >
+                                  <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                                      currentStatus === 'completed' ? 'bg-green-100' :
+                                      currentStatus === 'in_progress' ? 'bg-yellow-100' :
+                                      currentStatus === 'unlocked' ? 'bg-blue-100' : 'bg-gray-100'
+                                    }`}>
+                                      {currentStatus === 'completed' ? (
+                                        <CheckCircle className="h-4 w-4 text-green-600" />
+                                      ) : currentStatus === 'in_progress' ? (
+                                        <div className="w-2 h-2 bg-yellow-600 rounded-full"></div>
+                                      ) : currentStatus === 'unlocked' ? (
+                                        <Unlock className="h-3 w-3 text-blue-600" />
+                                      ) : (
+                                        <Lock className="h-3 w-3 text-gray-600" />
+                                      )}
+                                    </div>
+                                    <div>
+                                      <h5 className="font-medium text-gray-900 text-sm">{exam.title}</h5>
+                                      <p className="text-xs text-gray-500">
+                                        {currentStatus === 'completed' ? 'مكتمل' :
+                                         currentStatus === 'in_progress' ? 'قيد التنفيذ' :
+                                         currentStatus === 'unlocked' ? 'مفتوح' : 'مقفل'}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="flex space-x-2 rtl:space-x-reverse">
+                                    <button
+                                      onClick={() => handleToggleExamAccess(exam._id, 'open')}
+                                      disabled={!canToggle || togglingExam === exam._id}
+                                      className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                      {togglingExam === exam._id ? (
+                                        <div className="spinner w-3 h-3"></div>
+                                      ) : (
+                                        <Unlock className="h-3 w-3" />
+                                      )}
+                                      <span>فتح</span>
+                                    </button>
+                                    <button
+                                      onClick={() => handleToggleExamAccess(exam._id, 'close')}
+                                      disabled={!canToggle || togglingExam === exam._id}
+                                      className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                      {togglingExam === exam._id ? (
+                                        <div className="spinner w-3 h-3"></div>
+                                      ) : (
+                                        <Lock className="h-3 w-3" />
+                                      )}
+                                      <span>قفل</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })
+                          )}
                         </div>
                       </div>
                     )}
                   </div>
                 );
-              })})()}
+              }))
+              )}
             </div>
           </div>
         )}
