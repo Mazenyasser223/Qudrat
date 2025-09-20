@@ -32,6 +32,18 @@ const Home = () => {
       console.log('🔍 Fetching reviews from API...');
       const res = await axios.get('/api/reviews');
       console.log('📊 Reviews API response:', res.data);
+      console.log('📊 Reviews count:', res.data.data?.length || 0);
+      
+      if (res.data.data && res.data.data.length > 0) {
+        console.log('📋 Review details:', res.data.data.map(r => ({
+          id: r._id,
+          name: r.studentName,
+          rating: r.rating,
+          imageUrl: r.imageUrl,
+          isActive: r.isActive
+        })));
+      }
+      
       setReviews(res.data.data || []);
       console.log('✅ Reviews set in state:', res.data.data || []);
     } catch (error) {
@@ -422,8 +434,12 @@ const Home = () => {
                       className="w-full h-auto rounded-lg shadow-sm"
                       style={{ maxHeight: '400px', objectFit: 'contain' }}
                       onError={(e) => {
+                        console.log('❌ Image failed to load:', review.imageUrl);
                         e.target.style.display = 'none';
                         e.target.nextSibling.style.display = 'block';
+                      }}
+                      onLoad={() => {
+                        console.log('✅ Image loaded successfully:', review.imageUrl);
                       }}
                     />
                     <div 
