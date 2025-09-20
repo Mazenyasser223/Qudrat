@@ -488,7 +488,7 @@ const StudentProfile = () => {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        timeout: 30000
+        timeout: 60000
       });
       
       console.log('Toggle exam response:', response.data);
@@ -512,7 +512,7 @@ const StudentProfile = () => {
       console.log(`Toggling group ${groupId} to ${action}`);
       
       toast.loading(`جاري ${action === 'open' ? 'فتح' : 'قفل'} جميع الاختبارات في المجموعة...`, {
-        duration: 30000
+        duration: 60000
       });
       
       const response = await axios.put(`/api/users/students/${studentId}/toggle-group/${groupId}`, {
@@ -521,7 +521,7 @@ const StudentProfile = () => {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        timeout: 30000
+        timeout: 60000
       });
       
       console.log('Toggle group response:', response.data);
