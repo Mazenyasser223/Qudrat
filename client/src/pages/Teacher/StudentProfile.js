@@ -590,12 +590,14 @@ const StudentProfile = () => {
       setTogglingGroup(groupId);
       console.log(`Toggling group ${groupId} to ${action}`);
       
+      // Add timeout to prevent hanging
       const response = await axios.put(`/api/users/students/${studentId}/toggle-group/${groupId}`, {
         action
       }, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        },
+        timeout: 30000 // 30 second timeout
       });
       
       console.log('Toggle group response:', response.data);
@@ -606,7 +608,11 @@ const StudentProfile = () => {
       
     } catch (error) {
       console.error('Error toggling group:', error);
-      toast.error(error.response?.data?.message || 'حدث خطأ أثناء تغيير حالة المجموعة');
+      if (error.code === 'ECONNABORTED') {
+        toast.error('انتهت مهلة الطلب. يرجى المحاولة مرة أخرى');
+      } else {
+        toast.error(error.response?.data?.message || 'حدث خطأ أثناء تغيير حالة المجموعة');
+      }
     } finally {
       setTogglingGroup(null);
     }

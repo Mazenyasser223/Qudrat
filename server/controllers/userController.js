@@ -1165,6 +1165,8 @@ const toggleGroupAccess = async (req, res) => {
     
     // Find all exams in the group
     const exams = await Exam.find({ examGroup: parseInt(groupId) });
+    console.log(`Found ${exams.length} exams in group ${groupId}`);
+    
     if (exams.length === 0) {
       return res.status(404).json({
         success: false,
@@ -1173,9 +1175,13 @@ const toggleGroupAccess = async (req, res) => {
     }
     
     let updatedCount = 0;
+    console.log(`Starting to process ${exams.length} exams for ${action} action`);
     
     // Process each exam in the group
-    for (const exam of exams) {
+    for (let i = 0; i < exams.length; i++) {
+      const exam = exams[i];
+      console.log(`Processing exam ${i + 1}/${exams.length}: ${exam._id}`);
+      
       const existingProgressIndex = student.examProgress.findIndex(
         p => p.examId.toString() === exam._id.toString()
       );
