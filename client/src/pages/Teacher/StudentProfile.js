@@ -13,7 +13,13 @@ import {
   AlertTriangle,
   Eye,
   RefreshCw,
-  List
+  List,
+  Lock,
+  Unlock,
+  ChevronDown,
+  ChevronRight,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
 import StudentMistakes from '../../components/Exam/StudentMistakes';
 import StudentAnswersViewer from '../../components/Exam/StudentAnswersViewer';
@@ -38,6 +44,10 @@ const StudentProfile = () => {
   const [selectedExamForSubmission, setSelectedExamForSubmission] = useState(null);
   const [attemptedExams, setAttemptedExams] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [showExamControl, setShowExamControl] = useState(false);
+  const [expandedControlGroups, setExpandedControlGroups] = useState({});
+  const [togglingExam, setTogglingExam] = useState(null);
+  const [togglingGroup, setTogglingGroup] = useState(null);
 
   useEffect(() => {
     console.log('=== STUDENT PROFILE MOUNTED ===');
@@ -467,6 +477,68 @@ const StudentProfile = () => {
     console.log('=== CLOSING SUBMISSION ===');
     setShowSubmission(false);
     setSelectedExamForSubmission(null);
+  };
+
+  // Exam Control Functions
+  const toggleControlGroup = (groupKey) => {
+    setExpandedControlGroups(prev => ({
+      ...prev,
+      [groupKey]: !prev[groupKey]
+    }));
+  };
+
+  const handleToggleExamAccess = async (examId, action) => {
+    try {
+      setTogglingExam(examId);
+      console.log(`Toggling exam ${examId} to ${action}`);
+      
+      const response = await axios.put(`/api/users/students/${studentId}/toggle-exam/${examId}`, {
+        action
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      console.log('Toggle exam response:', response.data);
+      toast.success(response.data.message);
+      
+      // Refresh student data
+      await fetchStudentData();
+      
+    } catch (error) {
+      console.error('Error toggling exam:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء تغيير حالة الاختبار');
+    } finally {
+      setTogglingExam(null);
+    }
+  };
+
+  const handleToggleGroupAccess = async (groupId, action) => {
+    try {
+      setTogglingGroup(groupId);
+      console.log(`Toggling group ${groupId} to ${action}`);
+      
+      const response = await axios.put(`/api/users/students/${studentId}/toggle-group/${groupId}`, {
+        action
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      console.log('Toggle group response:', response.data);
+      toast.success(response.data.message);
+      
+      // Refresh student data
+      await fetchStudentData();
+      
+    } catch (error) {
+      console.error('Error toggling group:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء تغيير حالة المجموعة');
+    } finally {
+      setTogglingGroup(null);
+    }
   };
 
   if (loading) {
@@ -1163,8 +1235,197 @@ const StudentProfile = () => {
             </div>
           </div>
 
-
-
+      {/* Exam Control Section */}
+      <div className="card">
+        <div className="card-header">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2 rtl:space-x-reverse">
+                <Settings className="h-5 w-5 text-primary-600" />
+                <span>التحكم في الاختبارات</span>
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">فتح وإغلاق الاختبارات للمجموعات أو الاختبارات الفردية</p>
+            </div>
+            <button
+              onClick={() => setShowExamControl(!showExamControl)}
+              className="btn-secondary flex items-center space-x-2 rtl:space-x-reverse"
+            >
+              {showExamControl ? (
+                <>
+                  <XCircle className="h-4 w-4" />
+                  <span>إخفاء التحكم</span>
+                </>
+              ) : (
+                <>
+                  <Settings className="h-4 w-4" />
+                  <span>إظهار التحكم</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+        
+        {showExamControl && (
+          <div className="card-body">
+            <div className="space-y-4">
+              {/* Group Controls */}
+              {Object.keys(examGroups).map(groupKey => {
+                const groupNum = parseInt(groupKey);
+                const groupExams = examGroups[groupKey] || [];
+                const isExpanded = expandedControlGroups[groupKey];
+                
+                // Calculate group status
+                const groupProgress = groupExams.map(exam => 
+                  studentProgress.find(p => p.examId === exam._id)
+                );
+                
+                const unlockedCount = groupProgress.filter(p => p?.status === 'unlocked').length;
+                const lockedCount = groupProgress.filter(p => p?.status === 'locked' || !p).length;
+                const completedCount = groupProgress.filter(p => p?.status === 'completed').length;
+                
+                return (
+                  <div key={groupKey} className="border border-gray-200 rounded-lg overflow-hidden">
+                    {/* Group Header */}
+                    <button
+                      onClick={() => toggleControlGroup(groupKey)}
+                      className="w-full p-4 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-200 flex items-center justify-between"
+                    >
+                      <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                          {groupNum}
+                        </div>
+                        <div className="text-right">
+                          <h4 className="font-bold text-gray-900 text-sm">
+                            {groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}
+                          </h4>
+                          <p className="text-xs text-gray-600">
+                            {groupExams.length} اختبار • {unlockedCount} مفتوح • {lockedCount} مقفل • {completedCount} مكتمل
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                        {/* Group Action Buttons */}
+                        <div className="flex space-x-2 rtl:space-x-reverse">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleGroupAccess(groupNum, 'open');
+                            }}
+                            disabled={togglingGroup === groupNum}
+                            className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
+                          >
+                            {togglingGroup === groupNum ? (
+                              <div className="spinner w-3 h-3"></div>
+                            ) : (
+                              <Unlock className="h-3 w-3" />
+                            )}
+                            <span>فتح الكل</span>
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleGroupAccess(groupNum, 'close');
+                            }}
+                            disabled={togglingGroup === groupNum}
+                            className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
+                          >
+                            {togglingGroup === groupNum ? (
+                              <div className="spinner w-3 h-3"></div>
+                            ) : (
+                              <Lock className="h-3 w-3" />
+                            )}
+                            <span>قفل الكل</span>
+                          </button>
+                        </div>
+                        
+                        {isExpanded ? (
+                          <ChevronDown className="h-5 w-5 text-gray-500" />
+                        ) : (
+                          <ChevronRight className="h-5 w-5 text-gray-500" />
+                        )}
+                      </div>
+                    </button>
+                    
+                    {/* Expandable Content */}
+                    {isExpanded && (
+                      <div className="p-4 bg-white border-t border-gray-200">
+                        <div className="space-y-2">
+                          {groupExams.map(exam => {
+                            const progress = studentProgress.find(p => p.examId === exam._id);
+                            const currentStatus = progress?.status || 'locked';
+                            const canToggle = currentStatus !== 'completed' && currentStatus !== 'in_progress';
+                            
+                            return (
+                              <div
+                                key={exam._id}
+                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                              >
+                                <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                                  <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                                    currentStatus === 'completed' ? 'bg-green-100' :
+                                    currentStatus === 'in_progress' ? 'bg-yellow-100' :
+                                    currentStatus === 'unlocked' ? 'bg-blue-100' : 'bg-gray-100'
+                                  }`}>
+                                    {currentStatus === 'completed' ? (
+                                      <CheckCircle className="h-4 w-4 text-green-600" />
+                                    ) : currentStatus === 'in_progress' ? (
+                                      <div className="w-2 h-2 bg-yellow-600 rounded-full"></div>
+                                    ) : currentStatus === 'unlocked' ? (
+                                      <Unlock className="h-3 w-3 text-blue-600" />
+                                    ) : (
+                                      <Lock className="h-3 w-3 text-gray-600" />
+                                    )}
+                                  </div>
+                                  <div>
+                                    <h5 className="font-medium text-gray-900 text-sm">{exam.title}</h5>
+                                    <p className="text-xs text-gray-500">
+                                      {currentStatus === 'completed' ? 'مكتمل' :
+                                       currentStatus === 'in_progress' ? 'قيد التنفيذ' :
+                                       currentStatus === 'unlocked' ? 'مفتوح' : 'مقفل'}
+                                    </p>
+                                  </div>
+                                </div>
+                                
+                                <div className="flex space-x-2 rtl:space-x-reverse">
+                                  <button
+                                    onClick={() => handleToggleExamAccess(exam._id, 'open')}
+                                    disabled={!canToggle || togglingExam === exam._id}
+                                    className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    {togglingExam === exam._id ? (
+                                      <div className="spinner w-3 h-3"></div>
+                                    ) : (
+                                      <Unlock className="h-3 w-3" />
+                                    )}
+                                    <span>فتح</span>
+                                  </button>
+                                  <button
+                                    onClick={() => handleToggleExamAccess(exam._id, 'close')}
+                                    disabled={!canToggle || togglingExam === exam._id}
+                                    className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    {togglingExam === exam._id ? (
+                                      <div className="spinner w-3 h-3"></div>
+                                    ) : (
+                                      <Lock className="h-3 w-3" />
+                                    )}
+                                    <span>قفل</span>
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Lock/Unlock Modal - Temporarily Disabled for Build Fix */}
       {false && showLockUnlockModal && (

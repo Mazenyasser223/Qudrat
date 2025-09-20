@@ -1031,6 +1031,220 @@ const getAnalytics = async (req, res) => {
   }
 };
 
+// @desc    Toggle exam access for student (open/close individual exam)
+// @route   PUT /api/users/students/:id/toggle-exam/:examId
+// @access  Private (Teacher only)
+const toggleExamAccess = async (req, res) => {
+  try {
+    console.log('=== TOGGLE EXAM ACCESS REQUEST ===');
+    console.log('Student ID:', req.params.id);
+    console.log('Exam ID:', req.params.examId);
+    console.log('Action:', req.body.action);
+    
+    const { id: studentId } = req.params;
+    const { examId } = req.params;
+    const { action } = req.body; // 'open' or 'close'
+    
+    // Validate action
+    if (!action || !['open', 'close'].includes(action)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Action must be "open" or "close"'
+      });
+    }
+    
+    // Find student
+    const student = await User.findById(studentId);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'الطالب غير موجود'
+      });
+    }
+    
+    // Find exam
+    const exam = await Exam.findById(examId);
+    if (!exam) {
+      return res.status(404).json({
+        success: false,
+        message: 'الاختبار غير موجود'
+      });
+    }
+    
+    // Find existing progress
+    const existingProgressIndex = student.examProgress.findIndex(
+      p => p.examId.toString() === examId
+    );
+    
+    if (action === 'open') {
+      // Open exam - create or update progress to 'unlocked'
+      if (existingProgressIndex >= 0) {
+        // Update existing progress
+        student.examProgress[existingProgressIndex].status = 'unlocked';
+        student.examProgress[existingProgressIndex].unlockedAt = new Date();
+      } else {
+        // Create new progress entry
+        student.examProgress.push({
+          examId: new require('mongoose').Types.ObjectId(examId),
+          examGroup: exam.examGroup,
+          status: 'unlocked',
+          unlockedAt: new Date()
+        });
+      }
+    } else {
+      // Close exam - set status to 'locked'
+      if (existingProgressIndex >= 0) {
+        // Only lock if not completed or in progress
+        const currentStatus = student.examProgress[existingProgressIndex].status;
+        if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
+          student.examProgress[existingProgressIndex].status = 'locked';
+        }
+      } else {
+        // Create new progress entry with locked status
+        student.examProgress.push({
+          examId: new require('mongoose').Types.ObjectId(examId),
+          examGroup: exam.examGroup,
+          status: 'locked'
+        });
+      }
+    }
+    
+    // Save student
+    await student.save();
+    
+    console.log('Exam access toggled successfully');
+    res.json({
+      success: true,
+      message: `تم ${action === 'open' ? 'فتح' : 'قفل'} الاختبار بنجاح`,
+      data: {
+        examId,
+        action,
+        status: action === 'open' ? 'unlocked' : 'locked'
+      }
+    });
+    
+  } catch (error) {
+    console.error('Toggle exam access error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء تغيير حالة الاختبار'
+    });
+  }
+};
+
+// @desc    Toggle group exam access for student (open/close all exams in a group)
+// @route   PUT /api/users/students/:id/toggle-group/:groupId
+// @access  Private (Teacher only)
+const toggleGroupAccess = async (req, res) => {
+  try {
+    console.log('=== TOGGLE GROUP ACCESS REQUEST ===');
+    console.log('Student ID:', req.params.id);
+    console.log('Group ID:', req.params.groupId);
+    console.log('Action:', req.body.action);
+    
+    const { id: studentId } = req.params;
+    const { groupId } = req.params;
+    const { action } = req.body; // 'open' or 'close'
+    
+    // Validate action
+    if (!action || !['open', 'close'].includes(action)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Action must be "open" or "close"'
+      });
+    }
+    
+    // Find student
+    const student = await User.findById(studentId);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'الطالب غير موجود'
+      });
+    }
+    
+    // Find all exams in the group
+    const exams = await Exam.find({ examGroup: parseInt(groupId) });
+    if (exams.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'لا توجد اختبارات في هذه المجموعة'
+      });
+    }
+    
+    let updatedCount = 0;
+    
+    // Process each exam in the group
+    for (const exam of exams) {
+      const existingProgressIndex = student.examProgress.findIndex(
+        p => p.examId.toString() === exam._id.toString()
+      );
+      
+      if (action === 'open') {
+        // Open exam
+        if (existingProgressIndex >= 0) {
+          // Update existing progress
+          const currentStatus = student.examProgress[existingProgressIndex].status;
+          if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
+            student.examProgress[existingProgressIndex].status = 'unlocked';
+            student.examProgress[existingProgressIndex].unlockedAt = new Date();
+            updatedCount++;
+          }
+        } else {
+          // Create new progress entry
+          student.examProgress.push({
+            examId: new require('mongoose').Types.ObjectId(exam._id),
+            examGroup: exam.examGroup,
+            status: 'unlocked',
+            unlockedAt: new Date()
+          });
+          updatedCount++;
+        }
+      } else {
+        // Close exam
+        if (existingProgressIndex >= 0) {
+          // Only lock if not completed or in progress
+          const currentStatus = student.examProgress[existingProgressIndex].status;
+          if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
+            student.examProgress[existingProgressIndex].status = 'locked';
+            updatedCount++;
+          }
+        } else {
+          // Create new progress entry with locked status
+          student.examProgress.push({
+            examId: new require('mongoose').Types.ObjectId(exam._id),
+            examGroup: exam.examGroup,
+            status: 'locked'
+          });
+          updatedCount++;
+        }
+      }
+    }
+    
+    // Save student
+    await student.save();
+    
+    console.log(`Group access toggled successfully. Updated ${updatedCount} exams`);
+    res.json({
+      success: true,
+      message: `تم ${action === 'open' ? 'فتح' : 'قفل'} ${updatedCount} اختبار في المجموعة`,
+      data: {
+        groupId: parseInt(groupId),
+        action,
+        updatedCount,
+        totalExams: exams.length
+      }
+    });
+    
+  } catch (error) {
+    console.error('Toggle group access error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء تغيير حالة المجموعة'
+    });
+  }
+};
+
 module.exports = {
   getStudents,
   getStudent,
@@ -1045,5 +1259,7 @@ module.exports = {
   assignMultipleCategories,
   getAllStudentAnswers,
   getDashboardStats,
-  getAnalytics
+  getAnalytics,
+  toggleExamAccess,
+  toggleGroupAccess
 };

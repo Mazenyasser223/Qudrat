@@ -14,7 +14,9 @@ const {
   assignMultipleCategories,
   getAllStudentAnswers,
   getDashboardStats,
-  getAnalytics
+  getAnalytics,
+  toggleExamAccess,
+  toggleGroupAccess
 } = require('../controllers/userController');
 const { protect, isTeacher } = require('../middleware/auth');
 
@@ -371,5 +373,19 @@ router.get('/test-specific/:studentId/:examId', isTeacher, async (req, res) => {
     });
   }
 });
+
+// @route   PUT /api/users/students/:id/toggle-exam/:examId
+// @desc    Toggle exam access for student (open/close individual exam)
+// @access  Private (Teacher only)
+router.put('/students/:id/toggle-exam/:examId', [
+  body('action').isIn(['open', 'close']).withMessage('Action must be "open" or "close"')
+], toggleExamAccess);
+
+// @route   PUT /api/users/students/:id/toggle-group/:groupId
+// @desc    Toggle group exam access for student (open/close all exams in a group)
+// @access  Private (Teacher only)
+router.put('/students/:id/toggle-group/:groupId', [
+  body('action').isIn(['open', 'close']).withMessage('Action must be "open" or "close"')
+], toggleGroupAccess);
 
 module.exports = router;
