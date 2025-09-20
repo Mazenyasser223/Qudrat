@@ -3,9 +3,15 @@ const path = require('path');
 const fs = require('fs');
 
 // Ensure reviews directory exists
-const reviewsDir = 'uploads/reviews';
+const reviewsDir = path.join(__dirname, '../uploads/reviews');
+console.log('📁 Reviews directory path:', reviewsDir);
+
 if (!fs.existsSync(reviewsDir)) {
+  console.log('📁 Creating reviews directory:', reviewsDir);
   fs.mkdirSync(reviewsDir, { recursive: true });
+  console.log('✅ Reviews directory created successfully');
+} else {
+  console.log('✅ Reviews directory already exists');
 }
 
 // Configure storage for reviews

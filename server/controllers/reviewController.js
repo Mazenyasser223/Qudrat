@@ -61,6 +61,25 @@ const createReview = async (req, res) => {
       });
     }
 
+    // Verify file was actually saved
+    console.log('📁 File details:', {
+      filename: req.file.filename,
+      path: req.file.path,
+      size: req.file.size,
+      mimetype: req.file.mimetype
+    });
+
+    // Check if file actually exists on disk
+    if (!fs.existsSync(req.file.path)) {
+      console.log('❌ File was not saved to disk:', req.file.path);
+      return res.status(500).json({
+        success: false,
+        message: 'فشل في حفظ الصورة على الخادم'
+      });
+    }
+
+    console.log('✅ File exists on disk:', req.file.path);
+
     const review = new Review({
       studentName,
       rating: parseInt(rating),
@@ -69,9 +88,9 @@ const createReview = async (req, res) => {
       order: order ? parseInt(order) : 0
     });
 
-    console.log('💾 Saving review:', review);
+    console.log('💾 Saving review to database:', review);
     await review.save();
-    console.log('✅ Review saved successfully');
+    console.log('✅ Review saved successfully to database');
 
     res.status(201).json({
       success: true,
