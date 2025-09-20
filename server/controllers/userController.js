@@ -1177,52 +1177,63 @@ const toggleGroupAccess = async (req, res) => {
     let updatedCount = 0;
     console.log(`Starting to process ${exams.length} exams for ${action} action`);
     
-    // Process each exam in the group
-    for (let i = 0; i < exams.length; i++) {
-      const exam = exams[i];
-      console.log(`Processing exam ${i + 1}/${exams.length}: ${exam._id}`);
+    // Create a Map for faster progress lookup
+    const progressMap = new Map();
+    student.examProgress.forEach(progress => {
+      progressMap.set(progress.examId.toString(), progress);
+    });
+    
+    // Process exams in batches for better performance
+    const batchSize = 10;
+    for (let i = 0; i < exams.length; i += batchSize) {
+      const batch = exams.slice(i, i + batchSize);
+      console.log(`Processing batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(exams.length/batchSize)}: exams ${i + 1}-${Math.min(i + batchSize, exams.length)}`);
       
-      const existingProgressIndex = student.examProgress.findIndex(
-        p => p.examId.toString() === exam._id.toString()
-      );
-      
-      if (action === 'open') {
-        // Open exam
-        if (existingProgressIndex >= 0) {
-          // Update existing progress
-          const currentStatus = student.examProgress[existingProgressIndex].status;
-          if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
-            student.examProgress[existingProgressIndex].status = 'unlocked';
-            student.examProgress[existingProgressIndex].unlockedAt = new Date();
+      for (const exam of batch) {
+        const existingProgress = progressMap.get(exam._id.toString());
+        
+        if (action === 'open') {
+          // Open exam
+          if (existingProgress) {
+            // Update existing progress
+            const currentStatus = existingProgress.status;
+            if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
+              existingProgress.status = 'unlocked';
+              existingProgress.unlockedAt = new Date();
+              updatedCount++;
+            }
+          } else {
+            // Create new progress entry
+            student.examProgress.push({
+              examId: new require('mongoose').Types.ObjectId(exam._id),
+              examGroup: exam.examGroup,
+              status: 'unlocked',
+              unlockedAt: new Date()
+            });
+            // Update the map for future lookups
+            progressMap.set(exam._id.toString(), student.examProgress[student.examProgress.length - 1]);
             updatedCount++;
           }
         } else {
-          // Create new progress entry
-          student.examProgress.push({
-            examId: new require('mongoose').Types.ObjectId(exam._id),
-            examGroup: exam.examGroup,
-            status: 'unlocked',
-            unlockedAt: new Date()
-          });
-          updatedCount++;
-        }
-      } else {
-        // Close exam
-        if (existingProgressIndex >= 0) {
-          // Only lock if not completed or in progress
-          const currentStatus = student.examProgress[existingProgressIndex].status;
-          if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
-            student.examProgress[existingProgressIndex].status = 'locked';
+          // Close exam
+          if (existingProgress) {
+            // Only lock if not completed or in progress
+            const currentStatus = existingProgress.status;
+            if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
+              existingProgress.status = 'locked';
+              updatedCount++;
+            }
+          } else {
+            // Create new progress entry with locked status
+            student.examProgress.push({
+              examId: new require('mongoose').Types.ObjectId(exam._id),
+              examGroup: exam.examGroup,
+              status: 'locked'
+            });
+            // Update the map for future lookups
+            progressMap.set(exam._id.toString(), student.examProgress[student.examProgress.length - 1]);
             updatedCount++;
           }
-        } else {
-          // Create new progress entry with locked status
-          student.examProgress.push({
-            examId: new require('mongoose').Types.ObjectId(exam._id),
-            examGroup: exam.examGroup,
-            status: 'locked'
-          });
-          updatedCount++;
         }
       }
     }

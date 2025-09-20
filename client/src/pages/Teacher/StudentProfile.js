@@ -590,6 +590,11 @@ const StudentProfile = () => {
       setTogglingGroup(groupId);
       console.log(`Toggling group ${groupId} to ${action}`);
       
+      // Show progress message for large operations
+      toast.loading(`جاري ${action === 'open' ? 'فتح' : 'قفل'} جميع الاختبارات في المجموعة...`, {
+        duration: 60000 // Show for up to 60 seconds
+      });
+      
       // Add timeout to prevent hanging
       const response = await axios.put(`/api/users/students/${studentId}/toggle-group/${groupId}`, {
         action
@@ -597,7 +602,7 @@ const StudentProfile = () => {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        timeout: 30000 // 30 second timeout
+        timeout: 60000 // 60 second timeout for large groups
       });
       
       console.log('Toggle group response:', response.data);
