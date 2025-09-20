@@ -103,6 +103,48 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Test upload directory endpoint
+app.get('/api/test-upload-dir', (req, res) => {
+  const fs = require('fs');
+  const path = require('path');
+  
+  const uploadsDir = path.join(__dirname, 'uploads');
+  const reviewsDir = path.join(__dirname, 'uploads/reviews');
+  
+  try {
+    const uploadsExists = fs.existsSync(uploadsDir);
+    const reviewsExists = fs.existsSync(reviewsDir);
+    
+    let uploadsFiles = [];
+    let reviewsFiles = [];
+    
+    if (uploadsExists) {
+      uploadsFiles = fs.readdirSync(uploadsDir);
+    }
+    
+    if (reviewsExists) {
+      reviewsFiles = fs.readdirSync(reviewsDir);
+    }
+    
+    res.json({
+      success: true,
+      data: {
+        uploadsDir,
+        reviewsDir,
+        uploadsExists,
+        reviewsExists,
+        uploadsFiles,
+        reviewsFiles
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 
 // Simple CORS test endpoint
 app.get('/api/cors-test', (req, res) => {
