@@ -521,7 +521,7 @@ const StudentProfile = () => {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        timeout: 60000
+        timeout: 30000
       });
       
       console.log('Toggle group response:', response.data);

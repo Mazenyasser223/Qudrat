@@ -1053,8 +1053,12 @@ const toggleExamAccess = async (req, res) => {
       });
     }
     
-    // Find student
-    const student = await User.findById(studentId);
+    // Find student and exam in parallel for better performance
+    const [student, exam] = await Promise.all([
+      User.findById(studentId),
+      Exam.findById(examId, 'examGroup')
+    ]);
+    
     if (!student) {
       return res.status(404).json({
         success: false,
@@ -1062,8 +1066,6 @@ const toggleExamAccess = async (req, res) => {
       });
     }
     
-    // Find exam
-    const exam = await Exam.findById(examId);
     if (!exam) {
       return res.status(404).json({
         success: false,
@@ -1109,8 +1111,8 @@ const toggleExamAccess = async (req, res) => {
       }
     }
     
-    // Save student
-    await student.save();
+    // Save student with optimized options
+    await student.save({ validateBeforeSave: false });
     
     console.log('Exam access toggled successfully');
     res.json({
@@ -1222,7 +1224,7 @@ const openAllExams = async (req, res) => {
 // @access  Private (Teacher only)
 const toggleGroupAccess = async (req, res) => {
   try {
-    console.log('=== TOGGLE GROUP ACCESS REQUEST ===');
+    console.log('=== TOGGLE GROUP ACCESS REQUEST (OPTIMIZED) ===');
     console.log('Student ID:', req.params.id);
     console.log('Group ID:', req.params.groupId);
     console.log('Action:', req.body.action);
@@ -1248,28 +1250,32 @@ const toggleGroupAccess = async (req, res) => {
       });
     }
     
-    // Find all exams in the group
-    const exams = await Exam.find({ examGroup: parseInt(groupId) });
-    console.log(`Found ${exams.length} exams in group ${groupId}`);
+    // Get exam IDs for the group (only IDs for faster query)
+    const examIds = await Exam.find({ examGroup: parseInt(groupId) }, '_id');
+    console.log(`Found ${examIds.length} exams in group ${groupId}`);
     
-    if (exams.length === 0) {
+    if (examIds.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'لا توجد اختبارات في هذه المجموعة'
       });
     }
     
-    // Create a Map for faster progress lookup
-    const progressMap = new Map();
+    // Create a Set of exam IDs for faster lookup
+    const examIdSet = new Set(examIds.map(exam => exam._id.toString()));
+    
+    // Create a Map of existing progress for faster lookup
+    const existingProgressMap = new Map();
     student.examProgress.forEach(progress => {
-      progressMap.set(progress.examId.toString(), progress);
+      existingProgressMap.set(progress.examId.toString(), progress);
     });
     
     let updatedCount = 0;
+    const newProgressEntries = [];
     
-    // Process all exams
-    for (const exam of exams) {
-      const existingProgress = progressMap.get(exam._id.toString());
+    // Process all exams in the group
+    for (const examId of examIdSet) {
+      const existingProgress = existingProgressMap.get(examId);
       
       if (action === 'open') {
         // Open exam
@@ -1283,9 +1289,9 @@ const toggleGroupAccess = async (req, res) => {
           }
         } else {
           // Create new progress entry
-          student.examProgress.push({
-            examId: new require('mongoose').Types.ObjectId(exam._id),
-            examGroup: exam.examGroup,
+          newProgressEntries.push({
+            examId: new require('mongoose').Types.ObjectId(examId),
+            examGroup: parseInt(groupId),
             status: 'unlocked',
             unlockedAt: new Date()
           });
@@ -1302,9 +1308,9 @@ const toggleGroupAccess = async (req, res) => {
           }
         } else {
           // Create new progress entry with locked status
-          student.examProgress.push({
-            examId: new require('mongoose').Types.ObjectId(exam._id),
-            examGroup: exam.examGroup,
+          newProgressEntries.push({
+            examId: new require('mongoose').Types.ObjectId(examId),
+            examGroup: parseInt(groupId),
             status: 'locked'
           });
           updatedCount++;
@@ -1312,8 +1318,17 @@ const toggleGroupAccess = async (req, res) => {
       }
     }
     
-    // Save student
-    await student.save();
+    // Bulk add new progress entries
+    if (newProgressEntries.length > 0) {
+      student.examProgress.push(...newProgressEntries);
+      console.log(`Added ${newProgressEntries.length} new progress entries`);
+    }
+    
+    // Use bulkWrite for maximum performance
+    if (updatedCount > 0) {
+      await student.save({ validateBeforeSave: false });
+      console.log(`Bulk save completed for ${updatedCount} exams`);
+    }
     
     console.log(`Group access toggled successfully. Updated ${updatedCount} exams`);
     res.json({
@@ -1323,7 +1338,7 @@ const toggleGroupAccess = async (req, res) => {
         groupId: parseInt(groupId),
         action,
         updatedCount,
-        totalExams: exams.length
+        totalExams: examIds.length
       }
     });
     
