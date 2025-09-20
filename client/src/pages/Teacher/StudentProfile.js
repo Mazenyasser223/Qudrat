@@ -1363,8 +1363,9 @@ const StudentProfile = () => {
                     {isExpanded && (
                       <div className="p-4 bg-white border-t border-gray-200">
                         <div className="space-y-2">
-                          {groupExams.map(exam => {
-                            const progress = studentProgress.find(p => p.examId === exam._id);
+                          {groupExams.map(item => {
+                            const exam = item.exam;
+                            const progress = item.progress;
                             const currentStatus = progress?.status || 'locked';
                             const canToggle = currentStatus !== 'completed' && currentStatus !== 'in_progress';
                             
