@@ -49,6 +49,7 @@ const StudentProfile = () => {
   const [togglingExam, setTogglingExam] = useState(null);
   const [togglingGroup, setTogglingGroup] = useState(null);
   const [examControlData, setExamControlData] = useState(null);
+  const [examControlLoading, setExamControlLoading] = useState(false);
 
   useEffect(() => {
     console.log('=== STUDENT PROFILE MOUNTED ===');
@@ -483,16 +484,39 @@ const StudentProfile = () => {
   // Exam Control Functions
   // Memoized function to process exam control data
   const processExamControlData = useMemo(() => {
-    if (!exams.length || !studentProgress.length) return null;
+    console.log('🔄 Processing exam control data...');
+    console.log('📊 Exams count:', exams.length);
+    console.log('📊 Student progress count:', studentProgress.length);
+    
+    if (!exams.length || !studentProgress.length) {
+      console.log('❌ Missing data, returning null');
+      return null;
+    }
+    
+    // Create a Map for faster progress lookup
+    const progressMap = new Map();
+    studentProgress.forEach(progress => {
+      progressMap.set(progress.examId.toString(), progress);
+    });
     
     const groupedExams = {};
+    let processedCount = 0;
+    
+    // Process exams in batches to prevent UI blocking
     exams.forEach(exam => {
       const groupNum = exam.examGroup || 0;
       if (!groupedExams[groupNum]) {
         groupedExams[groupNum] = [];
       }
-      const progress = studentProgress.find(p => p.examId === exam._id);
+      
+      // Use Map lookup instead of find() for better performance
+      const progress = progressMap.get(exam._id.toString()) || null;
       groupedExams[groupNum].push({ exam, progress });
+      
+      processedCount++;
+      if (processedCount % 50 === 0) {
+        console.log(`📈 Processed ${processedCount}/${exams.length} exams`);
+      }
     });
     
     // Sort exams within each group
@@ -500,8 +524,32 @@ const StudentProfile = () => {
       groupedExams[group].sort((a, b) => a.exam.order - b.exam.order);
     });
     
+    console.log('✅ Exam control data processed successfully');
+    console.log('📊 Groups created:', Object.keys(groupedExams).length);
+    
     return groupedExams;
   }, [exams, studentProgress]);
+
+  // Handle exam control loading state
+  useEffect(() => {
+    if (showExamControl && exams.length > 0 && studentProgress.length > 0) {
+      setExamControlLoading(true);
+      
+      // Set a timeout to prevent infinite loading
+      const timeout = setTimeout(() => {
+        console.log('⏰ Exam control processing timeout - forcing completion');
+        setExamControlLoading(false);
+      }, 10000); // 10 second timeout
+      
+      // Clear timeout when data is processed
+      if (processExamControlData) {
+        clearTimeout(timeout);
+        setExamControlLoading(false);
+      }
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [showExamControl, exams.length, studentProgress.length, processExamControlData]);
 
   const toggleControlGroup = (groupKey) => {
     setExpandedControlGroups(prev => ({
@@ -1292,10 +1340,12 @@ const StudentProfile = () => {
           <div className="card-body">
             <div className="space-y-4">
               {/* Group Controls */}
-              {!processExamControlData ? (
+              {(!processExamControlData || examControlLoading) ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="spinner w-8 h-8"></div>
-                  <span className="mr-3 text-gray-600">جاري تحميل بيانات التحكم...</span>
+                  <span className="mr-3 text-gray-600">
+                    {examControlLoading ? 'جاري معالجة البيانات...' : 'جاري تحميل بيانات التحكم...'}
+                  </span>
                 </div>
               ) : (
                 Object.keys(processExamControlData).map(groupKey => {
