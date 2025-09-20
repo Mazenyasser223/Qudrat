@@ -1269,9 +1269,21 @@ const StudentProfile = () => {
           <div className="card-body">
             <div className="space-y-4">
               {/* Group Controls */}
-              {Object.keys(examGroups).map(groupKey => {
-                const groupNum = parseInt(groupKey);
-                const groupExams = examGroups[groupKey] || [];
+              {(() => {
+                // Create groupedExams for exam control
+                const groupedExams = {};
+                exams.forEach(exam => {
+                  const groupNum = exam.examGroup || 0;
+                  if (!groupedExams[groupNum]) {
+                    groupedExams[groupNum] = [];
+                  }
+                  const progress = studentProgress.find(p => p.examId === exam._id);
+                  groupedExams[groupNum].push({ exam, progress });
+                });
+                
+                return Object.keys(groupedExams).map(groupKey => {
+                  const groupNum = parseInt(groupKey);
+                  const groupExams = groupedExams[groupKey] || [];
                 const isExpanded = expandedControlGroups[groupKey];
                 
                 // Calculate group status
@@ -1421,7 +1433,7 @@ const StudentProfile = () => {
                     )}
                   </div>
                 );
-              })}
+              })})()}
             </div>
           </div>
         )}
