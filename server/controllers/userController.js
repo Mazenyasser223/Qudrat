@@ -1151,40 +1151,41 @@ const openAllExams = async (req, res) => {
       });
     }
     
-    // Get all exam IDs for faster processing
-    const examIds = await Exam.find({}, '_id examGroup');
-    console.log(`Found ${examIds.length} total exams`);
+    // Get all exams
+    const exams = await Exam.find({});
+    console.log(`Found ${exams.length} total exams`);
     
-    if (examIds.length === 0) {
+    if (exams.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'لا توجد اختبارات في النظام'
       });
     }
     
-    // Create a Set of existing exam IDs for faster lookup
-    const existingExamIds = new Set();
+    // Create a Map for faster progress lookup
+    const progressMap = new Map();
     student.examProgress.forEach(progress => {
-      existingExamIds.add(progress.examId.toString());
+      progressMap.set(progress.examId.toString(), progress);
     });
     
     let updatedCount = 0;
-    const newProgressEntries = [];
     
-    // Process all exams efficiently
-    for (const exam of examIds) {
-      if (existingExamIds.has(exam._id.toString())) {
+    // Process all exams
+    for (const exam of exams) {
+      const existingProgress = progressMap.get(exam._id.toString());
+      
+      if (existingProgress) {
         // Update existing progress if not completed or in progress
-        const existingProgress = student.examProgress.find(p => p.examId.toString() === exam._id.toString());
-        if (existingProgress && existingProgress.status !== 'completed' && existingProgress.status !== 'in_progress') {
+        const currentStatus = existingProgress.status;
+        if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
           existingProgress.status = 'unlocked';
           existingProgress.unlockedAt = new Date();
           updatedCount++;
         }
       } else {
         // Create new progress entry
-        newProgressEntries.push({
-          examId: exam._id,
+        student.examProgress.push({
+          examId: new require('mongoose').Types.ObjectId(exam._id),
           examGroup: exam.examGroup,
           status: 'unlocked',
           unlockedAt: new Date()
@@ -1193,14 +1194,8 @@ const openAllExams = async (req, res) => {
       }
     }
     
-    // Add all new progress entries at once
-    if (newProgressEntries.length > 0) {
-      student.examProgress.push(...newProgressEntries);
-      console.log(`Added ${newProgressEntries.length} new progress entries`);
-    }
-    
-    // Save student with optimized options
-    await student.save({ validateBeforeSave: false });
+    // Save student
+    await student.save();
     
     console.log(`Opened ${updatedCount} exams successfully`);
     res.json({
@@ -1240,39 +1235,40 @@ const closeAllExams = async (req, res) => {
       });
     }
     
-    // Get all exam IDs for faster processing
-    const examIds = await Exam.find({}, '_id examGroup');
-    console.log(`Found ${examIds.length} total exams`);
+    // Get all exams
+    const exams = await Exam.find({});
+    console.log(`Found ${exams.length} total exams`);
     
-    if (examIds.length === 0) {
+    if (exams.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'لا توجد اختبارات في النظام'
       });
     }
     
-    // Create a Set of existing exam IDs for faster lookup
-    const existingExamIds = new Set();
+    // Create a Map for faster progress lookup
+    const progressMap = new Map();
     student.examProgress.forEach(progress => {
-      existingExamIds.add(progress.examId.toString());
+      progressMap.set(progress.examId.toString(), progress);
     });
     
     let updatedCount = 0;
-    const newProgressEntries = [];
     
-    // Process all exams efficiently
-    for (const exam of examIds) {
-      if (existingExamIds.has(exam._id.toString())) {
+    // Process all exams
+    for (const exam of exams) {
+      const existingProgress = progressMap.get(exam._id.toString());
+      
+      if (existingProgress) {
         // Update existing progress if not completed or in progress
-        const existingProgress = student.examProgress.find(p => p.examId.toString() === exam._id.toString());
-        if (existingProgress && existingProgress.status !== 'completed' && existingProgress.status !== 'in_progress') {
+        const currentStatus = existingProgress.status;
+        if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
           existingProgress.status = 'locked';
           updatedCount++;
         }
       } else {
         // Create new progress entry with locked status
-        newProgressEntries.push({
-          examId: exam._id,
+        student.examProgress.push({
+          examId: new require('mongoose').Types.ObjectId(exam._id),
           examGroup: exam.examGroup,
           status: 'locked'
         });
@@ -1280,14 +1276,8 @@ const closeAllExams = async (req, res) => {
       }
     }
     
-    // Add all new progress entries at once
-    if (newProgressEntries.length > 0) {
-      student.examProgress.push(...newProgressEntries);
-      console.log(`Added ${newProgressEntries.length} new progress entries`);
-    }
-    
-    // Save student with optimized options
-    await student.save({ validateBeforeSave: false });
+    // Save student
+    await student.save();
     
     console.log(`Closed ${updatedCount} exams successfully`);
     res.json({
