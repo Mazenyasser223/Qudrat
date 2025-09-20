@@ -1525,7 +1525,7 @@ const StudentProfile = () => {
                     )}
                   </div>
                 );
-              }))
+              })
               )}
             </div>
           </div>
