@@ -21,13 +21,6 @@ const ExamResults = ({
     return 'text-red-600 bg-red-100';
   };
 
-  const getGradeText = (percentage) => {
-    if (percentage >= 90) return 'ممتاز';
-    if (percentage >= 80) return 'جيد جداً';
-    if (percentage >= 70) return 'جيد';
-    if (percentage >= 60) return 'مقبول';
-    return 'ضعيف';
-  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -42,7 +35,6 @@ const ExamResults = ({
           <div className="text-center space-y-4">
             <div className={`inline-flex items-center px-6 py-3 rounded-lg ${getGradeColor(percentage)}`}>
               <span className="text-2xl font-bold">{percentage.toFixed(2)}%</span>
-              <span className="mr-3 text-lg font-medium">{getGradeText(percentage)}</span>
             </div>
             <div className="text-lg text-gray-700">
               <span className="font-semibold">الدرجة: </span>
