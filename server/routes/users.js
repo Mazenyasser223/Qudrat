@@ -15,6 +15,8 @@ const {
   getAllStudentAnswers,
   getDashboardStats,
   getAnalytics,
+  toggleExamAccess,
+  toggleGroupAccess,
   openAllExams,
   closeAllExams
 } = require('../controllers/userController');
@@ -373,6 +375,20 @@ router.get('/test-specific/:studentId/:examId', isTeacher, async (req, res) => {
     });
   }
 });
+
+// @route   PUT /api/users/students/:id/toggle-exam/:examId
+// @desc    Toggle individual exam access for student (open/close single exam)
+// @access  Private (Teacher only)
+router.put('/students/:id/toggle-exam/:examId', isTeacher, [
+  body('action').isIn(['open', 'close']).withMessage('Action must be "open" or "close"')
+], toggleExamAccess);
+
+// @route   PUT /api/users/students/:id/toggle-group/:groupId
+// @desc    Toggle group exam access for student (open/close all exams in a group)
+// @access  Private (Teacher only)
+router.put('/students/:id/toggle-group/:groupId', isTeacher, [
+  body('action').isIn(['open', 'close']).withMessage('Action must be "open" or "close"')
+], toggleGroupAccess);
 
 // @route   PUT /api/users/students/:id/open-all-exams
 // @desc    Open all exams for student
