@@ -486,7 +486,7 @@ const StudentProfile = () => {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        timeout: 30000
+        timeout: 60000 // 60 seconds for large operations
       });
       
       toast.success(response.data.message);
@@ -509,7 +509,7 @@ const StudentProfile = () => {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        timeout: 30000
+        timeout: 60000 // 60 seconds for large operations
       });
       
       toast.success(response.data.message);
