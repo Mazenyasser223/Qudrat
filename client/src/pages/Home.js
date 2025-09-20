@@ -413,12 +413,12 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             {reviewsLoading ? (
               // Loading state
-              Array.from({ length: 3 }).map((_, index) => (
+              Array.from({ length: 2 }).map((_, index) => (
                 <div key={index} className="card p-6 bg-gray-200 border-none shadow-lg animate-pulse">
-                  <div className="bg-gray-300 rounded-lg w-full h-64 mb-4"></div>
+                  <div className="bg-gray-300 rounded-lg w-full h-96 mb-4"></div>
                   <div className="h-4 bg-gray-300 rounded mb-2"></div>
                   <div className="h-3 bg-gray-300 rounded w-2/3"></div>
                 </div>
@@ -426,13 +426,13 @@ const Home = () => {
             ) : reviews.length > 0 ? (
               // Dynamic review images
               reviews.map((review) => (
-                <div key={review._id} className="card p-4 bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div key={review._id} className="card p-6 bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                   <div className="relative">
                     <img 
                       src={review.imageUrl} 
                       alt={`تقييم ${review.studentName}`}
                       className="w-full h-auto rounded-lg shadow-sm"
-                      style={{ maxHeight: '400px', objectFit: 'contain' }}
+                      style={{ maxHeight: '600px', minHeight: '400px', objectFit: 'contain' }}
                       onError={(e) => {
                         console.log('❌ Image failed to load:', review.imageUrl);
                         e.target.style.display = 'none';
@@ -443,7 +443,7 @@ const Home = () => {
                       }}
                     />
                     <div 
-                      className="hidden w-full h-64 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-gray-500"
+                      className="hidden w-full h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-gray-500"
                     >
                       <div className="text-center">
                         <div className="text-4xl mb-2">📱</div>
