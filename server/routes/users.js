@@ -15,8 +15,8 @@ const {
   getAllStudentAnswers,
   getDashboardStats,
   getAnalytics,
-  toggleExamAccess,
-  toggleGroupAccess
+  openAllExams,
+  closeAllExams
 } = require('../controllers/userController');
 const { protect, isTeacher } = require('../middleware/auth');
 
@@ -374,18 +374,14 @@ router.get('/test-specific/:studentId/:examId', isTeacher, async (req, res) => {
   }
 });
 
-// @route   PUT /api/users/students/:id/toggle-exam/:examId
-// @desc    Toggle exam access for student (open/close individual exam)
+// @route   PUT /api/users/students/:id/open-all-exams
+// @desc    Open all exams for student
 // @access  Private (Teacher only)
-router.put('/students/:id/toggle-exam/:examId', [
-  body('action').isIn(['open', 'close']).withMessage('Action must be "open" or "close"')
-], toggleExamAccess);
+router.put('/students/:id/open-all-exams', isTeacher, openAllExams);
 
-// @route   PUT /api/users/students/:id/toggle-group/:groupId
-// @desc    Toggle group exam access for student (open/close all exams in a group)
+// @route   PUT /api/users/students/:id/close-all-exams
+// @desc    Close all exams for student
 // @access  Private (Teacher only)
-router.put('/students/:id/toggle-group/:groupId', [
-  body('action').isIn(['open', 'close']).withMessage('Action must be "open" or "close"')
-], toggleGroupAccess);
+router.put('/students/:id/close-all-exams', isTeacher, closeAllExams);
 
 module.exports = router;

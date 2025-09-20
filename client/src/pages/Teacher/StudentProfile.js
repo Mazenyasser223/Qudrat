@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -16,8 +16,6 @@ import {
   List,
   Lock,
   Unlock,
-  ChevronDown,
-  ChevronRight,
   CheckCircle,
   XCircle
 } from 'lucide-react';
@@ -44,11 +42,8 @@ const StudentProfile = () => {
   const [selectedExamForSubmission, setSelectedExamForSubmission] = useState(null);
   const [attemptedExams, setAttemptedExams] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  // New simple exam control states
   const [showExamControl, setShowExamControl] = useState(false);
-  const [expandedControlGroups, setExpandedControlGroups] = useState({});
-  const [togglingExam, setTogglingExam] = useState(null);
-  const [togglingGroup, setTogglingGroup] = useState(null);
-  const [examControlData, setExamControlData] = useState(null);
   const [examControlLoading, setExamControlLoading] = useState(false);
 
   useEffect(() => {
@@ -481,145 +476,50 @@ const StudentProfile = () => {
     setSelectedExamForSubmission(null);
   };
 
-  // Exam Control Functions
-  // Memoized function to process exam control data
-  const processExamControlData = useMemo(() => {
-    console.log('🔄 Processing exam control data...');
-    console.log('📊 Exams count:', exams.length);
-    console.log('📊 Student progress count:', studentProgress.length);
-    
-    if (!exams.length || !studentProgress.length) {
-      console.log('❌ Missing data, returning null');
-      return null;
-    }
-    
-    // Create a Map for faster progress lookup
-    const progressMap = new Map();
-    studentProgress.forEach(progress => {
-      progressMap.set(progress.examId.toString(), progress);
-    });
-    
-    const groupedExams = {};
-    let processedCount = 0;
-    
-    // Process exams in batches to prevent UI blocking
-    exams.forEach(exam => {
-      const groupNum = exam.examGroup || 0;
-      if (!groupedExams[groupNum]) {
-        groupedExams[groupNum] = [];
-      }
-      
-      // Use Map lookup instead of find() for better performance
-      const progress = progressMap.get(exam._id.toString()) || null;
-      groupedExams[groupNum].push({ exam, progress });
-      
-      processedCount++;
-      if (processedCount % 50 === 0) {
-        console.log(`📈 Processed ${processedCount}/${exams.length} exams`);
-      }
-    });
-    
-    // Sort exams within each group
-    Object.keys(groupedExams).forEach(group => {
-      groupedExams[group].sort((a, b) => a.exam.order - b.exam.order);
-    });
-    
-    console.log('✅ Exam control data processed successfully');
-    console.log('📊 Groups created:', Object.keys(groupedExams).length);
-    
-    return groupedExams;
-  }, [exams, studentProgress]);
-
-  // Handle exam control loading state
-  useEffect(() => {
-    if (showExamControl && exams.length > 0 && studentProgress.length > 0) {
+  // New Simple Exam Control Functions
+  const handleOpenAllExams = async () => {
+    try {
       setExamControlLoading(true);
+      toast.loading('جاري فتح جميع الاختبارات...', { duration: 10000 });
       
-      // Set a timeout to prevent infinite loading
-      const timeout = setTimeout(() => {
-        console.log('⏰ Exam control processing timeout - forcing completion');
-        setExamControlLoading(false);
-      }, 10000); // 10 second timeout
-      
-      // Clear timeout when data is processed
-      if (processExamControlData) {
-        clearTimeout(timeout);
-        setExamControlLoading(false);
-      }
-      
-      return () => clearTimeout(timeout);
-    }
-  }, [showExamControl, exams.length, studentProgress.length, processExamControlData]);
-
-  const toggleControlGroup = (groupKey) => {
-    setExpandedControlGroups(prev => ({
-      ...prev,
-      [groupKey]: !prev[groupKey]
-    }));
-  };
-
-  const handleToggleExamAccess = async (examId, action) => {
-    try {
-      setTogglingExam(examId);
-      console.log(`Toggling exam ${examId} to ${action}`);
-      
-      const response = await axios.put(`/api/users/students/${studentId}/toggle-exam/${examId}`, {
-        action
-      }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      console.log('Toggle exam response:', response.data);
-      toast.success(response.data.message);
-      
-      // Refresh student data
-      await fetchStudentData();
-      
-    } catch (error) {
-      console.error('Error toggling exam:', error);
-      toast.error(error.response?.data?.message || 'حدث خطأ أثناء تغيير حالة الاختبار');
-    } finally {
-      setTogglingExam(null);
-    }
-  };
-
-  const handleToggleGroupAccess = async (groupId, action) => {
-    try {
-      setTogglingGroup(groupId);
-      console.log(`Toggling group ${groupId} to ${action}`);
-      
-      // Show progress message for large operations
-      toast.loading(`جاري ${action === 'open' ? 'فتح' : 'قفل'} جميع الاختبارات في المجموعة...`, {
-        duration: 60000 // Show for up to 60 seconds
-      });
-      
-      // Add timeout to prevent hanging
-      const response = await axios.put(`/api/users/students/${studentId}/toggle-group/${groupId}`, {
-        action
-      }, {
+      const response = await axios.put(`/api/users/students/${studentId}/open-all-exams`, {}, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        timeout: 60000 // 60 second timeout for large groups
+        timeout: 30000
       });
       
-      console.log('Toggle group response:', response.data);
       toast.success(response.data.message);
-      
-      // Refresh student data
       await fetchStudentData();
       
     } catch (error) {
-      console.error('Error toggling group:', error);
-      if (error.code === 'ECONNABORTED') {
-        toast.error('انتهت مهلة الطلب. يرجى المحاولة مرة أخرى');
-      } else {
-        toast.error(error.response?.data?.message || 'حدث خطأ أثناء تغيير حالة المجموعة');
-      }
+      console.error('Error opening all exams:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء فتح الاختبارات');
     } finally {
-      setTogglingGroup(null);
+      setExamControlLoading(false);
+    }
+  };
+
+  const handleCloseAllExams = async () => {
+    try {
+      setExamControlLoading(true);
+      toast.loading('جاري قفل جميع الاختبارات...', { duration: 10000 });
+      
+      const response = await axios.put(`/api/users/students/${studentId}/close-all-exams`, {}, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        timeout: 30000
+      });
+      
+      toast.success(response.data.message);
+      await fetchStudentData();
+      
+    } catch (error) {
+      console.error('Error closing all exams:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء قفل الاختبارات');
+    } finally {
+      setExamControlLoading(false);
     }
   };
 
@@ -1349,245 +1249,68 @@ const StudentProfile = () => {
         
         {showExamControl && (
           <div className="card-body">
-            <div className="space-y-4">
-              {/* Group Controls */}
-              {(!processExamControlData || examControlLoading) ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="spinner w-8 h-8"></div>
-                  <span className="mr-3 text-gray-600">
-                    {examControlLoading ? 'جاري معالجة البيانات...' : 'جاري تحميل بيانات التحكم...'}
-                  </span>
-                </div>
-              ) : (
-                Object.keys(processExamControlData).map(groupKey => {
-                const groupNum = parseInt(groupKey);
-                const groupExams = processExamControlData[groupKey] || [];
-                const isExpanded = expandedControlGroups[groupKey];
+            <div className="space-y-6">
+              {/* Simple Global Controls */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
+                <h4 className="text-lg font-semibold text-gray-900 mb-4 text-center">
+                  التحكم العام في الاختبارات
+                </h4>
+                <p className="text-sm text-gray-600 mb-6 text-center">
+                  يمكنك فتح أو قفل جميع الاختبارات للطالب بنقرة واحدة
+                </p>
                 
-                // Calculate group status efficiently
-                const unlockedCount = groupExams.filter(item => item.progress?.status === 'unlocked').length;
-                const lockedCount = groupExams.filter(item => item.progress?.status === 'locked' || !item.progress).length;
-                const completedCount = groupExams.filter(item => item.progress?.status === 'completed').length;
-                
-                return (
-                  <div key={groupKey} className="border border-gray-200 rounded-lg overflow-hidden">
-                    {/* Group Header */}
-                    <button
-                      onClick={() => toggleControlGroup(groupKey)}
-                      className="w-full p-4 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-200 flex items-center justify-between"
-                    >
-                      <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                          {groupNum}
-                        </div>
-                        <div className="text-right">
-                          <h4 className="font-bold text-gray-900 text-sm">
-                            {groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}
-                          </h4>
-                          <p className="text-xs text-gray-600">
-                            {groupExams.length} اختبار • {unlockedCount} مفتوح • {lockedCount} مقفل • {completedCount} مكتمل
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                        {/* Group Action Buttons */}
-                        <div className="flex space-x-2 rtl:space-x-reverse">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleToggleGroupAccess(groupNum, 'open');
-                            }}
-                            disabled={togglingGroup === groupNum}
-                            className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
-                          >
-                            {togglingGroup === groupNum ? (
-                              <div className="spinner w-3 h-3"></div>
-                            ) : (
-                              <Unlock className="h-3 w-3" />
-                            )}
-                            <span>فتح الكل</span>
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleToggleGroupAccess(groupNum, 'close');
-                            }}
-                            disabled={togglingGroup === groupNum}
-                            className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
-                          >
-                            {togglingGroup === groupNum ? (
-                              <div className="spinner w-3 h-3"></div>
-                            ) : (
-                              <Lock className="h-3 w-3" />
-                            )}
-                            <span>قفل الكل</span>
-                          </button>
-                        </div>
-                        
-                        {isExpanded ? (
-                          <ChevronDown className="h-5 w-5 text-gray-500" />
-                        ) : (
-                          <ChevronRight className="h-5 w-5 text-gray-500" />
-                        )}
-                      </div>
-                    </button>
-                    
-                    {/* Expandable Content - Lazy Loaded */}
-                    {isExpanded && (
-                      <div className="p-4 bg-white border-t border-gray-200">
-                        <div className="space-y-2 max-h-96 overflow-y-auto">
-                          {groupExams.length > 20 ? (
-                            // Show first 20 exams with "Show More" button for large groups
-                            <>
-                              {groupExams.slice(0, 20).map(item => {
-                                const exam = item.exam;
-                                const progress = item.progress;
-                                const currentStatus = progress?.status || 'locked';
-                                const canToggle = currentStatus !== 'completed' && currentStatus !== 'in_progress';
-                                
-                                return (
-                                  <div
-                                    key={exam._id}
-                                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                                  >
-                                    <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                                        currentStatus === 'completed' ? 'bg-green-100' :
-                                        currentStatus === 'in_progress' ? 'bg-yellow-100' :
-                                        currentStatus === 'unlocked' ? 'bg-blue-100' : 'bg-gray-100'
-                                      }`}>
-                                        {currentStatus === 'completed' ? (
-                                          <CheckCircle className="h-4 w-4 text-green-600" />
-                                        ) : currentStatus === 'in_progress' ? (
-                                          <div className="w-2 h-2 bg-yellow-600 rounded-full"></div>
-                                        ) : currentStatus === 'unlocked' ? (
-                                          <Unlock className="h-3 w-3 text-blue-600" />
-                                        ) : (
-                                          <Lock className="h-3 w-3 text-gray-600" />
-                                        )}
-                                      </div>
-                                      <div>
-                                        <h5 className="font-medium text-gray-900 text-sm">{exam.title}</h5>
-                                        <p className="text-xs text-gray-500">
-                                          {currentStatus === 'completed' ? 'مكتمل' :
-                                           currentStatus === 'in_progress' ? 'قيد التنفيذ' :
-                                           currentStatus === 'unlocked' ? 'مفتوح' : 'مقفل'}
-                                        </p>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className="flex space-x-2 rtl:space-x-reverse">
-                                      <button
-                                        onClick={() => handleToggleExamAccess(exam._id, 'open')}
-                                        disabled={!canToggle || togglingExam === exam._id}
-                                        className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                      >
-                                        {togglingExam === exam._id ? (
-                                          <div className="spinner w-3 h-3"></div>
-                                        ) : (
-                                          <Unlock className="h-3 w-3" />
-                                        )}
-                                        <span>فتح</span>
-                                      </button>
-                                      <button
-                                        onClick={() => handleToggleExamAccess(exam._id, 'close')}
-                                        disabled={!canToggle || togglingExam === exam._id}
-                                        className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                      >
-                                        {togglingExam === exam._id ? (
-                                          <div className="spinner w-3 h-3"></div>
-                                        ) : (
-                                          <Lock className="h-3 w-3" />
-                                        )}
-                                        <span>قفل</span>
-                                      </button>
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                              <div className="text-center py-2">
-                                <span className="text-sm text-gray-500">
-                                  عرض {Math.min(20, groupExams.length)} من {groupExams.length} اختبار
-                                </span>
-                              </div>
-                            </>
-                          ) : (
-                            // Show all exams for smaller groups
-                            groupExams.map(item => {
-                              const exam = item.exam;
-                              const progress = item.progress;
-                              const currentStatus = progress?.status || 'locked';
-                              const canToggle = currentStatus !== 'completed' && currentStatus !== 'in_progress';
-                              
-                              return (
-                                <div
-                                  key={exam._id}
-                                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                                >
-                                  <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                                      currentStatus === 'completed' ? 'bg-green-100' :
-                                      currentStatus === 'in_progress' ? 'bg-yellow-100' :
-                                      currentStatus === 'unlocked' ? 'bg-blue-100' : 'bg-gray-100'
-                                    }`}>
-                                      {currentStatus === 'completed' ? (
-                                        <CheckCircle className="h-4 w-4 text-green-600" />
-                                      ) : currentStatus === 'in_progress' ? (
-                                        <div className="w-2 h-2 bg-yellow-600 rounded-full"></div>
-                                      ) : currentStatus === 'unlocked' ? (
-                                        <Unlock className="h-3 w-3 text-blue-600" />
-                                      ) : (
-                                        <Lock className="h-3 w-3 text-gray-600" />
-                                      )}
-                                    </div>
-                                    <div>
-                                      <h5 className="font-medium text-gray-900 text-sm">{exam.title}</h5>
-                                      <p className="text-xs text-gray-500">
-                                        {currentStatus === 'completed' ? 'مكتمل' :
-                                         currentStatus === 'in_progress' ? 'قيد التنفيذ' :
-                                         currentStatus === 'unlocked' ? 'مفتوح' : 'مقفل'}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  
-                                  <div className="flex space-x-2 rtl:space-x-reverse">
-                                    <button
-                                      onClick={() => handleToggleExamAccess(exam._id, 'open')}
-                                      disabled={!canToggle || togglingExam === exam._id}
-                                      className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                      {togglingExam === exam._id ? (
-                                        <div className="spinner w-3 h-3"></div>
-                                      ) : (
-                                        <Unlock className="h-3 w-3" />
-                                      )}
-                                      <span>فتح</span>
-                                    </button>
-                                    <button
-                                      onClick={() => handleToggleExamAccess(exam._id, 'close')}
-                                      disabled={!canToggle || togglingExam === exam._id}
-                                      className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                      {togglingExam === exam._id ? (
-                                        <div className="spinner w-3 h-3"></div>
-                                      ) : (
-                                        <Lock className="h-3 w-3" />
-                                      )}
-                                      <span>قفل</span>
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            })
-                          )}
-                        </div>
-                      </div>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button
+                    onClick={handleOpenAllExams}
+                    disabled={examControlLoading}
+                    className="flex items-center justify-center space-x-2 rtl:space-x-reverse px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {examControlLoading ? (
+                      <div className="spinner w-5 h-5"></div>
+                    ) : (
+                      <Unlock className="h-5 w-5" />
                     )}
+                    <span>فتح جميع الاختبارات</span>
+                  </button>
+                  
+                  <button
+                    onClick={handleCloseAllExams}
+                    disabled={examControlLoading}
+                    className="flex items-center justify-center space-x-2 rtl:space-x-reverse px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {examControlLoading ? (
+                      <div className="spinner w-5 h-5"></div>
+                    ) : (
+                      <Lock className="h-5 w-5" />
+                    )}
+                    <span>قفل جميع الاختبارات</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Exam Status Summary */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-green-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-green-600">
+                    {studentProgress.filter(p => p.status === 'unlocked').length}
                   </div>
-                );
-              })
-              )}
+                  <div className="text-sm text-green-700">اختبارات مفتوحة</div>
+                </div>
+                
+                <div className="bg-gray-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-gray-600">
+                    {studentProgress.filter(p => p.status === 'locked' || !p.status).length}
+                  </div>
+                  <div className="text-sm text-gray-700">اختبارات مقفلة</div>
+                </div>
+                
+                <div className="bg-blue-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {studentProgress.filter(p => p.status === 'completed').length}
+                  </div>
+                  <div className="text-sm text-blue-700">اختبارات مكتملة</div>
+                </div>
+              </div>
             </div>
           </div>
         )}

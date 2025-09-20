@@ -1132,27 +1132,15 @@ const toggleExamAccess = async (req, res) => {
   }
 };
 
-// @desc    Toggle group exam access for student (open/close all exams in a group)
-// @route   PUT /api/users/students/:id/toggle-group/:groupId
+// @desc    Open all exams for student
+// @route   PUT /api/users/students/:id/open-all-exams
 // @access  Private (Teacher only)
-const toggleGroupAccess = async (req, res) => {
+const openAllExams = async (req, res) => {
   try {
-    console.log('=== TOGGLE GROUP ACCESS REQUEST ===');
+    console.log('=== OPEN ALL EXAMS REQUEST ===');
     console.log('Student ID:', req.params.id);
-    console.log('Group ID:', req.params.groupId);
-    console.log('Action:', req.body.action);
     
     const { id: studentId } = req.params;
-    const { groupId } = req.params;
-    const { action } = req.body; // 'open' or 'close'
-    
-    // Validate action
-    if (!action || !['open', 'close'].includes(action)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Action must be "open" or "close"'
-      });
-    }
     
     // Find student
     const student = await User.findById(studentId);
@@ -1163,19 +1151,16 @@ const toggleGroupAccess = async (req, res) => {
       });
     }
     
-    // Find all exams in the group
-    const exams = await Exam.find({ examGroup: parseInt(groupId) });
-    console.log(`Found ${exams.length} exams in group ${groupId}`);
+    // Find all exams
+    const exams = await Exam.find({});
+    console.log(`Found ${exams.length} total exams`);
     
     if (exams.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'لا توجد اختبارات في هذه المجموعة'
+        message: 'لا توجد اختبارات في النظام'
       });
     }
-    
-    let updatedCount = 0;
-    console.log(`Starting to process ${exams.length} exams for ${action} action`);
     
     // Create a Map for faster progress lookup
     const progressMap = new Map();
@@ -1183,81 +1168,132 @@ const toggleGroupAccess = async (req, res) => {
       progressMap.set(progress.examId.toString(), progress);
     });
     
-    // Process exams in batches for better performance
-    const batchSize = 10;
-    for (let i = 0; i < exams.length; i += batchSize) {
-      const batch = exams.slice(i, i + batchSize);
-      console.log(`Processing batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(exams.length/batchSize)}: exams ${i + 1}-${Math.min(i + batchSize, exams.length)}`);
+    let updatedCount = 0;
+    
+    // Process all exams
+    for (const exam of exams) {
+      const existingProgress = progressMap.get(exam._id.toString());
       
-      for (const exam of batch) {
-        const existingProgress = progressMap.get(exam._id.toString());
-        
-        if (action === 'open') {
-          // Open exam
-          if (existingProgress) {
-            // Update existing progress
-            const currentStatus = existingProgress.status;
-            if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
-              existingProgress.status = 'unlocked';
-              existingProgress.unlockedAt = new Date();
-              updatedCount++;
-            }
-          } else {
-            // Create new progress entry
-            student.examProgress.push({
-              examId: new require('mongoose').Types.ObjectId(exam._id),
-              examGroup: exam.examGroup,
-              status: 'unlocked',
-              unlockedAt: new Date()
-            });
-            // Update the map for future lookups
-            progressMap.set(exam._id.toString(), student.examProgress[student.examProgress.length - 1]);
-            updatedCount++;
-          }
-        } else {
-          // Close exam
-          if (existingProgress) {
-            // Only lock if not completed or in progress
-            const currentStatus = existingProgress.status;
-            if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
-              existingProgress.status = 'locked';
-              updatedCount++;
-            }
-          } else {
-            // Create new progress entry with locked status
-            student.examProgress.push({
-              examId: new require('mongoose').Types.ObjectId(exam._id),
-              examGroup: exam.examGroup,
-              status: 'locked'
-            });
-            // Update the map for future lookups
-            progressMap.set(exam._id.toString(), student.examProgress[student.examProgress.length - 1]);
-            updatedCount++;
-          }
+      if (existingProgress) {
+        // Update existing progress if not completed or in progress
+        const currentStatus = existingProgress.status;
+        if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
+          existingProgress.status = 'unlocked';
+          existingProgress.unlockedAt = new Date();
+          updatedCount++;
         }
+      } else {
+        // Create new progress entry
+        student.examProgress.push({
+          examId: new require('mongoose').Types.ObjectId(exam._id),
+          examGroup: exam.examGroup,
+          status: 'unlocked',
+          unlockedAt: new Date()
+        });
+        updatedCount++;
       }
     }
     
     // Save student
     await student.save();
     
-    console.log(`Group access toggled successfully. Updated ${updatedCount} exams`);
+    console.log(`Opened ${updatedCount} exams successfully`);
     res.json({
       success: true,
-      message: `تم ${action === 'open' ? 'فتح' : 'قفل'} ${updatedCount} اختبار في المجموعة`,
+      message: `تم فتح ${updatedCount} اختبار بنجاح`,
       data: {
-        groupId: parseInt(groupId),
-        action,
         updatedCount,
         totalExams: exams.length
       }
     });
     
   } catch (error) {
-    console.error('Toggle group access error:', error);
+    console.error('Open all exams error:', error);
     res.status(500).json({
       success: false,
-      message: 'حدث خطأ أثناء تغيير حالة المجموعة'
+      message: 'حدث خطأ أثناء فتح الاختبارات'
+    });
+  }
+};
+
+// @desc    Close all exams for student
+// @route   PUT /api/users/students/:id/close-all-exams
+// @access  Private (Teacher only)
+const closeAllExams = async (req, res) => {
+  try {
+    console.log('=== CLOSE ALL EXAMS REQUEST ===');
+    console.log('Student ID:', req.params.id);
+    
+    const { id: studentId } = req.params;
+    
+    // Find student
+    const student = await User.findById(studentId);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'الطالب غير موجود'
+      });
+    }
+    
+    // Find all exams
+    const exams = await Exam.find({});
+    console.log(`Found ${exams.length} total exams`);
+    
+    if (exams.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'لا توجد اختبارات في النظام'
+      });
+    }
+    
+    // Create a Map for faster progress lookup
+    const progressMap = new Map();
+    student.examProgress.forEach(progress => {
+      progressMap.set(progress.examId.toString(), progress);
+    });
+    
+    let updatedCount = 0;
+    
+    // Process all exams
+    for (const exam of exams) {
+      const existingProgress = progressMap.get(exam._id.toString());
+      
+      if (existingProgress) {
+        // Update existing progress if not completed or in progress
+        const currentStatus = existingProgress.status;
+        if (currentStatus !== 'completed' && currentStatus !== 'in_progress') {
+          existingProgress.status = 'locked';
+          updatedCount++;
+        }
+      } else {
+        // Create new progress entry with locked status
+        student.examProgress.push({
+          examId: new require('mongoose').Types.ObjectId(exam._id),
+          examGroup: exam.examGroup,
+          status: 'locked'
+        });
+        updatedCount++;
+      }
+    }
+    
+    // Save student
+    await student.save();
+    
+    console.log(`Closed ${updatedCount} exams successfully`);
+    res.json({
+      success: true,
+      message: `تم قفل ${updatedCount} اختبار بنجاح`,
+      data: {
+        updatedCount,
+        totalExams: exams.length
+      }
+    });
+    
+  } catch (error) {
+    console.error('Close all exams error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء قفل الاختبارات'
     });
   }
 };
@@ -1277,6 +1313,6 @@ module.exports = {
   getAllStudentAnswers,
   getDashboardStats,
   getAnalytics,
-  toggleExamAccess,
-  toggleGroupAccess
+  openAllExams,
+  closeAllExams
 };
