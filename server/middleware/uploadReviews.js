@@ -1,34 +1,26 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../config/cloudinary');
 
-// Ensure reviews directory exists
-const reviewsDir = path.join(__dirname, '../uploads/reviews');
-console.log('📁 Reviews directory path:', reviewsDir);
-console.log('📁 Current working directory:', process.cwd());
-console.log('📁 __dirname:', __dirname);
-
-if (!fs.existsSync(reviewsDir)) {
-  console.log('📁 Creating reviews directory:', reviewsDir);
-  try {
-    fs.mkdirSync(reviewsDir, { recursive: true });
-    console.log('✅ Reviews directory created successfully');
-  } catch (error) {
-    console.error('❌ Error creating reviews directory:', error);
-  }
-} else {
-  console.log('✅ Reviews directory already exists');
-}
-
-// Configure storage for reviews
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, reviewsDir);
-  },
-  filename: function (req, file, cb) {
-    // Generate unique filename with timestamp
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'review-' + uniqueSuffix + path.extname(file.originalname));
+// Configure Cloudinary storage for reviews
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'qudrat/reviews',
+    format: async (req, file) => {
+      // Keep original format or convert to jpg if not supported
+      const supportedFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      const originalFormat = file.originalname.split('.').pop().toLowerCase();
+      return supportedFormats.includes(originalFormat) ? originalFormat : 'jpg';
+    },
+    public_id: (req, file) => {
+      // Generate unique public_id with timestamp
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      return `review-${uniqueSuffix}`;
+    },
+    transformation: [
+      { width: 800, height: 600, crop: 'limit', quality: 'auto' }
+    ]
   }
 });
 

@@ -69,22 +69,14 @@ const createReview = async (req, res) => {
       mimetype: req.file.mimetype
     });
 
-    // Check if file actually exists on disk
-    if (!fs.existsSync(req.file.path)) {
-      console.log('❌ File was not saved to disk:', req.file.path);
-      return res.status(500).json({
-        success: false,
-        message: 'فشل في حفظ الصورة على الخادم'
-      });
-    }
-
-    console.log('✅ File exists on disk:', req.file.path);
+    // For Cloudinary, the file.path is the Cloudinary URL
+    console.log('✅ File uploaded to Cloudinary:', req.file.path);
 
     const review = new Review({
       studentName,
       rating: parseInt(rating),
-      imageUrl: `/uploads/reviews/${req.file.filename}`,
-      imagePath: req.file.path,
+      imageUrl: req.file.path, // Cloudinary URL
+      imagePath: req.file.path, // Same as imageUrl for Cloudinary
       order: order ? parseInt(order) : 0
     });
 
