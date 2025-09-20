@@ -1324,10 +1324,10 @@ const toggleGroupAccess = async (req, res) => {
       console.log(`Added ${newProgressEntries.length} new progress entries`);
     }
     
-    // Save the student with all changes using bulkWrite for better performance
+    // Save the student with all changes
     if (updatedCount > 0) {
-      await student.save({ validateBeforeSave: false });
-      console.log(`Bulk save completed for ${updatedCount} exams`);
+      await student.save();
+      console.log(`Save completed for ${updatedCount} exams`);
     }
     
     console.log(`Group access toggled successfully. Updated ${updatedCount} exams`);
@@ -1338,17 +1338,24 @@ const toggleGroupAccess = async (req, res) => {
         groupId: parseInt(groupId),
         action,
         updatedCount,
-        totalExams: exams.length
+        totalExams: examIds.length
       }
     });
     
   } catch (error) {
-    console.error('Toggle group access error:', error);
-    console.error('Error details:', error.message);
+    console.error('=== TOGGLE GROUP ACCESS ERROR ===');
+    console.error('Student ID:', req.params.id);
+    console.error('Group ID:', req.params.groupId);
+    console.error('Action:', req.body.action);
+    console.error('Error message:', error.message);
+    console.error('Error name:', error.name);
+    console.error('Error code:', error.code);
     console.error('Error stack:', error.stack);
+    
     res.status(500).json({
       success: false,
-      message: 'حدث خطأ أثناء تغيير حالة المجموعة'
+      message: 'حدث خطأ أثناء تغيير حالة المجموعة',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
