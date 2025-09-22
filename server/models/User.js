@@ -128,6 +128,14 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Performance indexes
+userSchema.index({ email: 1 });
+userSchema.index({ role: 1 });
+userSchema.index({ phoneNumber: 1 });
+userSchema.index({ 'examProgress.examId': 1 });
+userSchema.index({ 'examProgress.status': 1 });
+userSchema.index({ createdAt: -1 });
+
 // Hash password before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();

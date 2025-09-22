@@ -85,6 +85,13 @@ const examSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Performance indexes
+examSchema.index({ examGroup: 1, order: 1 });
+examSchema.index({ isActive: 1 });
+examSchema.index({ isFreeExam: 1 });
+examSchema.index({ createdBy: 1 });
+examSchema.index({ createdAt: -1 });
+
 // Update totalQuestions when questions are modified
 examSchema.pre('save', function(next) {
   this.totalQuestions = this.questions.length;

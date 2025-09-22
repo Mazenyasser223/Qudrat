@@ -22,6 +22,7 @@ const {
   removeExamFromFree
 } = require('../controllers/examController');
 const { protect, isTeacher, isStudent } = require('../middleware/auth');
+const { cacheMiddleware, invalidateCache } = require('../middleware/cache');
 const upload = require('../middleware/upload');
 
 const router = express.Router();
@@ -177,12 +178,12 @@ router.post('/upload-image', isTeacher, (req, res) => {
 // @route   GET /api/exams
 // @desc    Get all exams
 // @access  Private
-router.get('/', getExams);
+router.get('/', protect, cacheMiddleware(300), getExams);
 
 // @route   GET /api/exams/group/:groupNumber
 // @desc    Get exams by group
 // @access  Private
-router.get('/group/:groupNumber', getExamsByGroup);
+router.get('/group/:groupNumber', protect, cacheMiddleware(300), getExamsByGroup);
 
 // Review Exam Routes (must come before /:id routes to avoid conflicts)
 // @route   GET /api/exams/review

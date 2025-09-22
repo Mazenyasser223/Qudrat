@@ -355,19 +355,23 @@ const submitExam = async (req, res) => {
       });
     }
 
-    // Calculate score and collect wrong questions
+    // Optimized score calculation - batch processing
     let correctAnswers = 0;
     const detailedAnswers = [];
     const wrongQuestions = [];
 
-    answers.forEach((answer, index) => {
-      const question = exam.questions[index];
+    // Process all answers in a single loop for better performance
+    for (let i = 0; i < answers.length; i++) {
+      const answer = answers[i];
+      const question = exam.questions[i];
+      
+      if (!question) continue; // Skip if question doesn't exist
+      
       const isCorrect = answer.selectedAnswer === question.correctAnswer;
       
       if (isCorrect) {
         correctAnswers++;
       } else {
-        // Collect wrong questions
         wrongQuestions.push(question._id);
       }
 
@@ -376,7 +380,7 @@ const submitExam = async (req, res) => {
         selectedAnswer: answer.selectedAnswer,
         isCorrect
       });
-    });
+    }
 
     const score = correctAnswers;
     const percentage = (correctAnswers / exam.questions.length) * 100;

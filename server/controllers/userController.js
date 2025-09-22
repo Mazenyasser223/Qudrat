@@ -56,9 +56,25 @@ const getStudent = async (req, res) => {
     }
     
     console.log('Searching for student with ID:', req.params.id);
+    // Optimized query - avoid populate for better performance
     const student = await User.findById(req.params.id)
-      .select('-password')
-      .populate('examProgress.examId', 'title examGroup order isActive');
+      .select('-password');
+    
+    // Get exam details separately to avoid N+1 query problem
+    const examIds = student.examProgress.map(progress => progress.examId);
+    const exams = await Exam.find({ _id: { $in: examIds } })
+      .select('title examGroup order isActive');
+    
+    // Create exam lookup map for O(1) access
+    const examMap = {};
+    exams.forEach(exam => {
+      examMap[exam._id.toString()] = exam;
+    });
+    
+    // Attach exam details to progress
+    student.examProgress.forEach(progress => {
+      progress.examId = examMap[progress.examId.toString()] || progress.examId;
+    });
 
     console.log('Student found:', !!student);
     console.log('Student role:', student?.role);
@@ -88,22 +104,32 @@ const getStudent = async (req, res) => {
       );
     }
 
-    // Add best review score for each exam progress
+    // Optimized review exam scores - batch query instead of individual queries
     const ReviewExam = require('../models/ReviewExam');
-    for (let progress of student.examProgress) {
-      if (progress.reviewExamId) {
-        try {
-          const reviewExam = await ReviewExam.findById(progress.reviewExamId);
-          if (reviewExam) {
-            progress.bestReviewScore = reviewExam.bestPercentage || 0;
-          }
-        } catch (error) {
-          console.error('Error fetching review exam:', error);
-          progress.bestReviewScore = 0;
-        }
-      } else {
+    const reviewExamIds = student.examProgress
+      .filter(progress => progress.reviewExamId)
+      .map(progress => progress.reviewExamId);
+    
+    if (reviewExamIds.length > 0) {
+      const reviewExams = await ReviewExam.find({ _id: { $in: reviewExamIds } })
+        .select('bestPercentage');
+      
+      const reviewExamMap = {};
+      reviewExams.forEach(review => {
+        reviewExamMap[review._id.toString()] = review.bestPercentage || 0;
+      });
+      
+      // Attach review scores
+      student.examProgress.forEach(progress => {
+        progress.bestReviewScore = progress.reviewExamId 
+          ? (reviewExamMap[progress.reviewExamId.toString()] || 0)
+          : 0;
+      });
+    } else {
+      // No review exams, set all to 0
+      student.examProgress.forEach(progress => {
         progress.bestReviewScore = 0;
-      }
+      });
     }
 
     console.log('=== STUDENT DATA PREPARED ===');
