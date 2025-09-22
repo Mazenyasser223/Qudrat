@@ -128,10 +128,8 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Performance indexes
-userSchema.index({ email: 1 });
+// Performance indexes (email and phoneNumber already have unique indexes)
 userSchema.index({ role: 1 });
-userSchema.index({ phoneNumber: 1 });
 userSchema.index({ 'examProgress.examId': 1 });
 userSchema.index({ 'examProgress.status': 1 });
 userSchema.index({ createdAt: -1 });
