@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { safeLocalStorage } from '../utils/storage';
 
 // Configure axios base URL
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
 
 const AuthContext = createContext();
 
