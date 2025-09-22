@@ -20,7 +20,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       // Create socket connection
-      const newSocket = io(process.env.REACT_APP_API_URL || 'http://localhost:5000', {
+      const newSocket = io(process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000'), {
         transports: ['websocket'],
         autoConnect: true
       });
