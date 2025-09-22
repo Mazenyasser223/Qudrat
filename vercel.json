@@ -23,5 +23,6 @@
   ],
   "env": {
     "REACT_APP_API_URL": ""
-  }
+  },
+  "buildCommand": "npm run build"
 }
