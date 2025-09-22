@@ -20,6 +20,6 @@
     }
   ],
   "env": {
-    "REACT_APP_API_URL": "http://62.72.29.136"
+    "REACT_APP_API_URL": "https://qudrat-2r6gde90g-mazenyasser223s-projects.vercel.app"
   }
 }
