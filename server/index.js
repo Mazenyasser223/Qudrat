@@ -28,9 +28,8 @@ app.set('trust proxy', 1);
 // Security middleware
 app.use(helmet());
 
-// Aggressive CORS middleware - must be first
+// CORS middleware - optimized for production
 app.use((req, res, next) => {
-  console.log('🚀 Pre-CORS middleware - Origin:', req.headers.origin);
   res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Access-Control-Request-Method, Access-Control-Request-Headers');
@@ -38,7 +37,6 @@ app.use((req, res, next) => {
   res.header('Access-Control-Max-Age', '86400');
   
   if (req.method === 'OPTIONS') {
-    console.log('🔄 Pre-CORS handling OPTIONS request');
     res.sendStatus(200);
     return;
   }
@@ -61,11 +59,10 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS - Aggressive permissive configuration for Railway deployment
+// CORS - Optimized configuration
 app.use(cors({
   origin: function (origin, callback) {
-    console.log('🌐 CORS Origin check:', origin);
-    // Allow all origins
+    // Allow all origins in production
     callback(null, true);
   },
   credentials: true,
@@ -78,7 +75,6 @@ app.use(cors({
 
 // Additional CORS headers for all responses
 app.use((req, res, next) => {
-  console.log('🔍 Request from origin:', req.headers.origin || 'no origin');
   res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
@@ -89,7 +85,6 @@ app.use((req, res, next) => {
 
 // Handle preflight requests
 app.options('*', (req, res) => {
-  console.log('🔄 Handling preflight request for:', req.path);
   res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
