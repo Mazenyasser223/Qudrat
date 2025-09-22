@@ -9,17 +9,19 @@
       }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "http://62.72.29.136/api/$1"
-    },
+      "source": "/api/(.*)",
+      "destination": "http://62.72.29.136/api/$1"
+    }
+  ],
+  "routes": [
     {
       "src": "/(.*)",
       "dest": "/$1"
     }
   ],
   "env": {
-    "REACT_APP_API_URL": "https://qudrat-bc31ziw7q-mazenyasser223s-projects.vercel.app"
+    "REACT_APP_API_URL": ""
   }
 }
