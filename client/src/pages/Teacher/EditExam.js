@@ -84,6 +84,13 @@ const EditExam = () => {
       console.log('Exam ID:', examId);
       console.log('Exam data:', data);
       
+      // Validate questions array
+      if (!data.questions || data.questions.length === 0) {
+        toast.error('يجب أن يحتوي الامتحان على سؤال واحد على الأقل');
+        setSubmitting(false);
+        return;
+      }
+
       // Validate that all questions have correct answers
       const invalidQuestions = data.questions.filter(q => !q.correctAnswer || !['A', 'B', 'C', 'D'].includes(q.correctAnswer));
       if (invalidQuestions.length > 0) {
@@ -101,6 +108,18 @@ const EditExam = () => {
         timeLimit: parseInt(data.timeLimit),
         questions: data.questions
       };
+
+      console.log('=== EXAM DATA TO SEND ===');
+      console.log('Title:', examData.title);
+      console.log('Exam Group:', examData.examGroup);
+      console.log('Order:', examData.order);
+      console.log('Time Limit:', examData.timeLimit);
+      console.log('Questions count:', examData.questions.length);
+      console.log('First question sample:', examData.questions[0] ? {
+        hasImage: !!examData.questions[0].questionImage,
+        correctAnswer: examData.questions[0].correctAnswer,
+        hasExplanation: !!examData.questions[0].explanation
+      } : 'No questions');
 
       // Check backend health first
       console.log('Checking backend health...');
