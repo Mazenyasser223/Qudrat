@@ -18,7 +18,8 @@ const {
   toggleExamAccess,
   toggleGroupAccess,
   openAllExams,
-  closeAllExams
+  closeAllExams,
+  reopenExamForStudent
 } = require('../controllers/userController');
 const { protect, isTeacher } = require('../middleware/auth');
 
@@ -399,5 +400,10 @@ router.put('/students/:id/open-all-exams', isTeacher, openAllExams);
 // @desc    Close all exams for student
 // @access  Private (Teacher only)
 router.put('/students/:id/close-all-exams', isTeacher, closeAllExams);
+
+// @route   PUT /api/users/students/:id/reopen-exam/:examId
+// @desc    Reopen completed exam for student (allow retake while keeping previous scores)
+// @access  Private (Teacher only)
+router.put('/students/:id/reopen-exam/:examId', isTeacher, reopenExamForStudent);
 
 module.exports = router;

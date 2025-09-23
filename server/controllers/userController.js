@@ -1468,6 +1468,139 @@ const closeAllExams = async (req, res) => {
   }
 };
 
+// @desc    Reopen completed exam for student (allow retake while keeping previous scores)
+// @route   PUT /api/users/students/:id/reopen-exam/:examId
+// @access  Private (Teacher only)
+const reopenExamForStudent = async (req, res) => {
+  try {
+    console.log('=== REOPEN EXAM REQUEST ===');
+    console.log('Student ID:', req.params.id);
+    console.log('Exam ID:', req.params.examId);
+    console.log('User:', req.user);
+
+    const { id: studentId, examId } = req.params;
+
+    // Validate student ID
+    if (!mongoose.Types.ObjectId.isValid(studentId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'معرف الطالب غير صحيح'
+      });
+    }
+
+    // Validate exam ID
+    if (!mongoose.Types.ObjectId.isValid(examId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'معرف الامتحان غير صحيح'
+      });
+    }
+
+    // Find student
+    const student = await User.findById(studentId);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'الطالب غير موجود'
+      });
+    }
+
+    // Find exam
+    const exam = await Exam.findById(examId);
+    if (!exam) {
+      return res.status(404).json({
+        success: false,
+        message: 'الامتحان غير موجود'
+      });
+    }
+
+    // Find the exam progress
+    const examProgressIndex = student.examProgress.findIndex(
+      progress => progress.examId.toString() === examId
+    );
+
+    if (examProgressIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'لم يتم العثور على تقدم الطالب في هذا الامتحان'
+      });
+    }
+
+    const currentProgress = student.examProgress[examProgressIndex];
+
+    // Check if exam is completed
+    if (currentProgress.status !== 'completed') {
+      return res.status(400).json({
+        success: false,
+        message: 'يمكن إعادة فتح الامتحانات المكتملة فقط'
+      });
+    }
+
+    // Create a new exam progress entry for the retake
+    const newProgressEntry = {
+      examId: examId,
+      status: 'unlocked',
+      score: 0,
+      totalQuestions: exam.totalQuestions,
+      percentage: 0,
+      timeSpent: 0,
+      submittedAt: null,
+      detailedAnswers: [],
+      wrongQuestions: [],
+      attemptNumber: (currentProgress.attemptNumber || 1) + 1,
+      previousAttempts: currentProgress.previousAttempts || []
+    };
+
+    // Add current attempt to previous attempts
+    if (!newProgressEntry.previousAttempts) {
+      newProgressEntry.previousAttempts = [];
+    }
+    
+    newProgressEntry.previousAttempts.push({
+      attemptNumber: currentProgress.attemptNumber || 1,
+      score: currentProgress.score,
+      percentage: currentProgress.percentage,
+      timeSpent: currentProgress.timeSpent,
+      submittedAt: currentProgress.submittedAt,
+      detailedAnswers: currentProgress.detailedAnswers,
+      wrongQuestions: currentProgress.wrongQuestions
+    });
+
+    // Update the exam progress
+    student.examProgress[examProgressIndex] = newProgressEntry;
+
+    // Save the student
+    await student.save();
+
+    console.log('Exam reopened successfully for student:', studentId);
+    console.log('New attempt number:', newProgressEntry.attemptNumber);
+    console.log('Previous attempts count:', newProgressEntry.previousAttempts.length);
+
+    res.json({
+      success: true,
+      message: 'تم إعادة فتح الامتحان بنجاح. يمكن للطالب الآن إعادة حل الامتحان',
+      data: {
+        examId: examId,
+        examTitle: exam.title,
+        attemptNumber: newProgressEntry.attemptNumber,
+        previousAttempts: newProgressEntry.previousAttempts.length
+      }
+    });
+
+  } catch (error) {
+    console.error('=== REOPEN EXAM ERROR ===');
+    console.error('Error object:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء إعادة فتح الامتحان',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 module.exports = {
   getStudents,
   getStudent,
@@ -1486,5 +1619,6 @@ module.exports = {
   toggleExamAccess,
   toggleGroupAccess,
   openAllExams,
-  closeAllExams
+  closeAllExams,
+  reopenExamForStudent
 };

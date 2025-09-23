@@ -114,7 +114,44 @@ const userSchema = new mongoose.Schema({
     wrongAnswers: {
       type: Number,
       default: 0
-    }
+    },
+    attemptNumber: {
+      type: Number,
+      default: 1
+    },
+    previousAttempts: [{
+      attemptNumber: {
+        type: Number,
+        required: true
+      },
+      score: {
+        type: Number,
+        default: 0
+      },
+      percentage: {
+        type: Number,
+        default: 0
+      },
+      timeSpent: {
+        type: Number,
+        default: 0
+      },
+      submittedAt: {
+        type: Date
+      },
+      detailedAnswers: [{
+        questionId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Question'
+        },
+        selectedAnswer: String,
+        isCorrect: Boolean
+      }],
+      wrongQuestions: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Question'
+      }]
+    }]
   }],
   totalScore: {
     type: Number,

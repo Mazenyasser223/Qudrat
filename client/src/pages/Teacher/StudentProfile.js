@@ -45,6 +45,7 @@ const StudentProfile = () => {
   // Individual exam control states
   const [togglingExam, setTogglingExam] = useState(null);
   const [togglingGroup, setTogglingGroup] = useState(null);
+  const [reopeningExam, setReopeningExam] = useState(null);
 
   useEffect(() => {
     console.log('=== STUDENT PROFILE MOUNTED ===');
@@ -542,6 +543,41 @@ const StudentProfile = () => {
     }
   };
 
+  // Reopen Exam Function
+  const handleReopenExam = async (examId) => {
+    try {
+      setReopeningExam(examId);
+      console.log(`Reopening exam ${examId} for student ${studentId}`);
+      
+      toast.loading('جاري إعادة فتح الامتحان...', {
+        duration: 30000
+      });
+      
+      const response = await axios.put(`/api/users/students/${studentId}/reopen-exam/${examId}`, {}, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        timeout: 30000
+      });
+      
+      console.log('Reopen exam response:', response.data);
+      toast.success(response.data.message);
+      
+      // Refresh student data to show updated status
+      await fetchStudentData();
+      
+    } catch (error) {
+      console.error('Error reopening exam:', error);
+      if (error.code === 'ECONNABORTED') {
+        toast.error('انتهت مهلة الطلب. يرجى المحاولة مرة أخرى');
+      } else {
+        toast.error(error.response?.data?.message || 'حدث خطأ أثناء إعادة فتح الامتحان');
+      }
+    } finally {
+      setReopeningExam(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -990,7 +1026,13 @@ const StudentProfile = () => {
                       const cumulativeData = groupCumulative[0];
                       
                       rows.push(
-                        <tr key={exam._id} data-exam-id={exam._id} className={`${progress?.status === 'completed' ? 'bg-green-50' : progress?.status === 'in_progress' ? 'bg-yellow-50' : 'bg-gray-50'} hover:bg-gray-100 transition-colors`}>
+                        <tr key={exam._id} data-exam-id={exam._id} className={`${
+                          progress?.status === 'completed' 
+                            ? progress?.attemptNumber > 1 ? 'bg-purple-50' : 'bg-green-50'
+                            : progress?.status === 'in_progress' 
+                            ? 'bg-yellow-50' 
+                            : 'bg-gray-50'
+                        } hover:bg-gray-100 transition-colors`}>
                           <td className="px-4 py-4 text-sm font-medium text-gray-900 border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                             {isFirstInGroup && (
                               <div className="space-y-2">
@@ -1038,29 +1080,68 @@ const StudentProfile = () => {
                 </div>
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
-                            {progress ? `${progress.score || 0}/${progress.totalQuestions || exam.totalQuestions || 0}` : '-'}
+                            {progress ? (
+                              <div className="space-y-1">
+                                <div className="font-medium">
+                                  {progress.score || 0}/{progress.totalQuestions || exam.totalQuestions || 0}
+                                </div>
+                                {progress.attemptNumber > 1 && (
+                                  <div className="text-xs text-blue-600">
+                                    المحاولة {progress.attemptNumber}
+                                  </div>
+                                )}
+                                {progress.previousAttempts && progress.previousAttempts.length > 0 && (
+                                  <div className="text-xs text-gray-500">
+                                    {progress.previousAttempts.length} محاولة سابقة
+                                  </div>
+                                )}
+                              </div>
+                            ) : '-'}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
-                            {progress ? `${(progress.percentage || 0).toFixed(2)}%` : '-'}
+                            {progress ? (
+                              <div className="space-y-1">
+                                <div className={`font-medium ${
+                                  progress.percentage >= 80 ? 'text-green-600' :
+                                  progress.percentage >= 60 ? 'text-blue-600' :
+                                  progress.percentage > 0 ? 'text-orange-600' : 'text-gray-600'
+                                }`}>
+                                  {(progress.percentage || 0).toFixed(2)}%
+                                </div>
+                                {progress.previousAttempts && progress.previousAttempts.length > 0 && (
+                                  <div className="text-xs text-gray-500">
+                                    أفضل: {Math.max(...progress.previousAttempts.map(p => p.percentage || 0), progress.percentage || 0).toFixed(1)}%
+                                  </div>
+                                )}
+                              </div>
+                            ) : '-'}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                             {isFirstInGroup && cumulativeData.completedExams > 0 ? `${cumulativeData.cumulativePercentage}%` : '-'}
                           </td>
                           <td className="px-4 py-4 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                             {progress ? (
-                              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                progress.status === 'completed' 
-                                  ? 'bg-green-100 text-green-800'
-                                  : progress.status === 'in_progress'
-                                  ? 'bg-yellow-100 text-yellow-800'
-                                  : progress.status === 'unlocked'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-gray-100 text-gray-800'
-                              }`}>
-                                {progress.status === 'completed' ? 'مكتمل' : 
-                                 progress.status === 'in_progress' ? 'قيد التنفيذ' :
-                                 progress.status === 'unlocked' ? 'متاح' : 'مقفل'}
-                  </span>
+                              <div className="space-y-1">
+                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                  progress.status === 'completed' 
+                                    ? progress.attemptNumber > 1 ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'
+                                    : progress.status === 'in_progress'
+                                    ? 'bg-yellow-100 text-yellow-800'
+                                    : progress.status === 'unlocked'
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : 'bg-gray-100 text-gray-800'
+                                }`}>
+                                  {progress.status === 'completed' ? 
+                                    (progress.attemptNumber > 1 ? `مكتمل (${progress.attemptNumber})` : 'مكتمل') : 
+                                   progress.status === 'in_progress' ? 'قيد التنفيذ' :
+                                   progress.status === 'unlocked' ? 'متاح' : 'مقفل'}
+                                </span>
+                                {progress.attemptNumber > 1 && (
+                                  <div className="text-xs text-purple-600">
+                                    إعادة محاولة
+                                  </div>
+                                )}
+                              </div>
                             ) : (
                               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                 غير محدد
@@ -1151,6 +1232,24 @@ const StudentProfile = () => {
                                   </button>
                                 </div>
                               )}
+                              
+                              {/* Reopen Exam Button - Only for completed exams */}
+                              {progress && progress.status === 'completed' && (
+                                <div className="flex flex-col space-y-1">
+                                  <button
+                                    onClick={() => handleReopenExam(exam._id)}
+                                    disabled={reopeningExam === exam._id}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    {reopeningExam === exam._id ? (
+                                      <div className="spinner w-3 h-3 ml-1"></div>
+                                    ) : (
+                                      <RefreshCw className="w-3 h-3 ml-1" />
+                                    )}
+                                    اعادة فتح
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </td>
                         </tr>
@@ -1167,7 +1266,13 @@ const StudentProfile = () => {
                         const cumulativeData = groupCumulative[groupNum];
                         
                         rows.push(
-                          <tr key={exam._id} data-exam-id={exam._id} className={`${progress?.status === 'completed' ? 'bg-green-50' : progress?.status === 'in_progress' ? 'bg-yellow-50' : 'bg-gray-50'} hover:bg-gray-100 transition-colors`}>
+                          <tr key={exam._id} data-exam-id={exam._id} className={`${
+                            progress?.status === 'completed' 
+                              ? progress?.attemptNumber > 1 ? 'bg-purple-50' : 'bg-green-50'
+                              : progress?.status === 'in_progress' 
+                              ? 'bg-yellow-50' 
+                              : 'bg-gray-50'
+                          } hover:bg-gray-100 transition-colors`}>
                             <td className="px-4 py-4 text-sm font-medium text-gray-900 border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                               {isFirstInGroup && (
                                 <div className="space-y-2">
@@ -1215,29 +1320,68 @@ const StudentProfile = () => {
                 </div>
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
-                              {progress ? `${progress.score || 0}/${progress.totalQuestions || exam.totalQuestions || 0}` : '-'}
+                              {progress ? (
+                                <div className="space-y-1">
+                                  <div className="font-medium">
+                                    {progress.score || 0}/{progress.totalQuestions || exam.totalQuestions || 0}
+                                  </div>
+                                  {progress.attemptNumber > 1 && (
+                                    <div className="text-xs text-blue-600">
+                                      المحاولة {progress.attemptNumber}
+                                    </div>
+                                  )}
+                                  {progress.previousAttempts && progress.previousAttempts.length > 0 && (
+                                    <div className="text-xs text-gray-500">
+                                      {progress.previousAttempts.length} محاولة سابقة
+                                    </div>
+                                  )}
+                                </div>
+                              ) : '-'}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
-                              {progress ? `${(progress.percentage || 0).toFixed(2)}%` : '-'}
+                              {progress ? (
+                                <div className="space-y-1">
+                                  <div className={`font-medium ${
+                                    progress.percentage >= 80 ? 'text-green-600' :
+                                    progress.percentage >= 60 ? 'text-blue-600' :
+                                    progress.percentage > 0 ? 'text-orange-600' : 'text-gray-600'
+                                  }`}>
+                                    {(progress.percentage || 0).toFixed(2)}%
+                                  </div>
+                                  {progress.previousAttempts && progress.previousAttempts.length > 0 && (
+                                    <div className="text-xs text-gray-500">
+                                      أفضل: {Math.max(...progress.previousAttempts.map(p => p.percentage || 0), progress.percentage || 0).toFixed(1)}%
+                                    </div>
+                                  )}
+                                </div>
+                              ) : '-'}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
                               {isFirstInGroup && cumulativeData.completedExams > 0 ? `${cumulativeData.cumulativePercentage}%` : '-'}
                             </td>
                             <td className="px-4 py-4 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                               {progress ? (
-                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                  progress.status === 'completed' 
-                                    ? 'bg-green-100 text-green-800'
-                                    : progress.status === 'in_progress'
-                                    ? 'bg-yellow-100 text-yellow-800'
-                                    : progress.status === 'unlocked'
-                                    ? 'bg-blue-100 text-blue-800'
-                                    : 'bg-gray-100 text-gray-800'
-                                }`}>
-                                  {progress.status === 'completed' ? 'مكتمل' : 
-                                   progress.status === 'in_progress' ? 'قيد التنفيذ' :
-                                   progress.status === 'unlocked' ? 'متاح' : 'مقفل'}
-                                </span>
+                                <div className="space-y-1">
+                                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                    progress.status === 'completed' 
+                                      ? progress.attemptNumber > 1 ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'
+                                      : progress.status === 'in_progress'
+                                      ? 'bg-yellow-100 text-yellow-800'
+                                      : progress.status === 'unlocked'
+                                      ? 'bg-blue-100 text-blue-800'
+                                      : 'bg-gray-100 text-gray-800'
+                                  }`}>
+                                    {progress.status === 'completed' ? 
+                                      (progress.attemptNumber > 1 ? `مكتمل (${progress.attemptNumber})` : 'مكتمل') : 
+                                     progress.status === 'in_progress' ? 'قيد التنفيذ' :
+                                     progress.status === 'unlocked' ? 'متاح' : 'مقفل'}
+                                  </span>
+                                  {progress.attemptNumber > 1 && (
+                                    <div className="text-xs text-purple-600">
+                                      إعادة محاولة
+                                    </div>
+                                  )}
+                                </div>
                               ) : (
                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                   غير محدد
@@ -1325,6 +1469,24 @@ const StudentProfile = () => {
                                     >
                                       <AlertTriangle className="w-3 h-3 ml-1" />
                                       عرض الأخطاء
+                                    </button>
+                                  </div>
+                                )}
+                                
+                                {/* Reopen Exam Button - Only for completed exams */}
+                                {progress && progress.status === 'completed' && (
+                                  <div className="flex flex-col space-y-1">
+                                    <button
+                                      onClick={() => handleReopenExam(exam._id)}
+                                      disabled={reopeningExam === exam._id}
+                                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                      {reopeningExam === exam._id ? (
+                                        <div className="spinner w-3 h-3 ml-1"></div>
+                                      ) : (
+                                        <RefreshCw className="w-3 h-3 ml-1" />
+                                      )}
+                                      اعادة فتح
                                     </button>
                                   </div>
                                 )}
