@@ -138,6 +138,7 @@ const updateExam = async (req, res) => {
     console.log('Exam ID:', req.params.id);
     console.log('Request body keys:', Object.keys(req.body));
     console.log('Questions count:', req.body.questions?.length);
+    console.log('Request body sample:', JSON.stringify(req.body, null, 2).substring(0, 500));
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -180,6 +181,8 @@ const updateExam = async (req, res) => {
     let parsedQuestions;
     try {
       parsedQuestions = typeof questions === 'string' ? JSON.parse(questions) : questions;
+      console.log('Parsed questions type:', typeof parsedQuestions);
+      console.log('Parsed questions length:', Array.isArray(parsedQuestions) ? parsedQuestions.length : 'Not an array');
     } catch (parseError) {
       console.error('Error parsing questions:', parseError);
       return res.status(400).json({

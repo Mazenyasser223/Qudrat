@@ -102,26 +102,15 @@ const updateExamValidation = [
         if (!Array.isArray(parsed) || parsed.length < 1) {
           throw new Error('يجب أن يحتوي الامتحان على سؤال واحد على الأقل');
         }
-        return true;
-      } catch (error) {
-        throw new Error('يجب أن يحتوي الامتحان على سؤال واحد على الأقل');
-      }
-    }),
-  body('questions')
-    .optional()
-    .custom((value) => {
-      try {
-        const parsed = typeof value === 'string' ? JSON.parse(value) : value;
-        if (Array.isArray(parsed)) {
-          for (const question of parsed) {
-            if (!question.correctAnswer || !['A', 'B', 'C', 'D'].includes(question.correctAnswer)) {
-              throw new Error('الإجابة الصحيحة يجب أن تكون A, B, C, أو D');
-            }
+        // Validate each question
+        parsed.forEach((question, index) => {
+          if (!question.correctAnswer || !['A', 'B', 'C', 'D'].includes(question.correctAnswer)) {
+            throw new Error(`الإجابة الصحيحة للسؤال ${index + 1} يجب أن تكون A, B, C, أو D`);
           }
-        }
+        });
         return true;
       } catch (error) {
-        throw new Error('الإجابة الصحيحة يجب أن تكون A, B, C, أو D');
+        throw new Error(error.message);
       }
     }),
   body('isActive')
