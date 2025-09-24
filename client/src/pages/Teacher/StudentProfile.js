@@ -72,10 +72,10 @@ const StudentProfile = () => {
           fetchExams()
         ]);
         console.log('Data loading completed successfully');
+        setLoading(false);
       } catch (error) {
         console.error('Error loading initial data:', error);
         toast.error('حدث خطأ أثناء تحميل البيانات');
-      } finally {
         setLoading(false);
       }
     };
@@ -141,21 +141,21 @@ const StudentProfile = () => {
       
       
       if (response.data && response.data.data) {
-      setStudent(response.data.data);
+        setStudent(response.data.data);
         console.log('Student set successfully:', response.data.data);
         
         // Validate student data
         if (!response.data.data._id || !response.data.data.name) {
           console.error('Invalid student data structure');
           toast.error('بيانات الطالب غير صحيحة');
-          navigate('/teacher/students');
+          setStudent(null); // Set student to null to trigger error state
           return;
         }
       } else {
         console.error('No student data in response');
         console.error('Response structure:', response.data);
         toast.error('لم يتم العثور على بيانات الطالب');
-        navigate('/teacher/students');
+        setStudent(null); // Set student to null to trigger error state
         return;
       }
       
@@ -176,22 +176,25 @@ const StudentProfile = () => {
       });
       
       if (error.response?.status === 404) {
-        toast.error('الطالب غير موجود');
+        // Don't show toast for 404, let the component handle it
+        setStudent(null);
       } else if (error.response?.status === 401) {
         toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
         localStorage.removeItem('token');
         navigate('/login');
       } else if (error.response?.status === 403) {
         toast.error('ليس لديك صلاحية للوصول إلى بيانات هذا الطالب');
+        setStudent(null);
       } else if (error.response?.status >= 500) {
         toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
+        setStudent(null);
       } else if (!error.response) {
         toast.error('لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت');
+        setStudent(null);
       } else {
         toast.error(`حدث خطأ أثناء تحميل بيانات الطالب: ${error.response?.data?.message || error.message}`);
+        setStudent(null);
       }
-      
-      navigate('/teacher/students');
     } finally {
       if (isRefresh) {
         setRefreshing(false);
@@ -592,7 +595,8 @@ const StudentProfile = () => {
     );
   }
 
-  if (!student && !loading) {
+  // Only show error if we're not loading and we've attempted to load data
+  if (!student && !loading && studentId) {
     return (
       <div className="text-center py-12">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">الطالب غير موجود</h2>
@@ -602,6 +606,15 @@ const StudentProfile = () => {
         >
           العودة لقائمة الطلاب
         </button>
+      </div>
+    );
+  }
+
+  // Show loading if we don't have student data yet
+  if (!student) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="spinner"></div>
       </div>
     );
   }
