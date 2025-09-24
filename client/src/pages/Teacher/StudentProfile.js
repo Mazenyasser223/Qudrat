@@ -64,11 +64,16 @@ const StudentProfile = () => {
     console.log('Student ID length:', studentId?.length);
     console.log('Current URL:', window.location.href);
     
+    // Reset loading state when studentId changes
+    setLoading(true);
+    setStudent(null);
+    
     // Validate student ID format
     if (!studentId || studentId.length < 10) {
       console.error('Invalid student ID format:', studentId);
       toast.error('معرف الطالب غير صحيح');
       navigate('/teacher/students');
+      setLoading(false);
       return;
     }
     
@@ -621,26 +626,31 @@ const StudentProfile = () => {
     );
   }
 
-  // Only show error if we're not loading and we've attempted to load data
-  if (!student && !loading && studentId) {
+  // Show loading if we don't have student data yet or if we're still loading
+  if (!student || loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="spinner mb-4"></div>
+          <p className="text-gray-600">جاري تحميل بيانات الطالب...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Only show error if we have a studentId but no student data after loading is complete
+  if (!student && studentId) {
     return (
       <div className="text-center py-12">
+        <div className="text-6xl mb-4">👤</div>
         <h2 className="text-xl font-semibold text-gray-900 mb-4">الطالب غير موجود</h2>
+        <p className="text-gray-600 mb-6">لم يتم العثور على الطالب المطلوب</p>
         <button
           onClick={() => navigate('/teacher/students')}
           className="btn-primary"
         >
           العودة لقائمة الطلاب
         </button>
-      </div>
-    );
-  }
-
-  // Show loading if we don't have student data yet
-  if (!student) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="spinner"></div>
       </div>
     );
   }
