@@ -1527,6 +1527,16 @@ const reopenExamForStudent = async (req, res) => {
     }
 
     const currentProgress = student.examProgress[examProgressIndex];
+    console.log('Current progress found:', {
+      status: currentProgress.status,
+      score: currentProgress.score,
+      percentage: currentProgress.percentage,
+      attemptNumber: currentProgress.attemptNumber,
+      hasDetailedAnswers: !!currentProgress.detailedAnswers,
+      hasAnswers: !!currentProgress.answers,
+      detailedAnswersLength: currentProgress.detailedAnswers?.length || 0,
+      answersLength: currentProgress.answers?.length || 0
+    });
 
     // Check if exam is completed
     if (currentProgress.status !== 'completed') {
@@ -1558,19 +1568,25 @@ const reopenExamForStudent = async (req, res) => {
     
     newProgressEntry.previousAttempts.push({
       attemptNumber: currentProgress.attemptNumber || 1,
-      score: currentProgress.score,
-      percentage: currentProgress.percentage,
-      timeSpent: currentProgress.timeSpent,
+      score: currentProgress.score || 0,
+      percentage: currentProgress.percentage || 0,
+      timeSpent: currentProgress.timeSpent || 0,
       submittedAt: currentProgress.submittedAt,
-      detailedAnswers: currentProgress.detailedAnswers,
-      wrongQuestions: currentProgress.wrongQuestions
+      detailedAnswers: currentProgress.detailedAnswers || currentProgress.answers || [],
+      wrongQuestions: currentProgress.wrongQuestions || []
     });
 
     // Update the exam progress
     student.examProgress[examProgressIndex] = newProgressEntry;
 
     // Save the student
-    await student.save();
+    try {
+      await student.save();
+      console.log('Student saved successfully');
+    } catch (saveError) {
+      console.error('Error saving student:', saveError);
+      throw saveError;
+    }
 
     console.log('Exam reopened successfully for student:', studentId);
     console.log('New attempt number:', newProgressEntry.attemptNumber);
