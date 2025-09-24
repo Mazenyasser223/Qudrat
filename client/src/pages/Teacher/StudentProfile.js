@@ -1197,7 +1197,7 @@ const StudentProfile = () => {
                                     )}
                                     قفل
                                   </button>
-                                ) : (
+                                ) : progress && progress.status !== 'completed' ? (
                                   <button
                                     onClick={() => handleToggleExamAccess(exam._id, 'open')}
                                     disabled={togglingExam === exam._id}
@@ -1210,7 +1210,7 @@ const StudentProfile = () => {
                                     )}
                                     فتح
                                   </button>
-                                )}
+                                ) : null}
                               </div>
                               
                               {/* View Answer Button */}
