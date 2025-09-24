@@ -1,5 +1,4 @@
 const express = require('express');
-const { body } = require('express-validator');
 const { 
   getExams, 
   getExam, 
@@ -23,6 +22,12 @@ const {
 } = require('../controllers/examController');
 const { protect, isTeacher, isStudent } = require('../middleware/auth');
 const { cacheMiddleware, invalidateCache } = require('../middleware/cache');
+const { 
+  validateExamCreation, 
+  validateExamUpdate, 
+  validateExamSubmission,
+  validateExamId 
+} = require('../middleware/validation');
 const upload = require('../middleware/upload');
 
 const router = express.Router();
@@ -41,92 +46,7 @@ router.get('/free', getFreeExams);
 // All other routes are protected
 router.use(protect);
 
-// Validation rules
-const createExamValidation = [
-  body('title')
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage('عنوان الامتحان مطلوب'),
-  body('examGroup')
-    .isInt({ min: 0, max: 8 })
-    .withMessage('المجموعة يجب أن تكون بين 0 و 8'),
-  body('order')
-    .isInt({ min: 1 })
-    .withMessage('الترتيب يجب أن يكون رقماً موجباً'),
-  body('timeLimit')
-    .isInt({ min: 1 })
-    .withMessage('الوقت المحدد يجب أن يكون دقيقة واحدة على الأقل'),
-  body('questions')
-    .custom((value) => {
-      try {
-        const parsed = typeof value === 'string' ? JSON.parse(value) : value;
-        if (!Array.isArray(parsed) || parsed.length === 0) {
-          throw new Error('يجب أن يحتوي الامتحان على سؤال واحد على الأقل');
-        }
-        // Validate each question
-        parsed.forEach((question, index) => {
-          if (!question.correctAnswer || !['A', 'B', 'C', 'D'].includes(question.correctAnswer)) {
-            throw new Error(`الإجابة الصحيحة للسؤال ${index + 1} يجب أن تكون A, B, C, أو D`);
-          }
-        });
-        return true;
-      } catch (error) {
-        throw new Error(error.message);
-      }
-    })
-];
-
-const updateExamValidation = [
-  body('title')
-    .optional()
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage('عنوان الامتحان لا يمكن أن يكون فارغاً'),
-  body('examGroup')
-    .optional()
-    .isInt({ min: 0, max: 8 })
-    .withMessage('المجموعة يجب أن تكون بين 0 و 8'),
-  body('order')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('الترتيب يجب أن يكون رقماً موجباً'),
-  body('timeLimit')
-    .optional()
-    .isInt({ min: 1 })
-    .withMessage('الوقت المحدد يجب أن يكون دقيقة واحدة على الأقل'),
-  body('questions')
-    .optional()
-    .custom((value) => {
-      try {
-        const parsed = typeof value === 'string' ? JSON.parse(value) : value;
-        if (!Array.isArray(parsed) || parsed.length < 1) {
-          throw new Error('يجب أن يحتوي الامتحان على سؤال واحد على الأقل');
-        }
-        // Validate each question
-        parsed.forEach((question, index) => {
-          if (!question.correctAnswer || !['A', 'B', 'C', 'D'].includes(question.correctAnswer)) {
-            throw new Error(`الإجابة الصحيحة للسؤال ${index + 1} يجب أن تكون A, B, C, أو D`);
-          }
-        });
-        return true;
-      } catch (error) {
-        throw new Error(error.message);
-      }
-    }),
-  body('isActive')
-    .optional()
-    .isBoolean()
-    .withMessage('حالة النشاط يجب أن تكون true أو false')
-];
-
-const submitExamValidation = [
-  body('answers')
-    .isArray({ min: 1 })
-    .withMessage('يجب أن تحتوي على إجابة واحدة على الأقل'),
-  body('answers.*.selectedAnswer')
-    .isIn(['A', 'B', 'C', 'D'])
-    .withMessage('الإجابة المختارة يجب أن تكون A, B, C, أو D')
-];
+// Routes now use centralized validation middleware
 
 // @route   POST /api/exams/upload-image
 // @desc    Upload question image to Cloudinary
@@ -214,7 +134,7 @@ router.get('/review/:reviewExamId', isStudent, getReviewExam);
 // @route   POST /api/exams/review/:reviewExamId/submit
 // @desc    Submit review exam answers
 // @access  Private (Student only)
-router.post('/review/:reviewExamId/submit', isStudent, submitExamValidation, submitReviewExam);
+router.post('/review/:reviewExamId/submit', isStudent, validateExamSubmission, submitReviewExam);
 
 // @route   GET /api/exams/:examId/student-mistakes/:studentId
 // @desc    Get student mistakes for a specific exam
@@ -240,12 +160,12 @@ router.get('/:id', getExam);
 // @route   POST /api/exams
 // @desc    Create new exam
 // @access  Private (Teacher only)
-router.post('/', isTeacher, createExamValidation, createExam);
+router.post('/', isTeacher, validateExamCreation, createExam);
 
 // @route   PUT /api/exams/:id
 // @desc    Update exam
 // @access  Private (Teacher only)
-router.put('/:id', isTeacher, updateExamValidation, updateExam);
+router.put('/:id', isTeacher, validateExamUpdate, updateExam);
 
 // @route   DELETE /api/exams/:id
 // @desc    Delete exam
@@ -255,7 +175,7 @@ router.delete('/:id', isTeacher, deleteExam);
 // @route   POST /api/exams/:id/submit
 // @desc    Submit exam answers
 // @access  Private (Student only)
-router.post('/:id/submit', isStudent, submitExamValidation, submitExam);
+router.post('/:id/submit', isStudent, validateExamSubmission, submitExam);
 
 // @route   POST /api/exams/:id/repeat
 // @desc    Repeat exam for student (Teacher only)
