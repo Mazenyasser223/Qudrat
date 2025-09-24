@@ -103,7 +103,14 @@ const QuestionCard = ({
           {options.map((option) => (
             <button
               key={option}
-              onClick={() => onAnswerSelect(option)}
+              onClick={() => {
+                // If the same option is clicked again, unselect it (pass null)
+                if (selectedAnswer === option) {
+                  onAnswerSelect(null);
+                } else {
+                  onAnswerSelect(option);
+                }
+              }}
               disabled={showCorrectAnswer}
               className={`w-full p-4 text-right border-2 rounded-lg transition-all duration-200 flex items-center justify-between ${
                 getOptionColor(option)
