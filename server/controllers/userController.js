@@ -59,12 +59,22 @@ const getStudent = async (req, res) => {
     console.log('Searching for student with ID:', req.params.id);
     // Optimized query - avoid populate for better performance
     const student = await User.findById(req.params.id)
-      .select('-password');
+      .select('-password')
+      .lean(); // Use lean() for better performance
+    
+    if (!student) {
+      console.log('Student not found in database');
+      return res.status(404).json({
+        success: false,
+        message: 'Student not found'
+      });
+    }
     
     // Get exam details separately to avoid N+1 query problem
     const examIds = student.examProgress.map(progress => progress.examId);
     const exams = await Exam.find({ _id: { $in: examIds } })
-      .select('title examGroup order isActive');
+      .select('title examGroup order isActive')
+      .lean(); // Use lean() for better performance
     
     // Create exam lookup map for O(1) access
     const examMap = {};
@@ -81,14 +91,6 @@ const getStudent = async (req, res) => {
     console.log('Student role:', student?.role);
     console.log('Student name:', student?.name);
     console.log('Student email:', student?.email);
-
-    if (!student) {
-      console.log('Student not found in database');
-      return res.status(404).json({
-        success: false,
-        message: 'Student not found'
-      });
-    }
     
     if (student.role !== 'student') {
       console.log('User found but not a student, role:', student.role);

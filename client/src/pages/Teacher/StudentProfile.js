@@ -127,11 +127,16 @@ const StudentProfile = () => {
       console.log('API URL:', `/api/users/students/${studentId}`);
       console.log('Token present:', !!localStorage.getItem('token'));
       
+      const startTime = Date.now();
       const response = await axios.get(`/api/users/students/${studentId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        },
+        timeout: 15000 // 15 second timeout
       });
+      
+      const endTime = Date.now();
+      console.log(`Student data fetched in ${endTime - startTime}ms`);
       
       
       if (response.data && response.data.data) {
@@ -586,7 +591,7 @@ const StudentProfile = () => {
     );
   }
 
-  if (!student) {
+  if (!student && !loading) {
     return (
       <div className="text-center py-12">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">الطالب غير موجود</h2>
