@@ -46,7 +46,16 @@ const StudentProfile = () => {
   const [togglingExam, setTogglingExam] = useState(null);
   const [togglingGroup, setTogglingGroup] = useState(null);
   const [reopeningExam, setReopeningExam] = useState(null);
-  const [reviewMistakes, setReviewMistakes] = useState({}); // Track which exams have review mistakes enabled
+  const [reviewMistakes, setReviewMistakes] = useState(() => {
+    // Load from localStorage on component mount
+    try {
+      const saved = localStorage.getItem('reviewMistakes');
+      return saved ? JSON.parse(saved) : {};
+    } catch (error) {
+      console.error('Error loading review mistakes from localStorage:', error);
+      return {};
+    }
+  }); // Track which exams have review mistakes enabled
 
   useEffect(() => {
     console.log('=== STUDENT PROFILE MOUNTED ===');
@@ -102,6 +111,23 @@ const StudentProfile = () => {
       setAttemptedExams(attempted);
     }
   }, [student, exams]);
+
+  // Save review mistakes to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('reviewMistakes', JSON.stringify(reviewMistakes));
+    } catch (error) {
+      console.error('Error saving review mistakes to localStorage:', error);
+    }
+  }, [reviewMistakes]);
+
+  // Helper function to handle checkbox changes
+  const handleReviewMistakesChange = (examId, checked) => {
+    setReviewMistakes(prev => ({
+      ...prev,
+      [examId]: checked
+    }));
+  };
 
   // Listen for exam changes from the submission modal
   useEffect(() => {
@@ -1211,12 +1237,7 @@ const StudentProfile = () => {
                               <input
                                 type="checkbox"
                                 checked={reviewMistakes[exam._id] || false}
-                                onChange={(e) => {
-                                  setReviewMistakes(prev => ({
-                                    ...prev,
-                                    [exam._id]: e.target.checked
-                                  }));
-                                }}
+                                onChange={(e) => handleReviewMistakesChange(exam._id, e.target.checked)}
                                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                               />
                             </div>
@@ -1466,12 +1487,7 @@ const StudentProfile = () => {
                                 <input
                                   type="checkbox"
                                   checked={reviewMistakes[exam._id] || false}
-                                  onChange={(e) => {
-                                    setReviewMistakes(prev => ({
-                                      ...prev,
-                                      [exam._id]: e.target.checked
-                                    }));
-                                  }}
+                                  onChange={(e) => handleReviewMistakesChange(exam._id, e.target.checked)}
                                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                                 />
                               </div>
