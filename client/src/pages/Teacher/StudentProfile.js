@@ -893,57 +893,57 @@ const StudentProfile = () => {
           <div className="overflow-x-auto">
             <table className="w-full divide-y divide-gray-200" style={{ 
               tableLayout: 'fixed',
-              width: '1710px',
-              minWidth: '1710px'
+              width: '100%',
+              minWidth: '100%'
             }}>
               <thead className="bg-gray-50 sticky top-0 z-20">
                 <tr>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
-                    width: '180px',
-                    minWidth: '180px',
-                    maxWidth: '180px'
+                  <th className="px-2 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
+                    width: '15%',
+                    minWidth: '120px',
+                    maxWidth: '150px'
                   }}>
                     اسم المجموعة
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
-                    width: '300px',
-                    minWidth: '300px',
-                    maxWidth: '300px'
+                  <th className="px-2 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
+                    width: '25%',
+                    minWidth: '200px',
+                    maxWidth: '250px'
                   }}>
                     اسم الاختبار
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
-                    width: '120px',
-                    minWidth: '120px',
-                    maxWidth: '120px'
+                  <th className="px-2 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
+                    width: '12%',
+                    minWidth: '80px',
+                    maxWidth: '100px'
                   }}>
                     النقاط
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
-                    width: '120px',
-                    minWidth: '120px',
-                    maxWidth: '120px'
+                  <th className="px-2 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
+                    width: '12%',
+                    minWidth: '80px',
+                    maxWidth: '100px'
                   }}>
                     النسبة المئوية
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
-                    width: '180px',
-                    minWidth: '180px',
-                    maxWidth: '180px'
+                  <th className="px-2 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
+                    width: '15%',
+                    minWidth: '120px',
+                    maxWidth: '150px'
                   }}>
                     النسبة التراكمية
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
-                    width: '120px',
-                    minWidth: '120px',
-                    maxWidth: '120px'
+                  <th className="px-2 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
+                    width: '12%',
+                    minWidth: '80px',
+                    maxWidth: '100px'
                   }}>
                     الحالة
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
-                    width: '120px',
-                    minWidth: '120px',
-                    maxWidth: '120px'
+                  <th className="px-2 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
+                    width: '9%',
+                    minWidth: '80px',
+                    maxWidth: '100px'
                   }}>
                     الوقت المستغرق
                   </th>
@@ -1033,7 +1033,7 @@ const StudentProfile = () => {
                             ? 'bg-yellow-50' 
                             : 'bg-gray-50'
                         } hover:bg-gray-100 transition-colors`}>
-                          <td className="px-4 py-4 text-sm font-medium text-gray-900 border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
+                          <td className="px-2 py-4 text-sm font-medium text-gray-900 border-r border-gray-200" style={{ width: '15%', minWidth: '120px', maxWidth: '150px' }}>
                             {isFirstInGroup && (
                               <div className="space-y-2">
                                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -1074,12 +1074,12 @@ const StudentProfile = () => {
                               </div>
                             )}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-900 border-r border-gray-200" style={{ width: '300px', minWidth: '300px', maxWidth: '300px' }}>
+                          <td className="px-2 py-4 text-sm text-gray-900 border-r border-gray-200" style={{ width: '25%', minWidth: '200px', maxWidth: '250px' }}>
                             <div className="truncate" title={exam.title}>
                               {exam.title}
                 </div>
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                          <td className="px-2 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '12%', minWidth: '80px', maxWidth: '100px' }}>
                             {progress ? (
                               <div className="space-y-1">
                                 <div className="font-medium">
@@ -1098,7 +1098,7 @@ const StudentProfile = () => {
                               </div>
                             ) : '-'}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                          <td className="px-2 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '12%', minWidth: '80px', maxWidth: '100px' }}>
                             {progress ? (
                               <div className="space-y-1">
                                 <div className={`font-medium ${
@@ -1116,10 +1116,10 @@ const StudentProfile = () => {
                               </div>
                             ) : '-'}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
+                          <td className="px-2 py-4 text-sm text-gray-900 text-right border-r border-gray-200" style={{ width: '15%', minWidth: '120px', maxWidth: '150px' }}>
                             {isFirstInGroup && cumulativeData.completedExams > 0 ? `${cumulativeData.cumulativePercentage}%` : '-'}
                           </td>
-                          <td className="px-4 py-4 text-right border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                          <td className="px-2 py-4 text-right border-r border-gray-200" style={{ width: '12%', minWidth: '80px', maxWidth: '100px' }}>
                             {progress ? (
                               <div className="space-y-1">
                                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
@@ -1148,14 +1148,14 @@ const StudentProfile = () => {
                               </span>
                             )}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                          <td className="px-2 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '9%', minWidth: '80px', maxWidth: '100px' }}>
                             {progress && progress.timeSpent ? (
                               <span className="font-medium text-blue-600">
                                 {Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}
                               </span>
                             ) : '-'}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '150px', minWidth: '150px', maxWidth: '150px' }}>
+                          <td className="px-2 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '12%', minWidth: '100px', maxWidth: '120px' }}>
                             {progress && progress.submittedAt ? (
                               <div className="text-xs">
                                 <div className="font-medium text-gray-900">
@@ -1171,7 +1171,7 @@ const StudentProfile = () => {
             </div>
                             ) : '-'}
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                          <td className="px-2 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '9%', minWidth: '80px', maxWidth: '100px' }}>
                             {progress && progress.bestReviewScore ? (
                               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
                                 {progress.bestReviewScore.toFixed(2)}%
@@ -1180,7 +1180,7 @@ const StudentProfile = () => {
                               <span className="text-gray-400 text-xs">-</span>
                             )}
                           </td>
-                          <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
+                          <td className="px-2 py-4 text-center" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
                             <div className="flex flex-col space-y-2">
                               {/* Lock/Unlock Controls */}
                               <div className="flex flex-col space-y-1">
@@ -1273,7 +1273,7 @@ const StudentProfile = () => {
                               ? 'bg-yellow-50' 
                               : 'bg-gray-50'
                           } hover:bg-gray-100 transition-colors`}>
-                            <td className="px-4 py-4 text-sm font-medium text-gray-900 border-r border-gray-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
+                            <td className="px-2 py-4 text-sm font-medium text-gray-900 border-r border-gray-200" style={{ width: '15%', minWidth: '120px', maxWidth: '150px' }}>
                               {isFirstInGroup && (
                                 <div className="space-y-2">
                                   <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -1314,12 +1314,12 @@ const StudentProfile = () => {
                                 </div>
                               )}
                             </td>
-                            <td className="px-4 py-4 text-sm text-gray-900 border-r border-gray-200" style={{ width: '300px', minWidth: '300px', maxWidth: '300px' }}>
+                            <td className="px-2 py-4 text-sm text-gray-900 border-r border-gray-200" style={{ width: '25%', minWidth: '200px', maxWidth: '250px' }}>
                               <div className="truncate" title={exam.title}>
                                 {exam.title}
                 </div>
                             </td>
-                            <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                            <td className="px-2 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '9%', minWidth: '80px', maxWidth: '100px' }}>
                               {progress ? (
                                 <div className="space-y-1">
                                   <div className="font-medium">
@@ -1338,7 +1338,7 @@ const StudentProfile = () => {
                                 </div>
                               ) : '-'}
                             </td>
-                            <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                            <td className="px-2 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '9%', minWidth: '80px', maxWidth: '100px' }}>
                               {progress ? (
                                 <div className="space-y-1">
                                   <div className={`font-medium ${
@@ -1388,14 +1388,14 @@ const StudentProfile = () => {
                                 </span>
                               )}
                             </td>
-                            <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                            <td className="px-2 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '9%', minWidth: '80px', maxWidth: '100px' }}>
                               {progress && progress.timeSpent ? (
                                 <span className="font-medium text-blue-600">
                                   {Math.floor(progress.timeSpent / 60)}:{(progress.timeSpent % 60).toString().padStart(2, '0')}
                                 </span>
                               ) : '-'}
                             </td>
-                            <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '150px', minWidth: '150px', maxWidth: '150px' }}>
+                            <td className="px-2 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '12%', minWidth: '100px', maxWidth: '120px' }}>
                               {progress && progress.submittedAt ? (
                                 <div className="text-xs">
                                   <div className="font-medium text-gray-900">
@@ -1411,7 +1411,7 @@ const StudentProfile = () => {
                                 </div>
                               ) : '-'}
                             </td>
-                            <td className="px-4 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>
+                            <td className="px-2 py-4 text-sm text-gray-900 text-center border-r border-gray-200" style={{ width: '9%', minWidth: '80px', maxWidth: '100px' }}>
                               {progress && progress.bestReviewScore ? (
                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
                                   {progress.bestReviewScore.toFixed(2)}%
@@ -1420,7 +1420,7 @@ const StudentProfile = () => {
                                 <span className="text-gray-400 text-xs">-</span>
                               )}
                             </td>
-                            <td className="px-4 py-4 text-center" style={{ width: '180px', minWidth: '180px', maxWidth: '180px' }}>
+                            <td className="px-2 py-4 text-center" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
                               <div className="flex flex-col space-y-2">
                                 {/* Lock/Unlock Controls */}
                                 <div className="flex flex-col space-y-1">
