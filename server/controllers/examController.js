@@ -9,11 +9,16 @@ const path = require('path');
 // @access  Private
 const getExams = async (req, res) => {
   try {
+    console.log('📋 === GET EXAMS REQUEST ===');
+    
     // For list view, only fetch basic exam info without questions to improve performance
     const exams = await Exam.find({ isActive: true })
       .select('title description examGroup order timeLimit isFreeExam totalQuestions createdAt updatedAt')
       .populate('createdBy', 'name email')
       .sort({ examGroup: 1, order: 1 });
+
+    console.log('📊 Found exams:', exams.length);
+    console.log('📋 Exam titles:', exams.map(e => `${e.title} (Group: ${e.examGroup}, Order: ${e.order})`));
 
     res.json({
       success: true,
@@ -21,7 +26,7 @@ const getExams = async (req, res) => {
       data: exams
     });
   } catch (error) {
-    console.error('Get exams error:', error);
+    console.error('❌ Get exams error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error while fetching exams'
@@ -62,8 +67,13 @@ const getExam = async (req, res) => {
 // @access  Private (Teacher only)
 const createExam = async (req, res) => {
   try {
+    console.log('📝 === CREATE EXAM REQUEST ===');
+    console.log('Request body keys:', Object.keys(req.body));
+    console.log('User ID:', req.user.id);
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('❌ Validation errors:', errors.array());
       return res.status(400).json({
         success: false,
         message: 'Validation errors',
@@ -72,6 +82,7 @@ const createExam = async (req, res) => {
     }
 
     const { title, description, examGroup, order, timeLimit, questions } = req.body;
+    console.log('📊 Exam data:', { title, examGroup, order, timeLimit, questionsCount: questions?.length });
 
     // Check if exam with same group and order exists
     const existingExam = await Exam.findOne({ 
@@ -81,6 +92,7 @@ const createExam = async (req, res) => {
     });
 
     if (existingExam) {
+      console.log('❌ Exam with same group and order already exists:', existingExam.title);
       return res.status(400).json({
         success: false,
         message: 'Exam with this group and order already exists'
@@ -89,14 +101,17 @@ const createExam = async (req, res) => {
 
     // Parse questions if it's a string
     const parsedQuestions = typeof questions === 'string' ? JSON.parse(questions) : questions;
+    console.log('📋 Parsed questions count:', parsedQuestions.length);
 
-    // Questions already contain Base64 image data, no need to map files
+    // Questions already contain Cloudinary URLs, no need to map files
     const questionsWithImages = parsedQuestions.map((question) => {
       return {
         ...question,
         questionImage: question.questionImage || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==' // 1x1 transparent pixel
       };
     });
+
+    console.log('🖼️ Questions with images count:', questionsWithImages.length);
 
     // Create exam
     const exam = await Exam.create({
@@ -110,6 +125,15 @@ const createExam = async (req, res) => {
       createdBy: req.user.id
     });
 
+    console.log('✅ Exam created successfully:', {
+      id: exam._id,
+      title: exam.title,
+      examGroup: exam.examGroup,
+      order: exam.order,
+      totalQuestions: exam.totalQuestions,
+      isActive: exam.isActive
+    });
+
     // Update all students' exam progress asynchronously (don't block response)
     updateStudentsExamProgress().catch(error => {
       console.error('Error updating students exam progress:', error);
@@ -121,7 +145,7 @@ const createExam = async (req, res) => {
       data: exam
     });
   } catch (error) {
-    console.error('Create exam error:', error);
+    console.error('❌ Create exam error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error while creating exam'
@@ -260,6 +284,41 @@ const deleteExam = async (req, res) => {
       });
     }
 
+    console.log(`🗑️ Deleting exam: ${exam.title} (ID: ${exam._id})`);
+    console.log(`📊 Exam has ${exam.questions?.length || 0} questions`);
+
+    // Delete images from Cloudinary before soft deleting the exam
+    if (exam.questions && exam.questions.length > 0) {
+      const cloudinary = require('../config/cloudinary');
+      let deletedImages = 0;
+      let failedDeletions = 0;
+
+      console.log('🖼️ Starting Cloudinary image cleanup...');
+
+      for (const question of exam.questions) {
+        if (question.questionImage && question.questionImage.includes('cloudinary.com')) {
+          try {
+            // Extract public_id from Cloudinary URL
+            const urlParts = question.questionImage.split('/');
+            const publicId = urlParts[urlParts.length - 1].split('.')[0];
+            const folderPath = 'qudrat/questions';
+            const fullPublicId = `${folderPath}/${publicId}`;
+
+            console.log(`🗑️ Deleting image: ${fullPublicId}`);
+            
+            await cloudinary.uploader.destroy(fullPublicId);
+            deletedImages++;
+            console.log(`✅ Successfully deleted: ${fullPublicId}`);
+          } catch (imageError) {
+            console.error(`❌ Failed to delete image: ${question.questionImage}`, imageError.message);
+            failedDeletions++;
+          }
+        }
+      }
+
+      console.log(`📊 Cloudinary cleanup completed: ${deletedImages} deleted, ${failedDeletions} failed`);
+    }
+
     // Soft delete by setting isActive to false
     exam.isActive = false;
     await exam.save();
@@ -270,9 +329,11 @@ const deleteExam = async (req, res) => {
       { $pull: { examProgress: { examId: exam._id } } }
     );
 
+    console.log(`✅ Exam ${exam.title} deleted successfully`);
+
     res.json({
       success: true,
-      message: 'Exam deleted successfully and progress data cleaned up'
+      message: 'Exam deleted successfully, images cleaned up from Cloudinary, and progress data cleaned up'
     });
   } catch (error) {
     console.error('Delete exam error:', error);
