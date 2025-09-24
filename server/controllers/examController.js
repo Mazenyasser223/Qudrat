@@ -3,6 +3,7 @@ const User = require('../models/User');
 const ReviewExam = require('../models/ReviewExam');
 const { validationResult } = require('express-validator');
 const path = require('path');
+const { invalidateCache } = require('../middleware/cache');
 
 // @desc    Get all exams
 // @route   GET /api/exams
@@ -134,6 +135,10 @@ const createExam = async (req, res) => {
       isActive: exam.isActive
     });
 
+    // Invalidate cache for exams list
+    invalidateCache('/api/exams');
+    console.log('🗑️ Cache invalidated for exams list');
+
     // Update all students' exam progress asynchronously (don't block response)
     updateStudentsExamProgress().catch(error => {
       console.error('Error updating students exam progress:', error);
@@ -252,6 +257,10 @@ const updateExam = async (req, res) => {
     console.log('Updated exam title:', updatedExam.title);
     console.log('Questions count:', updatedExam.questions.length);
     
+    // Invalidate cache for exams list
+    invalidateCache('/api/exams');
+    console.log('🗑️ Cache invalidated for exams list');
+    
     res.json({
       success: true,
       message: 'Exam updated successfully',
@@ -330,6 +339,10 @@ const deleteExam = async (req, res) => {
     );
 
     console.log(`✅ Exam ${exam.title} deleted successfully`);
+
+    // Invalidate cache for exams list
+    invalidateCache('/api/exams');
+    console.log('🗑️ Cache invalidated for exams list');
 
     res.json({
       success: true,
