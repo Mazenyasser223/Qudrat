@@ -65,11 +65,24 @@ const Students = () => {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('/api/users/students');
+      console.log('Fetching students...');
+      const startTime = Date.now();
+      
+      const res = await axios.get('/api/users/students', {
+        timeout: 10000 // 10 second timeout
+      });
+      
+      const endTime = Date.now();
+      console.log(`Students fetched in ${endTime - startTime}ms`);
+      
       setStudents(res.data.data);
     } catch (error) {
       console.error('Error fetching students:', error);
-      toast.error('حدث خطأ أثناء تحميل الطلاب');
+      if (error.code === 'ECONNABORTED') {
+        toast.error('انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى');
+      } else {
+        toast.error('حدث خطأ أثناء تحميل الطلاب');
+      }
     } finally {
       setLoading(false);
     }

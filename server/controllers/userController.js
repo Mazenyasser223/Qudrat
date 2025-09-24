@@ -12,12 +12,13 @@ const getStudents = async (req, res) => {
     console.log('User:', req.user);
     console.log('User role:', req.user?.role);
     
+    // Optimized query with better performance
     const students = await User.find({ role: 'student' })
-      .select('-password')
-      .sort({ createdAt: -1 });
+      .select('name email phoneNumber createdAt isActive')
+      .sort({ createdAt: -1 })
+      .lean(); // Use lean() for better performance
 
     console.log('Found students:', students.length);
-    console.log('Student IDs:', students.map(s => ({ id: s._id, name: s.name, email: s.email })));
 
     res.json({
       success: true,

@@ -193,7 +193,7 @@ const assignMultipleCategoriesValidation = [
 // @route   GET /api/users/students
 // @desc    Get all students
 // @access  Private (Teacher only)
-router.get('/students', isTeacher, getStudents);
+router.get('/students', isTeacher, require('../middleware/cache').cacheMiddleware(300), getStudents);
 
 // @route   GET /api/users/students/search
 // @desc    Search students
