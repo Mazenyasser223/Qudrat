@@ -80,7 +80,7 @@ const CreateExam = () => {
     try {
       setSubmitting(true);
       
-      // Send exam data as JSON (images are already Base64 in data.questions)
+      // Send exam data as JSON (images are now Cloudinary URLs in data.questions)
       const examData = {
         title: data.title,
         description: data.description,
@@ -150,7 +150,7 @@ const CreateExam = () => {
             }
           );
           
-          // Set the uploaded image URL (Base64 data)
+          // Set the uploaded image URL (Cloudinary URL)
           const imageUrl = response.data.imageUrl;
           console.log('Uploaded image URL:', imageUrl);
           setValue(`questions.${questionIndex}.questionImage`, imageUrl);
@@ -196,7 +196,7 @@ const CreateExam = () => {
       setUploading(true);
       toast.loading(`جاري رفع ${files.length} صورة...`);
 
-      // Upload all images as Base64
+      // Upload all images to Cloudinary
       const uploadPromises = files.map(async (file) => {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();

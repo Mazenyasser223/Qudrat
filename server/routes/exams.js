@@ -129,9 +129,9 @@ const submitExamValidation = [
 ];
 
 // @route   POST /api/exams/upload-image
-// @desc    Upload question image
+// @desc    Upload question image to Cloudinary
 // @access  Private (Teacher only)
-router.post('/upload-image', isTeacher, (req, res) => {
+router.post('/upload-image', isTeacher, async (req, res) => {
   try {
     const { imageData } = req.body;
     
@@ -149,11 +149,20 @@ router.post('/upload-image', isTeacher, (req, res) => {
         message: 'تنسيق الصورة غير صحيح'
       });
     }
+
+    // Upload to Cloudinary
+    const cloudinary = require('../config/cloudinary');
+    const result = await cloudinary.uploader.upload(imageData, {
+      folder: 'qudrat/questions',
+      resource_type: 'auto',
+      quality: 'auto',
+      fetch_format: 'auto'
+    });
     
     res.json({
       success: true,
       message: 'تم رفع الصورة بنجاح',
-      imageUrl: imageData // Return the base64 data directly
+      imageUrl: result.secure_url // Return Cloudinary URL instead of Base64
     });
   } catch (error) {
     console.error('Upload error:', error);
