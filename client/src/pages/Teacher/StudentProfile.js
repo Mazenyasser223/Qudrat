@@ -1269,7 +1269,7 @@ const StudentProfile = () => {
                                     )}
                                     قفل
                                   </button>
-                                ) : progress && progress.status !== 'completed' ? (
+                                ) : progress && (progress.status === 'locked' || progress.status === 'unlocked') ? (
                                   <button
                                     onClick={() => handleToggleExamAccess(exam._id, 'open')}
                                     disabled={togglingExam === exam._id}
