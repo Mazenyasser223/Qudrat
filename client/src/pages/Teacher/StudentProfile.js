@@ -46,6 +46,7 @@ const StudentProfile = () => {
   const [togglingExam, setTogglingExam] = useState(null);
   const [togglingGroup, setTogglingGroup] = useState(null);
   const [reopeningExam, setReopeningExam] = useState(null);
+  const [reviewMistakes, setReviewMistakes] = useState({}); // Track which exams have review mistakes enabled
 
   useEffect(() => {
     console.log('=== STUDENT PROFILE MOUNTED ===');
@@ -966,6 +967,13 @@ const StudentProfile = () => {
                   }}>
                     أفضل درجة مراجعة
                   </th>
+                  <th className="px-2 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider border-r border-gray-200" style={{ 
+                    width: '10%',
+                    minWidth: '100px',
+                    maxWidth: '120px'
+                  }}>
+                    مراجعة الأخطاء
+                  </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider" style={{ 
                     width: '180px',
                     minWidth: '180px',
@@ -1184,6 +1192,21 @@ const StudentProfile = () => {
                             ) : (
                               <span className="text-gray-400 text-xs">-</span>
                             )}
+                          </td>
+                          <td className="px-2 py-4 text-center border-r border-gray-200" style={{ width: '10%', minWidth: '100px', maxWidth: '120px' }}>
+                            <div className="flex justify-center">
+                              <input
+                                type="checkbox"
+                                checked={reviewMistakes[exam._id] || false}
+                                onChange={(e) => {
+                                  setReviewMistakes(prev => ({
+                                    ...prev,
+                                    [exam._id]: e.target.checked
+                                  }));
+                                }}
+                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                              />
+                            </div>
                           </td>
                           <td className="px-2 py-4 text-center" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
                             <div className="flex flex-col space-y-2">
@@ -1424,6 +1447,21 @@ const StudentProfile = () => {
                               ) : (
                                 <span className="text-gray-400 text-xs">-</span>
                               )}
+                            </td>
+                            <td className="px-2 py-4 text-center border-r border-gray-200" style={{ width: '10%', minWidth: '100px', maxWidth: '120px' }}>
+                              <div className="flex justify-center">
+                                <input
+                                  type="checkbox"
+                                  checked={reviewMistakes[exam._id] || false}
+                                  onChange={(e) => {
+                                    setReviewMistakes(prev => ({
+                                      ...prev,
+                                      [exam._id]: e.target.checked
+                                    }));
+                                  }}
+                                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                />
+                              </div>
                             </td>
                             <td className="px-2 py-4 text-center" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
                               <div className="flex flex-col space-y-2">
