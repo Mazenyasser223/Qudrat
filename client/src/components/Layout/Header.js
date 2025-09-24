@@ -59,15 +59,6 @@ const Header = () => {
                   </Link>
                 </>
               )}
-              {isStudent && (
-                <Link
-                  to="/student"
-                  className="flex items-center space-x-1 rtl:space-x-reverse text-gray-700 hover:text-green-600 transition-colors"
-                >
-                  <BookOpen className="h-4 w-4" />
-                  <span>الامتحانات</span>
-                </Link>
-              )}
             </nav>
           )}
 
