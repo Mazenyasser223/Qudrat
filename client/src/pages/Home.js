@@ -12,8 +12,15 @@ const Home = () => {
   const { user } = useAuth();
 
   useEffect(() => {
+    // Load critical data first
     fetchFreeExams();
-    fetchReviews();
+    
+    // Load reviews after a short delay to improve initial page load
+    const reviewsTimer = setTimeout(() => {
+      fetchReviews();
+    }, 100);
+    
+    return () => clearTimeout(reviewsTimer);
   }, []);
 
   const fetchFreeExams = async () => {
@@ -117,7 +124,7 @@ const Home = () => {
       <header className="bg-[#214C3A] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src="/logo.png" alt="Qudrat Logo" className="h-10 w-auto" />
+            <img src="https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/v1/qudrat/homepage/logo" alt="Qudrat Logo" className="h-10 w-auto" loading="lazy" />
             <span className="text-xl font-bold text-white">Qudrat</span>
           </div>
           <nav className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -131,13 +138,14 @@ const Home = () => {
         <section className="text-center mb-12">
           <div className="relative max-w-4xl mx-auto">
             <img 
-              src="/alaaa.jpg" 
+              src="https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_800/v1/qudrat/homepage/alaaa" 
               alt="تدريب احترافي لاختبارات القدرات الكمي" 
               className="w-full h-auto rounded-2xl shadow-2xl border-4 border-green-200 hover:shadow-3xl transition-all duration-500 transform hover:scale-105"
               style={{
                 maxHeight: '400px',
                 objectFit: 'contain'
               }}
+              loading="lazy"
               onError={(e) => {
                 e.target.style.display = 'none';
                 e.target.nextSibling.style.display = 'block';
@@ -162,22 +170,43 @@ const Home = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="card p-8 text-center bg-[#214C3A] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <img src="/icons/basics.png" alt="تأسيس" className="mx-auto h-16 w-16 mb-4 opacity-90" />
+              <img src="https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_64/v1/qudrat/icons/basics" alt="تأسيس" className="mx-auto h-16 w-16 mb-4 opacity-90" loading="lazy" />
               <h3 className="text-2xl font-bold mb-2">تأسيس</h3>
               <p className="text-gray-200 mb-4">مذكرة تأسيس شاملة للمفاهيم الأساسية</p>
-              <a href="/( تبسيط قدرات (مستر علاء وهبه.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition shadow-md">تحميل المذكرة</a>
+              <a href="https://res.cloudinary.com/demo/raw/upload/v1/qudrat/pdfs/foundation-guide" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition shadow-md">
+                <span className="flex items-center justify-center">
+                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  تحميل المذكرة
+                </span>
+              </a>
             </div>
             <div className="card p-8 text-center bg-[#214C3A] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-            <img src="/icons/rules.png" alt="قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" />
-            <h3 className="text-2xl font-bold mb-2">قوانين</h3>
+              <img src="https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_64/v1/qudrat/icons/rules" alt="قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" loading="lazy" />
+              <h3 className="text-2xl font-bold mb-2">قوانين</h3>
               <p className="text-gray-200 mb-4">ملف شامل لقوانين القدرات الكمي</p>
-              <a href="/ملف القوانين 2025.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition shadow-md">تحميل القوانين</a>
+              <a href="https://res.cloudinary.com/demo/raw/upload/v1/qudrat/pdfs/rules-2025" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition shadow-md">
+                <span className="flex items-center justify-center">
+                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  تحميل القوانين
+                </span>
+              </a>
             </div>
             <div className="card p-8 text-center bg-[#214C3A] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <img src="/icons/rules.png" alt="تسميع قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" />
+              <img src="https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_64/v1/qudrat/icons/rules" alt="تسميع قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" loading="lazy" />
               <h3 className="text-2xl font-bold mb-2">تسميع قوانين</h3>
               <p className="text-gray-200 mb-4">اختبار قوانين القدرات للتدريب</p>
-              <a href="/___اختبار قوانين القدرات.pdf" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition shadow-md">تحميل الاختبار</a>
+              <a href="https://res.cloudinary.com/demo/raw/upload/v1/qudrat/pdfs/rules-test" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block px-6 py-3 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition shadow-md">
+                <span className="flex items-center justify-center">
+                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  تحميل الاختبار
+                </span>
+              </a>
             </div>
           </div>
         </section>
@@ -354,7 +383,7 @@ const Home = () => {
                   rel="noreferrer"
                   className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white text-green-700 font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
                 >
-                  <img src="/icons/whatsapp.svg" alt="WhatsApp" className="h-6 w-6 mr-3" />
+                  <img src="https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_24/v1/qudrat/icons/whatsapp" alt="WhatsApp" className="h-6 w-6 mr-3" loading="lazy" />
                   اشترك الآن عبر واتساب
                 </a>
                 <div className="text-green-100 text-sm">
@@ -493,7 +522,7 @@ const Home = () => {
                   rel="noreferrer"
                   className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white text-green-700 font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
                 >
-                  <img src="/icons/whatsapp.svg" alt="WhatsApp" className="h-6 w-6 mr-3" />
+                  <img src="https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_24/v1/qudrat/icons/whatsapp" alt="WhatsApp" className="h-6 w-6 mr-3" loading="lazy" />
                   أضف تقييمك عبر واتساب
                 </a>
                 <div className="text-green-100 text-sm">
