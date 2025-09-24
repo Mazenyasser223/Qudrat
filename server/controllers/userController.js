@@ -1548,6 +1548,7 @@ const reopenExamForStudent = async (req, res) => {
 
     // Create a new exam progress entry for the retake
     const newProgressEntry = {
+      examGroup: exam.examGroup, // Add required examGroup field
       examId: examId,
       status: 'unlocked',
       score: 0,
