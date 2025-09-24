@@ -248,13 +248,6 @@ const PublicExam = () => {
                 </div>
               </div>
               
-              <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                <ExamTimer
-                  timeLimit={exam.timeLimit}
-                  onTimeUp={handleTimeUp}
-                  isActive={!timeUp && !showResults}
-                />
-              </div>
             </div>
           </div>
         </div>
@@ -264,7 +257,15 @@ const PublicExam = () => {
           <div className="lg:col-span-1">
             <div className="card sticky top-6">
               <div className="card-header">
-                <h3 className="text-lg font-semibold text-gray-900">الأسئلة</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900">الأسئلة</h3>
+                  {/* Timer moved here */}
+                  <ExamTimer
+                    timeLimit={exam.timeLimit}
+                    onTimeUp={handleTimeUp}
+                    isActive={!timeUp && !showResults}
+                  />
+                </div>
               </div>
               <div className="card-body">
                 <div className="grid grid-cols-4 gap-2 mb-4">
