@@ -47,10 +47,8 @@ const securityConfig = {
   // CORS Configuration
   cors: {
     allowedOrigins: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://quantitative-qudrat.cloud',
-      'http://www.quantitative-qudrat.cloud',
+      'http://localhost:3000',  // Development only
+      'http://localhost:3001',  // Development only
       'https://quantitative-qudrat.cloud',
       'https://www.quantitative-qudrat.cloud'
     ],
