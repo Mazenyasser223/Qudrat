@@ -193,13 +193,14 @@ const validateExamSubmission = [
     .withMessage('Answers must be an array'),
   
   body('answers.*.questionId')
+    .optional()
     .isMongoId()
     .withMessage('Invalid question ID'),
   
   body('answers.*.selectedAnswer')
     .optional()
-    .isInt({ min: 0, max: 4 })
-    .withMessage('Selected answer must be between 0 and 4'),
+    .isIn(['A', 'B', 'C', 'D'])
+    .withMessage('Selected answer must be A, B, C, or D'),
   
   body('timeSpent')
     .isInt({ min: 0 })

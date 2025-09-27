@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Plus, Trash2, Upload, Save, ArrowLeft } from 'lucide-react';
+import ConfirmationDialog from '../../components/ConfirmationDialog';
 
 const CreateExam = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const CreateExam = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showMultipleUpload, setShowMultipleUpload] = useState(false);
   const [existingExams, setExistingExams] = useState([]);
+  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, questionIndex: null });
 
   const {
     register,
@@ -268,6 +270,24 @@ const CreateExam = () => {
     }
   };
 
+  // Handler functions for delete confirmation
+  const handleDeleteQuestion = (questionIndex) => {
+    setDeleteDialog({
+      isOpen: true,
+      questionIndex: questionIndex
+    });
+  };
+
+  const confirmDeleteQuestion = () => {
+    remove(deleteDialog.questionIndex);
+    setDeleteDialog({ isOpen: false, questionIndex: null });
+    toast.success('تم حذف السؤال بنجاح');
+  };
+
+  const cancelDeleteQuestion = () => {
+    setDeleteDialog({ isOpen: false, questionIndex: null });
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
@@ -423,7 +443,7 @@ const CreateExam = () => {
                     </h4>
                     <button
                       type="button"
-                      onClick={() => remove(index)}
+                      onClick={() => handleDeleteQuestion(index)}
                       className="text-red-600 hover:text-red-800 transition-colors p-1 rounded hover:bg-red-50"
                       title="حذف السؤال"
                     >
@@ -617,6 +637,18 @@ const CreateExam = () => {
           </div>
         </div>
       )}
+
+      {/* Delete Question Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={cancelDeleteQuestion}
+        onConfirm={confirmDeleteQuestion}
+        title="حذف السؤال"
+        message={`هل أنت متأكد من حذف السؤال ${deleteDialog.questionIndex + 1}؟`}
+        confirmText="حذف السؤال"
+        cancelText="إلغاء"
+        type="danger"
+      />
     </div>
   );
 };

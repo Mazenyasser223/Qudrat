@@ -127,18 +127,18 @@ const io = new Server(server, {
   transports: ['websocket', 'polling']
 });
 
-// Socket.IO authentication middleware
-io.use((socket, next) => {
-  const token = socket.handshake.auth.token;
-  
-  if (!token) {
-    return next(new Error('Authentication error: No token provided'));
-  }
-  
-  // Verify JWT token here if needed
-  // For now, we'll allow all authenticated connections
-  next();
-});
+// Socket.IO authentication middleware - DISABLED FOR NOW
+// io.use((socket, next) => {
+//   const token = socket.handshake.auth.token;
+//   
+//   if (!token) {
+//     return next(new Error('Authentication error: No token provided'));
+//   }
+//   
+//   // Verify JWT token here if needed
+//   // For now, we'll allow all authenticated connections
+//   next();
+// });
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {

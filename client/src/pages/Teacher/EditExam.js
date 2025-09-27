@@ -4,6 +4,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Plus, Trash2, Save, ArrowLeft } from 'lucide-react';
+import ConfirmationDialog from '../../components/ConfirmationDialog';
 
 const EditExam = () => {
   const { examId } = useParams();
@@ -12,6 +13,7 @@ const EditExam = () => {
   const [submitting, setSubmitting] = useState(false);
   const [exam, setExam] = useState(null);
   const [cancelRequest, setCancelRequest] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, questionIndex: null });
 
   const {
     register,
@@ -221,6 +223,24 @@ const EditExam = () => {
     }
   };
 
+  // Handler functions for delete confirmation
+  const handleDeleteQuestion = (questionIndex) => {
+    setDeleteDialog({
+      isOpen: true,
+      questionIndex: questionIndex
+    });
+  };
+
+  const confirmDeleteQuestion = () => {
+    remove(deleteDialog.questionIndex);
+    setDeleteDialog({ isOpen: false, questionIndex: null });
+    toast.success('تم حذف السؤال بنجاح');
+  };
+
+  const cancelDeleteQuestion = () => {
+    setDeleteDialog({ isOpen: false, questionIndex: null });
+  };
+
   const handleImageUpload = async (event, questionIndex) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -412,8 +432,9 @@ const EditExam = () => {
                     {fields.length > 1 && (
                       <button
                         type="button"
-                        onClick={() => remove(index)}
+                        onClick={() => handleDeleteQuestion(index)}
                         className="text-red-600 hover:text-red-800 transition-colors"
+                        title="حذف السؤال"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -537,6 +558,18 @@ const EditExam = () => {
           )}
         </div>
       </form>
+
+      {/* Delete Question Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={cancelDeleteQuestion}
+        onConfirm={confirmDeleteQuestion}
+        title="حذف السؤال"
+        message={`هل أنت متأكد من حذف السؤال ${deleteDialog.questionIndex + 1}؟`}
+        confirmText="حذف السؤال"
+        cancelText="إلغاء"
+        type="danger"
+      />
     </div>
   );
 };

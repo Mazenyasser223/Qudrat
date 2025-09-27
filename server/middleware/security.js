@@ -53,10 +53,10 @@ const generalLimiter = createRateLimit(
   'Too many requests from this IP, please try again later.'
 );
 
-// Strict rate limiting for auth endpoints (5 requests per 15 minutes)
+// Moderate rate limiting for auth endpoints (10 requests per 15 minutes)
 const authLimiter = createRateLimit(
   15 * 60 * 1000, // 15 minutes
-  5, // 5 requests
+  10, // 10 requests (reasonable limit)
   'Too many login attempts, please try again later.'
 );
 
