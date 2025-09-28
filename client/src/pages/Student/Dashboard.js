@@ -213,6 +213,13 @@ const StudentDashboard = () => {
     }));
   };
 
+  const scrollToExamHistory = () => {
+    const examHistorySection = document.getElementById('exam-history-section');
+    if (examHistorySection) {
+      examHistorySection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const getStatusIcon = (status) => {
     switch (status) {
       case 'completed':
@@ -259,6 +266,17 @@ const StudentDashboard = () => {
             <p className="text-primary-100 text-lg">اختر المجموعة والامتحان الذي تريد حله</p>
           </div>
         </div>
+      </div>
+
+      {/* Quick Navigation Button */}
+      <div className="text-center">
+        <button
+          onClick={scrollToExamHistory}
+          className="inline-flex items-center space-x-2 rtl:space-x-reverse px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl transform hover:scale-105"
+        >
+          <History className="h-5 w-5" />
+          <span>سجل الامتحانات</span>
+        </button>
       </div>
 
       {/* Search and Filter Section */}
@@ -617,7 +635,7 @@ const StudentDashboard = () => {
       )}
 
       {/* Exam History Section with Toggle Lists */}
-      <div className="card">
+      <div id="exam-history-section" className="card">
         <div className="card-header">
           <div className="flex items-center justify-between">
             <div>
