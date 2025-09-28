@@ -304,32 +304,42 @@ const EditExam = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 relative">
-      {/* Scroll to Bottom Button - Top */}
-      <button
-        onClick={scrollToBottom}
-        style={{
-          position: 'fixed',
-          top: '100px',
-          right: '20px',
-          width: '80px',
-          height: '80px',
-          backgroundColor: '#ff0000',
-          border: '5px solid #ffffff',
-          borderRadius: '50%',
-          zIndex: 99999,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-          fontSize: '24px',
-          color: 'white',
-          fontWeight: 'bold'
-        }}
-        title="الانتقال إلى أسفل الصفحة"
-      >
-        ⬇
-      </button>
+      {/* Simple Scroll Buttons - In Content Area */}
+      <div style={{ textAlign: 'center', marginBottom: '20px', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '10px' }}>
+        <h3 style={{ marginBottom: '10px' }}>Quick Navigation</h3>
+        <button
+          onClick={scrollToBottom}
+          style={{
+            width: '100px',
+            height: '40px',
+            backgroundColor: 'red',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            margin: '5px',
+            cursor: 'pointer',
+            fontSize: '16px'
+          }}
+        >
+          Go to Bottom ↓
+        </button>
+        <button
+          onClick={scrollToTop}
+          style={{
+            width: '100px',
+            height: '40px',
+            backgroundColor: 'green',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            margin: '5px',
+            cursor: 'pointer',
+            fontSize: '16px'
+          }}
+        >
+          Go to Top ↑
+        </button>
+      </div>
       {/* Header */}
       <div className="card">
         <div className="card-body">
@@ -605,32 +615,6 @@ const EditExam = () => {
         type="danger"
       />
 
-      {/* Scroll to Top Button - Bottom */}
-      <button
-        onClick={scrollToTop}
-        style={{
-          position: 'fixed',
-          bottom: '30px',
-          right: '20px',
-          width: '80px',
-          height: '80px',
-          backgroundColor: '#00ff00',
-          border: '5px solid #ffffff',
-          borderRadius: '50%',
-          zIndex: 99999,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-          fontSize: '24px',
-          color: 'white',
-          fontWeight: 'bold'
-        }}
-        title="الانتقال إلى أعلى الصفحة"
-      >
-        ⬆
-      </button>
     </div>
   );
 };
