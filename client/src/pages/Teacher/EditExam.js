@@ -305,13 +305,29 @@ const EditExam = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Scroll to Bottom Button - Top */}
-      <div className="fixed top-20 right-4 z-[9999]">
+      <div 
+        className="fixed top-20 right-4 z-[9999]"
+        style={{ 
+          position: 'fixed',
+          top: '80px',
+          right: '16px',
+          zIndex: 9999,
+          pointerEvents: 'auto'
+        }}
+      >
         <button
           onClick={scrollToBottom}
-          className="flex items-center justify-center w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-xl transition-all duration-200 hover:scale-110 border-2 border-white"
+          className="flex items-center justify-center w-16 h-16 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-2xl transition-all duration-200 hover:scale-110 border-4 border-white"
           title="الانتقال إلى أسفل الصفحة"
+          style={{
+            width: '64px',
+            height: '64px',
+            backgroundColor: '#dc2626',
+            border: '4px solid white',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+          }}
         >
-          <ChevronDown className="h-6 w-6" />
+          <ChevronDown className="h-8 w-8" />
         </button>
       </div>
       {/* Header */}
@@ -590,13 +606,29 @@ const EditExam = () => {
       />
 
       {/* Scroll to Top Button - Bottom */}
-      <div className="fixed bottom-6 right-4 z-[9999]">
+      <div 
+        className="fixed bottom-6 right-4 z-[9999]"
+        style={{ 
+          position: 'fixed',
+          bottom: '24px',
+          right: '16px',
+          zIndex: 9999,
+          pointerEvents: 'auto'
+        }}
+      >
         <button
           onClick={scrollToTop}
-          className="flex items-center justify-center w-14 h-14 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-xl transition-all duration-200 hover:scale-110 border-2 border-white"
+          className="flex items-center justify-center w-16 h-16 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-2xl transition-all duration-200 hover:scale-110 border-4 border-white"
           title="الانتقال إلى أعلى الصفحة"
+          style={{
+            width: '64px',
+            height: '64px',
+            backgroundColor: '#16a34a',
+            border: '4px solid white',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+          }}
         >
-          <ChevronUp className="h-6 w-6" />
+          <ChevronUp className="h-8 w-8" />
         </button>
       </div>
     </div>
