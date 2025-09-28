@@ -63,33 +63,33 @@ const ViewExam = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6 relative">
       {/* Scroll to Bottom Button - Top */}
-      <div 
-        className="fixed top-20 right-4 z-[9999]"
-        style={{ 
+      <button
+        onClick={scrollToBottom}
+        style={{
           position: 'fixed',
-          top: '80px',
-          right: '16px',
-          zIndex: 9999,
-          pointerEvents: 'auto'
+          top: '100px',
+          right: '20px',
+          width: '80px',
+          height: '80px',
+          backgroundColor: '#ff0000',
+          border: '5px solid #ffffff',
+          borderRadius: '50%',
+          zIndex: 99999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+          fontSize: '24px',
+          color: 'white',
+          fontWeight: 'bold'
         }}
+        title="الانتقال إلى أسفل الصفحة"
       >
-        <button
-          onClick={scrollToBottom}
-          className="flex items-center justify-center w-16 h-16 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-2xl transition-all duration-200 hover:scale-110 border-4 border-white"
-          title="الانتقال إلى أسفل الصفحة"
-          style={{
-            width: '64px',
-            height: '64px',
-            backgroundColor: '#dc2626',
-            border: '4px solid white',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-          }}
-        >
-          <ChevronDown className="h-8 w-8" />
-        </button>
-      </div>
+        ⬇
+      </button>
       {/* Header */}
       <div className="card">
         <div className="card-body">
@@ -270,31 +270,31 @@ const ViewExam = () => {
       </div>
 
       {/* Scroll to Top Button - Bottom */}
-      <div 
-        className="fixed bottom-6 right-4 z-[9999]"
-        style={{ 
+      <button
+        onClick={scrollToTop}
+        style={{
           position: 'fixed',
-          bottom: '24px',
-          right: '16px',
-          zIndex: 9999,
-          pointerEvents: 'auto'
+          bottom: '30px',
+          right: '20px',
+          width: '80px',
+          height: '80px',
+          backgroundColor: '#00ff00',
+          border: '5px solid #ffffff',
+          borderRadius: '50%',
+          zIndex: 99999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+          fontSize: '24px',
+          color: 'white',
+          fontWeight: 'bold'
         }}
+        title="الانتقال إلى أعلى الصفحة"
       >
-        <button
-          onClick={scrollToTop}
-          className="flex items-center justify-center w-16 h-16 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-2xl transition-all duration-200 hover:scale-110 border-4 border-white"
-          title="الانتقال إلى أعلى الصفحة"
-          style={{
-            width: '64px',
-            height: '64px',
-            backgroundColor: '#16a34a',
-            border: '4px solid white',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-          }}
-        >
-          <ChevronUp className="h-8 w-8" />
-        </button>
-      </div>
+        ⬆
+      </button>
     </div>
   );
 };
