@@ -64,13 +64,10 @@ const ViewExam = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 relative">
-      {/* SIMPLE SCROLL LINKS */}
+      {/* SCROLL TO BOTTOM LINK - TOP */}
       <p style={{ fontSize: '20px', fontWeight: 'bold', color: 'red', textAlign: 'center', margin: '20px 0' }}>
-        <a href="#" onClick={(e) => { e.preventDefault(); scrollToBottom(); }} style={{ color: 'red', textDecoration: 'underline', marginRight: '20px' }}>
-          GO TO BOTTOM
-        </a>
-        <a href="#" onClick={(e) => { e.preventDefault(); scrollToTop(); }} style={{ color: 'green', textDecoration: 'underline' }}>
-          GO TO TOP
+        <a href="#" onClick={(e) => { e.preventDefault(); scrollToBottom(); }} style={{ color: 'red', textDecoration: 'underline' }}>
+          اسفل الصفحه
         </a>
       </p>
       {/* Header */}
@@ -251,6 +248,13 @@ const ViewExam = () => {
           </div>
         </div>
       </div>
+
+      {/* SCROLL TO TOP LINK - BOTTOM */}
+      <p style={{ fontSize: '20px', fontWeight: 'bold', color: 'green', textAlign: 'center', margin: '20px 0' }}>
+        <a href="#" onClick={(e) => { e.preventDefault(); scrollToTop(); }} style={{ color: 'green', textDecoration: 'underline' }}>
+          اعلى الصفحه
+        </a>
+      </p>
 
     </div>
   );
