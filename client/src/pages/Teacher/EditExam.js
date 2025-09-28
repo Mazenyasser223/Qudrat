@@ -305,13 +305,13 @@ const EditExam = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Scroll to Bottom Button - Top */}
-      <div className="fixed top-20 left-4 z-50">
+      <div className="fixed top-20 right-4 z-[9999]">
         <button
           onClick={scrollToBottom}
-          className="flex items-center justify-center w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-105"
+          className="flex items-center justify-center w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-xl transition-all duration-200 hover:scale-110 border-2 border-white"
           title="الانتقال إلى أسفل الصفحة"
         >
-          <ChevronDown className="h-5 w-5" />
+          <ChevronDown className="h-6 w-6" />
         </button>
       </div>
       {/* Header */}
@@ -590,13 +590,13 @@ const EditExam = () => {
       />
 
       {/* Scroll to Top Button - Bottom */}
-      <div className="fixed bottom-6 left-4 z-50">
+      <div className="fixed bottom-6 right-4 z-[9999]">
         <button
           onClick={scrollToTop}
-          className="flex items-center justify-center w-12 h-12 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-105"
+          className="flex items-center justify-center w-14 h-14 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-xl transition-all duration-200 hover:scale-110 border-2 border-white"
           title="الانتقال إلى أعلى الصفحة"
         >
-          <ChevronUp className="h-5 w-5" />
+          <ChevronUp className="h-6 w-6" />
         </button>
       </div>
     </div>
