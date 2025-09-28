@@ -26,12 +26,13 @@ const ManageReviews = () => {
     defaultValues: {
       studentName: '',
       rating: 5,
+      comment: '',
       order: 0,
-      isActive: true
+      isActive: true,
+      isApproved: false
     }
   });
 
-  const watchedImage = watch('image');
 
   useEffect(() => {
     fetchReviews();
@@ -55,32 +56,23 @@ const ManageReviews = () => {
       setUploading(true);
       setValidationErrors([]);
       
-      const formData = new FormData();
-      formData.append('studentName', data.studentName);
-      formData.append('rating', data.rating);
-      formData.append('order', data.order);
-      formData.append('isActive', data.isActive);
-      
-      if (data.image && data.image[0]) {
-        formData.append('image', data.image[0]);
-      }
+      const reviewData = {
+        studentName: data.studentName,
+        rating: parseInt(data.rating),
+        comment: data.comment,
+        order: parseInt(data.order),
+        isActive: data.isActive,
+        isApproved: data.isApproved
+      };
 
       let response;
       if (editingReview) {
         // Update existing review
-        response = await axios.put(`/api/reviews/${editingReview._id}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
+        response = await axios.put(`/api/reviews/${editingReview._id}`, reviewData);
         toast.success('تم تحديث التقييم بنجاح');
       } else {
         // Create new review
-        response = await axios.post('/api/reviews', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
+        response = await axios.post('/api/reviews/admin', reviewData);
         toast.success('تم إضافة التقييم بنجاح');
       }
       
@@ -105,8 +97,10 @@ const ManageReviews = () => {
     setEditingReview(review);
     setValue('studentName', review.studentName);
     setValue('rating', review.rating);
+    setValue('comment', review.comment || '');
     setValue('order', review.order);
     setValue('isActive', review.isActive);
+    setValue('isApproved', review.isApproved);
     setShowAddForm(true);
   };
 
@@ -155,6 +149,28 @@ const ManageReviews = () => {
     }
   };
 
+  const approveReview = async (reviewId) => {
+    try {
+      await axios.patch(`/api/reviews/${reviewId}/approve`);
+      toast.success('تم الموافقة على التقييم');
+      fetchReviews();
+    } catch (error) {
+      console.error('Error approving review:', error);
+      toast.error('حدث خطأ أثناء الموافقة على التقييم');
+    }
+  };
+
+  const rejectReview = async (reviewId) => {
+    try {
+      await axios.patch(`/api/reviews/${reviewId}/reject`);
+      toast.success('تم رفض التقييم');
+      fetchReviews();
+    } catch (error) {
+      console.error('Error rejecting review:', error);
+      toast.error('حدث خطأ أثناء رفض التقييم');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -168,7 +184,7 @@ const ManageReviews = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">إدارة تقييمات الطلاب</h1>
-          <p className="text-gray-600">إضافة وإدارة صور تقييمات الطلاب</p>
+          <p className="text-gray-600">إضافة وإدارة تقييمات الطلاب النصية</p>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
@@ -249,42 +265,37 @@ const ManageReviews = () => {
                     <option value={false}>غير نشط (مخفي)</option>
                   </select>
                 </div>
+
+                <div className="form-group">
+                  <label className="form-label">حالة الموافقة</label>
+                  <select
+                    className={`input-field ${errors.isApproved ? 'border-red-500' : ''}`}
+                    {...register('isApproved')}
+                  >
+                    <option value={true}>موافق عليه</option>
+                    <option value={false}>في انتظار الموافقة</option>
+                  </select>
+                </div>
               </div>
 
               <div className="form-group">
-                <label className="form-label">صورة التقييم</label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-gray-400 transition-colors">
-                  <div className="space-y-1 text-center">
-                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                    <div className="flex text-sm text-gray-600">
-                      <label
-                        htmlFor="image-upload"
-                        className="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500"
-                      >
-                        <span>اختر صورة</span>
-                        <input
-                          id="image-upload"
-                          type="file"
-                          className="sr-only"
-                          accept="image/*"
-                          {...register('image', {
-                            required: !editingReview ? 'صورة التقييم مطلوبة' : false
-                          })}
-                        />
-                      </label>
-                      <p className="pr-1">أو اسحب الصورة هنا</p>
-                    </div>
-                    <p className="text-xs text-gray-500">PNG, JPG, GIF حتى 10MB</p>
-                    {watchedImage && watchedImage[0] && (
-                      <p className="text-sm text-green-600 mt-2">
-                        تم اختيار: {watchedImage[0].name}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                {errors.image && (
-                  <p className="error-message">{errors.image.message}</p>
+                <label className="form-label">تعليق الطالب</label>
+                <textarea
+                  className={`input-field ${errors.comment ? 'border-red-500' : ''}`}
+                  rows={4}
+                  placeholder="أدخل تعليق الطالب..."
+                  {...register('comment', {
+                    required: 'تعليق الطالب مطلوب',
+                    maxLength: {
+                      value: 500,
+                      message: 'التعليق يجب أن يكون أقل من 500 حرف'
+                    }
+                  })}
+                />
+                {errors.comment && (
+                  <p className="error-message">{errors.comment.message}</p>
                 )}
+                <p className="text-sm text-gray-500 mt-1">التعليق سيظهر في الصفحة الرئيسية</p>
               </div>
 
               <div className="flex justify-end space-x-3 rtl:space-x-reverse">
@@ -337,19 +348,22 @@ const ManageReviews = () => {
                 <thead className="bg-gradient-to-r from-green-50 to-green-100">
                   <tr>
                     <th className="px-6 py-4 text-right text-sm font-semibold text-green-800 uppercase tracking-wider">
-                      الصورة
-                    </th>
-                    <th className="px-6 py-4 text-right text-sm font-semibold text-green-800 uppercase tracking-wider">
                       الطالب
                     </th>
                     <th className="px-6 py-4 text-center text-sm font-semibold text-green-800 uppercase tracking-wider">
                       التقييم
+                    </th>
+                    <th className="px-6 py-4 text-right text-sm font-semibold text-green-800 uppercase tracking-wider">
+                      التعليق
                     </th>
                     <th className="px-6 py-4 text-center text-sm font-semibold text-green-800 uppercase tracking-wider">
                       الترتيب
                     </th>
                     <th className="px-6 py-4 text-center text-sm font-semibold text-green-800 uppercase tracking-wider">
                       الحالة
+                    </th>
+                    <th className="px-6 py-4 text-center text-sm font-semibold text-green-800 uppercase tracking-wider">
+                      الموافقة
                     </th>
                     <th className="px-6 py-4 text-center text-sm font-semibold text-green-800 uppercase tracking-wider">
                       الإجراءات
@@ -359,18 +373,6 @@ const ManageReviews = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {reviews.map((review) => (
                     <tr key={review._id} className="hover:bg-green-50 transition-colors duration-200">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="h-16 w-16 flex-shrink-0">
-                          <img
-                            className="h-16 w-16 rounded-lg object-cover shadow-sm"
-                            src={review.imageUrl}
-                            alt={`تقييم ${review.studentName}`}
-                            onError={(e) => {
-                              e.target.src = '/placeholder-image.png';
-                            }}
-                          />
-                        </div>
-                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
                         <div className="text-sm font-semibold text-gray-900">
                           {review.studentName}
@@ -387,6 +389,17 @@ const ManageReviews = () => {
                             ))}
                           </div>
                           <span className="mr-2 text-sm text-gray-600">{review.rating}.0</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="text-sm text-gray-900 max-w-xs">
+                          {review.comment ? (
+                            <div className="truncate" title={review.comment}>
+                              {review.comment}
+                            </div>
+                          ) : (
+                            <span className="text-gray-400">لا يوجد تعليق</span>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -413,6 +426,34 @@ const ManageReviews = () => {
                             </>
                           )}
                         </button>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <div className="flex items-center justify-center space-x-2 rtl:space-x-reverse">
+                          {!review.isApproved ? (
+                            <>
+                              <button
+                                onClick={() => approveReview(review._id)}
+                                className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-medium"
+                                title="موافقة"
+                              >
+                                <span>✓</span>
+                                <span>موافقة</span>
+                              </button>
+                              <button
+                                onClick={() => rejectReview(review._id)}
+                                className="flex items-center space-x-1 rtl:space-x-reverse px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium"
+                                title="رفض"
+                              >
+                                <span>✗</span>
+                                <span>رفض</span>
+                              </button>
+                            </>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              ✓ موافق عليه
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <div className="flex items-center justify-center space-x-2 rtl:space-x-reverse">
