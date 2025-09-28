@@ -971,13 +971,26 @@ const getStudentMistakes = async (req, res) => {
     
     examProgress.answers.forEach((answer, index) => {
       const question = exam.questions.find(q => q._id.toString() === answer.questionId.toString());
-      if (question && !answer.isCorrect) {
-        mistakes.push({
-          question: question,
-          studentAnswer: answer.selectedAnswer,
-          correctAnswer: question.correctAnswer,
-          isCorrect: answer.isCorrect
-        });
+      if (question) {
+        // Handle both old and new data structures
+        let isCorrect;
+        if (answer.isCorrect !== undefined) {
+          // New data structure - use the stored isCorrect field
+          isCorrect = answer.isCorrect;
+        } else {
+          // Old data structure - calculate isCorrect on the fly
+          isCorrect = answer.selectedAnswer === question.correctAnswer;
+        }
+        
+        // Add to mistakes if not correct (wrong answer or unanswered)
+        if (!isCorrect) {
+          mistakes.push({
+            question: question,
+            studentAnswer: answer.selectedAnswer,
+            correctAnswer: question.correctAnswer,
+            isCorrect: isCorrect
+          });
+        }
       }
     });
 
