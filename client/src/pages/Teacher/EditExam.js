@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray } from 'react-hook-form';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Save, ArrowLeft } from 'lucide-react';
+import { Plus, Trash2, Save, ArrowLeft, ChevronUp, ChevronDown } from 'lucide-react';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 
 const EditExam = () => {
@@ -241,6 +241,14 @@ const EditExam = () => {
     setDeleteDialog({ isOpen: false, questionIndex: null });
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  };
+
   const handleImageUpload = async (event, questionIndex) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -296,6 +304,16 @@ const EditExam = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Scroll to Bottom Button - Top */}
+      <div className="fixed top-20 left-4 z-50">
+        <button
+          onClick={scrollToBottom}
+          className="flex items-center justify-center w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-105"
+          title="الانتقال إلى أسفل الصفحة"
+        >
+          <ChevronDown className="h-5 w-5" />
+        </button>
+      </div>
       {/* Header */}
       <div className="card">
         <div className="card-body">
@@ -570,6 +588,17 @@ const EditExam = () => {
         cancelText="إلغاء"
         type="danger"
       />
+
+      {/* Scroll to Top Button - Bottom */}
+      <div className="fixed bottom-6 left-4 z-50">
+        <button
+          onClick={scrollToTop}
+          className="flex items-center justify-center w-12 h-12 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-105"
+          title="الانتقال إلى أعلى الصفحة"
+        >
+          <ChevronUp className="h-5 w-5" />
+        </button>
+      </div>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Edit, BookOpen, Clock, Eye } from 'lucide-react';
+import { ArrowLeft, Edit, BookOpen, Clock, Eye, ChevronUp, ChevronDown } from 'lucide-react';
 
 const ViewExam = () => {
   const { examId } = useParams();
@@ -32,6 +32,14 @@ const ViewExam = () => {
     navigate(`/teacher/exams/edit/${examId}`);
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -56,6 +64,16 @@ const ViewExam = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
+      {/* Scroll to Bottom Button - Top */}
+      <div className="fixed top-20 left-4 z-50">
+        <button
+          onClick={scrollToBottom}
+          className="flex items-center justify-center w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-105"
+          title="الانتقال إلى أسفل الصفحة"
+        >
+          <ChevronDown className="h-5 w-5" />
+        </button>
+      </div>
       {/* Header */}
       <div className="card">
         <div className="card-body">
@@ -233,6 +251,17 @@ const ViewExam = () => {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Scroll to Top Button - Bottom */}
+      <div className="fixed bottom-6 left-4 z-50">
+        <button
+          onClick={scrollToTop}
+          className="flex items-center justify-center w-12 h-12 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-105"
+          title="الانتقال إلى أعلى الصفحة"
+        >
+          <ChevronUp className="h-5 w-5" />
+        </button>
       </div>
     </div>
   );
