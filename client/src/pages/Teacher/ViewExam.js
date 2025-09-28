@@ -64,42 +64,15 @@ const ViewExam = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 relative">
-      {/* Simple Scroll Buttons - In Content Area */}
-      <div style={{ textAlign: 'center', marginBottom: '20px', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '10px' }}>
-        <h3 style={{ marginBottom: '10px' }}>Quick Navigation</h3>
-        <button
-          onClick={scrollToBottom}
-          style={{
-            width: '100px',
-            height: '40px',
-            backgroundColor: 'red',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            margin: '5px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
-        >
-          Go to Bottom ↓
-        </button>
-        <button
-          onClick={scrollToTop}
-          style={{
-            width: '100px',
-            height: '40px',
-            backgroundColor: 'green',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            margin: '5px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
-        >
-          Go to Top ↑
-        </button>
-      </div>
+      {/* SIMPLE SCROLL LINKS */}
+      <p style={{ fontSize: '20px', fontWeight: 'bold', color: 'red', textAlign: 'center', margin: '20px 0' }}>
+        <a href="#" onClick={(e) => { e.preventDefault(); scrollToBottom(); }} style={{ color: 'red', textDecoration: 'underline', marginRight: '20px' }}>
+          GO TO BOTTOM
+        </a>
+        <a href="#" onClick={(e) => { e.preventDefault(); scrollToTop(); }} style={{ color: 'green', textDecoration: 'underline' }}>
+          GO TO TOP
+        </a>
+      </p>
       {/* Header */}
       <div className="card">
         <div className="card-body">
