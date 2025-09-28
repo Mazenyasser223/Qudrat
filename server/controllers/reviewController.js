@@ -2,14 +2,18 @@ const Review = require('../models/Review');
 const path = require('path');
 const fs = require('fs');
 
-// Get all active reviews
+// Get all active and approved reviews
 const getReviews = async (req, res) => {
   try {
-    console.log('🔍 Fetching reviews...');
-    const reviews = await Review.find({ isActive: true })
+    console.log('🔍 Fetching approved reviews...');
+    const reviews = await Review.find({ 
+      isActive: true, 
+      isApproved: true,
+      comment: { $exists: true, $ne: null } // Only text-based reviews
+    })
       .sort({ order: 1, createdAt: -1 });
     
-    console.log('📊 Found reviews:', reviews.length);
+    console.log('📊 Found approved reviews:', reviews.length);
     console.log('📋 Reviews data:', reviews);
     
     res.json({
@@ -44,40 +48,45 @@ const getAllReviews = async (req, res) => {
   }
 };
 
-// Create new review
+// Create new text-based review
 const createReview = async (req, res) => {
   try {
-    console.log('📝 Creating new review...');
+    console.log('📝 Creating new text review...');
     console.log('📋 Request body:', req.body);
-    console.log('📁 Request file:', req.file);
     
-    const { studentName, rating, order } = req.body;
+    const { studentName, rating, comment } = req.body;
     
-    if (!req.file) {
-      console.log('❌ No file uploaded');
+    // Validate required fields
+    if (!studentName || !rating || !comment) {
       return res.status(400).json({
         success: false,
-        message: 'يجب رفع صورة التقييم'
+        message: 'جميع الحقول مطلوبة (الاسم، التقييم، التعليق)'
       });
     }
 
-    // Verify file was actually saved
-    console.log('📁 File details:', {
-      filename: req.file.filename,
-      path: req.file.path,
-      size: req.file.size,
-      mimetype: req.file.mimetype
-    });
+    // Validate rating
+    const ratingNum = parseInt(rating);
+    if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+      return res.status(400).json({
+        success: false,
+        message: 'التقييم يجب أن يكون بين 1 و 5'
+      });
+    }
 
-    // For Cloudinary, the file.path is the Cloudinary URL
-    console.log('✅ File uploaded to Cloudinary:', req.file.path);
+    // Validate comment length
+    if (comment.length > 500) {
+      return res.status(400).json({
+        success: false,
+        message: 'التعليق يجب أن يكون أقل من 500 حرف'
+      });
+    }
 
     const review = new Review({
-      studentName,
-      rating: parseInt(rating),
-      imageUrl: req.file.path, // Cloudinary URL
-      imagePath: req.file.path, // Same as imageUrl for Cloudinary
-      order: order ? parseInt(order) : 0
+      studentName: studentName.trim(),
+      rating: ratingNum,
+      comment: comment.trim(),
+      isApproved: false, // New reviews need approval
+      isActive: true
     });
 
     console.log('💾 Saving review to database:', review);
@@ -86,29 +95,31 @@ const createReview = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'تم إضافة التقييم بنجاح',
+      message: 'تم إرسال تقييمك بنجاح! سيتم مراجعته من قبل الإدارة قبل النشر.',
       data: review
     });
   } catch (error) {
     console.error('❌ Error creating review:', error);
     res.status(500).json({
       success: false,
-      message: 'حدث خطأ أثناء إضافة التقييم'
+      message: 'حدث خطأ أثناء إرسال التقييم'
     });
   }
 };
 
-// Update review
+// Update review (admin)
 const updateReview = async (req, res) => {
   try {
     const { id } = req.params;
-    const { studentName, rating, order, isActive } = req.body;
+    const { studentName, rating, comment, order, isActive, isApproved } = req.body;
     
     const updateData = {
       studentName,
       rating: rating ? parseInt(rating) : undefined,
+      comment,
       order: order ? parseInt(order) : undefined,
-      isActive: isActive !== undefined ? isActive === 'true' : undefined
+      isActive: isActive !== undefined ? isActive === 'true' : undefined,
+      isApproved: isApproved !== undefined ? isApproved === 'true' : undefined
     };
 
     // Remove undefined values
@@ -116,7 +127,7 @@ const updateReview = async (req, res) => {
       updateData[key] === undefined && delete updateData[key]
     );
 
-    // If new image is uploaded
+    // If new image is uploaded (legacy support)
     if (req.file) {
       // Delete old image
       const oldReview = await Review.findById(id);
@@ -155,6 +166,70 @@ const updateReview = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'حدث خطأ أثناء تحديث التقييم'
+    });
+  }
+};
+
+// Approve review
+const approveReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const review = await Review.findByIdAndUpdate(
+      id,
+      { isApproved: true },
+      { new: true, runValidators: true }
+    );
+
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: 'التقييم غير موجود'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'تم الموافقة على التقييم بنجاح',
+      data: review
+    });
+  } catch (error) {
+    console.error('Error approving review:', error);
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء الموافقة على التقييم'
+    });
+  }
+};
+
+// Reject review
+const rejectReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const review = await Review.findByIdAndUpdate(
+      id,
+      { isApproved: false, isActive: false },
+      { new: true, runValidators: true }
+    );
+
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: 'التقييم غير موجود'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'تم رفض التقييم بنجاح',
+      data: review
+    });
+  } catch (error) {
+    console.error('Error rejecting review:', error);
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء رفض التقييم'
     });
   }
 };
@@ -201,5 +276,7 @@ module.exports = {
   getAllReviews,
   createReview,
   updateReview,
-  deleteReview
+  deleteReview,
+  approveReview,
+  rejectReview
 };

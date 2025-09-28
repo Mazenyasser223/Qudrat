@@ -12,13 +12,25 @@ const reviewSchema = new mongoose.Schema({
     min: 1,
     max: 5
   },
+  comment: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 500
+  },
+  // Legacy fields for backward compatibility
   imageUrl: {
     type: String,
-    required: true
+    required: false
   },
   imagePath: {
     type: String,
-    required: true
+    required: false
+  },
+  // New approval system
+  isApproved: {
+    type: Boolean,
+    default: false
   },
   isActive: {
     type: Boolean,

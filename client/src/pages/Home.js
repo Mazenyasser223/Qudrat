@@ -2,6 +2,151 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
+
+// Review Submission Form Component
+const ReviewSubmissionForm = () => {
+  const [formData, setFormData] = useState({
+    studentName: '',
+    rating: 5,
+    comment: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.studentName.trim() || !formData.comment.trim()) {
+      toast.error('يرجى ملء جميع الحقول المطلوبة');
+      return;
+    }
+
+    if (formData.comment.length > 500) {
+      toast.error('التعليق يجب أن يكون أقل من 500 حرف');
+      return;
+    }
+
+    setSubmitting(true);
+    
+    try {
+      const response = await axios.post('/api/reviews/submit', formData);
+      
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setFormData({
+          studentName: '',
+          rating: 5,
+          comment: ''
+        });
+      } else {
+        toast.error(response.data.message || 'حدث خطأ أثناء إرسال التقييم');
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء إرسال التقييم');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-white/10 rounded-2xl p-6 backdrop-blur-sm">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        {/* Student Name */}
+        <div>
+          <label htmlFor="studentName" className="block text-sm font-medium text-white mb-2">
+            اسمك
+          </label>
+          <input
+            type="text"
+            id="studentName"
+            name="studentName"
+            value={formData.studentName}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
+            placeholder="أدخل اسمك"
+            required
+          />
+        </div>
+
+        {/* Rating */}
+        <div>
+          <label className="block text-sm font-medium text-white mb-2">
+            تقييمك
+          </label>
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, rating: star }))}
+                className={`text-2xl transition-colors ${
+                  star <= formData.rating ? 'text-yellow-400' : 'text-white/30'
+                } hover:text-yellow-400`}
+              >
+                ⭐
+              </button>
+            ))}
+            <span className="text-white font-semibold mr-2">{formData.rating}/5</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Comment */}
+      <div className="mb-6">
+        <label htmlFor="comment" className="block text-sm font-medium text-white mb-2">
+          تعليقك
+        </label>
+        <textarea
+          id="comment"
+          name="comment"
+          value={formData.comment}
+          onChange={handleInputChange}
+          rows={4}
+          maxLength={500}
+          className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent resize-none"
+          placeholder="شاركنا تجربتك مع المنصة..."
+          required
+        />
+        <div className="text-right text-white/70 text-sm mt-1">
+          {formData.comment.length}/500
+        </div>
+      </div>
+
+      {/* Submit Button */}
+      <div className="text-center">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white text-green-700 font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+        >
+          {submitting ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-700 ml-2"></div>
+              جاري الإرسال...
+            </>
+          ) : (
+            <>
+              <span className="ml-2">📝</span>
+              أرسل تقييمي
+            </>
+          )}
+        </button>
+        <p className="text-white/80 text-sm mt-3">
+          سيتم مراجعة تقييمك من قبل الإدارة قبل النشر
+        </p>
+      </div>
+    </form>
+  );
+};
 
 const Home = () => {
   const [freeExams, setFreeExams] = useState([]);
@@ -442,56 +587,38 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {reviewsLoading ? (
               // Loading state
-              Array.from({ length: 2 }).map((_, index) => (
+              Array.from({ length: 3 }).map((_, index) => (
                 <div key={index} className="card p-6 bg-gray-200 border-none shadow-lg animate-pulse">
-                  <div className="bg-gray-300 rounded-lg w-full h-96 mb-4"></div>
                   <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-300 rounded mb-4 w-1/2"></div>
+                  <div className="h-20 bg-gray-300 rounded mb-4"></div>
                   <div className="h-3 bg-gray-300 rounded w-2/3"></div>
                 </div>
               ))
             ) : reviews.length > 0 ? (
-              // Dynamic review images
+              // Dynamic text reviews
               reviews.map((review) => (
                 <div key={review._id} className="card p-6 bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                  <div className="relative">
-                    <img 
-                      src={review.imageUrl} 
-                      alt={`تقييم ${review.studentName}`}
-                      className="w-full h-auto rounded-lg shadow-sm"
-                      style={{ maxHeight: '600px', minHeight: '400px', objectFit: 'contain' }}
-                      onError={(e) => {
-                        console.log('❌ Image failed to load:', review.imageUrl);
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'block';
-                      }}
-                      onLoad={() => {
-                        console.log('✅ Image loaded successfully:', review.imageUrl);
-                      }}
-                    />
-                    <div 
-                      className="hidden w-full h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-gray-500"
-                    >
-                      <div className="text-center">
-                        <div className="text-4xl mb-2">📱</div>
-                        <div className="text-sm">صورة التقييم</div>
-                      </div>
+                  {/* Rating stars */}
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="flex text-yellow-400 text-lg">
+                      {Array.from({ length: review.rating }).map((_, i) => (
+                        <span key={i}>⭐</span>
+                      ))}
                     </div>
-                    
-                    {/* Rating overlay */}
-                    <div className="absolute top-2 left-2 bg-white/90 rounded-full px-3 py-1 flex items-center shadow-sm">
-                      <div className="flex text-yellow-400 text-sm">
-                        {Array.from({ length: review.rating }).map((_, i) => (
-                          <span key={i}>⭐</span>
-                        ))}
-                      </div>
-                      <span className="mr-1 text-xs text-gray-600">{review.rating}.0</span>
-                    </div>
+                    <span className="mr-2 text-sm text-gray-600 font-semibold">{review.rating}.0</span>
                   </div>
                   
-                  <div className="mt-3 text-center">
+                  {/* Review comment */}
+                  <div className="text-gray-700 text-center mb-4 leading-relaxed">
+                    "{review.comment}"
+                  </div>
+                  
+                  {/* Student name */}
+                  <div className="text-center border-t border-gray-100 pt-4">
                     <div className="font-semibold text-gray-900">{review.studentName}</div>
                     <div className="text-sm text-gray-500">طالب</div>
                   </div>
@@ -502,33 +629,20 @@ const Home = () => {
               <div className="col-span-full text-center py-12">
                 <div className="text-6xl mb-4">⭐</div>
                 <h3 className="text-xl font-semibold text-gray-700 mb-2">لا توجد تقييمات بعد</h3>
-                <p className="text-gray-500">سيتم عرض تقييمات الطلاب هنا قريباً</p>
+                <p className="text-gray-500">كن أول من يشارك تجربته مع المنصة</p>
               </div>
             )}
           </div>
 
-          {/* Add Review CTA */}
-          <div className="bg-gradient-to-r from-green-600 via-green-700 to-green-800 rounded-2xl p-8 text-white text-center shadow-2xl">
+          {/* Review Submission Form */}
+          <div className="bg-gradient-to-r from-green-600 via-green-700 to-green-800 rounded-2xl p-8 text-white shadow-2xl">
             <div className="max-w-4xl mx-auto">
-              <h3 className="text-3xl font-bold mb-4">💬 شاركنا رأيك</h3>
-              <p className="text-green-100 text-lg mb-6">
+              <h3 className="text-3xl font-bold mb-4 text-center">💬 شاركنا رأيك</h3>
+              <p className="text-green-100 text-lg mb-8 text-center">
                 هل استفدت من المنصة؟ شاركنا تجربتك لنساعد المزيد من الطلاب
               </p>
               
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a 
-                  href="https://wa.me/966546894479?text=مرحباً، أريد إضافة تقييمي للمنصة التعليمية" 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-white text-green-700 font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
-                >
-                  <img src="/icons/whatsapp.svg" alt="WhatsApp" className="h-6 w-6 mr-3" loading="lazy" />
-                  أضف تقييمك عبر واتساب
-                </a>
-                <div className="text-green-100 text-sm">
-                  ⭐ تقييماتك تساعدنا في التحسين
-                </div>
-              </div>
+              <ReviewSubmissionForm />
             </div>
           </div>
         </section>
