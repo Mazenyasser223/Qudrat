@@ -966,12 +966,12 @@ const getStudentMistakes = async (req, res) => {
       });
     }
 
-    // Find mistakes (wrong answers)
+    // Find mistakes (wrong answers and unanswered questions)
     const mistakes = [];
     
     examProgress.answers.forEach((answer, index) => {
       const question = exam.questions.find(q => q._id.toString() === answer.questionId.toString());
-      if (question && answer.selectedAnswer !== question.correctAnswer) {
+      if (question && !answer.isCorrect) {
         mistakes.push({
           question: question,
           studentAnswer: answer.selectedAnswer,
