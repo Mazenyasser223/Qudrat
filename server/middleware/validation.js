@@ -102,17 +102,11 @@ const validateExamCreation = [
   
   body('questions.*.questionImage')
     .notEmpty()
-    .withMessage('Question image is required')
-    .isURL()
-    .withMessage('Question image must be a valid URL'),
-  
-  body('questions.*.options')
-    .isArray({ min: 2, max: 5 })
-    .withMessage('Each question must have between 2 and 5 options'),
+    .withMessage('Question image is required'),
   
   body('questions.*.correctAnswer')
-    .isInt({ min: 0, max: 4 })
-    .withMessage('Correct answer must be between 0 and 4'),
+    .isIn(['A', 'B', 'C', 'D'])
+    .withMessage('Correct answer must be A, B, C, or D'),
   
   handleValidationErrors
 ];
@@ -165,19 +159,12 @@ const validateExamUpdate = [
   body('questions.*.questionImage')
     .optional()
     .notEmpty()
-    .withMessage('Question image is required')
-    .isURL()
-    .withMessage('Question image must be a valid URL'),
-  
-  body('questions.*.options')
-    .optional()
-    .isArray({ min: 2, max: 5 })
-    .withMessage('Each question must have between 2 and 5 options'),
+    .withMessage('Question image is required'),
   
   body('questions.*.correctAnswer')
     .optional()
-    .isInt({ min: 0, max: 4 })
-    .withMessage('Correct answer must be between 0 and 4'),
+    .isIn(['A', 'B', 'C', 'D'])
+    .withMessage('Correct answer must be A, B, C, or D'),
   
   handleValidationErrors
 ];
@@ -248,17 +235,11 @@ const validateReviewCreation = [
   
   body('questions.*.questionImage')
     .notEmpty()
-    .withMessage('Question image is required')
-    .isURL()
-    .withMessage('Question image must be a valid URL'),
-  
-  body('questions.*.options')
-    .isArray({ min: 2, max: 5 })
-    .withMessage('Each question must have between 2 and 5 options'),
+    .withMessage('Question image is required'),
   
   body('questions.*.correctAnswer')
-    .isInt({ min: 0, max: 4 })
-    .withMessage('Correct answer must be between 0 and 4'),
+    .isIn(['A', 'B', 'C', 'D'])
+    .withMessage('Correct answer must be A, B, C, or D'),
   
   handleValidationErrors
 ];
