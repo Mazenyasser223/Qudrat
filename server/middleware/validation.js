@@ -186,8 +186,8 @@ const validateExamSubmission = [
   
   body('answers.*.selectedAnswer')
     .optional()
-    .isIn(['A', 'B', 'C', 'D'])
-    .withMessage('Selected answer must be A, B, C, or D'),
+    .isIn(['A', 'B', 'C', 'D', null])
+    .withMessage('Selected answer must be A, B, C, D, or null'),
   
   body('timeSpent')
     .isInt({ min: 0 })
