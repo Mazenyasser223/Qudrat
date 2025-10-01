@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import StudentMistakes from '../../components/Exam/StudentMistakes';
 import StudentAnswersViewer from '../../components/Exam/StudentAnswersViewer';
+import ConfirmationDialog from '../../components/ConfirmationDialog';
 import StudentExamSubmission from '../../components/Exam/StudentExamSubmission';
 
 const StudentProfile = () => {
@@ -46,6 +47,9 @@ const StudentProfile = () => {
   const [togglingExam, setTogglingExam] = useState(null);
   const [togglingGroup, setTogglingGroup] = useState(null);
   const [reopeningExam, setReopeningExam] = useState(null);
+  // Confirmation dialogs
+  const [lockDialog, setLockDialog] = useState({ isOpen: false, examId: null, examTitle: '', action: '' });
+  const [reopenDialog, setReopenDialog] = useState({ isOpen: false, examId: null, examTitle: '' });
   const [reviewMistakes, setReviewMistakes] = useState(() => {
     // Load from localStorage on component mount
     try {
@@ -518,9 +522,20 @@ const StudentProfile = () => {
   };
 
   // Individual Exam Control Functions
-  const handleToggleExamAccess = async (examId, action) => {
+  const requestToggleExamAccess = (examId, examTitle, action) => {
+    setLockDialog({
+      isOpen: true,
+      examId,
+      examTitle,
+      action
+    });
+  };
+
+  const confirmToggleExam = async () => {
+    const { examId, action } = lockDialog;
     try {
       setTogglingExam(examId);
+      setLockDialog({ isOpen: false, examId: null, examTitle: '', action: '' });
       console.log(`Toggling exam ${examId} to ${action}`);
       
       const response = await axios.put(`/api/users/students/${studentId}/toggle-exam/${examId}`, {
@@ -584,9 +599,27 @@ const StudentProfile = () => {
   };
 
   // Reopen Exam Function
-  const handleReopenExam = async (examId) => {
+  const cancelToggleExam = () => {
+    setLockDialog({ isOpen: false, examId: null, examTitle: '', action: '' });
+  };
+
+  const requestReopenExam = (examId, examTitle) => {
+    setReopenDialog({
+      isOpen: true,
+      examId,
+      examTitle
+    });
+  };
+
+  const cancelReopenExam = () => {
+    setReopenDialog({ isOpen: false, examId: null, examTitle: '' });
+  };
+
+  const confirmReopenExam = async () => {
+    const { examId } = reopenDialog;
     try {
       setReopeningExam(examId);
+      setReopenDialog({ isOpen: false, examId: null, examTitle: '' });
       console.log(`Reopening exam ${examId} for student ${studentId}`);
       
       toast.loading('جاري إعادة فتح الامتحان...', {
@@ -1258,7 +1291,7 @@ const StudentProfile = () => {
                               <div className="flex flex-col space-y-1">
                                 {progress && progress.status === 'unlocked' ? (
                                   <button
-                                    onClick={() => handleToggleExamAccess(exam._id, 'close')}
+                                    onClick={() => requestToggleExamAccess(exam._id, exam.title, 'close')}
                                     disabled={togglingExam === exam._id}
                                     className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                   >
@@ -1271,7 +1304,7 @@ const StudentProfile = () => {
                                   </button>
                                 ) : progress && (progress.status === 'locked' || progress.status === 'unlocked') ? (
                                   <button
-                                    onClick={() => handleToggleExamAccess(exam._id, 'open')}
+                                    onClick={() => requestToggleExamAccess(exam._id, exam.title, 'open')}
                                     disabled={togglingExam === exam._id}
                                     className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                   >
@@ -1309,7 +1342,7 @@ const StudentProfile = () => {
                               {progress && progress.status === 'completed' && (
                                 <div className="flex flex-col space-y-1">
                                   <button
-                                    onClick={() => handleReopenExam(exam._id)}
+                                    onClick={() => requestReopenExam(exam._id, exam.title)}
                                     disabled={reopeningExam === exam._id}
                                     className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                   >
@@ -1508,7 +1541,7 @@ const StudentProfile = () => {
                                 <div className="flex flex-col space-y-1">
                                   {progress && progress.status === 'unlocked' ? (
                                     <button
-                                      onClick={() => handleToggleExamAccess(exam._id, 'close')}
+                                      onClick={() => requestToggleExamAccess(exam._id, exam.title, 'close')}
                                       disabled={togglingExam === exam._id}
                                       className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
@@ -1521,7 +1554,7 @@ const StudentProfile = () => {
                                     </button>
                                   ) : progress && (progress.status === 'locked' || !progress.status) ? (
                                     <button
-                                      onClick={() => handleToggleExamAccess(exam._id, 'open')}
+                                      onClick={() => requestToggleExamAccess(exam._id, exam.title, 'open')}
                                       disabled={togglingExam === exam._id}
                                       className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
@@ -1559,7 +1592,7 @@ const StudentProfile = () => {
                                 {progress && progress.status === 'completed' && (
                                   <div className="flex flex-col space-y-1">
                                     <button
-                                      onClick={() => handleReopenExam(exam._id)}
+                                      onClick={() => requestReopenExam(exam._id, exam.title)}
                                       disabled={reopeningExam === exam._id}
                                       className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
@@ -1636,6 +1669,30 @@ const StudentProfile = () => {
           allExams={attemptedExams}
         />
       )}
+
+      {/* Lock/Unlock Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={lockDialog.isOpen}
+        onClose={cancelToggleExam}
+        onConfirm={confirmToggleExam}
+        title={lockDialog.action === 'close' ? 'قفل الامتحان' : 'فتح الامتحان'}
+        message={`هل أنت متأكد من ${lockDialog.action === 'close' ? 'قفل' : 'فتح'} الامتحان "${lockDialog.examTitle}" للطالب ${student?.name}؟`}
+        confirmText={lockDialog.action === 'close' ? 'قفل الامتحان' : 'فتح الامتحان'}
+        cancelText="إلغاء"
+        type={lockDialog.action === 'close' ? 'danger' : 'primary'}
+      />
+
+      {/* Reopen Exam Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={reopenDialog.isOpen}
+        onClose={cancelReopenExam}
+        onConfirm={confirmReopenExam}
+        title="إعادة فتح الامتحان"
+        message={`هل أنت متأكد من إعادة فتح الامتحان "${reopenDialog.examTitle}" للطالب ${student?.name}؟ سيتم حذف النتيجة السابقة وإعادة تعيين الامتحان.`}
+        confirmText="إعادة فتح الامتحان"
+        cancelText="إلغاء"
+        type="warning"
+      />
     </div>
   );
 };
