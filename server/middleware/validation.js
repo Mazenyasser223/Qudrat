@@ -186,7 +186,11 @@ const validateExamSubmission = [
   
   body('answers.*.selectedAnswer')
     .optional()
-    .isIn(['A', 'B', 'C', 'D', null])
+    .custom((value) => {
+      // Allow null, undefined, or valid answer choices
+      if (value === null || value === undefined) return true;
+      return ['A', 'B', 'C', 'D'].includes(value);
+    })
     .withMessage('Selected answer must be A, B, C, D, or null'),
   
   body('timeSpent')
