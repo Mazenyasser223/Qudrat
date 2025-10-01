@@ -93,102 +93,7 @@ router.get('/test-public/:studentId/:examId', async (req, res) => {
 // All other routes are protected
 router.use(protect);
 
-// Validation rules
-const createStudentValidation = [
-  body('name')
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage('الاسم يجب أن يكون حرفين على الأقل'),
-  body('email')
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('يرجى إدخال بريد إلكتروني صحيح'),
-  body('password')
-    .isLength({ min: 6 })
-    .withMessage('كلمة المرور يجب أن تكون 6 أحرف على الأقل'),
-  body('studentId')
-    .optional()
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage('رقم الطالب لا يمكن أن يكون فارغاً'),
-  body('phoneNumber')
-    .trim()
-    .isLength({ min: 10 })
-    .withMessage('رقم الجوال مطلوب ويجب أن يكون 10 أرقام على الأقل')
-];
-
-const updateStudentValidation = [
-  body('name')
-    .optional()
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage('الاسم يجب أن يكون حرفين على الأقل'),
-  body('email')
-    .optional()
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('يرجى إدخال بريد إلكتروني صحيح'),
-  body('studentId')
-    .optional()
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage('رقم الطالب لا يمكن أن يكون فارغاً'),
-  body('phoneNumber')
-    .optional()
-    .trim()
-    .isLength({ min: 10 })
-    .withMessage('رقم الجوال يجب أن يكون 10 أرقام على الأقل'),
-  body('isActive')
-    .optional()
-    .isBoolean()
-    .withMessage('حالة النشاط يجب أن تكون true أو false')
-];
-
-
-const toggleExamsValidation = [
-  body('examIds')
-    .isArray({ min: 1 })
-    .withMessage('يرجى إدخال قائمة معرفات الامتحانات'),
-  body('examIds.*')
-    .isMongoId()
-    .withMessage('يرجى إدخال معرفات امتحانات صحيحة'),
-  body('action')
-    .isIn(['lock', 'unlock'])
-    .withMessage('الإجراء يجب أن يكون lock أو unlock')
-];
-
-const toggleGroupValidation = [
-  body('groupNumber')
-    .isInt({ min: 1, max: 8 })
-    .withMessage('رقم المجموعة يجب أن يكون بين 1 و 8'),
-  body('action')
-    .isIn(['lock', 'unlock'])
-    .withMessage('الإجراء يجب أن يكون lock أو unlock')
-];
-
-const assignExamsValidation = [
-  body('examIds')
-    .isArray({ min: 1 })
-    .withMessage('يرجى اختيار امتحان واحد على الأقل'),
-  body('examIds.*')
-    .isMongoId()
-    .withMessage('يرجى إدخال معرفات امتحانات صحيحة')
-];
-
-const assignCategoryValidation = [
-  body('category')
-    .isInt({ min: 1, max: 8 })
-    .withMessage('يرجى اختيار مجموعة صحيحة (1-8)')
-];
-
-const assignMultipleCategoriesValidation = [
-  body('categories')
-    .isArray({ min: 1 })
-    .withMessage('يرجى اختيار مجموعة واحدة على الأقل'),
-  body('categories.*')
-    .isInt({ min: 1, max: 8 })
-    .withMessage('يرجى اختيار مجموعات صحيحة (1-8)')
-];
+// Validation rules removed for flexibility
 
 // @route   GET /api/users/students
 // @desc    Get all students
@@ -213,12 +118,12 @@ router.get('/students/:id/all-answers', isTeacher, getAllStudentAnswers);
 // @route   POST /api/users/students
 // @desc    Create new student
 // @access  Private (Teacher only)
-router.post('/students', isTeacher, createStudentValidation, createStudent);
+router.post('/students', isTeacher, createStudent);
 
 // @route   PUT /api/users/students/:id
 // @desc    Update student
 // @access  Private (Teacher only)
-router.put('/students/:id', isTeacher, updateStudentValidation, updateStudent);
+router.put('/students/:id', isTeacher, updateStudent);
 
 // @route   DELETE /api/users/students/:id
 // @desc    Delete student
@@ -229,41 +134,27 @@ router.delete('/students/:id', isTeacher, deleteStudent);
 // @route   PUT /api/users/students/:id/toggle-exams
 // @desc    Lock/Unlock multiple exams for student
 // @access  Private (Teacher only)
-router.put('/students/:id/toggle-exams', isTeacher, (req, res, next) => {
-  console.log('=== TOGGLE EXAMS MIDDLEWARE ===');
-  console.log('Request body:', req.body);
-  console.log('Request params:', req.params);
-  console.log('User:', req.user);
-  next();
-}, (req, res, next) => {
-  console.log('=== VALIDATION MIDDLEWARE ===');
-  console.log('Validating request body:', req.body);
-  next();
-}, toggleExamsValidation, (req, res, next) => {
-  console.log('=== AFTER VALIDATION ===');
-  console.log('Validation passed, proceeding to controller');
-  next();
-}, toggleMultipleExams);
+router.put('/students/:id/toggle-exams', isTeacher, toggleMultipleExams);
 
 // @route   PUT /api/users/students/:id/toggle-group
 // @desc    Lock/Unlock entire group for student
 // @access  Private (Teacher only)
-router.put('/students/:id/toggle-group', isTeacher, toggleGroupValidation, toggleGroupForStudent);
+router.put('/students/:id/toggle-group', isTeacher, toggleGroupForStudent);
 
 // @route   POST /api/users/students/:id/assign-exams
 // @desc    Assign specific exams to student
 // @access  Private (Teacher only)
-router.post('/students/:id/assign-exams', isTeacher, assignExamsValidation, assignSpecificExams);
+router.post('/students/:id/assign-exams', isTeacher, assignSpecificExams);
 
 // @route   POST /api/users/students/:id/assign-category
 // @desc    Assign specific category to student
 // @access  Private (Teacher only)
-router.post('/students/:id/assign-category', isTeacher, assignCategoryValidation, assignCategory);
+router.post('/students/:id/assign-category', isTeacher, assignCategory);
 
 // @route   POST /api/users/students/:id/assign-categories
 // @desc    Assign multiple categories to student
 // @access  Private (Teacher only)
-router.post('/students/:id/assign-categories', isTeacher, assignMultipleCategoriesValidation, assignMultipleCategories);
+router.post('/students/:id/assign-categories', isTeacher, assignMultipleCategories);
 
 // @route   GET /api/users/dashboard-stats
 // @desc    Get dashboard statistics
