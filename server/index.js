@@ -12,7 +12,6 @@ const connectDB = require('./config/database');
 const {
   securityHeaders,
   generalLimiter,
-  authLimiter,
   examSubmissionLimiter,
   apiLimiter,
   mongoSanitizer,
@@ -48,7 +47,7 @@ app.use(securityLogger);
 app.use(cors(corsOptions));
 
 // Rate limiting with security
-app.use('/api/auth', authLimiter);
+// Removed authLimiter to allow unlimited login attempts
 app.use('/api/exams/submit', examSubmissionLimiter);
 app.use('/api', apiLimiter);
 app.use(generalLimiter);
