@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { validationResult } = require('express-validator');
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -14,16 +13,15 @@ const generateToken = (id) => {
 // @access  Public
 const registerTeacher = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    const { name, email, password } = req.body;
+
+    // Basic validation
+    if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Validation errors',
-        errors: errors.array()
+        message: 'Please provide name, email and password'
       });
     }
-
-    const { name, email, password } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -70,16 +68,15 @@ const registerTeacher = async (req, res) => {
 // @access  Public
 const login = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    const { email, password } = req.body;
+
+    // Basic validation
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Validation errors',
-        errors: errors.array()
+        message: 'Please provide email and password'
       });
     }
-
-    const { email, password } = req.body;
 
     // Check for user
     const user = await User.findOne({ email }).select('+password');
