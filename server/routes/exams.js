@@ -174,10 +174,6 @@ router.post('/:id/submit', isStudent, submitExam);
 // @route   POST /api/exams/:id/repeat
 // @desc    Repeat exam for student (Teacher only)
 // @access  Private (Teacher only)
-router.post('/:id/repeat', isTeacher, [
-  body('studentId')
-    .isMongoId()
-    .withMessage('يرجى إدخال معرف طالب صحيح')
-], repeatExam);
+router.post('/:id/repeat', isTeacher, repeatExam);
 
 module.exports = router;
