@@ -22,12 +22,6 @@ const {
 } = require('../controllers/examController');
 const { protect, isTeacher, isStudent } = require('../middleware/auth');
 const { cacheMiddleware, invalidateCache } = require('../middleware/cache');
-const { 
-  validateExamCreation, 
-  validateExamUpdate, 
-  validateExamSubmission,
-  validateExamId 
-} = require('../middleware/validation');
 const upload = require('../middleware/upload');
 
 const router = express.Router();
@@ -134,7 +128,7 @@ router.get('/review/:reviewExamId', isStudent, getReviewExam);
 // @route   POST /api/exams/review/:reviewExamId/submit
 // @desc    Submit review exam answers
 // @access  Private (Student only)
-router.post('/review/:reviewExamId/submit', isStudent, validateExamSubmission, submitReviewExam);
+router.post('/review/:reviewExamId/submit', isStudent, submitReviewExam);
 
 // @route   GET /api/exams/:examId/student-mistakes/:studentId
 // @desc    Get student mistakes for a specific exam
@@ -160,12 +154,12 @@ router.get('/:id', getExam);
 // @route   POST /api/exams
 // @desc    Create new exam
 // @access  Private (Teacher only)
-router.post('/', isTeacher, validateExamCreation, createExam);
+router.post('/', isTeacher, createExam);
 
 // @route   PUT /api/exams/:id
 // @desc    Update exam
 // @access  Private (Teacher only)
-router.put('/:id', isTeacher, validateExamUpdate, updateExam);
+router.put('/:id', isTeacher, updateExam);
 
 // @route   DELETE /api/exams/:id
 // @desc    Delete exam
@@ -175,7 +169,7 @@ router.delete('/:id', isTeacher, deleteExam);
 // @route   POST /api/exams/:id/submit
 // @desc    Submit exam answers
 // @access  Private (Student only)
-router.post('/:id/submit', isStudent, validateExamSubmission, submitExam);
+router.post('/:id/submit', isStudent, submitExam);
 
 // @route   POST /api/exams/:id/repeat
 // @desc    Repeat exam for student (Teacher only)
