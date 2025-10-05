@@ -969,6 +969,13 @@ const getStudentMistakes = async (req, res) => {
     // Find mistakes (wrong answers and unanswered questions)
     const mistakes = [];
     
+    console.log('=== VIEWING MISTAKES DEBUG ===');
+    console.log('Student ID:', studentId);
+    console.log('Exam ID:', examId);
+    console.log('Exam Progress Status:', examProgress.status);
+    console.log('Total Answers:', examProgress.answers.length);
+    console.log('Total Questions:', exam.questions.length);
+    
     examProgress.answers.forEach((answer, index) => {
       const question = exam.questions.find(q => q._id.toString() === answer.questionId.toString());
       if (question) {
@@ -982,6 +989,14 @@ const getStudentMistakes = async (req, res) => {
           isCorrect = answer.selectedAnswer === question.correctAnswer;
         }
         
+        console.log(`Question ${index + 1}:`, {
+          questionId: question._id.toString(),
+          studentAnswer: answer.selectedAnswer,
+          correctAnswer: question.correctAnswer,
+          isCorrect: isCorrect,
+          hasIsCorrectField: answer.isCorrect !== undefined
+        });
+        
         // Add to mistakes if not correct (wrong answer or unanswered)
         if (!isCorrect) {
           mistakes.push({
@@ -991,8 +1006,13 @@ const getStudentMistakes = async (req, res) => {
             isCorrect: isCorrect
           });
         }
+      } else {
+        console.log(`Question ${index + 1}: NOT FOUND for questionId:`, answer.questionId.toString());
       }
     });
+    
+    console.log('Total Mistakes Found:', mistakes.length);
+    console.log('=== END DEBUG ===');
 
     res.json({
       success: true,
