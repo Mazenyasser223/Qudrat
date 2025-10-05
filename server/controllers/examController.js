@@ -977,7 +977,15 @@ const getStudentMistakes = async (req, res) => {
     console.log('Total Questions:', exam.questions.length);
     
     examProgress.answers.forEach((answer, index) => {
-      const question = exam.questions.find(q => q._id.toString() === answer.questionId.toString());
+      // Try to find question by ID first
+      let question = exam.questions.find(q => q._id.toString() === answer.questionId.toString());
+      
+      // If not found by ID (exam was edited), try to match by index position
+      if (!question && exam.questions[index]) {
+        console.log(`Question ${index + 1}: Matching by position (exam was edited)`);
+        question = exam.questions[index];
+      }
+      
       if (question) {
         // Handle both old and new data structures
         let isCorrect;
