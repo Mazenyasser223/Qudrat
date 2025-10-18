@@ -737,28 +737,65 @@ const getReviewExam = async (req, res) => {
 // @access  Private (Student only)
 const submitReviewExam = async (req, res) => {
   try {
+    console.log('📝 Review exam submission started');
+    console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    
     const { answers } = req.body;
+
+    // Validate answers array
+    if (!answers || !Array.isArray(answers)) {
+      console.log('❌ Validation failed: answers is not an array');
+      return res.status(400).json({
+        success: false,
+        message: 'يجب إرسال الإجابات كمصفوفة'
+      });
+    }
 
     const reviewExam = await ReviewExam.findById(req.params.reviewExamId)
       .populate('originalExamId', 'title examGroup order');
 
     if (!reviewExam) {
+      console.log('❌ Review exam not found:', req.params.reviewExamId);
       return res.status(404).json({
         success: false,
         message: 'Review exam not found'
       });
     }
 
+    console.log('✅ Review exam found:', reviewExam._id);
+    console.log('📊 Review exam questions:', reviewExam.questions.length);
+
     // Check if the review exam belongs to the current student
     if (reviewExam.studentId.toString() !== req.user.id) {
+      console.log('❌ Access denied: student mismatch');
       return res.status(403).json({
         success: false,
         message: 'Access denied. This review exam does not belong to you.'
       });
     }
 
+    // Validate answers length
+    if (answers.length !== reviewExam.questions.length) {
+      console.log(`❌ Validation failed: answers length (${answers.length}) doesn't match questions length (${reviewExam.questions.length})`);
+      return res.status(400).json({
+        success: false,
+        message: `عدد الإجابات (${answers.length}) لا يتطابق مع عدد الأسئلة (${reviewExam.questions.length})`
+      });
+    }
+
     // Get the original exam to access the questions
     const originalExam = await Exam.findById(reviewExam.originalExamId._id);
+    
+    if (!originalExam) {
+      console.log('❌ Original exam not found:', reviewExam.originalExamId._id);
+      return res.status(404).json({
+        success: false,
+        message: 'الامتحان الأصلي غير موجود'
+      });
+    }
+
+    console.log('✅ Original exam found:', originalExam._id);
+    console.log('📊 Original exam questions:', originalExam.questions.length);
 
     // Calculate score
     let correctAnswers = 0;
@@ -767,7 +804,23 @@ const submitReviewExam = async (req, res) => {
     answers.forEach((answer, index) => {
       const reviewQuestion = reviewExam.questions[index];
       const originalQuestion = originalExam.questions[reviewQuestion.originalQuestionIndex];
-      const isCorrect = answer.selectedAnswer === originalQuestion.correctAnswer;
+      
+      // Check if question still exists (exam might have been edited)
+      if (!originalQuestion) {
+        console.log(`⚠️ Question ${index + 1}: Original question not found at index ${reviewQuestion.originalQuestionIndex}`);
+        detailedAnswers.push({
+          questionId: reviewQuestion.questionId,
+          selectedAnswer: answer?.selectedAnswer || null,
+          isCorrect: false
+        });
+        return;
+      }
+
+      // Handle null/undefined answers
+      const selectedAnswer = answer?.selectedAnswer || null;
+      const isCorrect = selectedAnswer && selectedAnswer === originalQuestion.correctAnswer;
+      
+      console.log(`Question ${index + 1}: selected=${selectedAnswer}, correct=${originalQuestion.correctAnswer}, isCorrect=${isCorrect}`);
       
       if (isCorrect) {
         correctAnswers++;
@@ -775,13 +828,15 @@ const submitReviewExam = async (req, res) => {
 
       detailedAnswers.push({
         questionId: reviewQuestion.questionId,
-        selectedAnswer: answer.selectedAnswer,
+        selectedAnswer: selectedAnswer,
         isCorrect
       });
     });
 
     const score = correctAnswers;
     const percentage = (correctAnswers / reviewExam.questions.length) * 100;
+
+    console.log(`📊 Score calculated: ${score}/${reviewExam.questions.length} (${percentage.toFixed(2)}%)`);
 
     // Create new attempt
     const newAttempt = {
@@ -796,31 +851,40 @@ const submitReviewExam = async (req, res) => {
     reviewExam.totalAttempts += 1;
 
     // Update best score if this is better
-    if (percentage > reviewExam.bestPercentage) {
+    const isBestScore = percentage > reviewExam.bestPercentage;
+    if (isBestScore) {
       reviewExam.bestScore = score;
       reviewExam.bestPercentage = percentage;
+      console.log('🏆 New best score achieved!');
     }
 
     await reviewExam.save();
+    console.log('✅ Review exam saved successfully');
+
+    const responseData = {
+      score,
+      percentage,
+      correctAnswers,
+      totalQuestions: reviewExam.questions.length,
+      wrongAnswers: reviewExam.questions.length - correctAnswers,
+      attemptNumber: newAttempt.attemptNumber,
+      isBestScore
+    };
+
+    console.log('📤 Sending response:', responseData);
 
     res.json({
       success: true,
       message: 'Review exam submitted successfully',
-      data: {
-        score,
-        percentage,
-        correctAnswers,
-        totalQuestions: reviewExam.questions.length,
-        wrongAnswers: reviewExam.questions.length - correctAnswers,
-        attemptNumber: newAttempt.attemptNumber,
-        isBestScore: percentage === reviewExam.bestPercentage
-      }
+      data: responseData
     });
   } catch (error) {
-    console.error('Submit review exam error:', error);
+    console.error('❌ Submit review exam error:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({
       success: false,
-      message: 'Server error while submitting review exam'
+      message: 'Server error while submitting review exam',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
