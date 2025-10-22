@@ -151,6 +151,7 @@ const ReviewSubmissionForm = () => {
 const Home = () => {
   const [freeExams, setFreeExams] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [customGroups, setCustomGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const navigate = useNavigate();
@@ -159,6 +160,7 @@ const Home = () => {
   useEffect(() => {
     // Load critical data first
     fetchFreeExams();
+    fetchCustomGroups();
     
     // Load reviews after a short delay to improve initial page load
     const reviewsTimer = setTimeout(() => {
@@ -176,6 +178,15 @@ const Home = () => {
       console.error('Error fetching free exams:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCustomGroups = async () => {
+    try {
+      const res = await axios.get('/api/exam-groups');
+      setCustomGroups(res.data.data || []);
+    } catch (error) {
+      console.error('Error fetching custom groups:', error);
     }
   };
 
@@ -484,6 +495,36 @@ const Home = () => {
                     </div>
                     <h3 className="text-xl font-bold text-gray-700 mb-2">المجموعة {groupNum}</h3>
                     <p className="text-gray-600 text-sm mb-3">25 اختبار إلكتروني متدرج</p>
+                    <div className="text-xs text-gray-500 space-y-1">
+                      <div>✓ تصحيح تلقائي</div>
+                      <div>✓ تحليل الأخطاء</div>
+                      <div>✓ متابعة التقدم</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Custom Groups */}
+            {customGroups.map((group) => (
+              <div key={group._id} className="relative group">
+                <div className="card p-6 text-center bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-75">
+                  {/* Lock overlay */}
+                  <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
+                    <div className="bg-white/90 rounded-full p-3 shadow-lg">
+                      <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  {/* Custom Group content */}
+                  <div className="relative z-10">
+                    <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center opacity-50">
+                      <span className="text-2xl font-bold text-white">م</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-700 mb-2">{group.name}</h3>
+                    <p className="text-gray-600 text-sm mb-3">{group.examCount} اختبار إلكتروني</p>
                     <div className="text-xs text-gray-500 space-y-1">
                       <div>✓ تصحيح تلقائي</div>
                       <div>✓ تحليل الأخطاء</div>

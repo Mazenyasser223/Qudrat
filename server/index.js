@@ -25,6 +25,7 @@ const {
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const examRoutes = require('./routes/exams');
+const examGroupRoutes = require('./routes/examGroups');
 const adminRoutes = require('./routes/admin');
 const reviewRoutes = require('./routes/reviews');
 
@@ -63,6 +64,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/exams', examRoutes);
+app.use('/api/exam-groups', examGroupRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/reviews', reviewRoutes);
 

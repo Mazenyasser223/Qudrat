@@ -12,6 +12,7 @@ const CreateExam = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showMultipleUpload, setShowMultipleUpload] = useState(false);
   const [existingExams, setExistingExams] = useState([]);
+  const [examGroups, setExamGroups] = useState([]);
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, questionIndex: null });
 
   const {
@@ -53,21 +54,29 @@ const CreateExam = () => {
     name: 'questions'
   });
 
-  // Fetch existing exams to suggest next available order
+  // Fetch existing exams and groups to suggest next available order
   useEffect(() => {
-    const fetchExistingExams = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('/api/exams', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        setExistingExams(response.data.data);
+        const [examsResponse, groupsResponse] = await Promise.all([
+          axios.get('/api/exams', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          }),
+          axios.get('/api/exam-groups', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          })
+        ]);
+        setExistingExams(examsResponse.data.data);
+        setExamGroups(groupsResponse.data.data);
       } catch (error) {
-        console.error('Error fetching existing exams:', error);
+        console.error('Error fetching data:', error);
       }
     };
-    fetchExistingExams();
+    fetchData();
   }, []);
 
   // Function to get next available order for a group
@@ -340,13 +349,17 @@ const CreateExam = () => {
                   className={`input-field ${errors.examGroup ? 'border-red-500' : ''}`}
                   {...register('examGroup', {
                     required: 'المجموعة مطلوبة',
-                    min: { value: 0, message: 'المجموعة يجب أن تكون 0 أو أكثر' },
-                    max: { value: 8, message: 'المجموعة يجب أن تكون 8 أو أقل' }
+                    min: { value: 0, message: 'المجموعة يجب أن تكون 0 أو أكثر' }
                   })}
                 >
                   <option value={0}>اختبارات التأسيس</option>
                   {Array.from({ length: 8 }, (_, i) => i + 1).map(num => (
                     <option key={num} value={num}>المجموعة {num}</option>
+                  ))}
+                  {examGroups.map(group => (
+                    <option key={group._id} value={group.groupNumber}>
+                      {group.name} (مخصصة)
+                    </option>
                   ))}
                 </select>
                 {errors.examGroup && (

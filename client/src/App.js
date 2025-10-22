@@ -14,6 +14,7 @@ import TeacherDashboard from './pages/Teacher/Dashboard';
 import TeacherStudents from './pages/Teacher/Students';
 import StudentProfile from './pages/Teacher/StudentProfile';
 import TeacherExams from './pages/Teacher/Exams';
+import ExamGroups from './pages/Teacher/ExamGroups';
 import CreateExam from './pages/Teacher/CreateExam';
 import EditExam from './pages/Teacher/EditExam';
 import ViewExam from './pages/Teacher/ViewExam';
@@ -123,6 +124,16 @@ function App() {
                 <ProtectedRoute allowedRoles={['teacher', 'admin']}>
                   <Layout>
                     <ViewExam />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teacher/exam-groups"
+              element={
+                <ProtectedRoute allowedRoles={['teacher', 'admin']}>
+                  <Layout>
+                    <ExamGroups />
                   </Layout>
                 </ProtectedRoute>
               }

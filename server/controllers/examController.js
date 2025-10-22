@@ -1,4 +1,5 @@
 const Exam = require('../models/Exam');
+const ExamGroup = require('../models/ExamGroup');
 const User = require('../models/User');
 const ReviewExam = require('../models/ReviewExam');
 const { validationResult } = require('express-validator');
@@ -138,6 +139,11 @@ const createExam = async (req, res) => {
     // Invalidate cache for exams list
     invalidateCache('/api/exams');
     console.log('🗑️ Cache invalidated for exams list');
+
+    // Update exam group count asynchronously (don't block response)
+    updateExamGroupCount(examGroup).catch(error => {
+      console.error('Error updating exam group count:', error);
+    });
 
     // Update all students' exam progress asynchronously (don't block response)
     updateStudentsExamProgress().catch(error => {
@@ -339,6 +345,11 @@ const deleteExam = async (req, res) => {
     );
 
     console.log(`✅ Exam ${exam.title} deleted successfully`);
+
+    // Update exam group count asynchronously (don't block response)
+    updateExamGroupCount(exam.examGroup).catch(error => {
+      console.error('Error updating exam group count:', error);
+    });
 
     // Invalidate cache for exams list
     invalidateCache('/api/exams');
@@ -672,6 +683,31 @@ const updateStudentsExamProgress = async () => {
     }
   } catch (error) {
     console.error('Error updating students exam progress:', error);
+  }
+};
+
+// Helper function to update exam group count
+const updateExamGroupCount = async (groupNumber) => {
+  try {
+    console.log('Updating exam group count for group:', groupNumber);
+    
+    // Check if this is a custom group (groupNumber >= 9)
+    if (groupNumber >= 9) {
+      const examCount = await Exam.countDocuments({ 
+        examGroup: groupNumber, 
+        isActive: true 
+      });
+      
+      await ExamGroup.findOneAndUpdate(
+        { groupNumber: groupNumber },
+        { examCount: examCount },
+        { upsert: false } // Don't create if doesn't exist
+      );
+      
+      console.log(`Updated exam count for group ${groupNumber}: ${examCount}`);
+    }
+  } catch (error) {
+    console.error('Error updating exam group count:', error);
   }
 };
 

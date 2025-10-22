@@ -7,6 +7,7 @@ import { BookOpen, Lock, Unlock, CheckCircle, Clock, Play, RotateCcw, AlertCircl
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const [examGroups, setExamGroups] = useState([]);
+  const [customGroups, setCustomGroups] = useState([]);
   const [studentProgress, setStudentProgress] = useState([]);
   const [reviewExams, setReviewExams] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,6 +18,7 @@ const StudentDashboard = () => {
 
   useEffect(() => {
     fetchExamGroups();
+    fetchCustomGroups();
     fetchStudentProgress();
     fetchReviewExams();
     
@@ -58,6 +60,19 @@ const StudentDashboard = () => {
       toast.error('حدث خطأ أثناء تحميل المجموعات');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCustomGroups = async () => {
+    try {
+      const res = await axios.get('/api/exam-groups', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setCustomGroups(res.data.data || []);
+    } catch (error) {
+      console.error('Error fetching custom groups:', error);
     }
   };
 
@@ -123,6 +138,21 @@ const StudentDashboard = () => {
   const getExamPercentage = (exam) => {
     const progress = studentProgress.find(p => p.examId === exam._id);
     return progress ? progress.percentage : 0;
+  };
+
+  const getGroupName = (groupNumber) => {
+    if (groupNumber === '0' || groupNumber === 0) {
+      return 'اختبارات التأسيس';
+    }
+    
+    // Check if it's a custom group
+    const customGroup = customGroups.find(group => group.groupNumber === parseInt(groupNumber));
+    if (customGroup) {
+      return customGroup.name;
+    }
+    
+    // Default to standard group naming
+    return `المجموعة ${groupNumber}`;
   };
 
   // Filter and search logic
@@ -308,7 +338,7 @@ const StudentDashboard = () => {
                 <option value="all">جميع المجموعات</option>
                 <option value="0">اختبارات التأسيس</option>
                 {availableGroups().filter(g => g !== 'all' && g !== '0').map(group => (
-                  <option key={group} value={group}>المجموعة {group}</option>
+                  <option key={group} value={group}>{getGroupName(group)}</option>
                 ))}
               </select>
             </div>
@@ -371,7 +401,7 @@ const StudentDashboard = () => {
                   <h3 className={`text-lg font-semibold ${
                     groupNumber === '0' ? 'text-white' : 'text-gray-900'
                   }`}>
-                    {groupNumber === '0' ? 'اختبارات التأسيس' : `المجموعة ${groupNumber}`}
+                    {getGroupName(groupNumber)}
                   </h3>
                   <p className={`text-sm ${
                     groupNumber === '0' ? 'text-primary-100' : 'text-gray-600'
@@ -527,7 +557,7 @@ const StudentDashboard = () => {
                   <h3 className={`text-lg font-semibold ${
                     groupNumber === '0' ? 'text-white' : 'text-gray-900'
                   }`}>
-                    {groupNumber === '0' ? 'اختبارات التأسيس' : `المجموعة ${groupNumber}`}
+                    {getGroupName(groupNumber)}
                   </h3>
                   <p className={`text-sm ${
                     groupNumber === '0' ? 'text-primary-100' : 'text-gray-600'
@@ -566,7 +596,7 @@ const StudentDashboard = () => {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-900">
-                                {groupNumber === '0' ? 'اختبارات التأسيس' : `المجموعة ${groupNumber}`}
+                                {getGroupName(groupNumber)}
                     </div>
                               <div className="text-sm text-gray-500">ترتيب: {exam.order}</div>
                             </td>
@@ -688,7 +718,7 @@ const StudentDashboard = () => {
                         </div>
                         <div className="text-right">
                           <h4 className="font-bold text-gray-900 text-sm">
-                            {groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}
+                            {getGroupName(groupNum)}
                           </h4>
                           <p className="text-xs text-gray-600">
                             {completedExams.length} امتحان مكتمل

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, BookOpen, ArrowRight } from 'lucide-react';
+import { Users, BookOpen, ArrowRight, FolderPlus } from 'lucide-react';
 
 const TeacherDashboard = () => {
   const navigate = useNavigate();
@@ -23,6 +23,15 @@ const TeacherDashboard = () => {
       bgColor: 'bg-primary-50',
       iconColor: 'text-primary-600',
       href: '/teacher/exams'
+    },
+    {
+      title: 'إدارة المجموعات',
+      description: 'إنشاء وإدارة مجموعات الامتحانات المخصصة',
+      icon: FolderPlus,
+      color: 'from-purple-500 to-purple-600',
+      bgColor: 'bg-purple-50',
+      iconColor: 'text-purple-600',
+      href: '/teacher/exam-groups'
     },
   ];
 
