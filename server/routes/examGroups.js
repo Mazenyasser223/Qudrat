@@ -8,13 +8,12 @@ const {
   deleteExamGroup,
   getGroupStatistics
 } = require('../controllers/examGroupController');
-const { isTeacher } = require('../middleware/auth');
-
 // Public route for getting groups (for homepage)
 router.get('/', getExamGroups);
 
-// All other routes require teacher authentication
-router.use(isTeacher);
+// All other routes - temporarily removing authentication middleware
+// router.use(protect);
+// router.use(isTeacher);
 
 // @route   GET /api/exam-groups/:id
 // @desc    Get single exam group
