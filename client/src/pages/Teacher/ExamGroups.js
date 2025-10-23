@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { Plus, Edit, Trash2, Eye, BarChart3, Users, BookOpen, Search, Filter } from 'lucide-react';
-import ConfirmationDialog from '../../components/ConfirmationDialog';
+import { Plus, Edit, Eye, BarChart3, Users, BookOpen, Search, Filter } from 'lucide-react';
 
 const ExamGroups = () => {
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, groupId: null, groupName: '' });
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -68,35 +66,6 @@ const ExamGroups = () => {
     }
   };
 
-  const handleDeleteGroup = (groupId, groupName) => {
-    setDeleteDialog({
-      isOpen: true,
-      groupId: groupId,
-      groupName: groupName
-    });
-  };
-
-  const confirmDeleteGroup = async () => {
-    try {
-      await axios.delete(`/api/exam-groups/${deleteDialog.groupId}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      toast.success('تم حذف المجموعة بنجاح');
-      fetchGroups();
-    } catch (error) {
-      console.error('Error deleting group:', error);
-      toast.error(error.response?.data?.message || 'حدث خطأ أثناء حذف المجموعة');
-    } finally {
-      setDeleteDialog({ isOpen: false, groupId: null, groupName: '' });
-    }
-  };
-
-  const cancelDeleteGroup = () => {
-    setDeleteDialog({ isOpen: false, groupId: null, groupName: '' });
-  };
 
   const filteredGroups = groups.filter(group =>
     group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -173,10 +142,6 @@ const ExamGroups = () => {
                   <div className="text-2xl font-bold text-primary-600">{group.examCount}</div>
                   <div className="text-sm text-gray-600">امتحان</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{group.statistics?.totalAttempts || 0}</div>
-                  <div className="text-sm text-gray-600">محاولة</div>
-                </div>
               </div>
 
               <div className="flex items-center justify-between pt-4 border-t border-gray-100">
@@ -197,13 +162,6 @@ const ExamGroups = () => {
                     title="إضافة امتحان"
                   >
                     <Plus className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteGroup(group._id, group.name)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    title="حذف المجموعة"
-                  >
-                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -320,17 +278,6 @@ const ExamGroups = () => {
         </div>
       )}
 
-      {/* Delete Confirmation Dialog */}
-      <ConfirmationDialog
-        isOpen={deleteDialog.isOpen}
-        onClose={cancelDeleteGroup}
-        onConfirm={confirmDeleteGroup}
-        title="حذف المجموعة"
-        message={`هل أنت متأكد من حذف المجموعة "${deleteDialog.groupName}"؟ سيتم حذف جميع الامتحانات في هذه المجموعة.`}
-        confirmText="حذف المجموعة"
-        cancelText="إلغاء"
-        type="danger"
-      />
     </div>
   );
 };
