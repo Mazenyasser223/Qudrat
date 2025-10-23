@@ -1449,6 +1449,11 @@ const StudentProfile = () => {
                     .filter(groupNum => groupNum > 0)
                     .sort((a, b) => a - b);
                   
+                  console.log('=== TABLE RENDERING DEBUG ===');
+                  console.log('All group numbers for table:', allGroupNumbers);
+                  console.log('Grouped exams keys:', Object.keys(groupedExams));
+                  console.log('Grouped exams:', groupedExams);
+                  
                   allGroupNumbers.forEach(groupNum => {
                     if (groupedExams[groupNum] && groupedExams[groupNum].length > 0) {
                       groupedExams[groupNum].forEach((item, index) => {
