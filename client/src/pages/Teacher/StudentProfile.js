@@ -1071,16 +1071,23 @@ const StudentProfile = () => {
                   const groupedExams = {};
                   const groupCumulative = {};
                   
-                  // Initialize groups (0-8, group 0 is foundation tests)
-                  for (let i = 0; i <= 8; i++) {
-                    groupedExams[i] = [];
-                    groupCumulative[i] = { totalScore: 0, totalQuestions: 0, completedExams: 0 };
-                  }
+                  // Initialize groups dynamically based on actual exam groups
+                  const uniqueGroups = [...new Set(exams.map(exam => exam.examGroup))];
+                  uniqueGroups.forEach(groupNum => {
+                    groupedExams[groupNum] = [];
+                    groupCumulative[groupNum] = { totalScore: 0, totalQuestions: 0, completedExams: 0 };
+                  });
                   
                   // Group exams and calculate cumulative data
                   exams.forEach(exam => {
                     const groupNum = exam.examGroup;
                     const progress = studentProgress.find(p => p.examId && p.examId._id === exam._id);
+                    
+                    // Ensure the group exists before pushing
+                    if (!groupedExams[groupNum]) {
+                      groupedExams[groupNum] = [];
+                      groupCumulative[groupNum] = { totalScore: 0, totalQuestions: 0, completedExams: 0 };
+                    }
                     
                     if (progress) {
                       groupedExams[groupNum].push({ exam, progress });
