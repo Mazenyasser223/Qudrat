@@ -109,8 +109,8 @@ const updateExamGroup = async (req, res) => {
       });
     }
 
-    // Check if user is the creator or admin
-    if (group.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check if user is the creator or admin (skip if no authentication)
+    if (req.user && group.createdBy && group.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to update this group'
@@ -163,8 +163,8 @@ const deleteExamGroup = async (req, res) => {
       });
     }
 
-    // Check if user is the creator or admin
-    if (group.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check if user is the creator or admin (skip if no authentication)
+    if (req.user && group.createdBy && group.createdBy.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to delete this group'
