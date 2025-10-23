@@ -407,6 +407,14 @@ const getExamsByGroup = async (req, res) => {
 const submitExam = async (req, res) => {
   try {
     const { answers, timeSpent, submittedAt } = req.body;
+    
+    console.log('=== EXAM SUBMISSION DEBUG ===');
+    console.log('Student ID:', req.user.id);
+    console.log('Exam ID:', req.params.id);
+    console.log('Answers received:', answers);
+    console.log('Answers length:', answers?.length);
+    console.log('Time spent:', timeSpent);
+    console.log('Submitted at:', submittedAt);
 
     const exam = await Exam.findById(req.params.id);
     if (!exam) {
@@ -449,11 +457,25 @@ const submitExam = async (req, res) => {
     const wrongQuestions = [];
 
     // Process all answers in a single loop for better performance
+    console.log('=== PROCESSING ANSWERS ===');
+    console.log('Exam questions count:', exam.questions.length);
+    console.log('Answers array length:', answers.length);
+    
     for (let i = 0; i < answers.length; i++) {
       const answer = answers[i];
       const question = exam.questions[i];
       
-      if (!question) continue; // Skip if question doesn't exist
+      console.log(`Question ${i + 1}:`, {
+        questionId: question?._id,
+        correctAnswer: question?.correctAnswer,
+        selectedAnswer: answer?.selectedAnswer,
+        hasAnswer: !!answer?.selectedAnswer
+      });
+      
+      if (!question) {
+        console.log(`Skipping question ${i + 1} - question not found`);
+        continue; // Skip if question doesn't exist
+      }
       
       const isCorrect = answer.selectedAnswer === question.correctAnswer;
       
@@ -469,6 +491,11 @@ const submitExam = async (req, res) => {
         isCorrect
       });
     }
+    
+    console.log('=== PROCESSING RESULTS ===');
+    console.log('Correct answers:', correctAnswers);
+    console.log('Wrong questions:', wrongQuestions.length);
+    console.log('Detailed answers:', detailedAnswers);
 
     const score = correctAnswers;
     const percentage = (correctAnswers / exam.questions.length) * 100;
