@@ -845,7 +845,7 @@ const StudentProfile = () => {
                         <div className={`w-8 h-8 rounded-full mx-auto mb-1 flex items-center justify-center text-white text-xs font-bold ${
                           isUnlocked ? 'bg-green-500' : 'bg-red-500'
                         }`} title={groupName}>
-                          {isCustomGroup ? 'م' : groupNum}
+                          {groupNum}
                         </div>
                         <div className="text-xs text-gray-600">
                           {isUnlocked ? 'مفتوحة' : 'مقفلة'}
