@@ -8,6 +8,7 @@ import ConfirmationDialog from '../../components/ConfirmationDialog';
 const Exams = () => {
   const navigate = useNavigate();
   const [exams, setExams] = useState([]);
+  const [customGroups, setCustomGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,11 +33,13 @@ const Exams = () => {
       console.log('Backend is healthy:', response.data);
       // If backend is healthy, fetch data
       fetchExams();
+      fetchCustomGroups();
       fetchFreeExams();
     } catch (error) {
       console.error('Backend health check failed:', error);
       // Try to fetch anyway, but with better error handling
       fetchExams();
+      fetchCustomGroups();
       fetchFreeExams();
     }
   };
@@ -112,6 +115,42 @@ const Exams = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchCustomGroups = async () => {
+    try {
+      console.log('=== FETCHING CUSTOM GROUPS ===');
+      const response = await axios.get('/api/exam-groups', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      console.log('Custom groups response:', response.data);
+      if (response.data && response.data.data) {
+        setCustomGroups(response.data.data);
+        console.log('Custom groups set successfully:', response.data.data.length, 'groups');
+      }
+    } catch (error) {
+      console.error('Error fetching custom groups:', error);
+      // Don't show error toast for custom groups as it's not critical
+      setCustomGroups([]);
+    }
+  };
+
+  const getGroupName = (groupNumber) => {
+    if (groupNumber === 0) {
+      return 'اختبارات التأسيس';
+    }
+    
+    // Check if it's a custom group
+    const customGroup = customGroups.find(group => group.groupNumber === parseInt(groupNumber));
+    if (customGroup) {
+      return customGroup.name;
+    }
+    
+    // Default to standard group name
+    return `المجموعة ${groupNumber}`;
   };
 
   const fetchFreeExams = async () => {
@@ -471,7 +510,7 @@ const Exams = () => {
                   <h3 className={`text-lg font-semibold ${
                     groupNumber === '0' ? 'text-white' : 'text-gray-900'
                   }`}>
-                    {groupNumber === '0' ? 'اختبارات التأسيس' : `المجموعة ${groupNumber}`}
+                    {getGroupName(groupNumber)}
                   </h3>
                   <p className={`text-sm ${
                     groupNumber === '0' ? 'text-primary-100' : 'text-gray-600'
