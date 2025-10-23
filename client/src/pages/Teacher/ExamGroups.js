@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { Plus, Edit, Eye, BarChart3, Users, BookOpen, Search, Filter } from 'lucide-react';
+import { Plus, Edit, Eye, BarChart3, Users, BookOpen, Search, Filter, Trash2, Save, X } from 'lucide-react';
+import ConfirmationDialog from '../../components/ConfirmationDialog';
 
 const ExamGroups = () => {
   const navigate = useNavigate();
@@ -14,6 +15,9 @@ const ExamGroups = () => {
   const [formData, setFormData] = useState({
     name: ''
   });
+  const [editingGroup, setEditingGroup] = useState(null);
+  const [editName, setEditName] = useState('');
+  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, groupId: null, groupName: '' });
 
   useEffect(() => {
     fetchGroups();
@@ -65,9 +69,72 @@ const ExamGroups = () => {
   };
 
 
+  const handleEditGroup = (group) => {
+    setEditingGroup(group._id);
+    setEditName(group.name);
+  };
+
+  const handleSaveEdit = async (groupId) => {
+    if (!editName.trim()) {
+      toast.error('اسم المجموعة مطلوب');
+      return;
+    }
+
+    try {
+      await axios.put(`/api/exam-groups/${groupId}`, { name: editName }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      toast.success('تم تحديث اسم المجموعة بنجاح');
+      setEditingGroup(null);
+      setEditName('');
+      fetchGroups();
+    } catch (error) {
+      console.error('Error updating group:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء تحديث المجموعة');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingGroup(null);
+    setEditName('');
+  };
+
+  const handleDeleteGroup = (groupId, groupName) => {
+    setDeleteDialog({
+      isOpen: true,
+      groupId,
+      groupName
+    });
+  };
+
+  const confirmDeleteGroup = async () => {
+    if (!deleteDialog.groupId) return;
+
+    try {
+      await axios.delete(`/api/exam-groups/${deleteDialog.groupId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      toast.success('تم حذف المجموعة بنجاح');
+      setDeleteDialog({ isOpen: false, groupId: null, groupName: '' });
+      fetchGroups();
+    } catch (error) {
+      console.error('Error deleting group:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء حذف المجموعة');
+    }
+  };
+
+  const cancelDeleteGroup = () => {
+    setDeleteDialog({ isOpen: false, groupId: null, groupName: '' });
+  };
+
   const filteredGroups = groups.filter(group =>
-    group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    group.description.toLowerCase().includes(searchTerm.toLowerCase())
+    group.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -123,8 +190,43 @@ const ExamGroups = () => {
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{group.name}</h3>
-                  <p className="text-gray-600 text-sm mb-3">{group.description}</p>
+                  {editingGroup === group._id ? (
+                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                      <input
+                        type="text"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-lg font-bold"
+                        placeholder="اسم المجموعة"
+                        autoFocus
+                      />
+                      <button
+                        onClick={() => handleSaveEdit(group._id)}
+                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                        title="حفظ التعديل"
+                      >
+                        <Save className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                        title="إلغاء التعديل"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">{group.name}</h3>
+                      <button
+                        onClick={() => handleEditGroup(group)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="تعديل اسم المجموعة"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
                   {group.isPremium && (
@@ -161,6 +263,15 @@ const ExamGroups = () => {
                   >
                     <Plus className="h-4 w-4" />
                   </button>
+                  {group.examCount === 0 && (
+                    <button
+                      onClick={() => handleDeleteGroup(group._id, group.name)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="حذف المجموعة (فقط إذا كانت فارغة)"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -252,6 +363,17 @@ const ExamGroups = () => {
         </div>
       )}
 
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={cancelDeleteGroup}
+        onConfirm={confirmDeleteGroup}
+        title="حذف المجموعة"
+        message={`هل أنت متأكد من حذف المجموعة "${deleteDialog.groupName}"؟ سيتم حذف المجموعة نهائياً.`}
+        confirmText="حذف المجموعة"
+        cancelText="إلغاء"
+        type="danger"
+      />
     </div>
   );
 };
