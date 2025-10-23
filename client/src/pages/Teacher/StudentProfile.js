@@ -1407,8 +1407,13 @@ const StudentProfile = () => {
                     });
                   }
                   
-                  // Render groups 1-8
-                  for (let groupNum = 1; groupNum <= 8; groupNum++) {
+                  // Render all groups (1+ and custom groups)
+                  const allGroupNumbers = Object.keys(groupedExams)
+                    .map(Number)
+                    .filter(groupNum => groupNum > 0)
+                    .sort((a, b) => a - b);
+                  
+                  allGroupNumbers.forEach(groupNum => {
                     if (groupedExams[groupNum] && groupedExams[groupNum].length > 0) {
                       groupedExams[groupNum].forEach((item, index) => {
                         const { exam, progress } = item;
@@ -1656,7 +1661,7 @@ const StudentProfile = () => {
                         );
                       });
                     }
-                  }
+                  });
                   
                   return rows.length > 0 ? rows : (
                     <tr>
