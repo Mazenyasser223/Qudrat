@@ -54,6 +54,11 @@ const StudentDashboard = () => {
         groupedExams[group].sort((a, b) => a.order - b.order);
       });
 
+      console.log('=== EXAM GROUPS DEBUG ===');
+      console.log('All exams:', exams);
+      console.log('Grouped exams:', groupedExams);
+      console.log('Group numbers:', Object.keys(groupedExams));
+      
       setExamGroups(groupedExams);
     } catch (error) {
       console.error('Error fetching exam groups:', error);
