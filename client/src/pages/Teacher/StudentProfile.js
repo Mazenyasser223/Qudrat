@@ -29,6 +29,7 @@ const StudentProfile = () => {
   const navigate = useNavigate();
   const [student, setStudent] = useState(null);
   const [exams, setExams] = useState([]);
+  const [customGroups, setCustomGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showLockUnlockModal, setShowLockUnlockModal] = useState(false);
   const [selectedExams, setSelectedExams] = useState([]);
@@ -87,7 +88,8 @@ const StudentProfile = () => {
         console.log('Starting to load data for student:', studentId);
         await Promise.all([
           fetchStudentData(),
-          fetchExams()
+          fetchExams(),
+          fetchCustomGroups()
         ]);
         console.log('Data loading completed successfully');
         setLoading(false);
@@ -293,6 +295,42 @@ const StudentProfile = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchCustomGroups = async () => {
+    try {
+      console.log('=== FETCHING CUSTOM GROUPS ===');
+      const response = await axios.get('/api/exam-groups', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      console.log('Custom groups response:', response.data);
+      if (response.data && response.data.data) {
+        setCustomGroups(response.data.data);
+        console.log('Custom groups set successfully:', response.data.data.length, 'groups');
+      }
+    } catch (error) {
+      console.error('Error fetching custom groups:', error);
+      // Don't show error toast for custom groups as it's not critical
+      setCustomGroups([]);
+    }
+  };
+
+  const getGroupName = (groupNumber) => {
+    if (groupNumber === 0) {
+      return 'اختبارات التأسيس';
+    }
+    
+    // Check if it's a custom group
+    const customGroup = customGroups.find(group => group.groupNumber === parseInt(groupNumber));
+    if (customGroup) {
+      return customGroup.name;
+    }
+    
+    // Default to standard group name
+    return `المجموعة ${groupNumber}`;
   };
 
   const fetchStudentProgress = () => {
@@ -846,7 +884,7 @@ const StudentProfile = () => {
                         </div>
                         <div>
                           <h5 className="font-bold text-gray-900 text-sm">
-                            {groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}
+                            {getGroupName(groupNum)}
                           </h5>
                           <p className="text-xs text-gray-500">
                             {completedExams}/{groupExams.length} مكتمل
@@ -1389,7 +1427,7 @@ const StudentProfile = () => {
                               {isFirstInGroup && (
                                 <div className="space-y-2">
                                   <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                                    <span className="font-semibold">المجموعة {groupNum}</span>
+                                    <span className="font-semibold">{getGroupName(groupNum)}</span>
                                     {cumulativeData.completedExams > 0 && (
                                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                         {cumulativeData.cumulativePercentage.toFixed(2)}%
