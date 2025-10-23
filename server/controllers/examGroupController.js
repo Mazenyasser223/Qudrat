@@ -67,7 +67,7 @@ const createExamGroup = async (req, res) => {
       description,
       groupNumber: nextGroupNumber,
       isPremium,
-      createdBy: req.user?.id || 'system'
+      ...(req.user?.id && { createdBy: req.user.id })
     };
 
     const group = await ExamGroup.create(groupData);
