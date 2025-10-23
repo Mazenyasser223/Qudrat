@@ -1041,8 +1041,8 @@ const StudentProfile = () => {
                     </div>
                   </div>
                 );
-                })();
-              })}
+                });
+              })()}}
         </div>
       </div>
 
