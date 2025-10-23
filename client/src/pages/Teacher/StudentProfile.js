@@ -882,8 +882,15 @@ const StudentProfile = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {Array.from({ length: 9 }, (_, i) => i).map(groupNum => {
-                const groupExams = exams.filter(exam => exam.examGroup === groupNum);
+              {(() => {
+                // Get all unique group numbers from exams
+                const allGroupNumbers = [...new Set(exams.map(exam => exam.examGroup))].sort((a, b) => a - b);
+                console.log('=== EXAM CARDS DEBUG ===');
+                console.log('All group numbers:', allGroupNumbers);
+                console.log('Exams:', exams);
+                
+                return allGroupNumbers.map(groupNum => {
+                  const groupExams = exams.filter(exam => exam.examGroup === groupNum);
                 
                 if (groupExams.length === 0) return null;
                 
@@ -1034,6 +1041,7 @@ const StudentProfile = () => {
                     </div>
                   </div>
                 );
+                })();
               })}
         </div>
       </div>
