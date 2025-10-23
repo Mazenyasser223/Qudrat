@@ -1153,9 +1153,15 @@ const StudentProfile = () => {
                   });
                   
                   // Group exams and calculate cumulative data
+                  console.log('=== PROCESSING EXAMS FOR TABLE ===');
+                  console.log('Exams to process:', exams.length);
+                  console.log('Student progress:', studentProgress.length);
+                  
                   exams.forEach(exam => {
                     const groupNum = exam.examGroup;
                     const progress = studentProgress.find(p => p.examId && p.examId._id === exam._id);
+                    
+                    console.log(`Processing exam ${exam._id} in group ${groupNum}, progress:`, !!progress);
                     
                     // Ensure the group exists before pushing
                     if (!groupedExams[groupNum]) {
@@ -1448,6 +1454,11 @@ const StudentProfile = () => {
                     .map(Number)
                     .filter(groupNum => groupNum > 0)
                     .sort((a, b) => a - b);
+                  
+                  console.log('=== TABLE RENDERING DEBUG ===');
+                  console.log('All group numbers for table:', allGroupNumbers);
+                  console.log('Grouped exams keys:', Object.keys(groupedExams));
+                  console.log('Grouped exams:', groupedExams);
                   
                   console.log('=== TABLE RENDERING DEBUG ===');
                   console.log('All group numbers for table:', allGroupNumbers);
