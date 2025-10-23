@@ -716,7 +716,7 @@ const updateStudentsExamProgress = async () => {
 // Helper function to update exam group count
 const updateExamGroupCount = async (groupNumber) => {
   try {
-    console.log('Updating exam group count for group:', groupNumber);
+    console.log('🔄 Updating exam group count for group:', groupNumber);
     
     // Check if this is a custom group (groupNumber >= 9)
     if (groupNumber >= 9) {
@@ -725,16 +725,24 @@ const updateExamGroupCount = async (groupNumber) => {
         isActive: true 
       });
       
-      await ExamGroup.findOneAndUpdate(
+      console.log(`📊 Found ${examCount} active exams in group ${groupNumber}`);
+      
+      const result = await ExamGroup.findOneAndUpdate(
         { groupNumber: groupNumber },
         { examCount: examCount },
         { upsert: false } // Don't create if doesn't exist
       );
       
-      console.log(`Updated exam count for group ${groupNumber}: ${examCount}`);
+      if (result) {
+        console.log(`✅ Updated exam count for group ${groupNumber}: ${examCount}`);
+      } else {
+        console.log(`⚠️ Group ${groupNumber} not found in ExamGroup collection`);
+      }
+    } else {
+      console.log(`ℹ️ Group ${groupNumber} is not a custom group, skipping count update`);
     }
   } catch (error) {
-    console.error('Error updating exam group count:', error);
+    console.error('❌ Error updating exam group count:', error);
   }
 };
 

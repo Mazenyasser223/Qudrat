@@ -171,8 +171,11 @@ const deleteExamGroup = async (req, res) => {
       });
     }
 
-    // Check if group has exams
-    const examCount = await Exam.countDocuments({ examGroup: group.groupNumber });
+    // Check if group has active exams
+    const examCount = await Exam.countDocuments({ 
+      examGroup: group.groupNumber, 
+      isActive: true 
+    });
     if (examCount > 0) {
       return res.status(400).json({
         success: false,
