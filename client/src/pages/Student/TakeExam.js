@@ -99,7 +99,8 @@ const TakeExam = () => {
         
         // Map shuffled answers back to original question order
         const answersArray = exam.questions.map((_, originalIndex) => {
-          const shuffledIndex = questionOrder[originalIndex];
+          // Find which shuffled position corresponds to this original question
+          const shuffledIndex = questionOrder.findIndex(orderIndex => orderIndex === originalIndex);
           return {
             selectedAnswer: answers[shuffledIndex] || null
           };
@@ -175,7 +176,8 @@ const TakeExam = () => {
         exam={exam}
         results={results}
         answers={exam.questions.map((question, originalIndex) => {
-          const shuffledIndex = questionOrder[originalIndex];
+          // Find which shuffled position corresponds to this original question
+          const shuffledIndex = questionOrder.findIndex(orderIndex => orderIndex === originalIndex);
           const selectedAnswer = answers[shuffledIndex];
           return {
             selectedAnswer: selectedAnswer,
