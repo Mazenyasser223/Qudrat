@@ -12,9 +12,7 @@ const ExamGroups = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    isPremium: true
+    name: ''
   });
 
   useEffect(() => {
@@ -56,7 +54,7 @@ const ExamGroups = () => {
 
       toast.success('تم إنشاء المجموعة بنجاح');
       setShowCreateForm(false);
-      setFormData({ name: '', description: '', isPremium: true });
+      setFormData({ name: '' });
       fetchGroups();
     } catch (error) {
       console.error('Error creating group:', error);
@@ -221,30 +219,6 @@ const ExamGroups = () => {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    وصف المجموعة
-                  </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    rows="3"
-                    placeholder="وصف مختصر للمجموعة..."
-                  />
-                </div>
-
-                <div>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={formData.isPremium}
-                      onChange={(e) => setFormData({ ...formData, isPremium: e.target.checked })}
-                      className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                    />
-                    <span className="mr-2 text-sm text-gray-700">مجموعة مميزة (تتطلب اشتراك)</span>
-                  </label>
-                </div>
               </div>
 
               <div className="flex justify-end space-x-3 rtl:space-x-reverse mt-6 pt-4 border-t border-gray-200">
