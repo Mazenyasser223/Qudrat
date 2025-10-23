@@ -108,6 +108,13 @@ const StudentProfile = () => {
     fetchStudentProgress();
   }, [student]);
 
+  // Update group status when exams or student progress changes
+  useEffect(() => {
+    if (student && student.examProgress) {
+      calculateGroupStatus(student.examProgress);
+    }
+  }, [exams, student]);
+
   // Update attempted exams when student progress changes
   useEffect(() => {
     if (student && student.examProgress) {
@@ -355,9 +362,18 @@ const StudentProfile = () => {
     
     const status = {};
     
-    // Initialize groups 0-8 as locked
+    // Initialize all groups (0-8 + custom groups) as locked
+    // First, initialize standard groups 0-8
     for (let i = 0; i <= 8; i++) {
       status[i] = 'locked';
+    }
+    
+    // Then, initialize custom groups from exams data
+    if (exams && Array.isArray(exams)) {
+      const customGroups = [...new Set(exams.map(exam => exam.examGroup).filter(group => group > 8))];
+      customGroups.forEach(groupNum => {
+        status[groupNum] = 'locked';
+      });
     }
     
     if (!progress || !Array.isArray(progress)) {
@@ -371,8 +387,8 @@ const StudentProfile = () => {
       try {
         const groupNum = progressItem.examId ? progressItem.examId.examGroup : progressItem.examGroup;
         if (groupNum !== undefined && groupNum !== null) {
-      if (progressItem.status === 'unlocked' || progressItem.status === 'in_progress' || progressItem.status === 'completed') {
-        status[groupNum] = 'unlocked';
+          if (progressItem.status === 'unlocked' || progressItem.status === 'in_progress' || progressItem.status === 'completed') {
+            status[groupNum] = 'unlocked';
           }
         }
       } catch (error) {
@@ -814,22 +830,29 @@ const StudentProfile = () => {
                     {groupStatus[0] === 'unlocked' ? 'مفتوحة' : 'مقفلة'}
                   </div>
                 </div>
-                {/* Groups 1-8 */}
-                {Array.from({ length: 8 }, (_, i) => i + 1).map((groupNum) => {
-                  const isUnlocked = groupStatus[groupNum] === 'unlocked';
-                  return (
-                    <div key={groupNum} className="text-center">
-                      <div className={`w-8 h-8 rounded-full mx-auto mb-1 flex items-center justify-center text-white text-xs font-bold ${
-                        isUnlocked ? 'bg-green-500' : 'bg-red-500'
-                      }`}>
-                        {groupNum}
+                {/* All other groups (1-8 + custom groups) */}
+                {Object.keys(groupStatus)
+                  .map(Number)
+                  .filter(groupNum => groupNum > 0)
+                  .sort((a, b) => a - b)
+                  .map((groupNum) => {
+                    const isUnlocked = groupStatus[groupNum] === 'unlocked';
+                    const isCustomGroup = groupNum > 8;
+                    const groupName = isCustomGroup ? getGroupName(groupNum) : `المجموعة ${groupNum}`;
+                    
+                    return (
+                      <div key={groupNum} className="text-center">
+                        <div className={`w-8 h-8 rounded-full mx-auto mb-1 flex items-center justify-center text-white text-xs font-bold ${
+                          isUnlocked ? 'bg-green-500' : 'bg-red-500'
+                        }`} title={groupName}>
+                          {isCustomGroup ? 'م' : groupNum}
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          {isUnlocked ? 'مفتوحة' : 'مقفلة'}
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-600">
-                        {isUnlocked ? 'مفتوحة' : 'مقفلة'}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
             </div>
 
