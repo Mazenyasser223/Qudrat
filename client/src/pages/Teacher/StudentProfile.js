@@ -1449,10 +1449,9 @@ const StudentProfile = () => {
                     });
                   }
                   
-                  // Render all groups (1+ and custom groups)
+                  // Render ALL groups dynamically (including group 0 and all custom groups)
                   const allGroupNumbers = Object.keys(groupedExams)
                     .map(Number)
-                    .filter(groupNum => groupNum > 0)
                     .sort((a, b) => a - b);
                   
                   console.log('=== TABLE RENDERING DEBUG ===');
