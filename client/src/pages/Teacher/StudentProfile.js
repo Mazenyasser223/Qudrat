@@ -1134,6 +1134,11 @@ const StudentProfile = () => {
                   
                   // Initialize groups dynamically based on actual exam groups
                   const uniqueGroups = [...new Set(exams.map(exam => exam.examGroup))];
+                  console.log('=== GROUPED EXAMS DEBUG ===');
+                  console.log('All exams:', exams);
+                  console.log('Unique groups:', uniqueGroups);
+                  console.log('Custom groups from state:', customGroups);
+                  
                   uniqueGroups.forEach(groupNum => {
                     groupedExams[groupNum] = [];
                     groupCumulative[groupNum] = { totalScore: 0, totalQuestions: 0, completedExams: 0 };
