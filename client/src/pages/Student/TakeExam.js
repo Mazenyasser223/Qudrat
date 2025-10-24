@@ -82,10 +82,19 @@ const TakeExam = () => {
   };
 
   const handleAnswerSelect = (answer) => {
-    setAnswers(prev => ({
-      ...prev,
-      [currentQuestion]: answer
-    }));
+    console.log(`=== ANSWER SELECTION DEBUG ===`);
+    console.log(`Current question: ${currentQuestion}`);
+    console.log(`Selected answer: ${answer}`);
+    console.log(`Previous answers:`, answers);
+    
+    setAnswers(prev => {
+      const newAnswers = {
+        ...prev,
+        [currentQuestion]: answer
+      };
+      console.log(`New answers state:`, newAnswers);
+      return newAnswers;
+    });
   };
 
   const handlePrevious = () => {
