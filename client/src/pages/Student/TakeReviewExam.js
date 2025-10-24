@@ -97,8 +97,8 @@ const TakeReviewExam = () => {
         
         // Map shuffled answers back to original question order
         const answersArray = reviewExam.questions.map((_, originalIndex) => {
-          // Find which shuffled position corresponds to this original question
-          const shuffledIndex = questionOrder.findIndex(orderIndex => orderIndex === originalIndex);
+          // Get the shuffled index for this original question
+          const shuffledIndex = questionOrder[originalIndex];
           return {
             selectedAnswer: answers[shuffledIndex] || null
           };
