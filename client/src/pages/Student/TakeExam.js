@@ -53,10 +53,18 @@ const TakeExam = () => {
       setShuffledQuestions(shuffled);
       
       // Create question order mapping (original index -> shuffled index)
-      const order = examData.questions.map((_, originalIndex) => {
-        return shuffled.findIndex(q => q === examData.questions[originalIndex]);
+      // Use question._id for reliable comparison instead of object reference
+      const order = examData.questions.map((originalQuestion, originalIndex) => {
+        return shuffled.findIndex(shuffledQuestion => 
+          shuffledQuestion._id === originalQuestion._id
+        );
       });
       setQuestionOrder(order);
+      
+      console.log('=== QUESTION ORDER DEBUG ===');
+      console.log('Original questions:', examData.questions.map(q => q._id));
+      console.log('Shuffled questions:', shuffled.map(q => q._id));
+      console.log('Question order mapping:', order);
       
       // Initialize answers object
       const initialAnswers = {};
@@ -98,13 +106,27 @@ const TakeExam = () => {
         setSubmitting(true);
         
         // Map shuffled answers back to original question order
-        const answersArray = exam.questions.map((_, originalIndex) => {
+        const answersArray = exam.questions.map((question, originalIndex) => {
           // Get the shuffled index for this original question
           const shuffledIndex = questionOrder[originalIndex];
+          const selectedAnswer = answers[shuffledIndex] || null;
+          
+          console.log(`Mapping answer for question ${originalIndex + 1}:`, {
+            originalIndex,
+            shuffledIndex,
+            selectedAnswer,
+            questionId: question._id
+          });
+          
           return {
-            selectedAnswer: answers[shuffledIndex] || null
+            selectedAnswer: selectedAnswer
           };
         });
+        
+        console.log('=== SUBMISSION DEBUG ===');
+        console.log('Question order:', questionOrder);
+        console.log('Answers object:', answers);
+        console.log('Final answers array:', answersArray);
 
         const res = await axios.post(`/api/exams/${examId}/submit`, {
           answers: answersArray,

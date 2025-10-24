@@ -51,8 +51,11 @@ const TakeReviewExam = () => {
       setShuffledQuestions(shuffled);
       
       // Create question order mapping (original index -> shuffled index)
-      const order = reviewExamData.questions.map((_, originalIndex) => {
-        return shuffled.findIndex(q => q === reviewExamData.questions[originalIndex]);
+      // Use question._id for reliable comparison instead of object reference
+      const order = reviewExamData.questions.map((originalQuestion, originalIndex) => {
+        return shuffled.findIndex(shuffledQuestion => 
+          shuffledQuestion._id === originalQuestion._id
+        );
       });
       setQuestionOrder(order);
       
