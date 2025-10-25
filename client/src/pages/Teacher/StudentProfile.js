@@ -1200,8 +1200,9 @@ const StudentProfile = () => {
                   // Render table rows
                   const rows = [];
                   
-                  // Render group 0 first (اختبارات التأسيس)
-                  if (groupedExams[0] && groupedExams[0].length > 0) {
+                  // Render group 0 first (اختبارات التأسيس) - COMMENTED OUT TO PREVENT DUPLICATION
+                  // Group 0 will be handled by the dynamic rendering below
+                  if (false && groupedExams[0] && groupedExams[0].length > 0) {
                     groupedExams[0].forEach((item, index) => {
                       const { exam, progress } = item;
                       const isFirstInGroup = index === 0;
