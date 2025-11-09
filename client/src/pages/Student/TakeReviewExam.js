@@ -20,6 +20,7 @@ const TakeReviewExam = () => {
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState(null);
   const [timeUp, setTimeUp] = useState(false);
+  const [timeSpent, setTimeSpent] = useState(0);
 
   useEffect(() => {
     fetchReviewExam();
@@ -93,44 +94,55 @@ const TakeReviewExam = () => {
     }
   };
 
-  const handleSubmit = async () => {
-    if (window.confirm('هل أنت متأكد من تسليم امتحان المراجعة؟')) {
-      try {
-        setSubmitting(true);
-        
-        // Map shuffled answers back to original question order
-        const answersArray = reviewExam.questions.map((_, originalIndex) => {
-          // Get the shuffled index for this original question
-          const shuffledIndex = questionOrder[originalIndex];
-          return {
-            selectedAnswer: answers[shuffledIndex] || null
-          };
-        });
+  const handleSubmit = async ({ skipConfirm = false } = {}) => {
+    if (submitting || showResults) {
+      return;
+    }
 
-        const res = await axios.post(`/api/exams/review/${reviewExamId}/submit`, {
-          answers: answersArray
-        }, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-
-        setResults(res.data.data);
-        setShowResults(true);
-        toast.success('تم تسليم امتحان المراجعة بنجاح');
-      } catch (error) {
-        console.error('Error submitting review exam:', error);
-        toast.error(error.response?.data?.message || 'حدث خطأ أثناء تسليم امتحان المراجعة');
-      } finally {
-        setSubmitting(false);
+    if (!skipConfirm) {
+      const confirmSubmit = window.confirm('هل أنت متأكد من تسليم امتحان المراجعة؟');
+      if (!confirmSubmit) {
+        return;
       }
+    }
+
+    try {
+      setSubmitting(true);
+      
+      // Map shuffled answers back to original question order
+      const answersArray = reviewExam.questions.map((_, originalIndex) => {
+        // Get the shuffled index for this original question
+        const shuffledIndex = questionOrder[originalIndex];
+        return {
+          selectedAnswer: answers[shuffledIndex] || null
+        };
+      });
+
+      const res = await axios.post(`/api/exams/review/${reviewExamId}/submit`, {
+        answers: answersArray,
+        timeSpent: timeSpent,
+        submittedAt: new Date().toISOString()
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      setResults(res.data.data);
+      setShowResults(true);
+      toast.success(skipConfirm ? 'تم تسليم امتحان المراجعة تلقائيًا لانتهاء الوقت' : 'تم تسليم امتحان المراجعة بنجاح');
+    } catch (error) {
+      console.error('Error submitting review exam:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء تسليم امتحان المراجعة');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleTimeUp = () => {
     setTimeUp(true);
-    toast.error('انتهى الوقت المحدد لامتحان المراجعة');
-    handleSubmit();
+    toast.error('انتهى الوقت المحدد لامتحان المراجعة، سيتم تسليم إجاباتك تلقائيًا');
+    handleSubmit({ skipConfirm: true });
   };
 
   const handleTimeWarning = () => {
@@ -317,6 +329,7 @@ const TakeReviewExam = () => {
                   timeLimit={reviewExam.questions.length}
                   onTimeUp={handleTimeUp}
                   onWarning={handleTimeWarning}
+                  onTimeUpdate={setTimeSpent}
                 />
               </div>
             </div>

@@ -109,60 +109,69 @@ const TakeExam = () => {
     }
   };
 
-  const handleSubmit = async () => {
-    if (window.confirm('هل أنت متأكد من تسليم الامتحان؟')) {
-      try {
-        setSubmitting(true);
-        
-        // Map shuffled answers back to original question order
-        const answersArray = exam.questions.map((question, originalIndex) => {
-          // Get the shuffled index for this original question
-          const shuffledIndex = questionOrder[originalIndex];
-          const selectedAnswer = answers[shuffledIndex] || null;
-          
-          console.log(`Mapping answer for question ${originalIndex + 1}:`, {
-            originalIndex,
-            shuffledIndex,
-            selectedAnswer,
-            questionId: question._id
-          });
-          
-          return {
-            selectedAnswer: selectedAnswer
-          };
-        });
-        
-        console.log('=== SUBMISSION DEBUG ===');
-        console.log('Question order:', questionOrder);
-        console.log('Answers object:', answers);
-        console.log('Final answers array:', answersArray);
+  const handleSubmit = async ({ skipConfirm = false } = {}) => {
+    if (submitting || showResults) {
+      return;
+    }
 
-        const res = await axios.post(`/api/exams/${examId}/submit`, {
-          answers: answersArray,
-          timeSpent: timeSpent,
-          submittedAt: new Date().toISOString()
-        }, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-
-        setResults(res.data.data);
-        setShowResults(true);
-        toast.success('تم تسليم الامتحان بنجاح');
-      } catch (error) {
-        console.error('Error submitting exam:', error);
-        toast.error(error.response?.data?.message || 'حدث خطأ أثناء تسليم الامتحان');
-      } finally {
-        setSubmitting(false);
+    if (!skipConfirm) {
+      const confirmSubmit = window.confirm('هل أنت متأكد من تسليم الامتحان؟');
+      if (!confirmSubmit) {
+        return;
       }
+    }
+
+    try {
+      setSubmitting(true);
+      
+      // Map shuffled answers back to original question order
+      const answersArray = exam.questions.map((question, originalIndex) => {
+        // Get the shuffled index for this original question
+        const shuffledIndex = questionOrder[originalIndex];
+        const selectedAnswer = answers[shuffledIndex] || null;
+        
+        console.log(`Mapping answer for question ${originalIndex + 1}:`, {
+          originalIndex,
+          shuffledIndex,
+          selectedAnswer,
+          questionId: question._id
+        });
+        
+        return {
+          selectedAnswer: selectedAnswer
+        };
+      });
+      
+      console.log('=== SUBMISSION DEBUG ===');
+      console.log('Question order:', questionOrder);
+      console.log('Answers object:', answers);
+      console.log('Final answers array:', answersArray);
+
+      const res = await axios.post(`/api/exams/${examId}/submit`, {
+        answers: answersArray,
+        timeSpent: timeSpent,
+        submittedAt: new Date().toISOString()
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      setResults(res.data.data);
+      setShowResults(true);
+      toast.success(skipConfirm ? 'تم تسليم الامتحان تلقائيًا لانتهاء الوقت' : 'تم تسليم الامتحان بنجاح');
+    } catch (error) {
+      console.error('Error submitting exam:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء تسليم الامتحان');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleTimeUp = () => {
     setTimeUp(true);
-    toast.error('انتهى الوقت المحدد للامتحان');
-    handleSubmit();
+    toast.error('انتهى الوقت المحدد للامتحان، سيتم تسليم إجاباتك تلقائيًا');
+    handleSubmit({ skipConfirm: true });
   };
 
   const handleTimeWarning = () => {
