@@ -108,6 +108,22 @@ const StudentProfile = () => {
     fetchStudentProgress();
   }, [student]);
 
+  const normalizeExamId = (progressExamId) => {
+    if (!progressExamId) return null;
+    if (typeof progressExamId === 'string') return progressExamId;
+    if (progressExamId._id) return progressExamId._id;
+    if (typeof progressExamId === 'object' && progressExamId.toString) {
+      return progressExamId.toString();
+    }
+    return null;
+  };
+
+  const findProgressByExamId = (examId, progressList = []) => {
+    if (!examId) return null;
+    const examIdStr = examId.toString();
+    return progressList.find(progress => normalizeExamId(progress.examId) === examIdStr) || null;
+  };
+
   // Update group status when exams or student progress changes
   useEffect(() => {
     if (student && student.examProgress) {
@@ -121,7 +137,8 @@ const StudentProfile = () => {
       const attempted = student.examProgress
         .filter(progress => progress.status === 'completed' || progress.status === 'in_progress')
         .map(progress => {
-          const exam = exams.find(e => e._id === progress.examId);
+          const progressExamId = normalizeExamId(progress.examId);
+          const exam = exams.find(e => e._id === progressExamId);
           return exam;
         })
         .filter(exam => exam); // Remove undefined exams
@@ -896,7 +913,7 @@ const StudentProfile = () => {
                 
                 // Calculate group statistics
                 const groupProgress = groupExams.map(exam => 
-                  student?.examProgress?.find(p => p.examId === exam._id)
+                  findProgressByExamId(exam._id, student?.examProgress || [])
                 ).filter(Boolean);
                 
                 const completedExams = groupProgress.filter(p => p.status === 'completed').length;
@@ -935,7 +952,7 @@ const StudentProfile = () => {
                     {/* Exams List */}
               <div className="space-y-2">
                       {(expandedGroups[groupNum] ? groupExams : groupExams.slice(0, 3)).map(exam => {
-                        const progress = student?.examProgress?.find(p => p.examId === exam._id);
+                        const progress = findProgressByExamId(exam._id, student?.examProgress || []);
                         const hasTimeData = progress && (progress.timeSpent || progress.submittedAt);
                         
                         return (
@@ -1159,7 +1176,7 @@ const StudentProfile = () => {
                   
                   exams.forEach(exam => {
                     const groupNum = exam.examGroup;
-                    const progress = studentProgress.find(p => p.examId && p.examId._id === exam._id);
+                    const progress = findProgressByExamId(exam._id, studentProgress);
                     
                     console.log(`Processing exam ${exam._id} in group ${groupNum}, progress:`, !!progress);
                     
