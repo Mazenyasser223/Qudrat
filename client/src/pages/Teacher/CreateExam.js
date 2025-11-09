@@ -12,7 +12,7 @@ const CreateExam = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showMultipleUpload, setShowMultipleUpload] = useState(false);
   const [existingExams, setExistingExams] = useState([]);
-  const [examGroups, setExamGroups] = useState([]);
+  const [customGroups, setCustomGroups] = useState([]);
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, questionIndex: null });
 
   const {
@@ -71,7 +71,10 @@ const CreateExam = () => {
           })
         ]);
         setExistingExams(examsResponse.data.data);
-        setExamGroups(groupsResponse.data.data);
+        const filteredGroups = (groupsResponse.data.data || [])
+          .filter(group => typeof group.groupNumber === 'number' && group.groupNumber > 8)
+          .sort((a, b) => a.groupNumber - b.groupNumber);
+        setCustomGroups(filteredGroups);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -81,7 +84,8 @@ const CreateExam = () => {
 
   // Function to get next available order for a group
   const getNextAvailableOrder = (group) => {
-    const groupExams = existingExams.filter(exam => exam.examGroup === group);
+    const groupNumber = typeof group === 'string' ? parseInt(group, 10) : group;
+    const groupExams = existingExams.filter(exam => exam.examGroup === groupNumber);
     if (groupExams.length === 0) return 1;
     const maxOrder = Math.max(...groupExams.map(exam => exam.order));
     return maxOrder + 1;
@@ -356,9 +360,9 @@ const CreateExam = () => {
                   {Array.from({ length: 8 }, (_, i) => i + 1).map(num => (
                     <option key={num} value={num}>المجموعة {num}</option>
                   ))}
-                  {examGroups.map(group => (
-                    <option key={group._id} value={group.groupNumber}>
-                      {group.name} (مخصصة)
+                  {customGroups.map(group => (
+                    <option key={group._id || group.groupNumber} value={group.groupNumber}>
+                      {group.name || `المجموعة ${group.groupNumber}`} (مخصصة)
                     </option>
                   ))}
                 </select>

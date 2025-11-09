@@ -14,6 +14,7 @@ const EditExam = () => {
   const [exam, setExam] = useState(null);
   const [cancelRequest, setCancelRequest] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, questionIndex: null });
+  const [customGroups, setCustomGroups] = useState([]);
 
   const {
     register,
@@ -68,9 +69,27 @@ const EditExam = () => {
     }
   }, [examId, navigate, reset]);
 
+  const fetchCustomGroups = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/exam-groups', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.data?.data) {
+        setCustomGroups(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching custom groups:', error);
+      setCustomGroups([]);
+    }
+  }, []);
+
   useEffect(() => {
     fetchExam();
-  }, [fetchExam]);
+    fetchCustomGroups();
+  }, [fetchExam, fetchCustomGroups]);
 
   // Cleanup function
   useEffect(() => {
@@ -373,6 +392,14 @@ const EditExam = () => {
                   {Array.from({ length: 8 }, (_, i) => i + 1).map(num => (
                     <option key={num} value={num}>المجموعة {num}</option>
                   ))}
+                  {customGroups
+                    .filter(group => group.groupNumber > 8)
+                    .sort((a, b) => a.groupNumber - b.groupNumber)
+                    .map(group => (
+                      <option key={group.groupNumber} value={group.groupNumber}>
+                        {group.name || `المجموعة ${group.groupNumber}`}
+                      </option>
+                    ))}
                 </select>
                 {errors.examGroup && (
                   <p className="error-message">{errors.examGroup.message}</p>
