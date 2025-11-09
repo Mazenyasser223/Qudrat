@@ -4,10 +4,21 @@ import { Clock, AlertTriangle } from 'lucide-react';
 const ExamTimer = ({ timeLimit, onTimeUp, onWarning, onTimeUpdate }) => {
   const [timeLeft, setTimeLeft] = useState(timeLimit * 60); // Convert minutes to seconds
   const [warningShown, setWarningShown] = useState(false);
+  const [hasTriggeredTimeUp, setHasTriggeredTimeUp] = useState(false);
+
+  useEffect(() => {
+    setTimeLeft(timeLimit * 60);
+    setWarningShown(false);
+    setHasTriggeredTimeUp(false);
+  }, [timeLimit]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      onTimeUp();
+      if (!hasTriggeredTimeUp) {
+        setHasTriggeredTimeUp(true);
+        onTimeUpdate?.(timeLimit * 60);
+        onTimeUp();
+      }
       return;
     }
 
@@ -20,17 +31,19 @@ const ExamTimer = ({ timeLimit, onTimeUp, onWarning, onTimeUpdate }) => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         const newTimeLeft = prev - 1;
-        // Calculate time spent and notify parent component
-        if (onTimeUpdate) {
-          const timeSpent = (timeLimit * 60) - newTimeLeft;
-          onTimeUpdate(timeSpent);
+        if (newTimeLeft >= 0) {
+          // Calculate time spent and notify parent component
+          if (onTimeUpdate) {
+            const timeSpent = (timeLimit * 60) - newTimeLeft;
+            onTimeUpdate(timeSpent);
+          }
         }
-        return newTimeLeft;
+        return Math.max(newTimeLeft, 0);
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft, onTimeUp, onWarning, warningShown]);
+  }, [timeLeft, onTimeUp, onWarning, warningShown, hasTriggeredTimeUp, onTimeUpdate, timeLimit]);
 
   const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);

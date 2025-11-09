@@ -1,0 +1,3409 @@
+====================================================================================================
+📋 DETAILED DUPLICATE QUESTIONS REPORT BY EXAM
+====================================================================================================
+Generated: 11/5/2025, 10:42:24 PM
+Total Exams with Duplicates: 35
+Total Duplicate Groups: 127
+Total Duplicate Questions: 324
+====================================================================================================
+
+
+====================================================================================================
+📚 GROUP 0 - 11 exam(s) with duplicates
+====================================================================================================
+
+
+1. Exam: "اختبار تأسيس 1"
+   Exam ID: 68c9cd52fa034b1998187776
+   Group: 0, Order: 1
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 10
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 729edd108307e45b1da235043bda81fa
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 8" (Group 0, Order 8, Q3, Answer: C) ✅
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q0, Answer: C) ✅
+
+
+2. Exam: "اختبار تأسيس 2"
+   Exam ID: 68c9d2f4fa034b1998188caa
+   Group: 0, Order: 2
+   Status: ✅ Active
+   Total Duplicate Questions: 4
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 2
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 4787796d13b820f6e14e2f08cc3869be
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 8" (Group 0, Order 8, Q7, Answer: D) ✅
+
+   Duplicate 2:
+   ├─ Question Index: 8
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 55498e6e7e85d478ea42daf2296f57a2
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q3, Answer: D) ✅
+
+   Duplicate 3:
+   ├─ Question Index: 10
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 55d1eff1fbdc52b5599f4aa337614f20
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 8" (Group 0, Order 8, Q9, Answer: A) ✅
+
+   Duplicate 4:
+   ├─ Question Index: 18
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: c8aa15d9a5c1756b754bd1c28fbf4481
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 8" (Group 0, Order 8, Q10, Answer: D) ✅
+
+
+3. Exam: "اختبار تأسيس 3"
+   Exam ID: 68cb50a1e82fa99b0e9c57a4
+   Group: 0, Order: 3
+   Status: ✅ Active
+   Total Duplicate Questions: 20
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: deb1f019fdaab799ba856fe987a04e24
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q0, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 1
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: e20f34031a28286bc3814a85d8dbdd90
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q1, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 2
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d4acd7162270f2fc7c255db859319b7b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q2, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 3
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d56b57c03ed76edd4be86a694c307979
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q3, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 4
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 0037927d1c5c86025c1699669bb596c5
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 1, Order 3, Q4, Answer: A) ❌
+       └─ "اختبار تأسيس 8" (Group 0, Order 8, Q12, Answer: B) ✅
+
+   Duplicate 6:
+   ├─ Question Index: 5
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: f010b25425940c590871b57a7cb0baab
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 1, Order 3, Q5, Answer: A) ❌
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q13, Answer: C) ✅
+
+   Duplicate 7:
+   ├─ Question Index: 6
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0b372abffefd9d2e2614957ae05f3f69
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q6, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 7
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 9273965d34d52d6d28c3eadbc33b3874
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 1, Order 3, Q7, Answer: A) ❌
+       └─ "اختبار تأسيس 8" (Group 0, Order 8, Q13, Answer: B) ✅
+
+   Duplicate 9:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 40a1c001d264f6ec7c403d681e6e8bd8
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q8, Answer: A) ❌
+
+   Duplicate 10:
+   ├─ Question Index: 9
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 53ad514398ef1dcf89e7f522556c1efe
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 1, Order 3, Q9, Answer: A) ❌
+       └─ "اختبار تأسيس 8" (Group 0, Order 8, Q14, Answer: C) ✅
+
+   Duplicate 11:
+   ├─ Question Index: 10
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 237cef623fe860d4f011dfe6df708850
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q10, Answer: A) ❌
+
+   Duplicate 12:
+   ├─ Question Index: 11
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 7f7a042fd955a3cdf6eeca35d9b1e0e5
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 1, Order 3, Q11, Answer: A) ❌
+       └─ "اختبار تأسيس 8" (Group 0, Order 8, Q23, Answer: C) ✅
+
+   Duplicate 13:
+   ├─ Question Index: 12
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 021dbd87cb4b5812ddb670161fb3a683
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q12, Answer: A) ❌
+
+   Duplicate 14:
+   ├─ Question Index: 13
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 2b90e6b6f5a9f7852295cc77d51bc982
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q13, Answer: A) ❌
+
+   Duplicate 15:
+   ├─ Question Index: 14
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 50d8b97b517afe985805e89e1cc205a7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q14, Answer: A) ❌
+
+   Duplicate 16:
+   ├─ Question Index: 15
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 3eea43e6b0f5144b221670eb71ef928c
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q15, Answer: A) ❌
+
+   Duplicate 17:
+   ├─ Question Index: 16
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 67594e47b520775cf5300b2b5cd74413
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q16, Answer: A) ❌
+
+   Duplicate 18:
+   ├─ Question Index: 17
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 0715d0e159a20ef4fc32376d7b699a04
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q17, Answer: A) ❌
+
+   Duplicate 19:
+   ├─ Question Index: 18
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 1fb96eee56fba4527b390c1f7b86c443
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q18, Answer: A) ❌
+
+   Duplicate 20:
+   ├─ Question Index: 19
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 937e2e00910c5eed1f9020c823a141b7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 1, Order 3, Q19, Answer: A) ❌
+
+
+4. Exam: "اختبار تأسيس 3"
+   Exam ID: 68c9d17afa034b199818821a
+   Group: 0, Order: 3
+   Status: ❌ Inactive
+   Total Duplicate Questions: 20
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 174d54df65b3f46df26cc95a5b673011
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q0, Answer: C) ✅
+
+   Duplicate 2:
+   ├─ Question Index: 1
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b61347669d12885f8aea3af3c221fed4
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q1, Answer: B) ✅
+
+   Duplicate 3:
+   ├─ Question Index: 2
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0d8807f63caa95c653d2e67fea7587f9
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 4" (Group 0, Order 4, Q2, Answer: B) ✅
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q7, Answer: B) ✅
+
+   Duplicate 4:
+   ├─ Question Index: 3
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: e2355dc7324572df94d85b3c66c60efa
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 4" (Group 0, Order 4, Q3, Answer: B) ✅
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q6, Answer: B) ✅
+
+   Duplicate 5:
+   ├─ Question Index: 4
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b2d41bdfc31e6d7ec06a2e2bdde839be
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q4, Answer: A) ✅
+
+   Duplicate 6:
+   ├─ Question Index: 5
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 46dc59cbe2ca2e5ec912e64360066864
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q5, Answer: C) ✅
+
+   Duplicate 7:
+   ├─ Question Index: 6
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 1c394ca8b7fc978d7075494f4149bfd0
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q6, Answer: C) ✅
+
+   Duplicate 8:
+   ├─ Question Index: 7
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: f497208cee94d404c8ed0aa1d3f4b0a8
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 4" (Group 0, Order 4, Q7, Answer: C) ✅
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q8, Answer: C) ✅
+
+   Duplicate 9:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: f41a966f25cf18c1169659ab7c52c6ee
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 4" (Group 0, Order 4, Q8, Answer: D) ✅
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q10, Answer: D) ✅
+
+   Duplicate 10:
+   ├─ Question Index: 9
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: e31d43101eeaa3cc957871b360eef26e
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q9, Answer: A) ✅
+
+   Duplicate 11:
+   ├─ Question Index: 10
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 9eccc8988f0173df87eb908adaf325f6
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q10, Answer: B) ✅
+
+   Duplicate 12:
+   ├─ Question Index: 11
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 1227d5e392d4f6c4866f08943d17762a
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q11, Answer: B) ✅
+
+   Duplicate 13:
+   ├─ Question Index: 12
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 13ae2af8982bec0736edf3e4dd8de312
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q12, Answer: D) ✅
+
+   Duplicate 14:
+   ├─ Question Index: 13
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: a2cd3e9ab01404e3de7df09ce514f148
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q13, Answer: B) ✅
+
+   Duplicate 15:
+   ├─ Question Index: 14
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 52ceb1e71aeb5495b443ace1aecccc50
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q14, Answer: A) ✅
+
+   Duplicate 16:
+   ├─ Question Index: 15
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0c9d767a7abf682d989c1665d9577845
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q15, Answer: D) ✅
+
+   Duplicate 17:
+   ├─ Question Index: 16
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 8853499307d4a1e5da3085df9895d424
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q16, Answer: D) ✅
+
+   Duplicate 18:
+   ├─ Question Index: 17
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: f0e93d2a063cfb654de8923052e4f723
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q17, Answer: A) ✅
+
+   Duplicate 19:
+   ├─ Question Index: 18
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 11850448b436d4e0788be22ec00b8db4
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q18, Answer: A) ✅
+
+   Duplicate 20:
+   ├─ Question Index: 19
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 2958c7aa735e7433eb73a29d3be51145
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q19, Answer: D) ✅
+
+
+5. Exam: "اختبار تأسيس 4"
+   Exam ID: 68c9d247fa034b19981885a6
+   Group: 0, Order: 4
+   Status: ✅ Active
+   Total Duplicate Questions: 20
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 174d54df65b3f46df26cc95a5b673011
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q0, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 1
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: b61347669d12885f8aea3af3c221fed4
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q1, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 2
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 0d8807f63caa95c653d2e67fea7587f9
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 0, Order 3, Q2, Answer: A) ❌
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q7, Answer: B) ✅
+
+   Duplicate 4:
+   ├─ Question Index: 3
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: e2355dc7324572df94d85b3c66c60efa
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 0, Order 3, Q3, Answer: A) ❌
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q6, Answer: B) ✅
+
+   Duplicate 5:
+   ├─ Question Index: 4
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b2d41bdfc31e6d7ec06a2e2bdde839be
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q4, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 5
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 46dc59cbe2ca2e5ec912e64360066864
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q5, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 6
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 1c394ca8b7fc978d7075494f4149bfd0
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q6, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 7
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: f497208cee94d404c8ed0aa1d3f4b0a8
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 0, Order 3, Q7, Answer: A) ❌
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q8, Answer: C) ✅
+
+   Duplicate 9:
+   ├─ Question Index: 8
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: f41a966f25cf18c1169659ab7c52c6ee
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 0, Order 3, Q8, Answer: A) ❌
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q10, Answer: D) ✅
+
+   Duplicate 10:
+   ├─ Question Index: 9
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: e31d43101eeaa3cc957871b360eef26e
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q9, Answer: A) ❌
+
+   Duplicate 11:
+   ├─ Question Index: 10
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 9eccc8988f0173df87eb908adaf325f6
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q10, Answer: A) ❌
+
+   Duplicate 12:
+   ├─ Question Index: 11
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 1227d5e392d4f6c4866f08943d17762a
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q11, Answer: A) ❌
+
+   Duplicate 13:
+   ├─ Question Index: 12
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 13ae2af8982bec0736edf3e4dd8de312
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q12, Answer: A) ❌
+
+   Duplicate 14:
+   ├─ Question Index: 13
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: a2cd3e9ab01404e3de7df09ce514f148
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q13, Answer: A) ❌
+
+   Duplicate 15:
+   ├─ Question Index: 14
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 52ceb1e71aeb5495b443ace1aecccc50
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q14, Answer: A) ❌
+
+   Duplicate 16:
+   ├─ Question Index: 15
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 0c9d767a7abf682d989c1665d9577845
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q15, Answer: A) ❌
+
+   Duplicate 17:
+   ├─ Question Index: 16
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 8853499307d4a1e5da3085df9895d424
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q16, Answer: A) ❌
+
+   Duplicate 18:
+   ├─ Question Index: 17
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: f0e93d2a063cfb654de8923052e4f723
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q17, Answer: A) ❌
+
+   Duplicate 19:
+   ├─ Question Index: 18
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 11850448b436d4e0788be22ec00b8db4
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q18, Answer: A) ❌
+
+   Duplicate 20:
+   ├─ Question Index: 19
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 2958c7aa735e7433eb73a29d3be51145
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q19, Answer: A) ❌
+
+
+6. Exam: "اختبار تأسيس 5"
+   Exam ID: 68c9d297fa034b1998188796
+   Group: 0, Order: 5
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 2
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 4b4914556aab63ad6147311e2d9f8ba0
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q15, Answer: C) ✅
+
+
+7. Exam: "اختبار تأسيس 8"
+   Exam ID: 68c9d4cfd4fd70506674cf90
+   Group: 0, Order: 8
+   Status: ✅ Active
+   Total Duplicate Questions: 10
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 3
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 729edd108307e45b1da235043bda81fa
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 1" (Group 0, Order 1, Q10, Answer: C) ✅
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q0, Answer: C) ✅
+
+   Duplicate 2:
+   ├─ Question Index: 12
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 0037927d1c5c86025c1699669bb596c5
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 1, Order 3, Q4, Answer: A) ❌
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q4, Answer: B) ✅
+
+   Duplicate 3:
+   ├─ Question Index: 13
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 9273965d34d52d6d28c3eadbc33b3874
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 1, Order 3, Q7, Answer: A) ❌
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q7, Answer: B) ✅
+
+   Duplicate 4:
+   ├─ Question Index: 14
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 53ad514398ef1dcf89e7f522556c1efe
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 1, Order 3, Q9, Answer: A) ❌
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q9, Answer: C) ✅
+
+   Duplicate 5:
+   ├─ Question Index: 23
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 7f7a042fd955a3cdf6eeca35d9b1e0e5
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 1, Order 3, Q11, Answer: A) ❌
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q11, Answer: C) ✅
+
+   Duplicate 6:
+   ├─ Question Index: 7
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 4787796d13b820f6e14e2f08cc3869be
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 2" (Group 0, Order 2, Q2, Answer: D) ✅
+
+   Duplicate 7:
+   ├─ Question Index: 9
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 55d1eff1fbdc52b5599f4aa337614f20
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 2" (Group 0, Order 2, Q10, Answer: A) ✅
+
+   Duplicate 8:
+   ├─ Question Index: 10
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: c8aa15d9a5c1756b754bd1c28fbf4481
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 2" (Group 0, Order 2, Q18, Answer: D) ✅
+
+   Duplicate 9:
+   ├─ Question Index: 15
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: ae171a33979a35333f9b42011c0acb56
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q5, Answer: B) ✅
+
+   Duplicate 10:
+   ├─ Question Index: 19
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 21bacf03c82e2456d68c05c1daef631b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 9" (Group 0, Order 9, Q12, Answer: B) ✅
+
+
+8. Exam: "اختبار تأسيس 9"
+   Exam ID: 68c9d523d4fd70506674d3ae
+   Group: 0, Order: 9
+   Status: ✅ Active
+   Total Duplicate Questions: 10
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 729edd108307e45b1da235043bda81fa
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 1" (Group 0, Order 1, Q10, Answer: C) ✅
+       └─ "اختبار تأسيس 8" (Group 0, Order 8, Q3, Answer: C) ✅
+
+   Duplicate 2:
+   ├─ Question Index: 13
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: f010b25425940c590871b57a7cb0baab
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 1, Order 3, Q5, Answer: A) ❌
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q5, Answer: C) ✅
+
+   Duplicate 3:
+   ├─ Question Index: 7
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 0d8807f63caa95c653d2e67fea7587f9
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 0, Order 3, Q2, Answer: A) ❌
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q2, Answer: B) ✅
+
+   Duplicate 4:
+   ├─ Question Index: 6
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: e2355dc7324572df94d85b3c66c60efa
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 0, Order 3, Q3, Answer: A) ❌
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q3, Answer: B) ✅
+
+   Duplicate 5:
+   ├─ Question Index: 8
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: f497208cee94d404c8ed0aa1d3f4b0a8
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 0, Order 3, Q7, Answer: A) ❌
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q7, Answer: C) ✅
+
+   Duplicate 6:
+   ├─ Question Index: 10
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: f41a966f25cf18c1169659ab7c52c6ee
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 3" (Group 0, Order 3, Q8, Answer: A) ❌
+       └─ "اختبار تأسيس 4" (Group 0, Order 4, Q8, Answer: D) ✅
+
+   Duplicate 7:
+   ├─ Question Index: 15
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 4b4914556aab63ad6147311e2d9f8ba0
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 5" (Group 0, Order 5, Q2, Answer: C) ✅
+
+   Duplicate 8:
+   ├─ Question Index: 3
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 55498e6e7e85d478ea42daf2296f57a2
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 2" (Group 0, Order 2, Q8, Answer: D) ✅
+
+   Duplicate 9:
+   ├─ Question Index: 5
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: ae171a33979a35333f9b42011c0acb56
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 8" (Group 0, Order 8, Q15, Answer: B) ✅
+
+   Duplicate 10:
+   ├─ Question Index: 12
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 21bacf03c82e2456d68c05c1daef631b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 8" (Group 0, Order 8, Q19, Answer: B) ✅
+
+
+9. Exam: "اختبار تجريبي"
+   Exam ID: 68e79808f8c2c709346fd9bd
+   Group: 0, Order: 10
+   Status: ❌ Inactive
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b357a19c87624c7c4d131aeeb4ae677f
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "196" (Group 8, Order 21, Q0, Answer: A) ❌
+
+
+10. Exam: "اختبار  194"
+   Exam ID: 68cc7e9f4cbe7be95bab43e3
+   Group: 0, Order: 12
+   Status: ✅ Active
+   Total Duplicate Questions: 25
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 5efb0604b09a125ca926b68604aa8b83
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q0, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 1
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: a60e36152218cb9becb3b795af95d451
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q1, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 2
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 674451162ff3e4afc9389c7c47d53170
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q2, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 3
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 3fce1f2ead680025986824ba08187532
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q3, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 4
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ca24f7b3c38bcd002fd8518b9f73cebd
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q4, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 5
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 6e611353cfff0ed9ecb4e39901823dce
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q5, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 6
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 6035affc88e3b4cbbfaf5e2e2a92f1f9
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q6, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 7
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 73be38db03926105ddee427be024d88b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q7, Answer: A) ❌
+
+   Duplicate 9:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0bd0b788ef0483161f4641317c9242a7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q8, Answer: A) ❌
+
+   Duplicate 10:
+   ├─ Question Index: 9
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 9ec0dba21f6dcfeb816d349aa7dd6d2b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q9, Answer: A) ❌
+
+   Duplicate 11:
+   ├─ Question Index: 10
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: d775777a81c6eb59d676c157dee84a59
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q10, Answer: A) ❌
+
+   Duplicate 12:
+   ├─ Question Index: 11
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 1c8372e9fb117c116d112b9ee8c7deb2
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q11, Answer: A) ❌
+
+   Duplicate 13:
+   ├─ Question Index: 12
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: af62e95a4f2cb92aec5f213e98e1be9d
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q12, Answer: A) ❌
+
+   Duplicate 14:
+   ├─ Question Index: 13
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: ec23e7f6d4353653cd0aa9528a9c98f7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q13, Answer: A) ❌
+
+   Duplicate 15:
+   ├─ Question Index: 14
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: eb2c2624bf0d26fa9a6c2ed8d5b1ba7c
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q14, Answer: A) ❌
+
+   Duplicate 16:
+   ├─ Question Index: 15
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 612bd62685bc6e915e424d12d049049e
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q15, Answer: A) ❌
+
+   Duplicate 17:
+   ├─ Question Index: 16
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ce4e93f28562ec08df124653bcaa0af1
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q16, Answer: A) ❌
+
+   Duplicate 18:
+   ├─ Question Index: 17
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: fa8108f11c23c7c7de7ce70342f52914
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q17, Answer: A) ❌
+
+   Duplicate 19:
+   ├─ Question Index: 18
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b4dcedb847cfa1e7a8dbfb295e435181
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q18, Answer: A) ❌
+
+   Duplicate 20:
+   ├─ Question Index: 19
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 7f542e0154c0a2439df776fe2bfef8d6
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q19, Answer: A) ❌
+
+   Duplicate 21:
+   ├─ Question Index: 20
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 5d1891bf86fa8577c27b7fac3cd7fd76
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q20, Answer: A) ❌
+
+   Duplicate 22:
+   ├─ Question Index: 21
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: bbbc17cd4fd7b3a24c2230d7fbb2aac2
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q21, Answer: A) ❌
+
+   Duplicate 23:
+   ├─ Question Index: 22
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d70420965cdd2a085eab6b572dd8ad1b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q22, Answer: A) ❌
+
+   Duplicate 24:
+   ├─ Question Index: 23
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 42bb1914b448976f0e6250cde77a55c5
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q23, Answer: A) ❌
+
+   Duplicate 25:
+   ├─ Question Index: 24
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: f562834627648314907c284f27f8b175
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 194" (Group 8, Order 19, Q24, Answer: A) ❌
+
+
+11. Exam: "اختبار  195"
+   Exam ID: 68cc7efc4cbe7be95bab488f
+   Group: 0, Order: 13
+   Status: ✅ Active
+   Total Duplicate Questions: 18
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 3
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 24406f54b987cc70b4cfe310135707b3
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q3, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q3, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q3, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q3, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 5
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: c3bde34305fb094540351c5b5b3f6cd0
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q5, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q5, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q5, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q5, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q5, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 7
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 486293bea2d1a23b1b4732426e5fb0e5
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q7, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q7, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q7, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q7, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q7, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 9
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 8d0589c9721a19035c4dc7d54ad15252
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "exam 200" (Group 10, Order 1, Q9, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 10
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 999345305eed84fc41755c571366e762
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q10, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q10, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q10, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q10, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 11
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 8ded834bf3157ec91cc26c19cad078bf
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "test" (Group 12, Order 1, Q11, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q11, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q11, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 12
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0fa8a156a049c6251bd971dbdf315c01
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q12, Answer: A) ❌
+       └─ "test" (Group 12, Order 1, Q12, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 14
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: b362744f2a6d07926a70e7bb47f9b518
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q14, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q14, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q14, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q14, Answer: A) ❌
+
+   Duplicate 9:
+   ├─ Question Index: 15
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 3d2c0f50ac388af0c677b5806ac8ba83
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q15, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q15, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q15, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q15, Answer: A) ❌
+
+   Duplicate 10:
+   ├─ Question Index: 16
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 29959a180a0659078ef6843cc43069e4
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q16, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q16, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q16, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q16, Answer: A) ❌
+
+   Duplicate 11:
+   ├─ Question Index: 17
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 7c61d80d74043a7627239206464aba2a
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q17, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q17, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q17, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q17, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q17, Answer: A) ❌
+
+   Duplicate 12:
+   ├─ Question Index: 18
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 91092e75f91c99cf95f686bbe631dcc1
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "test" (Group 12, Order 1, Q18, Answer: A) ❌
+
+   Duplicate 13:
+   ├─ Question Index: 19
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: eaf0bca1f138069b69864d2090d4b86b
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "exam 26" (Group 8, Order 26, Q19, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q19, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q19, Answer: A) ❌
+
+   Duplicate 14:
+   ├─ Question Index: 20
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: a7c6185a694e2d9c0e7ab9ea97cd03cd
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "exam 26" (Group 8, Order 26, Q20, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q20, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q20, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q20, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q20, Answer: A) ❌
+
+   Duplicate 15:
+   ├─ Question Index: 21
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d8ea000eb4a620c8d5c7814036ad0b6b
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q21, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q21, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q21, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q21, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q21, Answer: A) ❌
+
+   Duplicate 16:
+   ├─ Question Index: 22
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 6e01a875511179cc0f081e78dfd5c479
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "امتحان 199" (Group 9, Order 1, Q22, Answer: A) ❌
+
+   Duplicate 17:
+   ├─ Question Index: 23
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 9a1a859921874b054b28fbd005b9f326
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "exam 26" (Group 8, Order 26, Q23, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q23, Answer: A) ❌
+
+   Duplicate 18:
+   ├─ Question Index: 24
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 22b5c831302dc00d88cd235fbf8bb84f
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q24, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q24, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+
+
+====================================================================================================
+📚 GROUP 1 - 3 exam(s) with duplicates
+====================================================================================================
+
+
+1. Exam: "اختبار تأسيس 3"
+   Exam ID: 68c9d0f9fa034b1998187e5b
+   Group: 1, Order: 3
+   Status: ❌ Inactive
+   Total Duplicate Questions: 20
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: deb1f019fdaab799ba856fe987a04e24
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q0, Answer: C) ✅
+
+   Duplicate 2:
+   ├─ Question Index: 1
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: e20f34031a28286bc3814a85d8dbdd90
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q1, Answer: D) ✅
+
+   Duplicate 3:
+   ├─ Question Index: 2
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d4acd7162270f2fc7c255db859319b7b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q2, Answer: A) ✅
+
+   Duplicate 4:
+   ├─ Question Index: 3
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d56b57c03ed76edd4be86a694c307979
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q3, Answer: A) ✅
+
+   Duplicate 5:
+   ├─ Question Index: 4
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0037927d1c5c86025c1699669bb596c5
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 8" (Group 0, Order 8, Q12, Answer: B) ✅
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q4, Answer: B) ✅
+
+   Duplicate 6:
+   ├─ Question Index: 5
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: f010b25425940c590871b57a7cb0baab
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 9" (Group 0, Order 9, Q13, Answer: C) ✅
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q5, Answer: C) ✅
+
+   Duplicate 7:
+   ├─ Question Index: 6
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0b372abffefd9d2e2614957ae05f3f69
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q6, Answer: A) ✅
+
+   Duplicate 8:
+   ├─ Question Index: 7
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 9273965d34d52d6d28c3eadbc33b3874
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 8" (Group 0, Order 8, Q13, Answer: B) ✅
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q7, Answer: B) ✅
+
+   Duplicate 9:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 40a1c001d264f6ec7c403d681e6e8bd8
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q8, Answer: A) ✅
+
+   Duplicate 10:
+   ├─ Question Index: 9
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 53ad514398ef1dcf89e7f522556c1efe
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 8" (Group 0, Order 8, Q14, Answer: C) ✅
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q9, Answer: C) ✅
+
+   Duplicate 11:
+   ├─ Question Index: 10
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 237cef623fe860d4f011dfe6df708850
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q10, Answer: A) ✅
+
+   Duplicate 12:
+   ├─ Question Index: 11
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 7f7a042fd955a3cdf6eeca35d9b1e0e5
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تأسيس 8" (Group 0, Order 8, Q23, Answer: C) ✅
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q11, Answer: C) ✅
+
+   Duplicate 13:
+   ├─ Question Index: 12
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 021dbd87cb4b5812ddb670161fb3a683
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q12, Answer: A) ✅
+
+   Duplicate 14:
+   ├─ Question Index: 13
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 2b90e6b6f5a9f7852295cc77d51bc982
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q13, Answer: D) ✅
+
+   Duplicate 15:
+   ├─ Question Index: 14
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 50d8b97b517afe985805e89e1cc205a7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q14, Answer: A) ✅
+
+   Duplicate 16:
+   ├─ Question Index: 15
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 3eea43e6b0f5144b221670eb71ef928c
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q15, Answer: B) ✅
+
+   Duplicate 17:
+   ├─ Question Index: 16
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 67594e47b520775cf5300b2b5cd74413
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q16, Answer: B) ✅
+
+   Duplicate 18:
+   ├─ Question Index: 17
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0715d0e159a20ef4fc32376d7b699a04
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q17, Answer: B) ✅
+
+   Duplicate 19:
+   ├─ Question Index: 18
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 1fb96eee56fba4527b390c1f7b86c443
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q18, Answer: A) ✅
+
+   Duplicate 20:
+   ├─ Question Index: 19
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 937e2e00910c5eed1f9020c823a141b7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار تأسيس 3" (Group 0, Order 3, Q19, Answer: C) ✅
+
+
+2. Exam: "اختبار  4"
+   Exam ID: 68c9d752f13e9d27abebef6c
+   Group: 1, Order: 4
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 18
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 8435fe8e1d457136d76721fb4a69f8b5
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اخبار 14" (Group 1, Order 14, Q0, Answer: D) ✅
+
+
+3. Exam: "اخبار 14"
+   Exam ID: 68cb2cc1e5d22dfd0405feb0
+   Group: 1, Order: 14
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 8435fe8e1d457136d76721fb4a69f8b5
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  4" (Group 1, Order 4, Q18, Answer: D) ✅
+
+
+====================================================================================================
+📚 GROUP 2 - 1 exam(s) with duplicates
+====================================================================================================
+
+
+1. Exam: "اختبار  43"
+   Exam ID: 68cb5282a3ec4b79384793a5
+   Group: 2, Order: 18
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 20
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: bcbcb29dc7f3d13832800752bc43f8e1
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 85" (Group 4, Order 10, Q11, Answer: A) ✅
+
+
+====================================================================================================
+📚 GROUP 4 - 3 exam(s) with duplicates
+====================================================================================================
+
+
+1. Exam: "اختبار 85"
+   Exam ID: 68ccfec1a091fe325a9b4fd5
+   Group: 4, Order: 10
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 11
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: bcbcb29dc7f3d13832800752bc43f8e1
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  43" (Group 2, Order 18, Q20, Answer: A) ✅
+
+
+2. Exam: "اختبار 100"
+   Exam ID: 68c9ce65fa034b19981878e1
+   Group: 4, Order: 25
+   Status: ❌ Inactive
+   Total Duplicate Questions: 23
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 86257633c931b715ede5dfac33e76abd
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q0, Answer: D) ✅
+
+   Duplicate 2:
+   ├─ Question Index: 1
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: fa53d314989d594d2d297b5eda3532eb
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q1, Answer: A) ✅
+
+   Duplicate 3:
+   ├─ Question Index: 2
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 4ee9b386387d0aba052857e08ada9b8a
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q2, Answer: A) ✅
+
+   Duplicate 4:
+   ├─ Question Index: 3
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 295acd1175b32fcd472983188ae6ffcc
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q3, Answer: C) ✅
+
+   Duplicate 5:
+   ├─ Question Index: 4
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 91f38a96691ba77778f1c4d1801eaccb
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q4, Answer: C) ✅
+
+   Duplicate 6:
+   ├─ Question Index: 5
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 25a6502b443810eefa90201e9ce8051d
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q5, Answer: B) ✅
+
+   Duplicate 7:
+   ├─ Question Index: 6
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: e63143d77a2f345958fd9f912a34785f
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q6, Answer: C) ✅
+
+   Duplicate 8:
+   ├─ Question Index: 7
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 28e23f8de36fec9f4420fd3f1999261b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q7, Answer: A) ✅
+
+   Duplicate 9:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 8194d16f638f764e179848818128b591
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q8, Answer: A) ✅
+
+   Duplicate 10:
+   ├─ Question Index: 9
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 2cedf8cc35d06a627cba1039e3eb1290
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q9, Answer: A) ✅
+
+   Duplicate 11:
+   ├─ Question Index: 10
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: f5cf5250898f5f0952dc411dae9d0935
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q10, Answer: C) ✅
+
+   Duplicate 12:
+   ├─ Question Index: 11
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 8b2e80fff017ac8600d748ba75d64fdb
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q11, Answer: A) ✅
+
+   Duplicate 13:
+   ├─ Question Index: 12
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 1f9cfab01a771bb497ba53aaeaed0775
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q12, Answer: A) ✅
+
+   Duplicate 14:
+   ├─ Question Index: 13
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 058d23c6843b9893a536f58f047b452b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q13, Answer: A) ✅
+
+   Duplicate 15:
+   ├─ Question Index: 14
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 8433aa57c827bcbf08151d43d80a85f7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q14, Answer: D) ✅
+
+   Duplicate 16:
+   ├─ Question Index: 15
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 55125969cb0be9aa4cb469668c131a26
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q15, Answer: D) ✅
+
+   Duplicate 17:
+   ├─ Question Index: 17
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 3902ddb44c40baf9ddd240e896a7cd15
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q17, Answer: D) ✅
+
+   Duplicate 18:
+   ├─ Question Index: 19
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 721156f3edb13c30cb0531a4405e7218
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q19, Answer: A) ✅
+
+   Duplicate 19:
+   ├─ Question Index: 20
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 4eb0d6d6ef35b3989ce1a32d1ea1bf7c
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q20, Answer: A) ✅
+
+   Duplicate 20:
+   ├─ Question Index: 21
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 3c1b268f65fb6f2ab455624edace9247
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q21, Answer: B) ✅
+
+   Duplicate 21:
+   ├─ Question Index: 22
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 51f149838e81d366d91f4a3cd0b18a5d
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q22, Answer: C) ✅
+
+   Duplicate 22:
+   ├─ Question Index: 23
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 062eafca9cf8f9b1771b483634f21da7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q23, Answer: C) ✅
+
+   Duplicate 23:
+   ├─ Question Index: 24
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: e76b2ff902e43e412f8701edfbbdff46
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q24, Answer: C) ✅
+
+
+3. Exam: "اختبار 100"
+   Exam ID: 68cd02c72a89957ed90a2dcb
+   Group: 4, Order: 25
+   Status: ✅ Active
+   Total Duplicate Questions: 23
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 86257633c931b715ede5dfac33e76abd
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q0, Answer: D) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 1
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: fa53d314989d594d2d297b5eda3532eb
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q1, Answer: D) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 2
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 4ee9b386387d0aba052857e08ada9b8a
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q2, Answer: D) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 3
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 295acd1175b32fcd472983188ae6ffcc
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q3, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 4
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 91f38a96691ba77778f1c4d1801eaccb
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q4, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 5
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 25a6502b443810eefa90201e9ce8051d
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q5, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 6
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: e63143d77a2f345958fd9f912a34785f
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q6, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 7
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 28e23f8de36fec9f4420fd3f1999261b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q7, Answer: A) ❌
+
+   Duplicate 9:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 8194d16f638f764e179848818128b591
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q8, Answer: A) ❌
+
+   Duplicate 10:
+   ├─ Question Index: 9
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 2cedf8cc35d06a627cba1039e3eb1290
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q9, Answer: A) ❌
+
+   Duplicate 11:
+   ├─ Question Index: 10
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: f5cf5250898f5f0952dc411dae9d0935
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q10, Answer: A) ❌
+
+   Duplicate 12:
+   ├─ Question Index: 11
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 8b2e80fff017ac8600d748ba75d64fdb
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q11, Answer: A) ❌
+
+   Duplicate 13:
+   ├─ Question Index: 12
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 1f9cfab01a771bb497ba53aaeaed0775
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q12, Answer: A) ❌
+
+   Duplicate 14:
+   ├─ Question Index: 13
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 058d23c6843b9893a536f58f047b452b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q13, Answer: A) ❌
+
+   Duplicate 15:
+   ├─ Question Index: 14
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 8433aa57c827bcbf08151d43d80a85f7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q14, Answer: A) ❌
+
+   Duplicate 16:
+   ├─ Question Index: 15
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 55125969cb0be9aa4cb469668c131a26
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q15, Answer: A) ❌
+
+   Duplicate 17:
+   ├─ Question Index: 17
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 3902ddb44c40baf9ddd240e896a7cd15
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q17, Answer: A) ❌
+
+   Duplicate 18:
+   ├─ Question Index: 19
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 721156f3edb13c30cb0531a4405e7218
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q19, Answer: A) ❌
+
+   Duplicate 19:
+   ├─ Question Index: 20
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 4eb0d6d6ef35b3989ce1a32d1ea1bf7c
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q20, Answer: A) ❌
+
+   Duplicate 20:
+   ├─ Question Index: 21
+   ├─ Correct Answer: B
+   ├─ MD5 Hash: 3c1b268f65fb6f2ab455624edace9247
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q21, Answer: A) ❌
+
+   Duplicate 21:
+   ├─ Question Index: 22
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 51f149838e81d366d91f4a3cd0b18a5d
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q22, Answer: A) ❌
+
+   Duplicate 22:
+   ├─ Question Index: 23
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 062eafca9cf8f9b1771b483634f21da7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q23, Answer: A) ❌
+
+   Duplicate 23:
+   ├─ Question Index: 24
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: e76b2ff902e43e412f8701edfbbdff46
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 100" (Group 4, Order 25, Q24, Answer: A) ❌
+
+
+====================================================================================================
+📚 GROUP 5 - 2 exam(s) with duplicates
+====================================================================================================
+
+
+1. Exam: "اختبار 114"
+   Exam ID: 68cd04ee2a89957ed90a9d8a
+   Group: 5, Order: 14
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 10
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 27ba2ca1337a7bde4c94660ea7bb1351
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 123" (Group 5, Order 23, Q5, Answer: C) ✅
+
+
+2. Exam: "اختبار 123"
+   Exam ID: 68cd0d563abb8008cdfa3f48
+   Group: 5, Order: 23
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 5
+   ├─ Correct Answer: C
+   ├─ MD5 Hash: 27ba2ca1337a7bde4c94660ea7bb1351
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 114" (Group 5, Order 14, Q10, Answer: C) ✅
+
+
+====================================================================================================
+📚 GROUP 6 - 4 exam(s) with duplicates
+====================================================================================================
+
+
+1. Exam: "اختبار 132"
+   Exam ID: 68cd0eb93abb8008cdfa7612
+   Group: 6, Order: 7
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 9
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: c261a990d30b7b4aaa096a0a5a3b74f7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 134" (Group 6, Order 9, Q5, Answer: D) ✅
+
+
+2. Exam: "اختبار 134"
+   Exam ID: 68cd0eef3abb8008cdfa8150
+   Group: 6, Order: 9
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 5
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: c261a990d30b7b4aaa096a0a5a3b74f7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 132" (Group 6, Order 7, Q9, Answer: D) ✅
+
+
+3. Exam: "135"
+   Exam ID: 68cd0f143abb8008cdfa86f8
+   Group: 6, Order: 10
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 17
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 7eecee755e5002d40ccb22afceadeefd
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار 137" (Group 6, Order 12, Q15, Answer: D) ✅
+
+
+4. Exam: "اختبار 137"
+   Exam ID: 68cd0fad3abb8008cdfa925a
+   Group: 6, Order: 12
+   Status: ✅ Active
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 15
+   ├─ Correct Answer: D
+   ├─ MD5 Hash: 7eecee755e5002d40ccb22afceadeefd
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "135" (Group 6, Order 10, Q17, Answer: D) ✅
+
+
+====================================================================================================
+📚 GROUP 8 - 3 exam(s) with duplicates
+====================================================================================================
+
+
+1. Exam: "اختبار 194"
+   Exam ID: 68c9cf41fa034b1998187a40
+   Group: 8, Order: 19
+   Status: ❌ Inactive
+   Total Duplicate Questions: 25
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 5efb0604b09a125ca926b68604aa8b83
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q0, Answer: B) ✅
+
+   Duplicate 2:
+   ├─ Question Index: 1
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: a60e36152218cb9becb3b795af95d451
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q1, Answer: B) ✅
+
+   Duplicate 3:
+   ├─ Question Index: 2
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 674451162ff3e4afc9389c7c47d53170
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q2, Answer: C) ✅
+
+   Duplicate 4:
+   ├─ Question Index: 3
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 3fce1f2ead680025986824ba08187532
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q3, Answer: C) ✅
+
+   Duplicate 5:
+   ├─ Question Index: 4
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ca24f7b3c38bcd002fd8518b9f73cebd
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q4, Answer: A) ✅
+
+   Duplicate 6:
+   ├─ Question Index: 5
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 6e611353cfff0ed9ecb4e39901823dce
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q5, Answer: A) ✅
+
+   Duplicate 7:
+   ├─ Question Index: 6
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 6035affc88e3b4cbbfaf5e2e2a92f1f9
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q6, Answer: D) ✅
+
+   Duplicate 8:
+   ├─ Question Index: 7
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 73be38db03926105ddee427be024d88b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q7, Answer: B) ✅
+
+   Duplicate 9:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0bd0b788ef0483161f4641317c9242a7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q8, Answer: A) ✅
+
+   Duplicate 10:
+   ├─ Question Index: 9
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 9ec0dba21f6dcfeb816d349aa7dd6d2b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q9, Answer: B) ✅
+
+   Duplicate 11:
+   ├─ Question Index: 10
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d775777a81c6eb59d676c157dee84a59
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q10, Answer: D) ✅
+
+   Duplicate 12:
+   ├─ Question Index: 11
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 1c8372e9fb117c116d112b9ee8c7deb2
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q11, Answer: D) ✅
+
+   Duplicate 13:
+   ├─ Question Index: 12
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: af62e95a4f2cb92aec5f213e98e1be9d
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q12, Answer: C) ✅
+
+   Duplicate 14:
+   ├─ Question Index: 13
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ec23e7f6d4353653cd0aa9528a9c98f7
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q13, Answer: B) ✅
+
+   Duplicate 15:
+   ├─ Question Index: 14
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: eb2c2624bf0d26fa9a6c2ed8d5b1ba7c
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q14, Answer: B) ✅
+
+   Duplicate 16:
+   ├─ Question Index: 15
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 612bd62685bc6e915e424d12d049049e
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q15, Answer: D) ✅
+
+   Duplicate 17:
+   ├─ Question Index: 16
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ce4e93f28562ec08df124653bcaa0af1
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q16, Answer: A) ✅
+
+   Duplicate 18:
+   ├─ Question Index: 17
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: fa8108f11c23c7c7de7ce70342f52914
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q17, Answer: B) ✅
+
+   Duplicate 19:
+   ├─ Question Index: 18
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b4dcedb847cfa1e7a8dbfb295e435181
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q18, Answer: A) ✅
+
+   Duplicate 20:
+   ├─ Question Index: 19
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 7f542e0154c0a2439df776fe2bfef8d6
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q19, Answer: D) ✅
+
+   Duplicate 21:
+   ├─ Question Index: 20
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 5d1891bf86fa8577c27b7fac3cd7fd76
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q20, Answer: C) ✅
+
+   Duplicate 22:
+   ├─ Question Index: 21
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: bbbc17cd4fd7b3a24c2230d7fbb2aac2
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q21, Answer: B) ✅
+
+   Duplicate 23:
+   ├─ Question Index: 22
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d70420965cdd2a085eab6b572dd8ad1b
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q22, Answer: A) ✅
+
+   Duplicate 24:
+   ├─ Question Index: 23
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 42bb1914b448976f0e6250cde77a55c5
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q23, Answer: A) ✅
+
+   Duplicate 25:
+   ├─ Question Index: 24
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: f562834627648314907c284f27f8b175
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  194" (Group 0, Order 12, Q24, Answer: A) ✅
+
+
+2. Exam: "196"
+   Exam ID: 68d7d6093a7968561c330418
+   Group: 8, Order: 21
+   Status: ❌ Inactive
+   Total Duplicate Questions: 1
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 0
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b357a19c87624c7c4d131aeeb4ae677f
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار تجريبي" (Group 0, Order 10, Q0, Answer: A) ❌
+       └─ "اختبار تجريبي" (Group 0, Order 10, Q1, Answer: A) ❌
+
+
+3. Exam: "exam 26"
+   Exam ID: 68fa476972a809c0d8af26dc
+   Group: 8, Order: 26
+   Status: ❌ Inactive
+   Total Duplicate Questions: 8
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 5
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: c3bde34305fb094540351c5b5b3f6cd0
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q5, Answer: C) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q5, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q5, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q5, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q5, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 17
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 7c61d80d74043a7627239206464aba2a
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q17, Answer: D) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q17, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q17, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q17, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q17, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 19
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: eaf0bca1f138069b69864d2090d4b86b
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q19, Answer: D) ✅
+       ├─ "test exam" (Group 10, Order 1, Q19, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q19, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 20
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: a7c6185a694e2d9c0e7ab9ea97cd03cd
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q20, Answer: B) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q20, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q20, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q20, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q20, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 23
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 9a1a859921874b054b28fbd005b9f326
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q23, Answer: B) ✅
+       └─ "exam 200" (Group 10, Order 1, Q23, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 0
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0ba2262cd5c7209302d26e4effee1038
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q0, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q0, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q0, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q0, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 13
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ab7495cf6253cd1a2a3a93b924438001
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q13, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q13, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q13, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 2
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ef59024c993642d688cecdbd1edc4656
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q2, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q2, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q2, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q2, Answer: A) ❌
+
+
+====================================================================================================
+📚 GROUP 9 - 3 exam(s) with duplicates
+====================================================================================================
+
+
+1. Exam: "exam 199"
+   Exam ID: 68fa2a4bab9d720a19f99d7c
+   Group: 9, Order: 1
+   Status: ❌ Inactive
+   Total Duplicate Questions: 8
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 3
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 24406f54b987cc70b4cfe310135707b3
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q3, Answer: D) ✅
+       ├─ "test exam" (Group 10, Order 1, Q3, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q3, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q3, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 5
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: c3bde34305fb094540351c5b5b3f6cd0
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q5, Answer: C) ✅
+       ├─ "exam 26" (Group 8, Order 26, Q5, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q5, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q5, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q5, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 7
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 486293bea2d1a23b1b4732426e5fb0e5
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q7, Answer: B) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q7, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q7, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q7, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q7, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 16
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 29959a180a0659078ef6843cc43069e4
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q16, Answer: B) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q16, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q16, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q16, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 21
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d8ea000eb4a620c8d5c7814036ad0b6b
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q21, Answer: A) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q21, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q21, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q21, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q21, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 4
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: e2521219b3abca03c5bd078dc7edaba3
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q4, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q4, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q4, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 6
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 08496a642a5e617ac0535685edf4c1aa
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "test" (Group 12, Order 1, Q6, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: c5536768c2769a9103a59807702e4867
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q8, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q8, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q8, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q8, Answer: A) ❌
+
+
+2. Exam: "امتحان 199"
+   Exam ID: 68fa5aa0aa460b6860dfb78d
+   Group: 9, Order: 1
+   Status: ❌ Inactive
+   Total Duplicate Questions: 8
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 3
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 24406f54b987cc70b4cfe310135707b3
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q3, Answer: D) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q3, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q3, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q3, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 7
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 486293bea2d1a23b1b4732426e5fb0e5
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q7, Answer: B) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q7, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q7, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q7, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q7, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 11
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 8ded834bf3157ec91cc26c19cad078bf
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q11, Answer: A) ✅
+       ├─ "test" (Group 12, Order 1, Q11, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q11, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 15
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 3d2c0f50ac388af0c677b5806ac8ba83
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q15, Answer: C) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q15, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q15, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q15, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 17
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 7c61d80d74043a7627239206464aba2a
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q17, Answer: D) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q17, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q17, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q17, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q17, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 22
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 6e01a875511179cc0f081e78dfd5c479
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  195" (Group 0, Order 13, Q22, Answer: A) ✅
+
+   Duplicate 7:
+   ├─ Question Index: 4
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: e2521219b3abca03c5bd078dc7edaba3
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q4, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q4, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q4, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 2
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ef59024c993642d688cecdbd1edc4656
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 26" (Group 8, Order 26, Q2, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q2, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q2, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q2, Answer: A) ❌
+
+
+3. Exam: "exam 199"
+   Exam ID: 68fa480772a809c0d8afe1bd
+   Group: 9, Order: 1
+   Status: ❌ Inactive
+   Total Duplicate Questions: 10
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 5
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: c3bde34305fb094540351c5b5b3f6cd0
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q5, Answer: C) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q5, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q5, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q5, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q5, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 14
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b362744f2a6d07926a70e7bb47f9b518
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q14, Answer: C) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q14, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q14, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q14, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 15
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 3d2c0f50ac388af0c677b5806ac8ba83
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q15, Answer: C) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q15, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q15, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q15, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 20
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: a7c6185a694e2d9c0e7ab9ea97cd03cd
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q20, Answer: B) ✅
+       ├─ "exam 26" (Group 8, Order 26, Q20, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q20, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q20, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q20, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 21
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d8ea000eb4a620c8d5c7814036ad0b6b
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q21, Answer: A) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q21, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q21, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q21, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q21, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 24
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 22b5c831302dc00d88cd235fbf8bb84f
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q24, Answer: C) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q24, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: c5536768c2769a9103a59807702e4867
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q8, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q8, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q8, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q8, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 0
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0ba2262cd5c7209302d26e4effee1038
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q0, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q0, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q0, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q0, Answer: A) ❌
+
+   Duplicate 9:
+   ├─ Question Index: 13
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ab7495cf6253cd1a2a3a93b924438001
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q13, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q13, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q13, Answer: A) ❌
+
+   Duplicate 10:
+   ├─ Question Index: 1
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b09b634ef75d0430fae592c8b25380cc
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q1, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q1, Answer: A) ❌
+
+
+====================================================================================================
+📚 GROUP 10 - 4 exam(s) with duplicates
+====================================================================================================
+
+
+1. Exam: "test exam"
+   Exam ID: 68fa5505f49af71240c01b8b
+   Group: 10, Order: 1
+   Status: ❌ Inactive
+   Total Duplicate Questions: 10
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 3
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 24406f54b987cc70b4cfe310135707b3
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q3, Answer: D) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q3, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q3, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q3, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 5
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: c3bde34305fb094540351c5b5b3f6cd0
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q5, Answer: C) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q5, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q5, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q5, Answer: A) ❌
+       └─ "test" (Group 12, Order 1, Q5, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 7
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 486293bea2d1a23b1b4732426e5fb0e5
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q7, Answer: B) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q7, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q7, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q7, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q7, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 10
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 999345305eed84fc41755c571366e762
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q10, Answer: A) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q10, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q10, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q10, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 11
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 8ded834bf3157ec91cc26c19cad078bf
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q11, Answer: A) ✅
+       ├─ "test" (Group 12, Order 1, Q11, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q11, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 14
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b362744f2a6d07926a70e7bb47f9b518
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q14, Answer: C) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q14, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q14, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q14, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 19
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: eaf0bca1f138069b69864d2090d4b86b
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q19, Answer: D) ✅
+       ├─ "exam 26" (Group 8, Order 26, Q19, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q19, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 20
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: a7c6185a694e2d9c0e7ab9ea97cd03cd
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q20, Answer: B) ✅
+       ├─ "exam 26" (Group 8, Order 26, Q20, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q20, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q20, Answer: A) ❌
+       └─ "test" (Group 12, Order 1, Q20, Answer: A) ❌
+
+   Duplicate 9:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: c5536768c2769a9103a59807702e4867
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q8, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q8, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q8, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q8, Answer: A) ❌
+
+   Duplicate 10:
+   ├─ Question Index: 0
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0ba2262cd5c7209302d26e4effee1038
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q0, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q0, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q0, Answer: A) ❌
+       └─ "test" (Group 12, Order 1, Q0, Answer: A) ❌
+
+
+2. Exam: "exam 200"
+   Exam ID: 68fa57850ad2854547e9ddee
+   Group: 10, Order: 1
+   Status: ❌ Inactive
+   Total Duplicate Questions: 13
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 3
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 24406f54b987cc70b4cfe310135707b3
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q3, Answer: D) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q3, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q3, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q3, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 10
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 999345305eed84fc41755c571366e762
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q10, Answer: A) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q10, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q10, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q10, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 15
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 3d2c0f50ac388af0c677b5806ac8ba83
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q15, Answer: C) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q15, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q15, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q15, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 16
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 29959a180a0659078ef6843cc43069e4
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q16, Answer: B) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q16, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q16, Answer: A) ❌
+       └─ "test" (Group 12, Order 1, Q16, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 17
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 7c61d80d74043a7627239206464aba2a
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q17, Answer: D) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q17, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q17, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q17, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q17, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 19
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: eaf0bca1f138069b69864d2090d4b86b
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q19, Answer: D) ✅
+       ├─ "exam 26" (Group 8, Order 26, Q19, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q19, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 21
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d8ea000eb4a620c8d5c7814036ad0b6b
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q21, Answer: A) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q21, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q21, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q21, Answer: A) ❌
+       └─ "test" (Group 12, Order 1, Q21, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 23
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 9a1a859921874b054b28fbd005b9f326
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q23, Answer: B) ✅
+       └─ "exam 26" (Group 8, Order 26, Q23, Answer: A) ❌
+
+   Duplicate 9:
+   ├─ Question Index: 24
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 22b5c831302dc00d88cd235fbf8bb84f
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q24, Answer: C) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q24, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+       └─ "test" (Group 12, Order 1, Q24, Answer: A) ❌
+
+   Duplicate 10:
+   ├─ Question Index: 4
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: e2521219b3abca03c5bd078dc7edaba3
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q4, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q4, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q4, Answer: A) ❌
+
+   Duplicate 11:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: c5536768c2769a9103a59807702e4867
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q8, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q8, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q8, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q8, Answer: A) ❌
+
+   Duplicate 12:
+   ├─ Question Index: 2
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ef59024c993642d688cecdbd1edc4656
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 26" (Group 8, Order 26, Q2, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q2, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q2, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q2, Answer: A) ❌
+
+   Duplicate 13:
+   ├─ Question Index: 1
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b09b634ef75d0430fae592c8b25380cc
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q1, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q1, Answer: A) ❌
+
+
+3. Exam: "exam 200"
+   Exam ID: 68fa482872a809c0d8b06639
+   Group: 10, Order: 1
+   Status: ❌ Inactive
+   Total Duplicate Questions: 12
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 7
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 486293bea2d1a23b1b4732426e5fb0e5
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q7, Answer: B) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q7, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q7, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q7, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q7, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 9
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 8d0589c9721a19035c4dc7d54ad15252
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  195" (Group 0, Order 13, Q9, Answer: B) ✅
+
+   Duplicate 3:
+   ├─ Question Index: 12
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0fa8a156a049c6251bd971dbdf315c01
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q12, Answer: A) ✅
+       └─ "test" (Group 12, Order 1, Q12, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 14
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b362744f2a6d07926a70e7bb47f9b518
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q14, Answer: C) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q14, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q14, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q14, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 15
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 3d2c0f50ac388af0c677b5806ac8ba83
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q15, Answer: C) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q15, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q15, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q15, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 16
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 29959a180a0659078ef6843cc43069e4
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q16, Answer: B) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q16, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q16, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q16, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 20
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: a7c6185a694e2d9c0e7ab9ea97cd03cd
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q20, Answer: B) ✅
+       ├─ "exam 26" (Group 8, Order 26, Q20, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q20, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q20, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q20, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 21
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d8ea000eb4a620c8d5c7814036ad0b6b
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q21, Answer: A) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q21, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q21, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q21, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q21, Answer: A) ❌
+
+   Duplicate 9:
+   ├─ Question Index: 24
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 22b5c831302dc00d88cd235fbf8bb84f
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q24, Answer: C) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q24, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q24, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+
+   Duplicate 10:
+   ├─ Question Index: 13
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ab7495cf6253cd1a2a3a93b924438001
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q13, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q13, Answer: A) ❌
+       └─ "exam 199" (Group 9, Order 1, Q13, Answer: A) ❌
+
+   Duplicate 11:
+   ├─ Question Index: 2
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ef59024c993642d688cecdbd1edc4656
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 26" (Group 8, Order 26, Q2, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q2, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q2, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q2, Answer: A) ❌
+
+   Duplicate 12:
+   ├─ Question Index: 1
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b09b634ef75d0430fae592c8b25380cc
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q1, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q1, Answer: A) ❌
+
+
+4. Exam: "exam 200"
+   Exam ID: 68fa4171a7846170bf63f3c4
+   Group: 10, Order: 1
+   Status: ❌ Inactive
+   Total Duplicate Questions: 7
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 10
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 999345305eed84fc41755c571366e762
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q10, Answer: A) ✅
+       ├─ "test" (Group 12, Order 1, Q10, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q10, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q10, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 14
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: b362744f2a6d07926a70e7bb47f9b518
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q14, Answer: C) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q14, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q14, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q14, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 17
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 7c61d80d74043a7627239206464aba2a
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q17, Answer: D) ✅
+       ├─ "exam 26" (Group 8, Order 26, Q17, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q17, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q17, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q17, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 24
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 22b5c831302dc00d88cd235fbf8bb84f
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q24, Answer: C) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q24, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q24, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 4
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: e2521219b3abca03c5bd078dc7edaba3
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q4, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q4, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q4, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 0
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0ba2262cd5c7209302d26e4effee1038
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 26" (Group 8, Order 26, Q0, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q0, Answer: A) ❌
+       ├─ "test" (Group 12, Order 1, Q0, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q0, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 13
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ab7495cf6253cd1a2a3a93b924438001
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "exam 26" (Group 8, Order 26, Q13, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q13, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q13, Answer: A) ❌
+
+
+====================================================================================================
+📚 GROUP 12 - 1 exam(s) with duplicates
+====================================================================================================
+
+
+1. Exam: "test"
+   Exam ID: 68fa4d8b2eaf0f355107aac6
+   Group: 12, Order: 1
+   Status: ❌ Inactive
+   Total Duplicate Questions: 15
+   ──────────────────────────────────────────────────────────────────────────────────────────────────
+
+   Duplicate 1:
+   ├─ Question Index: 5
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: c3bde34305fb094540351c5b5b3f6cd0
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q5, Answer: C) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q5, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q5, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q5, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q5, Answer: A) ❌
+
+   Duplicate 2:
+   ├─ Question Index: 7
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 486293bea2d1a23b1b4732426e5fb0e5
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q7, Answer: B) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q7, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q7, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q7, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q7, Answer: A) ❌
+
+   Duplicate 3:
+   ├─ Question Index: 10
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 999345305eed84fc41755c571366e762
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q10, Answer: A) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q10, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q10, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q10, Answer: A) ❌
+
+   Duplicate 4:
+   ├─ Question Index: 11
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 8ded834bf3157ec91cc26c19cad078bf
+   ├─ Appears 4 time(s) total
+   └─ Also appears in 3 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q11, Answer: A) ✅
+       ├─ "test exam" (Group 10, Order 1, Q11, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q11, Answer: A) ❌
+
+   Duplicate 5:
+   ├─ Question Index: 12
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0fa8a156a049c6251bd971dbdf315c01
+   ├─ Appears 3 time(s) total
+   └─ Also appears in 2 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q12, Answer: A) ✅
+       └─ "exam 200" (Group 10, Order 1, Q12, Answer: A) ❌
+
+   Duplicate 6:
+   ├─ Question Index: 16
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 29959a180a0659078ef6843cc43069e4
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q16, Answer: B) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q16, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q16, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q16, Answer: A) ❌
+
+   Duplicate 7:
+   ├─ Question Index: 17
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 7c61d80d74043a7627239206464aba2a
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q17, Answer: D) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q17, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q17, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q17, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q17, Answer: A) ❌
+
+   Duplicate 8:
+   ├─ Question Index: 18
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 91092e75f91c99cf95f686bbe631dcc1
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "اختبار  195" (Group 0, Order 13, Q18, Answer: D) ✅
+
+   Duplicate 9:
+   ├─ Question Index: 20
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: a7c6185a694e2d9c0e7ab9ea97cd03cd
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q20, Answer: B) ✅
+       ├─ "exam 26" (Group 8, Order 26, Q20, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q20, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q20, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q20, Answer: A) ❌
+
+   Duplicate 10:
+   ├─ Question Index: 21
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: d8ea000eb4a620c8d5c7814036ad0b6b
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q21, Answer: A) ✅
+       ├─ "exam 199" (Group 9, Order 1, Q21, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q21, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q21, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q21, Answer: A) ❌
+
+   Duplicate 11:
+   ├─ Question Index: 24
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 22b5c831302dc00d88cd235fbf8bb84f
+   ├─ Appears 6 time(s) total
+   └─ Also appears in 5 other exam(s):
+       ├─ "اختبار  195" (Group 0, Order 13, Q24, Answer: C) ✅
+       ├─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q24, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q24, Answer: A) ❌
+
+   Duplicate 12:
+   ├─ Question Index: 6
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 08496a642a5e617ac0535685edf4c1aa
+   ├─ Appears 2 time(s) total
+   └─ Also appears in 1 other exam(s):
+       └─ "exam 199" (Group 9, Order 1, Q6, Answer: A) ❌
+
+   Duplicate 13:
+   ├─ Question Index: 8
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: c5536768c2769a9103a59807702e4867
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 199" (Group 9, Order 1, Q8, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q8, Answer: A) ❌
+       ├─ "test exam" (Group 10, Order 1, Q8, Answer: A) ❌
+       └─ "exam 200" (Group 10, Order 1, Q8, Answer: A) ❌
+
+   Duplicate 14:
+   ├─ Question Index: 0
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: 0ba2262cd5c7209302d26e4effee1038
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 200" (Group 10, Order 1, Q0, Answer: A) ❌
+       ├─ "exam 26" (Group 8, Order 26, Q0, Answer: A) ❌
+       ├─ "exam 199" (Group 9, Order 1, Q0, Answer: A) ❌
+       └─ "test exam" (Group 10, Order 1, Q0, Answer: A) ❌
+
+   Duplicate 15:
+   ├─ Question Index: 2
+   ├─ Correct Answer: A
+   ├─ MD5 Hash: ef59024c993642d688cecdbd1edc4656
+   ├─ Appears 5 time(s) total
+   └─ Also appears in 4 other exam(s):
+       ├─ "exam 26" (Group 8, Order 26, Q2, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q2, Answer: A) ❌
+       ├─ "exam 200" (Group 10, Order 1, Q2, Answer: A) ❌
+       └─ "امتحان 199" (Group 9, Order 1, Q2, Answer: A) ❌
+
+
+====================================================================================================
+📊 SUMMARY STATISTICS BY GROUP
+====================================================================================================
+
+Group 0:
+  - Exams with duplicates: 11 (9 active, 2 inactive)
+  - Total duplicate questions: 130
+
+Group 1:
+  - Exams with duplicates: 3 (2 active, 1 inactive)
+  - Total duplicate questions: 22
+
+Group 2:
+  - Exams with duplicates: 1 (1 active, 0 inactive)
+  - Total duplicate questions: 1
+
+Group 4:
+  - Exams with duplicates: 3 (2 active, 1 inactive)
+  - Total duplicate questions: 47
+
+Group 5:
+  - Exams with duplicates: 2 (2 active, 0 inactive)
+  - Total duplicate questions: 2
+
+Group 6:
+  - Exams with duplicates: 4 (4 active, 0 inactive)
+  - Total duplicate questions: 4
+
+Group 8:
+  - Exams with duplicates: 3 (0 active, 3 inactive)
+  - Total duplicate questions: 34
+
+Group 9:
+  - Exams with duplicates: 3 (0 active, 3 inactive)
+  - Total duplicate questions: 26
+
+Group 10:
+  - Exams with duplicates: 4 (0 active, 4 inactive)
+  - Total duplicate questions: 42
+
+Group 12:
+  - Exams with duplicates: 1 (0 active, 1 inactive)
+  - Total duplicate questions: 15
+
+
+====================================================================================================
+🏆 TOP 20 EXAMS WITH MOST DUPLICATES
+====================================================================================================
+
+1. "اختبار  194" (Group 0, Order 12)
+   Exam ID: 68cc7e9f4cbe7be95bab43e3
+   Duplicates: 25 questions
+   Status: ✅ Active
+
+2. "اختبار 194" (Group 8, Order 19)
+   Exam ID: 68c9cf41fa034b1998187a40
+   Duplicates: 25 questions
+   Status: ❌ Inactive
+
+3. "اختبار 100" (Group 4, Order 25)
+   Exam ID: 68c9ce65fa034b19981878e1
+   Duplicates: 23 questions
+   Status: ❌ Inactive
+
+4. "اختبار 100" (Group 4, Order 25)
+   Exam ID: 68cd02c72a89957ed90a2dcb
+   Duplicates: 23 questions
+   Status: ✅ Active
+
+5. "اختبار تأسيس 3" (Group 0, Order 3)
+   Exam ID: 68cb50a1e82fa99b0e9c57a4
+   Duplicates: 20 questions
+   Status: ✅ Active
+
+6. "اختبار تأسيس 3" (Group 0, Order 3)
+   Exam ID: 68c9d17afa034b199818821a
+   Duplicates: 20 questions
+   Status: ❌ Inactive
+
+7. "اختبار تأسيس 4" (Group 0, Order 4)
+   Exam ID: 68c9d247fa034b19981885a6
+   Duplicates: 20 questions
+   Status: ✅ Active
+
+8. "اختبار تأسيس 3" (Group 1, Order 3)
+   Exam ID: 68c9d0f9fa034b1998187e5b
+   Duplicates: 20 questions
+   Status: ❌ Inactive
+
+9. "اختبار  195" (Group 0, Order 13)
+   Exam ID: 68cc7efc4cbe7be95bab488f
+   Duplicates: 18 questions
+   Status: ✅ Active
+
+10. "test" (Group 12, Order 1)
+   Exam ID: 68fa4d8b2eaf0f355107aac6
+   Duplicates: 15 questions
+   Status: ❌ Inactive
+
+11. "exam 200" (Group 10, Order 1)
+   Exam ID: 68fa57850ad2854547e9ddee
+   Duplicates: 13 questions
+   Status: ❌ Inactive
+
+12. "exam 200" (Group 10, Order 1)
+   Exam ID: 68fa482872a809c0d8b06639
+   Duplicates: 12 questions
+   Status: ❌ Inactive
+
+13. "اختبار تأسيس 8" (Group 0, Order 8)
+   Exam ID: 68c9d4cfd4fd70506674cf90
+   Duplicates: 10 questions
+   Status: ✅ Active
+
+14. "اختبار تأسيس 9" (Group 0, Order 9)
+   Exam ID: 68c9d523d4fd70506674d3ae
+   Duplicates: 10 questions
+   Status: ✅ Active
+
+15. "exam 199" (Group 9, Order 1)
+   Exam ID: 68fa480772a809c0d8afe1bd
+   Duplicates: 10 questions
+   Status: ❌ Inactive
+
+16. "test exam" (Group 10, Order 1)
+   Exam ID: 68fa5505f49af71240c01b8b
+   Duplicates: 10 questions
+   Status: ❌ Inactive
+
+17. "exam 26" (Group 8, Order 26)
+   Exam ID: 68fa476972a809c0d8af26dc
+   Duplicates: 8 questions
+   Status: ❌ Inactive
+
+18. "exam 199" (Group 9, Order 1)
+   Exam ID: 68fa2a4bab9d720a19f99d7c
+   Duplicates: 8 questions
+   Status: ❌ Inactive
+
+19. "امتحان 199" (Group 9, Order 1)
+   Exam ID: 68fa5aa0aa460b6860dfb78d
+   Duplicates: 8 questions
+   Status: ❌ Inactive
+
+20. "exam 200" (Group 10, Order 1)
+   Exam ID: 68fa4171a7846170bf63f3c4
+   Duplicates: 7 questions
+   Status: ❌ Inactive
+

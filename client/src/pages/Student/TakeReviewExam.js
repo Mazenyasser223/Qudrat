@@ -261,8 +261,8 @@ const TakeReviewExam = () => {
               setShuffledQuestions(shuffled);
               
               // Create new question order mapping
-              const order = reviewExam.questions.map((_, originalIndex) => {
-                return shuffled.findIndex(q => q === reviewExam.questions[originalIndex]);
+              const order = reviewExam.questions.map((originalQuestion) => {
+                return shuffled.findIndex(q => q._id === originalQuestion._id);
               });
               setQuestionOrder(order);
               
@@ -326,7 +326,7 @@ const TakeReviewExam = () => {
                 <h3 className="text-lg font-semibold text-gray-900">الأسئلة</h3>
                 {/* Timer moved here */}
                 <ExamTimer
-                  timeLimit={reviewExam.questions.length}
+                  timeLimit={reviewExam.timeLimit || reviewExam.questions.length}
                   onTimeUp={handleTimeUp}
                   onWarning={handleTimeWarning}
                   onTimeUpdate={setTimeSpent}
