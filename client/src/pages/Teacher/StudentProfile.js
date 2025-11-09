@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -108,20 +108,42 @@ const StudentProfile = () => {
     fetchStudentProgress();
   }, [student]);
 
-  const normalizeExamId = (progressExamId) => {
-    if (!progressExamId) return null;
-    if (typeof progressExamId === 'string') return progressExamId;
-    if (progressExamId._id) return progressExamId._id;
-    if (typeof progressExamId === 'object' && progressExamId.toString) {
-      return progressExamId.toString();
+  const getExamIdString = (value) => {
+    if (!value) return null;
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number') return value.toString();
+    if (value.$oid) return value.$oid;
+    if (value._id) return getExamIdString(value._id);
+    if (value.id) return getExamIdString(value.id);
+    if (typeof value.toString === 'function') {
+      const str = value.toString();
+      if (str && str !== '[object Object]') {
+        return str;
+      }
     }
     return null;
   };
 
-  const findProgressByExamId = (examId, progressList = []) => {
-    if (!examId) return null;
-    const examIdStr = examId.toString();
-    return progressList.find(progress => normalizeExamId(progress.examId) === examIdStr) || null;
+  const progressByExamId = useMemo(() => {
+    const map = new Map();
+    if (student?.examProgress) {
+      student.examProgress.forEach(progress => {
+        const id = getExamIdString(progress?.examId);
+        if (id) {
+          map.set(id, progress);
+        }
+      });
+    }
+    return map;
+  }, [student]);
+
+  const findProgressByExamId = (examId, fallbackProgressList = []) => {
+    const targetId = getExamIdString(examId);
+    if (!targetId) return null;
+    if (progressByExamId.has(targetId)) {
+      return progressByExamId.get(targetId);
+    }
+    return fallbackProgressList.find(progress => getExamIdString(progress?.examId) === targetId) || null;
   };
 
   // Update group status when exams or student progress changes
@@ -137,7 +159,7 @@ const StudentProfile = () => {
       const attempted = student.examProgress
         .filter(progress => progress.status === 'completed' || progress.status === 'in_progress')
         .map(progress => {
-          const progressExamId = normalizeExamId(progress.examId);
+          const progressExamId = getExamIdString(progress.examId);
           const exam = exams.find(e => e._id === progressExamId);
           return exam;
         })
