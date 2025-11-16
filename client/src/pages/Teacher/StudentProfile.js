@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -137,14 +137,34 @@ const StudentProfile = () => {
     return map;
   }, [student]);
 
-  const findProgressByExamId = (examId, fallbackProgressList = []) => {
+  const findProgressByExamId = useCallback((examId, fallbackProgressList = []) => {
     const targetId = getExamIdString(examId);
     if (!targetId) return null;
     if (progressByExamId.has(targetId)) {
       return progressByExamId.get(targetId);
     }
     return fallbackProgressList.find(progress => getExamIdString(progress?.examId) === targetId) || null;
-  };
+  }, [progressByExamId]);
+
+  const getProgressForExam = useCallback((exam, fallbackProgressList = []) => {
+    if (!exam) return null;
+    const existingProgress = findProgressByExamId(exam._id, fallbackProgressList);
+    if (existingProgress) {
+      return existingProgress;
+    }
+    return {
+      examId: exam._id,
+      examGroup: exam.examGroup,
+      status: 'locked',
+      score: null,
+      percentage: null,
+      totalQuestions: exam.totalQuestions || 0,
+      correctAnswers: null,
+      wrongAnswers: null,
+      attemptNumber: 1,
+      isPlaceholder: true
+    };
+  }, [findProgressByExamId]);
 
   // Update group status when exams or student progress changes
   useEffect(() => {
@@ -935,12 +955,13 @@ const StudentProfile = () => {
                 
                 // Calculate group statistics
                 const groupProgress = groupExams.map(exam => 
-                  findProgressByExamId(exam._id, student?.examProgress || [])
-                ).filter(Boolean);
+                  getProgressForExam(exam, student?.examProgress || [])
+                );
                 
-                const completedExams = groupProgress.filter(p => p.status === 'completed').length;
-                const avgScore = groupProgress.length > 0 
-                  ? Math.round(groupProgress.reduce((sum, p) => sum + (p.percentage || 0), 0) / groupProgress.length)
+                const actualProgress = groupProgress.filter(p => p && !p.isPlaceholder);
+                const completedExams = actualProgress.filter(p => p.status === 'completed').length;
+                const avgScore = actualProgress.length > 0 
+                  ? Math.round(actualProgress.reduce((sum, p) => sum + (p.percentage || 0), 0) / actualProgress.length)
                   : 0;
                 
                 return (
