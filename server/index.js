@@ -28,6 +28,7 @@ const examRoutes = require('./routes/exams');
 const examGroupRoutes = require('./routes/examGroups');
 const adminRoutes = require('./routes/admin');
 const reviewRoutes = require('./routes/reviews');
+const reportRoutes = require('./routes/reports');
 
 // Connect to database
 connectDB();
@@ -67,6 +68,7 @@ app.use('/api/exams', examRoutes);
 app.use('/api/exam-groups', examGroupRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
