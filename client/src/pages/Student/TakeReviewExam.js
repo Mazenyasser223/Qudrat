@@ -409,7 +409,7 @@ const TakeReviewExam = () => {
             <div className="mt-6 flex justify-center">
               <button
                 onClick={handleSubmit}
-                disabled={submitting || timeUp}
+                disabled={submitting}
                 className="btn-primary flex items-center space-x-2 rtl:space-x-reverse px-8 py-3 text-lg"
               >
                 {submitting ? (
