@@ -266,14 +266,33 @@ const generateDuplicateReportByGroup = async () => {
 
     // Save report to file
     const outputPath = path.join(__dirname, 'duplicate-questions-by-group.txt');
-    fs.writeFileSync(outputPath, report, 'utf8');
+    const absolutePath = path.resolve(outputPath);
     
-    console.log('\n✅ تم إنشاء التقرير بنجاح!');
-    console.log(`📄 تم حفظ الملف في: ${outputPath}`);
-    console.log(`\n📊 الملخص:`);
-    console.log(`   - إجمالي المجموعات: ${sortedGroups.length}`);
-    console.log(`   - إجمالي مجموعات الأسئلة المكررة: ${duplicates.length}`);
-    console.log(`   - إجمالي التكرارات: ${duplicates.reduce((sum, d) => sum + d.count, 0)}`);
+    try {
+      fs.writeFileSync(outputPath, report, 'utf8');
+      
+      // Verify file was created
+      if (fs.existsSync(outputPath)) {
+        const stats = fs.statSync(outputPath);
+        console.log('\n✅ تم إنشاء التقرير بنجاح!');
+        console.log(`📄 المسار النسبي: ${outputPath}`);
+        console.log(`📄 المسار الكامل: ${absolutePath}`);
+        console.log(`📊 حجم الملف: ${(stats.size / 1024).toFixed(2)} KB`);
+        console.log(`\n📊 الملخص:`);
+        console.log(`   - إجمالي المجموعات: ${sortedGroups.length}`);
+        console.log(`   - إجمالي مجموعات الأسئلة المكررة: ${duplicates.length}`);
+        console.log(`   - إجمالي التكرارات: ${duplicates.reduce((sum, d) => sum + d.count, 0)}`);
+        console.log(`\n💡 لعرض الملف استخدم:`);
+        console.log(`   cat ${absolutePath}`);
+        console.log(`   أو`);
+        console.log(`   less ${absolutePath}`);
+      } else {
+        throw new Error('فشل إنشاء الملف - الملف غير موجود بعد الكتابة');
+      }
+    } catch (writeError) {
+      console.error('❌ خطأ في كتابة الملف:', writeError);
+      throw writeError;
+    }
 
     return outputPath;
   } catch (error) {
