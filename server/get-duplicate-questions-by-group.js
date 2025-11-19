@@ -46,6 +46,22 @@ const downloadImage = (url) => {
 
 const md5 = (buf) => (buf ? crypto.createHash('md5').update(buf).digest('hex') : null);
 
+// Calculate Hamming distance between two hex hashes (for pHash comparison)
+// Converts hex to binary and counts differing bits
+const hammingDistance = (hash1, hash2) => {
+  if (!hash1 || !hash2 || hash1.length !== hash2.length) return Infinity;
+  
+  let distance = 0;
+  for (let i = 0; i < hash1.length; i++) {
+    const hex1 = parseInt(hash1[i], 16);
+    const hex2 = parseInt(hash2[i], 16);
+    // XOR to find differing bits, then count set bits
+    const diff = hex1 ^ hex2;
+    distance += diff.toString(2).split('1').length - 1;
+  }
+  return distance;
+};
+
 const generateDuplicateReportByGroup = async () => {
   try {
     console.log('🔍 بدء تحليل الأسئلة المكررة...\n');
@@ -59,11 +75,15 @@ const generateDuplicateReportByGroup = async () => {
     console.log(`📊 تم العثور على ${exams.length} امتحان نشط\n`);
 
     // Maps to track question images and their occurrences
-    const md5Map = new Map(); // md5Hash -> [{ examId, examTitle, examGroup, examOrder, questionIndex, correctAnswer }]
+    const md5Map = new Map(); // md5Hash -> [{ examId, examTitle, examGroup, examOrder, questionIndex, correctAnswer, pHash }]
+    const phashMap = new Map(); // pHash -> [{ examId, examTitle, examGroup, examOrder, questionIndex, correctAnswer, md5Hash }]
+    const questionData = []; // Store all question data with hashes for comparison
+    
     let processed = 0;
     let failed = 0;
 
     console.log('📥 جاري تحميل ومعالجة صور الأسئلة...\n');
+    console.log('🔍 استخدام مقارنة محتوى الصور (Perceptual Hash) للكشف عن التكرارات\n\n');
 
     // Process all questions from all exams
     for (const exam of exams) {
@@ -95,21 +115,44 @@ const generateDuplicateReportByGroup = async () => {
 
         processed++;
         const md5Hash = md5(buf);
+        let pHash = null;
         
+        try {
+          // Calculate perceptual hash (16 bits = 256 bits total)
+          pHash = await imghash.hash(buf, 16).catch(() => null);
+        } catch (err) {
+          // If pHash fails, continue with MD5 only
+        }
+        
+        const questionInfo = {
+          examId: exam._id.toString(),
+          examTitle: exam.title,
+          examGroup: exam.examGroup,
+          examOrder: exam.order,
+          questionIndex: i + 1, // 1-indexed for display
+          correctAnswer: question.correctAnswer || 'غير محدد',
+          md5Hash,
+          pHash
+        };
+        
+        // Store in MD5 map (exact duplicates)
         if (md5Hash) {
           if (!md5Map.has(md5Hash)) {
             md5Map.set(md5Hash, []);
           }
-          
-          md5Map.get(md5Hash).push({
-            examId: exam._id.toString(),
-            examTitle: exam.title,
-            examGroup: exam.examGroup,
-            examOrder: exam.order,
-            questionIndex: i + 1, // 1-indexed for display
-            correctAnswer: question.correctAnswer || 'غير محدد'
-          });
+          md5Map.get(md5Hash).push(questionInfo);
         }
+        
+        // Store in pHash map (similar images)
+        if (pHash) {
+          if (!phashMap.has(pHash)) {
+            phashMap.set(pHash, []);
+          }
+          phashMap.get(pHash).push(questionInfo);
+        }
+        
+        // Store for Hamming distance comparison
+        questionData.push(questionInfo);
       }
     }
 
@@ -118,14 +161,16 @@ const generateDuplicateReportByGroup = async () => {
       console.log(`⚠️  فشل تحميل ${failed} سؤال`);
     }
 
-    // Find duplicates (questions that appear multiple times)
-    const duplicates = [];
+    console.log('\n🔍 جاري مقارنة الصور للعثور على التكرارات...\n');
+
+    // Find exact duplicates using MD5
+    const exactDuplicates = [];
     md5Map.forEach((occurrences, md5Hash) => {
       if (occurrences.length > 1) {
-        // Check if it appears in different exams or same exam
         const uniqueExams = new Set(occurrences.map(o => o.examId));
-        duplicates.push({
-          md5Hash,
+        exactDuplicates.push({
+          type: 'exact',
+          hash: md5Hash,
           occurrences,
           count: occurrences.length,
           examCount: uniqueExams.size,
@@ -134,7 +179,107 @@ const generateDuplicateReportByGroup = async () => {
       }
     });
 
-    console.log(`\n🔍 تم العثور على ${duplicates.length} مجموعة أسئلة مكررة\n`);
+    // Find similar duplicates using pHash (exact pHash matches)
+    const phashDuplicates = [];
+    phashMap.forEach((occurrences, pHash) => {
+      if (occurrences.length > 1) {
+        // Only include if not already in exact duplicates
+        const md5Hashes = new Set(occurrences.map(o => o.md5Hash).filter(h => h));
+        const isInExact = exactDuplicates.some(dup => 
+          md5Hashes.has(dup.hash)
+        );
+        
+        if (!isInExact) {
+          const uniqueExams = new Set(occurrences.map(o => o.examId));
+          phashDuplicates.push({
+            type: 'similar',
+            hash: pHash,
+            occurrences,
+            count: occurrences.length,
+            examCount: uniqueExams.size,
+            groupCount: new Set(occurrences.map(o => o.examGroup)).size
+          });
+        }
+      }
+    });
+
+    // Find similar images using Hamming distance (threshold: 5 for 16-bit hash)
+    // This catches images that are very similar but not identical
+    const similarDuplicates = [];
+    const processedPairs = new Set();
+    const HAMMING_THRESHOLD = 5; // Adjustable threshold for similarity
+    
+    for (let i = 0; i < questionData.length; i++) {
+      if (!questionData[i].pHash) continue;
+      
+      for (let j = i + 1; j < questionData.length; j++) {
+        if (!questionData[j].pHash) continue;
+        
+        const pairKey = `${Math.min(i, j)}-${Math.max(i, j)}`;
+        if (processedPairs.has(pairKey)) continue;
+        
+        const distance = hammingDistance(questionData[i].pHash, questionData[j].pHash);
+        
+        if (distance <= HAMMING_THRESHOLD && distance > 0) {
+          // Check if they're not already exact duplicates
+          const isExact = questionData[i].md5Hash && questionData[j].md5Hash && 
+                         questionData[i].md5Hash === questionData[j].md5Hash;
+          
+          if (!isExact) {
+            processedPairs.add(pairKey);
+            
+            // Group similar questions
+            const groupKey = `${questionData[i].pHash}-${questionData[j].pHash}`;
+            let found = false;
+            
+            for (const sim of similarDuplicates) {
+              if (sim.occurrences.some(o => 
+                (o.examId === questionData[i].examId && o.questionIndex === questionData[i].questionIndex) ||
+                (o.examId === questionData[j].examId && o.questionIndex === questionData[j].questionIndex)
+              )) {
+                // Add to existing group
+                if (!sim.occurrences.find(o => 
+                  o.examId === questionData[i].examId && o.questionIndex === questionData[i].questionIndex
+                )) {
+                  sim.occurrences.push(questionData[i]);
+                }
+                if (!sim.occurrences.find(o => 
+                  o.examId === questionData[j].examId && o.questionIndex === questionData[j].questionIndex
+                )) {
+                  sim.occurrences.push(questionData[j]);
+                }
+                sim.count = sim.occurrences.length;
+                sim.examCount = new Set(sim.occurrences.map(o => o.examId)).size;
+                sim.groupCount = new Set(sim.occurrences.map(o => o.examGroup)).size;
+                found = true;
+                break;
+              }
+            }
+            
+            if (!found) {
+              similarDuplicates.push({
+                type: 'very_similar',
+                hash: `${questionData[i].pHash.substring(0, 8)}...`,
+                distance,
+                occurrences: [questionData[i], questionData[j]],
+                count: 2,
+                examCount: new Set([questionData[i].examId, questionData[j].examId]).size,
+                groupCount: new Set([questionData[i].examGroup, questionData[j].examGroup]).size
+              });
+            }
+          }
+        }
+      }
+    }
+
+    // Combine all duplicates
+    const duplicates = [...exactDuplicates, ...phashDuplicates, ...similarDuplicates];
+
+    console.log(`\n🔍 نتائج التحليل:`);
+    console.log(`   • التكرارات التامة (MD5): ${exactDuplicates.length}`);
+    console.log(`   • التكرارات المتشابهة (pHash مطابق): ${phashDuplicates.length}`);
+    console.log(`   • التكرارات المشابهة جداً (Hamming distance ≤ ${HAMMING_THRESHOLD}): ${similarDuplicates.length}`);
+    console.log(`   • إجمالي مجموعات التكرار: ${duplicates.length}\n`);
 
     // Build detailed Arabic report
     let report = '';
@@ -153,7 +298,12 @@ const generateDuplicateReportByGroup = async () => {
     report += `   • إجمالي الامتحانات النشطة: ${exams.length}\n`;
     report += `   • إجمالي الأسئلة المعالجة: ${processed}\n`;
     report += `   • عدد مجموعات الأسئلة المكررة: ${duplicates.length}\n`;
+    report += `      - التكرارات التامة (MD5): ${exactDuplicates.length}\n`;
+    report += `      - التكرارات المتشابهة (pHash مطابق): ${phashDuplicates.length}\n`;
+    report += `      - التكرارات المشابهة جداً: ${similarDuplicates.length}\n`;
     report += `   • إجمالي تكرارات الأسئلة: ${duplicates.reduce((sum, d) => sum + d.count, 0)}\n\n`;
+    report += `💡 ملاحظة: يستخدم هذا التقرير مقارنة محتوى الصور (Perceptual Hash)\n`;
+    report += `   للكشف عن الأسئلة المكررة حتى لو كانت الصور مختلفة قليلاً.\n\n`;
 
     // Group duplicates by examGroup for better organization
     const duplicatesByGroup = new Map();
@@ -186,7 +336,10 @@ const generateDuplicateReportByGroup = async () => {
         report += `   عدد مجموعات الأسئلة المكررة في هذه المجموعة: ${uniqueDuplicatesInGroup.length}\n\n`;
 
         uniqueDuplicatesInGroup.forEach((dup, idx) => {
-          report += `\n${idx + 1}. السؤال المكرر (يظهر ${dup.count} مرة في ${dup.examCount} امتحان):\n`;
+          const typeLabel = dup.type === 'exact' ? 'تكرار تام' : 
+                           dup.type === 'similar' ? 'متشابه (pHash مطابق)' : 
+                           `مشابه جداً (مسافة ${dup.distance})`;
+          report += `\n${idx + 1}. السؤال المكرر - ${typeLabel} (يظهر ${dup.count} مرة في ${dup.examCount} امتحان):\n`;
           report += `   ───────────────────────────────────────────────────────────\n`;
           
           // Group occurrences by exam for better readability
