@@ -1435,7 +1435,7 @@ const StudentProfile = () => {
                           </td>
                           <td className="px-2 py-4 text-center" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
                             <div className="flex flex-col space-y-2">
-                              {/* Lock/Unlock Controls */}
+                              {/* Lock/Unlock Controls - Always visible */}
                               <div className="flex flex-col space-y-1">
                                 {progress && progress.status === 'unlocked' ? (
                                   <button
@@ -1450,7 +1450,7 @@ const StudentProfile = () => {
                                     )}
                                     قفل
                                   </button>
-                                ) : progress && (progress.status === 'locked' || progress.status === 'unlocked') ? (
+                                ) : (
                                   <button
                                     onClick={() => requestToggleExamAccess(exam._id, exam.title, 'open')}
                                     disabled={togglingExam === exam._id}
@@ -1463,7 +1463,7 @@ const StudentProfile = () => {
                                     )}
                                     فتح
                                   </button>
-                                ) : null}
+                                )}
                               </div>
                               
                               {/* View Answer Button */}
@@ -1699,7 +1699,7 @@ const StudentProfile = () => {
                             </td>
                             <td className="px-2 py-4 text-center" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
                               <div className="flex flex-col space-y-2">
-                                {/* Lock/Unlock Controls */}
+                                {/* Lock/Unlock Controls - Always visible */}
                                 <div className="flex flex-col space-y-1">
                                   {progress && progress.status === 'unlocked' ? (
                                     <button
@@ -1714,7 +1714,7 @@ const StudentProfile = () => {
                                       )}
                                       قفل
                                     </button>
-                                  ) : progress && (progress.status === 'locked' || !progress.status) ? (
+                                  ) : (
                                     <button
                                       onClick={() => requestToggleExamAccess(exam._id, exam.title, 'open')}
                                       disabled={togglingExam === exam._id}
@@ -1727,7 +1727,7 @@ const StudentProfile = () => {
                                       )}
                                       فتح
                                     </button>
-                                  ) : null}
+                                  )}
                                 </div>
                                 
                                 {/* View Answer Button */}

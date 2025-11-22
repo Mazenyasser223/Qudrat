@@ -213,10 +213,10 @@ const createStudent = async (req, res) => {
     // Initialize exam progress for all existing exams
     try {
       const exams = await Exam.find({ isActive: true }).sort({ examGroup: 1, order: 1 });
-      const examProgress = exams.map((exam, index) => ({
+      const examProgress = exams.map((exam) => ({
         examGroup: exam.examGroup,
         examId: exam._id,
-        status: index === 0 ? 'unlocked' : 'locked' // First exam is unlocked
+        status: 'locked' // All exams are locked by default
       }));
 
       student.examProgress = examProgress;
@@ -469,10 +469,10 @@ const toggleMultipleExams = async (req, res) => {
         return a.order - b.order;
       });
       
-      const examProgress = allExams.map((exam, index) => ({
+      const examProgress = allExams.map((exam) => ({
         examGroup: exam.examGroup,
         examId: exam._id,
-        status: index === 0 ? 'unlocked' : 'locked' // First exam is unlocked
+        status: 'locked' // All exams are locked by default
       }));
       
       student.examProgress = examProgress;
@@ -681,7 +681,7 @@ const assignSpecificExams = async (req, res) => {
       if (!existingProgress) {
         student.examProgress.push({
           examId: exam._id,
-          status: 'unlocked',
+          status: 'locked', // All exams are locked by default
           correctAnswers: 0,
           totalQuestions: exam.questions.length,
           wrongQuestions: [],
