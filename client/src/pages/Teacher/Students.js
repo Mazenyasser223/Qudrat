@@ -383,14 +383,14 @@ const Students = () => {
                     <th className="px-6 py-4 text-right text-sm font-semibold text-green-800 uppercase tracking-wider">
                       رقم الجوال
                     </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-green-800 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-sm font-semibold text-green-800 uppercase tracking-wider sticky right-0 bg-gradient-to-r from-green-50 to-green-100 z-10">
                       الإجراءات
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredStudents.map((student) => (
-                    <tr key={student._id} className="hover:bg-green-50 transition-colors duration-200">
+                    <tr key={student._id} className="hover:bg-green-50 transition-colors duration-200 group">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center justify-end">
                           <div className="mr-4 text-right">
@@ -418,7 +418,7 @@ const Students = () => {
                           {student.phoneNumber || '-'}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <td className="px-6 py-4 whitespace-nowrap text-center sticky right-0 bg-white group-hover:bg-green-50 z-10 shadow-[2px_0_4px_rgba(0,0,0,0.05)] transition-colors duration-200">
                         <div className="flex items-center justify-center space-x-2 rtl:space-x-reverse">
                           <button
                             onClick={() => handleViewProfile(student._id)}
