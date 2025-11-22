@@ -51,16 +51,7 @@ const StudentProfile = () => {
   // Confirmation dialogs
   const [lockDialog, setLockDialog] = useState({ isOpen: false, examId: null, examTitle: '', action: '' });
   const [reopenDialog, setReopenDialog] = useState({ isOpen: false, examId: null, examTitle: '' });
-  const [reviewMistakes, setReviewMistakes] = useState(() => {
-    // Load from localStorage on component mount
-    try {
-      const saved = localStorage.getItem('reviewMistakes');
-      return saved ? JSON.parse(saved) : {};
-    } catch (error) {
-      console.error('Error loading review mistakes from localStorage:', error);
-      return {};
-    }
-  }); // Track which exams have review mistakes enabled
+  const [reviewMistakes, setReviewMistakes] = useState({}); // Track which exams have review mistakes enabled
 
   useEffect(() => {
     console.log('=== STUDENT PROFILE MOUNTED ===');
@@ -189,21 +180,52 @@ const StudentProfile = () => {
     }
   }, [student, exams]);
 
-  // Save review mistakes to localStorage whenever it changes
+  // Load review mistakes enabled status from backend when student data is loaded
   useEffect(() => {
-    try {
-      localStorage.setItem('reviewMistakes', JSON.stringify(reviewMistakes));
-    } catch (error) {
-      console.error('Error saving review mistakes to localStorage:', error);
+    if (student && student.examProgress && exams.length > 0) {
+      const reviewMistakesState = {};
+      student.examProgress.forEach(progress => {
+        const examId = getExamIdString(progress.examId);
+        if (examId && progress.reviewMistakesEnabled) {
+          reviewMistakesState[examId] = true;
+        }
+      });
+      setReviewMistakes(reviewMistakesState);
     }
-  }, [reviewMistakes]);
+  }, [student, exams]);
 
   // Helper function to handle checkbox changes
-  const handleReviewMistakesChange = (examId, checked) => {
-    setReviewMistakes(prev => ({
-      ...prev,
-      [examId]: checked
-    }));
+  const handleReviewMistakesChange = async (examId, checked) => {
+    if (!studentId) return;
+
+    try {
+      // Optimistically update UI
+      setReviewMistakes(prev => ({
+        ...prev,
+        [examId]: checked
+      }));
+
+      // Save to backend
+      await axios.put(
+        `/api/users/students/${studentId}/review-mistakes/${examId}`,
+        { enabled: checked },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+
+      toast.success(checked ? 'تم تفعيل مراجعة الأخطاء' : 'تم إلغاء تفعيل مراجعة الأخطاء');
+    } catch (error) {
+      console.error('Error updating review mistakes enabled:', error);
+      // Revert on error
+      setReviewMistakes(prev => ({
+        ...prev,
+        [examId]: !checked
+      }));
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء تحديث حالة مراجعة الأخطاء');
+    }
   };
 
   // Listen for exam changes from the submission modal

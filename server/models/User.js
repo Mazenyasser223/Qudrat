@@ -100,6 +100,10 @@ const userSchema = new mongoose.Schema({
       type: Number,
       default: 0
     },
+    reviewMistakesEnabled: {
+      type: Boolean,
+      default: false
+    },
     timeSpent: {
       type: Number,
       default: 0

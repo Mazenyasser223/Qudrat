@@ -19,7 +19,8 @@ const {
   toggleGroupAccess,
   openAllExams,
   closeAllExams,
-  reopenExamForStudent
+  reopenExamForStudent,
+  updateReviewMistakesEnabled
 } = require('../controllers/userController');
 const { protect, isTeacher } = require('../middleware/auth');
 
@@ -296,5 +297,10 @@ router.put('/students/:id/close-all-exams', isTeacher, closeAllExams);
 // @desc    Reopen completed exam for student (allow retake while keeping previous scores)
 // @access  Private (Teacher only)
 router.put('/students/:id/reopen-exam/:examId', isTeacher, reopenExamForStudent);
+
+// @route   PUT /api/users/students/:id/review-mistakes/:examId
+// @desc    Update review mistakes enabled status for a specific exam
+// @access  Private (Teacher only)
+router.put('/students/:id/review-mistakes/:examId', isTeacher, updateReviewMistakesEnabled);
 
 module.exports = router;

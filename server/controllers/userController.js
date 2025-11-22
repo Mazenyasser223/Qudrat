@@ -1621,6 +1621,77 @@ const reopenExamForStudent = async (req, res) => {
   }
 };
 
+// @desc    Update review mistakes enabled status for a specific exam
+// @route   PUT /api/users/students/:id/review-mistakes/:examId
+// @access  Private (Teacher only)
+const updateReviewMistakesEnabled = async (req, res) => {
+  try {
+    const { id: studentId } = req.params;
+    const { examId } = req.params;
+    const { enabled } = req.body;
+
+    if (typeof enabled !== 'boolean') {
+      return res.status(400).json({
+        success: false,
+        message: 'يجب إرسال قيمة enabled كقيمة منطقية (true/false)'
+      });
+    }
+
+    const student = await User.findById(studentId);
+    if (!student || student.role !== 'student') {
+      return res.status(404).json({
+        success: false,
+        message: 'الطالب غير موجود'
+      });
+    }
+
+    // Find the exam progress entry
+    const examProgress = student.examProgress.find(
+      progress => progress.examId.toString() === examId
+    );
+
+    if (examProgress) {
+      // Update existing progress
+      examProgress.reviewMistakesEnabled = enabled;
+    } else {
+      // Create new progress entry if it doesn't exist
+      const Exam = require('../models/Exam');
+      const exam = await Exam.findById(examId);
+      
+      if (!exam) {
+        return res.status(404).json({
+          success: false,
+          message: 'الامتحان غير موجود'
+        });
+      }
+
+      student.examProgress.push({
+        examGroup: exam.examGroup,
+        examId: exam._id,
+        status: 'locked',
+        reviewMistakesEnabled: enabled
+      });
+    }
+
+    await student.save();
+
+    res.json({
+      success: true,
+      message: enabled ? 'تم تفعيل مراجعة الأخطاء' : 'تم إلغاء تفعيل مراجعة الأخطاء',
+      data: {
+        examId,
+        reviewMistakesEnabled: enabled
+      }
+    });
+  } catch (error) {
+    console.error('Update review mistakes enabled error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء تحديث حالة مراجعة الأخطاء'
+    });
+  }
+};
+
 module.exports = {
   getStudents,
   getStudent,
@@ -1640,5 +1711,6 @@ module.exports = {
   toggleGroupAccess,
   openAllExams,
   closeAllExams,
-  reopenExamForStudent
+  reopenExamForStudent,
+  updateReviewMistakesEnabled
 };
