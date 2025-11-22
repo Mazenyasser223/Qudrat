@@ -1185,7 +1185,7 @@ const StudentProfile = () => {
                   }}>
                     مراجعة الأخطاء
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider" style={{ 
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider sticky right-0 bg-gray-50 z-20" style={{ 
                     width: '180px',
                     minWidth: '180px',
                     maxWidth: '180px'
@@ -1433,7 +1433,7 @@ const StudentProfile = () => {
                               />
                             </div>
                           </td>
-                          <td className="px-2 py-4 text-center" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
+                          <td className="px-2 py-4 text-center sticky right-0 bg-white group-hover:bg-green-50 z-10 shadow-[2px_0_4px_rgba(0,0,0,0.05)] transition-colors duration-200" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
                             <div className="flex flex-col space-y-2">
                               {/* Lock/Unlock Controls - Always visible */}
                               <div className="flex flex-col space-y-1">
@@ -1697,7 +1697,7 @@ const StudentProfile = () => {
                                 />
                               </div>
                             </td>
-                            <td className="px-2 py-4 text-center" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
+                            <td className="px-2 py-4 text-center sticky right-0 bg-white group-hover:bg-green-50 z-10 shadow-[2px_0_4px_rgba(0,0,0,0.05)] transition-colors duration-200" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
                               <div className="flex flex-col space-y-2">
                                 {/* Lock/Unlock Controls - Always visible */}
                                 <div className="flex flex-col space-y-1">
