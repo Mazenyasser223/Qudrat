@@ -27,7 +27,8 @@
     "node-cache": "^5.1.2",
     "sharp": "^0.34.4",
     "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "ssh2": "^1.17.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
