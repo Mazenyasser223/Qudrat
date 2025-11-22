@@ -1107,7 +1107,7 @@ const StudentProfile = () => {
       </div>
 
         <div className="card-body p-0">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto" style={{ position: 'relative' }}>
             <table className="w-full divide-y divide-gray-200" style={{ 
               tableLayout: 'fixed',
               width: '100%',
@@ -1433,7 +1433,7 @@ const StudentProfile = () => {
                               />
                             </div>
                           </td>
-                          <td className="px-2 py-4 text-center sticky right-0 bg-white group-hover:bg-green-50 z-10 shadow-[2px_0_4px_rgba(0,0,0,0.05)] transition-colors duration-200" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
+                          <td className="px-2 py-4 text-center sticky right-0 bg-white group-hover:bg-green-50 z-10 shadow-[2px_0_4px_rgba(0,0,0,0.05)] transition-colors duration-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px', position: 'sticky', right: 0 }}>
                             <div className="flex flex-col space-y-2">
                               {/* Lock/Unlock Controls - Always visible */}
                               <div className="flex flex-col space-y-1">
@@ -1441,27 +1441,31 @@ const StudentProfile = () => {
                                   <button
                                     onClick={() => requestToggleExamAccess(exam._id, exam.title, 'close')}
                                     disabled={togglingExam === exam._id}
-                                    className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full"
                                   >
                                     {togglingExam === exam._id ? (
                                       <div className="spinner w-3 h-3"></div>
                                     ) : (
-                                      <Lock className="w-3 h-3 ml-1" />
+                                      <>
+                                        <Lock className="w-3 h-3 ml-1" />
+                                        <span>قفل</span>
+                                      </>
                                     )}
-                                    قفل
                                   </button>
                                 ) : (
                                   <button
                                     onClick={() => requestToggleExamAccess(exam._id, exam.title, 'open')}
                                     disabled={togglingExam === exam._id}
-                                    className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full"
                                   >
                                     {togglingExam === exam._id ? (
                                       <div className="spinner w-3 h-3"></div>
                                     ) : (
-                                      <Unlock className="w-3 h-3 ml-1" />
+                                      <>
+                                        <Unlock className="w-3 h-3 ml-1" />
+                                        <span>فتح</span>
+                                      </>
                                     )}
-                                    فتح
                                   </button>
                                 )}
                               </div>
@@ -1697,7 +1701,7 @@ const StudentProfile = () => {
                                 />
                               </div>
                             </td>
-                            <td className="px-2 py-4 text-center sticky right-0 bg-white group-hover:bg-green-50 z-10 shadow-[2px_0_4px_rgba(0,0,0,0.05)] transition-colors duration-200" style={{ width: '12%', minWidth: '120px', maxWidth: '150px' }}>
+                            <td className="px-2 py-4 text-center sticky right-0 bg-white group-hover:bg-green-50 z-10 shadow-[2px_0_4px_rgba(0,0,0,0.05)] transition-colors duration-200" style={{ width: '180px', minWidth: '180px', maxWidth: '180px', position: 'sticky', right: 0 }}>
                               <div className="flex flex-col space-y-2">
                                 {/* Lock/Unlock Controls - Always visible */}
                                 <div className="flex flex-col space-y-1">
@@ -1705,27 +1709,31 @@ const StudentProfile = () => {
                                     <button
                                       onClick={() => requestToggleExamAccess(exam._id, exam.title, 'close')}
                                       disabled={togglingExam === exam._id}
-                                      className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                      className="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full"
                                     >
                                       {togglingExam === exam._id ? (
                                         <div className="spinner w-3 h-3"></div>
                                       ) : (
-                                        <Lock className="w-3 h-3 ml-1" />
+                                        <>
+                                          <Lock className="w-3 h-3 ml-1" />
+                                          <span>قفل</span>
+                                        </>
                                       )}
-                                      قفل
                                     </button>
                                   ) : (
                                     <button
                                       onClick={() => requestToggleExamAccess(exam._id, exam.title, 'open')}
                                       disabled={togglingExam === exam._id}
-                                      className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                      className="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full"
                                     >
                                       {togglingExam === exam._id ? (
                                         <div className="spinner w-3 h-3"></div>
                                       ) : (
-                                        <Unlock className="w-3 h-3 ml-1" />
+                                        <>
+                                          <Unlock className="w-3 h-3 ml-1" />
+                                          <span>فتح</span>
+                                        </>
                                       )}
-                                      فتح
                                     </button>
                                   )}
                                 </div>
