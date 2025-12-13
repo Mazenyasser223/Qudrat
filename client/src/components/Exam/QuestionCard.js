@@ -131,21 +131,29 @@ const QuestionCard = ({
           ))}
         </div>
 
-        {/* Review Button */}
-        {onToggleReview && (
-          <div className="mt-4 flex justify-center">
-            <button
-              onClick={onToggleReview}
-              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                isMarkedForReview
-                  ? 'bg-yellow-500 text-white hover:bg-yellow-600'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              {isMarkedForReview ? '✓ Review' : 'Review'}
-            </button>
-          </div>
-        )}
+        {/* Review Button - Always visible */}
+        <div className="mt-6 mb-4 flex justify-center">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (onToggleReview) {
+                onToggleReview();
+              }
+            }}
+            type="button"
+            disabled={!onToggleReview}
+            className={`px-8 py-3 rounded-lg font-semibold text-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
+              !onToggleReview
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : isMarkedForReview
+                ? 'bg-yellow-500 text-white hover:bg-yellow-600 border-2 border-yellow-600'
+                : 'bg-blue-500 text-white hover:bg-blue-600 border-2 border-blue-600'
+            }`}
+          >
+            {isMarkedForReview ? '✓ Marked for Review' : 'Review'}
+          </button>
+        </div>
 
         {/* Navigation - Only show if onNext and onPrevious are provided */}
         {(onNext || onPrevious) && (
