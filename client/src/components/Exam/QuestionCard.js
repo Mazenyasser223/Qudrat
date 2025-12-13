@@ -131,27 +131,36 @@ const QuestionCard = ({
           ))}
         </div>
 
-        {/* Review Button - Always visible */}
+        {/* Review Button - Always visible and prominent */}
         <div className="mt-6 mb-4 flex justify-center">
           <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              console.log('Review button clicked!', { isMarkedForReview, hasHandler: !!onToggleReview });
               if (onToggleReview) {
                 onToggleReview();
+              } else {
+                console.warn('onToggleReview handler not provided!');
               }
             }}
             type="button"
-            disabled={!onToggleReview}
-            className={`px-8 py-3 rounded-lg font-semibold text-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 ${
+            style={{
+              minWidth: '200px',
+              minHeight: '50px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              zIndex: 1000
+            }}
+            className={`px-8 py-3 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 ${
               !onToggleReview
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-red-500 text-white cursor-not-allowed opacity-50'
                 : isMarkedForReview
-                ? 'bg-yellow-500 text-white hover:bg-yellow-600 border-2 border-yellow-600'
-                : 'bg-blue-500 text-white hover:bg-blue-600 border-2 border-blue-600'
+                ? 'bg-yellow-500 text-white hover:bg-yellow-600 border-4 border-yellow-700'
+                : 'bg-blue-600 text-white hover:bg-blue-700 border-4 border-blue-800'
             }`}
           >
-            {isMarkedForReview ? '✓ Marked for Review' : 'Review'}
+            {!onToggleReview ? '⚠️ NO HANDLER' : isMarkedForReview ? '✓ Marked for Review' : 'Review'}
           </button>
         </div>
 
