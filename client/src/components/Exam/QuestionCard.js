@@ -10,7 +10,9 @@ const QuestionCard = ({
   onPrevious, 
   onNext,
   isAnswered,
-  showCorrectAnswer = false 
+  showCorrectAnswer = false,
+  isMarkedForReview = false,
+  onToggleReview
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -128,6 +130,22 @@ const QuestionCard = ({
             </button>
           ))}
         </div>
+
+        {/* Review Button */}
+        {onToggleReview && (
+          <div className="mt-4 flex justify-center">
+            <button
+              onClick={onToggleReview}
+              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+                isMarkedForReview
+                  ? 'bg-yellow-500 text-white hover:bg-yellow-600'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {isMarkedForReview ? '✓ Review' : 'Review'}
+            </button>
+          </div>
+        )}
 
         {/* Navigation - Only show if onNext and onPrevious are provided */}
         {(onNext || onPrevious) && (

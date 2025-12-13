@@ -23,6 +23,7 @@ const PublicExam = () => {
   const [examForResults, setExamForResults] = useState(null);
   const [timeUp, setTimeUp] = useState(false);
   const [startTime, setStartTime] = useState(null);
+  const [markedForReview, setMarkedForReview] = useState(new Set());
 
   useEffect(() => {
     fetchExam();
@@ -79,6 +80,18 @@ const PublicExam = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
     }
+  };
+
+  const handleToggleReview = () => {
+    setMarkedForReview(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(currentQuestion)) {
+        newSet.delete(currentQuestion);
+      } else {
+        newSet.add(currentQuestion);
+      }
+      return newSet;
+    });
   };
 
   const handleSubmit = async () => {
@@ -269,21 +282,30 @@ const PublicExam = () => {
               </div>
               <div className="card-body">
                 <div className="grid grid-cols-4 gap-2 mb-4">
-                  {shuffledQuestions.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentQuestion(index)}
-                      className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
-                        currentQuestion === index
-                          ? 'bg-primary-600 text-white'
-                          : answers[index]
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                    >
-                      {index + 1}
-                    </button>
-                  ))}
+                  {shuffledQuestions.map((_, index) => {
+                    const isMarked = markedForReview.has(index);
+                    const isAnswered = answers[index] !== null;
+                    
+                    let buttonClass = 'bg-gray-100 text-gray-600 hover:bg-gray-200';
+                    
+                    if (currentQuestion === index) {
+                      buttonClass = 'bg-primary-600 text-white';
+                    } else if (isMarked) {
+                      buttonClass = 'bg-yellow-400 text-yellow-900 hover:bg-yellow-500';
+                    } else if (isAnswered) {
+                      buttonClass = 'bg-green-100 text-green-700 hover:bg-green-200';
+                    }
+                    
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentQuestion(index)}
+                        className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${buttonClass}`}
+                      >
+                        {index + 1}
+                      </button>
+                    );
+                  })}
                 </div>
                 
                 <div className="space-y-2 text-sm">
@@ -325,6 +347,8 @@ const PublicExam = () => {
                 onNext={handleNext}
                 onPrevious={handlePrevious}
                 isAnswered={answers[currentQuestion] !== null}
+                isMarkedForReview={markedForReview.has(currentQuestion)}
+                onToggleReview={handleToggleReview}
               />
             )}
 
