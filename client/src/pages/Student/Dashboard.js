@@ -421,18 +421,27 @@ const StudentDashboard = () => {
                     const status = getExamStatus(exam);
                     const progress = studentProgress.find(p => p.examId === exam._id);
                     
+                    // Determine card color based on score if completed
+                    const isFullMark = status === 'completed' && progress && progress.score === exam.totalQuestions;
+                    const hasPartialScore = status === 'completed' && progress && progress.score > 0 && progress.score < exam.totalQuestions;
+                    const hasZeroScore = status === 'completed' && progress && progress.score === 0;
+                    
+                    const cardClasses = isFullMark
+                      ? 'bg-gradient-to-r from-green-50 to-green-100 border-green-300 hover:shadow-md'
+                      : hasPartialScore
+                      ? 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-300 hover:shadow-md'
+                      : hasZeroScore
+                      ? 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-300 hover:shadow-md opacity-75'
+                      : status === 'unlocked'
+                      ? 'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-md'
+                      : status === 'in_progress'
+                      ? 'bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200 hover:shadow-md'
+                      : 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200 opacity-75';
+                    
                     return (
                       <div
                         key={exam._id}
-                        className={`p-4 rounded-lg border transition-all duration-200 cursor-pointer ${
-                          status === 'completed' 
-                            ? 'bg-gradient-to-r from-green-50 to-green-100 border-green-200 hover:shadow-md' 
-                            : status === 'unlocked'
-                            ? 'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-md' 
-                            : status === 'in_progress'
-                            ? 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200 hover:shadow-md'
-                            : 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200 opacity-75'
-                        }`}
+                        className={`p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer ${cardClasses}`}
                         onClick={() => handleStartExam(exam)}
                       >
                         <div className="flex items-center justify-between mb-3">
