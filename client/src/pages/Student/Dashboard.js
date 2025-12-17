@@ -53,11 +53,6 @@ const StudentDashboard = () => {
       Object.keys(groupedExams).forEach(group => {
         groupedExams[group].sort((a, b) => a.order - b.order);
       });
-
-      console.log('=== EXAM GROUPS DEBUG ===');
-      console.log('All exams:', exams);
-      console.log('Grouped exams:', groupedExams);
-      console.log('Group numbers:', Object.keys(groupedExams));
       
       setExamGroups(groupedExams);
     } catch (error) {
@@ -88,7 +83,6 @@ const StudentDashboard = () => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      console.log('Student progress fetched:', res.data.user.examProgress);
       setStudentProgress(res.data.user.examProgress || []);
     } catch (error) {
       console.error('Error fetching student progress:', error);
@@ -122,11 +116,6 @@ const StudentDashboard = () => {
 
   const getExamStatus = (exam) => {
     const progress = studentProgress.find(p => p.examId === exam._id);
-    console.log(`Exam ${exam.title} (${exam._id}):`, {
-      hasProgress: !!progress,
-      progressStatus: progress?.status,
-      allProgress: studentProgress.map(p => ({ examId: p.examId, status: p.status }))
-    });
     
     if (!progress) return 'locked';
     

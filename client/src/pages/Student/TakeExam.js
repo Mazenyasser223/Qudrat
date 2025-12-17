@@ -62,11 +62,6 @@ const TakeExam = () => {
       });
       setQuestionOrder(order);
       
-      console.log('=== QUESTION ORDER DEBUG ===');
-      console.log('Original questions:', examData.questions.map(q => q._id));
-      console.log('Shuffled questions:', shuffled.map(q => q._id));
-      console.log('Question order mapping:', order);
-      
       // Initialize answers object
       const initialAnswers = {};
       shuffled.forEach((_, index) => {
@@ -83,19 +78,10 @@ const TakeExam = () => {
   };
 
   const handleAnswerSelect = (answer) => {
-    console.log(`=== ANSWER SELECTION DEBUG ===`);
-    console.log(`Current question: ${currentQuestion}`);
-    console.log(`Selected answer: ${answer}`);
-    console.log(`Previous answers:`, answers);
-    
-    setAnswers(prev => {
-      const newAnswers = {
-        ...prev,
-        [currentQuestion]: answer
-      };
-      console.log(`New answers state:`, newAnswers);
-      return newAnswers;
-    });
+    setAnswers(prev => ({
+      ...prev,
+      [currentQuestion]: answer
+    }));
   };
 
   const handlePrevious = () => {
@@ -143,22 +129,10 @@ const TakeExam = () => {
         const shuffledIndex = questionOrder[originalIndex];
         const selectedAnswer = answers[shuffledIndex] || null;
         
-        console.log(`Mapping answer for question ${originalIndex + 1}:`, {
-          originalIndex,
-          shuffledIndex,
-          selectedAnswer,
-          questionId: question._id
-        });
-        
         return {
           selectedAnswer: selectedAnswer
         };
       });
-      
-      console.log('=== SUBMISSION DEBUG ===');
-      console.log('Question order:', questionOrder);
-      console.log('Answers object:', answers);
-      console.log('Final answers array:', answersArray);
 
       const res = await axios.post(`/api/exams/${examId}/submit`, {
         answers: answersArray,
