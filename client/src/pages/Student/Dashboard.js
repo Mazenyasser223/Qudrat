@@ -412,8 +412,8 @@ const StudentDashboard = () => {
                     
                     // Check if exam has review and review performance
                     const hasReviewExam = status === 'completed' && progress && progress.reviewExamId;
-                    const reviewFullMark = hasReviewExam && progress.bestReviewScore === progress.wrongQuestions?.length;
-                    const reviewPartialOrFailed = hasReviewExam && progress.bestReviewScore < progress.wrongQuestions?.length;
+                    const reviewFullMark = hasReviewExam && progress.bestReviewScore >= 100;
+                    const reviewPartialOrFailed = hasReviewExam && progress.bestReviewScore < 100;
                     
                     // Determine card color based on score and review performance
                     let cardClasses;
@@ -498,24 +498,22 @@ const StudentDashboard = () => {
                                     <div className="flex items-center justify-between text-xs mb-1">
                                       <span className="text-purple-700 font-medium">أفضل درجة في المراجعة:</span>
                                       <span className={`font-bold ${
-                                        progress.bestReviewScore === progress.wrongQuestions.length
+                                        progress.bestReviewScore >= 100
                                           ? 'text-green-600'
                                           : 'text-red-600'
                                       }`}>
-                                        {progress.bestReviewScore || 0}/{progress.wrongQuestions.length}
+                                        {Math.round((progress.bestReviewScore || 0) / 100 * progress.wrongQuestions.length)}/{progress.wrongQuestions.length} ({progress.bestReviewScore || 0}%)
                                       </span>
                                     </div>
                                     <div className="w-full bg-purple-200 rounded-full h-1.5">
                                       <div 
                                         className={`h-1.5 rounded-full ${
-                                          progress.bestReviewScore === progress.wrongQuestions.length
+                                          progress.bestReviewScore >= 100
                                             ? 'bg-green-500'
                                             : 'bg-red-500'
                                         }`}
                                         style={{ 
-                                          width: `${progress.wrongQuestions.length > 0 
-                                            ? ((progress.bestReviewScore || 0) / progress.wrongQuestions.length) * 100 
-                                            : 0}%` 
+                                          width: `${progress.bestReviewScore || 0}%` 
                                         }}
                                       ></div>
                                     </div>
