@@ -491,17 +491,50 @@ const StudentDashboard = () => {
                               ></div>
                             </div>
                             {progress.reviewExamId && (
-                              <div className="flex items-center justify-center mt-2">
-                          <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/student/review-exam/${progress.reviewExamId}`);
-                                  }}
-                                  className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium hover:bg-purple-200 transition-colors"
-                                >
-                                  <RotateCcw className="h-3 w-3" />
-                                  <span>امتحان المراجعة</span>
-                                </button>
+                              <div className="mt-3 space-y-2">
+                                {/* Best Review Score Display */}
+                                {progress.wrongQuestions && progress.wrongQuestions.length > 0 && (
+                                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-2">
+                                    <div className="flex items-center justify-between text-xs mb-1">
+                                      <span className="text-purple-700 font-medium">أفضل درجة في المراجعة:</span>
+                                      <span className={`font-bold ${
+                                        progress.bestReviewScore === progress.wrongQuestions.length
+                                          ? 'text-green-600'
+                                          : 'text-red-600'
+                                      }`}>
+                                        {progress.bestReviewScore || 0}/{progress.wrongQuestions.length}
+                                      </span>
+                                    </div>
+                                    <div className="w-full bg-purple-200 rounded-full h-1.5">
+                                      <div 
+                                        className={`h-1.5 rounded-full ${
+                                          progress.bestReviewScore === progress.wrongQuestions.length
+                                            ? 'bg-green-500'
+                                            : 'bg-red-500'
+                                        }`}
+                                        style={{ 
+                                          width: `${progress.wrongQuestions.length > 0 
+                                            ? ((progress.bestReviewScore || 0) / progress.wrongQuestions.length) * 100 
+                                            : 0}%` 
+                                        }}
+                                      ></div>
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Review Exam Button */}
+                                <div className="flex items-center justify-center">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigate(`/student/review-exam/${progress.reviewExamId}`);
+                                    }}
+                                    className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium hover:bg-purple-200 transition-colors"
+                                  >
+                                    <RotateCcw className="h-3 w-3" />
+                                    <span>امتحان المراجعة</span>
+                                  </button>
+                                </div>
                               </div>
                             )}
                           </div>
