@@ -137,30 +137,24 @@ const QuestionCard = ({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              console.log('Review button clicked!', { isMarkedForReview, hasHandler: !!onToggleReview });
               if (onToggleReview) {
                 onToggleReview();
-              } else {
-                console.warn('onToggleReview handler not provided!');
               }
             }}
             type="button"
+            className={`px-8 py-3 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 ${
+              isMarkedForReview
+                ? 'bg-yellow-500 text-white hover:bg-yellow-600 border-2 border-yellow-700'
+                : 'bg-blue-600 text-white hover:bg-blue-700 border-2 border-blue-800'
+            }`}
             style={{
               minWidth: '200px',
               minHeight: '50px',
               fontSize: '18px',
-              fontWeight: 'bold',
-              zIndex: 1000
+              fontWeight: 'bold'
             }}
-            className={`px-8 py-3 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 ${
-              !onToggleReview
-                ? 'bg-red-500 text-white cursor-not-allowed opacity-50'
-                : isMarkedForReview
-                ? 'bg-yellow-500 text-white hover:bg-yellow-600 border-4 border-yellow-700'
-                : 'bg-blue-600 text-white hover:bg-blue-700 border-4 border-blue-800'
-            }`}
           >
-            {!onToggleReview ? '⚠️ NO HANDLER' : isMarkedForReview ? '✓ Marked for Review' : 'Review'}
+            {isMarkedForReview ? '✓ تم وضع علامة للمراجعة' : '📌 وضع علامة للمراجعة'}
           </button>
         </div>
 
