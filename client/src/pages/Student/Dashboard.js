@@ -756,17 +756,35 @@ const StudentDashboard = () => {
                           {completedExams.map(exam => {
                             const progress = studentProgress.find(p => p.examId === exam._id && p.status === 'completed');
                             
+                            // Determine card color based on score
+                            const isFullMark = progress && progress.score === exam.totalQuestions;
+                            const hasScore = progress && progress.score > 0;
+                            
+                            const cardClasses = isFullMark
+                              ? "bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-300 hover:from-green-100 hover:to-green-200"
+                              : hasScore
+                              ? "bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-300 hover:from-yellow-100 hover:to-yellow-200"
+                              : "bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-300 hover:from-gray-100 hover:to-gray-200";
+                            
                             return (
                               <div
                                 key={exam._id}
-                                className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-4 hover:from-green-100 hover:to-blue-100 transition-all duration-200 cursor-pointer shadow-sm"
+                                className={`${cardClasses} rounded-lg p-4 transition-all duration-200 cursor-pointer shadow-sm`}
                                 onClick={() => navigate(`/student/exam-history/${exam._id}`)}
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex-1">
                                     <div className="flex items-center space-x-3 rtl:space-x-reverse mb-2">
-                                      <div className="p-2 bg-green-100 rounded-lg">
-                                        <CheckCircle className="h-4 w-4 text-green-600" />
+                                      <div className={`p-2 rounded-lg ${
+                                        isFullMark ? 'bg-green-200' :
+                                        hasScore ? 'bg-yellow-200' :
+                                        'bg-gray-200'
+                                      }`}>
+                                        <CheckCircle className={`h-4 w-4 ${
+                                          isFullMark ? 'text-green-700' :
+                                          hasScore ? 'text-yellow-700' :
+                                          'text-gray-600'
+                                        }`} />
                                       </div>
                                       <div>
                                         <h5 className="font-bold text-gray-900 text-base">
