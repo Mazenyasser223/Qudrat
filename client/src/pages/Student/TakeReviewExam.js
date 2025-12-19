@@ -389,6 +389,21 @@ const TakeReviewExam = () => {
                 </div>
               </div>
 
+              {/* Review Button */}
+              <div className="mt-4">
+                <button
+                  onClick={handleToggleReview}
+                  type="button"
+                  className={`w-full px-4 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg ${
+                    markedForReview.has(currentQuestion)
+                      ? 'bg-yellow-500 text-white hover:bg-yellow-600 border-2 border-yellow-600'
+                      : 'bg-blue-600 text-white hover:bg-blue-700 border-2 border-blue-700'
+                  }`}
+                >
+                  {markedForReview.has(currentQuestion) ? '✓ تم وضع علامة للمراجعة' : '📌 وضع علامة للمراجعة'}
+                </button>
+              </div>
+
               {getUnansweredQuestions().length > 0 && (
                 <div className="mt-4 p-3 bg-yellow-50 rounded-lg">
                   <p className="text-sm text-yellow-800 mb-2">أسئلة غير مجابة:</p>
