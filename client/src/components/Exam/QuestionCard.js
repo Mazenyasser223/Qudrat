@@ -131,33 +131,6 @@ const QuestionCard = ({
           ))}
         </div>
 
-        {/* Review Button - Always visible and prominent */}
-        <div className="mt-6 mb-4 flex justify-center">
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (onToggleReview) {
-                onToggleReview();
-              }
-            }}
-            type="button"
-            className={`px-8 py-3 rounded-lg font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 ${
-              isMarkedForReview
-                ? 'bg-yellow-500 text-white hover:bg-yellow-600 border-2 border-yellow-700'
-                : 'bg-blue-600 text-white hover:bg-blue-700 border-2 border-blue-800'
-            }`}
-            style={{
-              minWidth: '200px',
-              minHeight: '50px',
-              fontSize: '18px',
-              fontWeight: 'bold'
-            }}
-          >
-            {isMarkedForReview ? '✓ تم وضع علامة للمراجعة' : '📌 وضع علامة للمراجعة'}
-          </button>
-        </div>
-
         {/* Navigation - Only show if onNext and onPrevious are provided */}
         {(onNext || onPrevious) && (
           <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
