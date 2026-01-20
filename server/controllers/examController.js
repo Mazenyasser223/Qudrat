@@ -503,7 +503,10 @@ const submitExam = async (req, res) => {
     // Update exam progress
     examProgress.status = 'completed';
     examProgress.score = score;
+    examProgress.totalQuestions = exam.questions.length;
     examProgress.percentage = percentage;
+    examProgress.correctAnswers = correctAnswers;
+    examProgress.wrongAnswers = exam.questions.length - correctAnswers;
     examProgress.completedAt = new Date();
     examProgress.submittedAt = submittedAt ? new Date(submittedAt) : new Date();
     examProgress.timeSpent = timeSpent || 0;
