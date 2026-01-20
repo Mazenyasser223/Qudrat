@@ -139,23 +139,31 @@ const getMe = async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     
     // Add best review score for each exam progress if user is a student
-    if (user.role === 'student' && user.examProgress) {
+    if (user.role === 'student' && user.examProgress && user.examProgress.length > 0) {
       const ReviewExam = require('../models/ReviewExam');
-      for (let progress of user.examProgress) {
-        if (progress.reviewExamId) {
-          try {
-            const reviewExam = await ReviewExam.findById(progress.reviewExamId);
-            if (reviewExam) {
-              progress.bestReviewScore = reviewExam.bestPercentage || 0;
-            }
-          } catch (error) {
-            console.error('Error fetching review exam:', error);
-            progress.bestReviewScore = 0;
-          }
-        } else {
-          progress.bestReviewScore = 0;
-        }
-      }
+      
+      // Collect all review exam IDs
+      const reviewExamIds = user.examProgress
+        .filter(p => p.reviewExamId)
+        .map(p => p.reviewExamId);
+      
+      // Fetch all review exams in ONE query instead of 222 separate queries
+      const reviewExams = await ReviewExam.find({
+        _id: { $in: reviewExamIds }
+      }).select('_id bestPercentage').lean();
+      
+      // Create a map for O(1) lookup
+      const reviewExamMap = {};
+      reviewExams.forEach(re => {
+        reviewExamMap[re._id.toString()] = re.bestPercentage || 0;
+      });
+      
+      // Assign best review scores
+      user.examProgress.forEach(progress => {
+        progress.bestReviewScore = progress.reviewExamId 
+          ? (reviewExamMap[progress.reviewExamId.toString()] || 0)
+          : 0;
+      });
     }
     
     res.json({
