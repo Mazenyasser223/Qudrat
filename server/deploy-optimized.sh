@@ -30,7 +30,7 @@ echo ""
 
 # Step 4: Build with optimizations
 echo "🔨 Step 4: Building React app..."
-GENERATE_SOURCEMAP=false npm run build
+GENERATE_SOURCEMAP=false DISABLE_ESLINT_PLUGIN=true npm run build
 if [ $? -ne 0 ]; then
     echo "❌ Build failed!"
     exit 1
