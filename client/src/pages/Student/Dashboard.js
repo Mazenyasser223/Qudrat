@@ -330,7 +330,7 @@ const StudentDashboard = () => {
               >
                 <option value="all">جميع المجموعات</option>
                 <option value="0">اختبارات التأسيس</option>
-                {availableGroups().filter(g => g !== 'all' && g !== '0').map(group => (
+                {availableGroups.filter(g => g !== 'all' && g !== '0').map(group => (
                   <option key={group} value={group}>{getGroupName(group)}</option>
                 ))}
               </select>
@@ -363,7 +363,7 @@ const StudentDashboard = () => {
 
           {/* Results Count */}
           <div className="mt-4 text-sm text-gray-600">
-            عرض {filteredExams().length} من {Object.values(examGroups).flat().length} امتحان
+            عرض {filteredExams.length} من {Object.values(examGroups).flat().length} امتحان
           </div>
         </div>
       </div>
@@ -372,7 +372,7 @@ const StudentDashboard = () => {
       {viewMode === 'grid' ? (
         /* Grid View */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {Object.keys(groupedExams()).length === 0 ? (
+          {Object.keys(groupedExams).length === 0 ? (
             <div className="col-span-full">
               <div className="text-center py-12 bg-white rounded-xl shadow-sm border">
                 <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -383,7 +383,7 @@ const StudentDashboard = () => {
               </div>
             </div>
           ) : (
-            Object.entries(groupedExams()).map(([groupNumber, groupExams]) => (
+            Object.entries(groupedExams).map(([groupNumber, groupExams]) => (
               <div key={groupNumber} className="bg-white rounded-xl shadow-sm border overflow-hidden">
                 {/* Group Header */}
                 <div className={`p-4 ${
@@ -588,7 +588,7 @@ const StudentDashboard = () => {
       ) : (
         /* List View */
         <div className="space-y-6">
-          {Object.keys(groupedExams()).length === 0 ? (
+          {Object.keys(groupedExams).length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl shadow-sm border">
               <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">لا توجد امتحانات</h3>
@@ -597,7 +597,7 @@ const StudentDashboard = () => {
               </p>
             </div>
           ) : (
-            Object.entries(groupedExams()).map(([groupNumber, groupExams]) => (
+            Object.entries(groupedExams).map(([groupNumber, groupExams]) => (
               <div key={groupNumber} className="bg-white rounded-xl shadow-sm border overflow-hidden">
                 {/* Group Header */}
                 <div className={`p-4 ${
