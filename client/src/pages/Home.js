@@ -192,26 +192,12 @@ const Home = () => {
 
   const fetchReviews = async () => {
     try {
-      console.log('🔍 Fetching reviews from API...');
       const res = await axios.get('/api/reviews');
-      console.log('📊 Reviews API response:', res.data);
-      console.log('📊 Reviews count:', res.data.data?.length || 0);
-      
-      if (res.data.data && res.data.data.length > 0) {
-        console.log('📋 Review details:', res.data.data.map(r => ({
-          id: r._id,
-          name: r.studentName,
-          rating: r.rating,
-          imageUrl: r.imageUrl,
-          isActive: r.isActive
-        })));
-      }
-      
       setReviews(res.data.data || []);
-      console.log('✅ Reviews set in state:', res.data.data || []);
     } catch (error) {
-      console.error('❌ Error fetching reviews:', error);
-      console.error('❌ Error response:', error.response);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error fetching reviews:', error);
+      }
     } finally {
       setReviewsLoading(false);
     }

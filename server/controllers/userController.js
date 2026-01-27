@@ -8,25 +8,34 @@ const { validationResult } = require('express-validator');
 // @access  Private (Teacher only)
 const getStudents = async (req, res) => {
   try {
-    console.log('=== GET STUDENTS REQUEST ===');
-    console.log('User:', req.user);
-    console.log('User role:', req.user?.role);
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50;
+    const skip = (page - 1) * limit;
     
-    // Optimized query with better performance
+    // Get total count for pagination
+    const totalCount = await User.countDocuments({ role: 'student' });
+    
+    // Optimized query with pagination and better performance
     const students = await User.find({ role: 'student' })
       .select('name email phoneNumber createdAt isActive')
       .sort({ createdAt: -1 })
-      .lean(); // Use lean() for better performance
-
-    console.log('Found students:', students.length);
+      .skip(skip)
+      .limit(limit)
+      .lean();
 
     res.json({
       success: true,
       count: students.length,
+      total: totalCount,
+      page,
+      totalPages: Math.ceil(totalCount / limit),
       data: students
     });
   } catch (error) {
-    console.error('Get students error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Get students error:', error);
+    }
     res.status(500).json({
       success: false,
       message: 'Server error while fetching students'
@@ -231,8 +240,8 @@ const createStudent = async (req, res) => {
     try {
       const io = req.app.get('io');
       if (io) {
-        // Get all teachers to notify them of the new student
-        const teachers = await User.find({ role: 'teacher' });
+        // Get all teacher IDs to notify them of the new student (optimized)
+        const teachers = await User.find({ role: 'teacher' }).select('_id').lean();
         teachers.forEach(teacher => {
           io.to(`teacher-${teacher._id}`).emit('student-added', {
             studentId: student._id,
@@ -348,8 +357,8 @@ const deleteStudent = async (req, res) => {
     // Emit real-time update to teachers
     const io = req.app.get('io');
     if (io) {
-      // Get all teachers to notify them of the deleted student
-      const teachers = await User.find({ role: 'teacher' });
+      // Get all teacher IDs to notify them of the deleted student (optimized)
+      const teachers = await User.find({ role: 'teacher' }).select('_id').lean();
       teachers.forEach(teacher => {
         io.to(`teacher-${teacher._id}`).emit('student-deleted', {
           studentId: student._id,
@@ -882,12 +891,21 @@ const getAllStudentAnswers = async (req, res) => {
       progress.status === 'completed' || progress.status === 'in_progress'
     );
 
+    // Batch fetch all exams at once (fix N+1 query)
+    const examIds = attemptedExams.map(progress => progress.examId);
+    const exams = await Exam.find({ 
+      _id: { $in: examIds },
+      isActive: true 
+    }).lean();
+
+    // Create a map for fast lookup
+    const examMap = new Map(exams.map(exam => [exam._id.toString(), exam]));
+
     const studentAnswers = [];
 
     for (const progress of attemptedExams) {
-      // Get the full exam with questions (only active exams)
-      const exam = await Exam.findById(progress.examId).populate('questions');
-      if (!exam || !exam.isActive) continue;
+      const exam = examMap.get(progress.examId.toString());
+      if (!exam) continue;
 
       studentAnswers.push({
         exam: {

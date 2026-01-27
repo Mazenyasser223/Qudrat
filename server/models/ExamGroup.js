@@ -62,6 +62,10 @@ examGroupSchema.pre('save', function(next) {
 // Indexes for performance
 examGroupSchema.index({ groupNumber: 1 });
 examGroupSchema.index({ isActive: 1 });
+examGroupSchema.index({ isPremium: 1 });
 examGroupSchema.index({ createdBy: 1 });
+examGroupSchema.index({ createdAt: -1 });
+// Compound index
+examGroupSchema.index({ isActive: 1, isPremium: 1 });
 
 module.exports = mongoose.model('ExamGroup', examGroupSchema);

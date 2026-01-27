@@ -11,24 +11,35 @@ const { invalidateCache } = require('../middleware/cache');
 // @access  Private
 const getExams = async (req, res) => {
   try {
-    console.log('📋 === GET EXAMS REQUEST ===');
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const skip = (page - 1) * limit;
+    
+    // Get total count for pagination
+    const totalCount = await Exam.countDocuments({ isActive: true });
     
     // For list view, only fetch basic exam info without questions to improve performance
     const exams = await Exam.find({ isActive: true })
       .select('title description examGroup order timeLimit isFreeExam totalQuestions createdAt updatedAt')
       .populate('createdBy', 'name email')
-      .sort({ examGroup: 1, order: 1 });
-
-    console.log('📊 Found exams:', exams.length);
-    console.log('📋 Exam titles:', exams.map(e => `${e.title} (Group: ${e.examGroup}, Order: ${e.order})`));
+      .sort({ examGroup: 1, order: 1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
 
     res.json({
       success: true,
       count: exams.length,
+      total: totalCount,
+      page,
+      totalPages: Math.ceil(totalCount / limit),
       data: exams
     });
   } catch (error) {
-    console.error('❌ Get exams error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Get exams error:', error);
+    }
     res.status(500).json({
       success: false,
       message: 'Server error while fetching exams'
@@ -302,16 +313,15 @@ const deleteExam = async (req, res) => {
     console.log(`🗑️ Deleting exam: ${exam.title} (ID: ${exam._id})`);
     console.log(`📊 Exam has ${exam.questions?.length || 0} questions`);
 
-    // Delete images from Cloudinary before soft deleting the exam
+    // Delete images from Cloudinary before soft deleting the exam (optimized - parallel deletions)
     if (exam.questions && exam.questions.length > 0) {
       const cloudinary = require('../config/cloudinary');
-      let deletedImages = 0;
-      let failedDeletions = 0;
-
       console.log('🖼️ Starting Cloudinary image cleanup...');
 
-      for (const question of exam.questions) {
-        if (question.questionImage && question.questionImage.includes('cloudinary.com')) {
+      // Collect all deletion promises for parallel execution
+      const deletionPromises = exam.questions
+        .filter(question => question.questionImage && question.questionImage.includes('cloudinary.com'))
+        .map(async (question) => {
           try {
             // Extract public_id from Cloudinary URL
             const urlParts = question.questionImage.split('/');
@@ -320,16 +330,19 @@ const deleteExam = async (req, res) => {
             const fullPublicId = `${folderPath}/${publicId}`;
 
             console.log(`🗑️ Deleting image: ${fullPublicId}`);
-            
             await cloudinary.uploader.destroy(fullPublicId);
-            deletedImages++;
             console.log(`✅ Successfully deleted: ${fullPublicId}`);
+            return { success: true, publicId: fullPublicId };
           } catch (imageError) {
             console.error(`❌ Failed to delete image: ${question.questionImage}`, imageError.message);
-            failedDeletions++;
+            return { success: false, error: imageError.message };
           }
-        }
-      }
+        });
+
+      // Execute all deletions in parallel
+      const results = await Promise.all(deletionPromises);
+      const deletedImages = results.filter(r => r.success).length;
+      const failedDeletions = results.filter(r => !r.success).length;
 
       console.log(`📊 Cloudinary cleanup completed: ${deletedImages} deleted, ${failedDeletions} failed`);
     }
@@ -416,7 +429,10 @@ const submitExam = async (req, res) => {
     console.log('Time spent:', timeSpent);
     console.log('Submitted at:', submittedAt);
 
-    const exam = await Exam.findById(req.params.id);
+    // Only select needed fields for better performance
+    const exam = await Exam.findById(req.params.id)
+      .select('questions.correctAnswer questions._id title examGroup order totalQuestions statistics')
+      .lean();
     if (!exam) {
       return res.status(404).json({
         success: false,
@@ -546,11 +562,11 @@ const submitExam = async (req, res) => {
     
     await exam.save();
 
-    // Emit real-time update to teachers
+    // Emit real-time update to teachers (optimized - only fetch IDs)
     const io = req.app.get('io');
     if (io) {
-      // Get all teachers to notify them of the exam submission
-      const teachers = await User.find({ role: 'teacher' });
+      // Get all teacher IDs to notify them of the exam submission
+      const teachers = await User.find({ role: 'teacher' }).select('_id').lean();
       teachers.forEach(teacher => {
         io.to(`teacher-${teacher._id}`).emit('exam-submitted', {
           studentId: student._id,
@@ -1074,8 +1090,8 @@ const getStudentMistakes = async (req, res) => {
   try {
     const { examId, studentId } = req.params;
 
-    // Get the exam with questions
-    const exam = await Exam.findById(examId).populate('questions');
+    // Get the exam with questions (questions are embedded, no need to populate)
+    const exam = await Exam.findById(examId).lean();
     if (!exam) {
       return res.status(404).json({
         success: false,
@@ -1182,8 +1198,8 @@ const getStudentSubmission = async (req, res) => {
   try {
     const { examId, studentId } = req.params;
 
-    // Get the exam with questions
-    const exam = await Exam.findById(examId).populate('questions');
+    // Get the exam with questions (questions are embedded, no need to populate)
+    const exam = await Exam.findById(examId).lean();
     if (!exam) {
       return res.status(404).json({
         success: false,

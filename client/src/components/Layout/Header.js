@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { LogOut, User, BookOpen, Users, Star } from 'lucide-react';
 
-const Header = () => {
+const Header = React.memo(() => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout();
     navigate('/');
-  };
+  }, [logout, navigate]);
 
-  const isTeacher = user?.role === 'teacher' || user?.role === 'admin';
-  const isStudent = user?.role === 'student';
+  const isTeacher = useMemo(() => user?.role === 'teacher' || user?.role === 'admin', [user?.role]);
+  const isStudent = useMemo(() => user?.role === 'student', [user?.role]);
 
   return (
     <header className="bg-white shadow-lg border-b border-green-200 bg-gradient-to-r from-white to-green-50">
@@ -88,6 +88,8 @@ const Header = () => {
       </div>
     </header>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;

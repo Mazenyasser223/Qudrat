@@ -90,6 +90,10 @@ examSchema.index({ isActive: 1 });
 examSchema.index({ isFreeExam: 1 });
 examSchema.index({ createdBy: 1 });
 examSchema.index({ createdAt: -1 });
+// Compound indexes for faster queries
+examSchema.index({ examGroup: 1, isActive: 1 });
+examSchema.index({ isFreeExam: 1, freeExamOrder: 1 });
+examSchema.index({ isActive: 1, createdAt: -1 });
 
 // Update totalQuestions when questions are modified
 examSchema.pre('save', function(next) {

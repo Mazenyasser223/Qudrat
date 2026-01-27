@@ -28,16 +28,15 @@ const Exams = () => {
 
   const checkBackendHealth = async () => {
     try {
-      console.log('Checking backend health...');
-      const response = await axios.get('/api/health', { timeout: 5000 });
-      console.log('Backend is healthy:', response.data);
-      // If backend is healthy, fetch data
+      await axios.get('/api/health', { timeout: 5000 });
       fetchExams();
       fetchCustomGroups();
       fetchFreeExams();
     } catch (error) {
-      console.error('Backend health check failed:', error);
-      // Try to fetch anyway, but with better error handling
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Backend health check failed:', error);
+      }
+      // Try to fetch anyway
       fetchExams();
       fetchCustomGroups();
       fetchFreeExams();
@@ -53,49 +52,25 @@ const Exams = () => {
   const fetchExams = async () => {
     try {
       setLoading(true);
-      console.log('=== FETCHING EXAMS ===');
-      console.log('API URL:', axios.defaults.baseURL + '/api/exams');
-      console.log('Token present:', !!localStorage.getItem('token'));
-      console.log('Token value:', localStorage.getItem('token')?.substring(0, 20) + '...');
-      
       const res = await axios.get('/api/exams', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        timeout: 30000 // 30 second timeout for main exams (they have more data)
+        timeout: 30000
       });
       
-      console.log('=== EXAMS RESPONSE ===');
-      console.log('Status:', res.status);
-      console.log('Headers:', res.headers);
-      console.log('Data:', res.data);
-      console.log('Data type:', typeof res.data);
-      console.log('Data.data:', res.data?.data);
-      console.log('Data.data length:', res.data?.data?.length);
-      
       const examsData = res.data?.data || [];
-      console.log('Setting exams:', examsData);
       setExams(examsData);
       
       if (examsData.length === 0) {
-        console.warn('No exams returned from API');
         toast.error('لا توجد امتحانات في النظام');
       }
     } catch (error) {
-      console.error('=== EXAMS ERROR ===');
-      console.error('Error object:', error);
-      console.error('Error message:', error.message);
-      console.error('Error code:', error.code);
-      console.error('Error response:', error.response);
-      console.error('Error details:', {
-        message: error.message,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.headers
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Exams fetch error:', error);
+      }
       
-      if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
         toast.error('انتهت مهلة الاتصال بالخادم، يرجى المحاولة مرة أخرى');
       } else if (error.response?.status === 401) {
         toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
@@ -119,21 +94,19 @@ const Exams = () => {
 
   const fetchCustomGroups = async () => {
     try {
-      console.log('=== FETCHING CUSTOM GROUPS ===');
       const response = await axios.get('/api/exam-groups', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
       
-      console.log('Custom groups response:', response.data);
       if (response.data && response.data.data) {
         setCustomGroups(response.data.data);
-        console.log('Custom groups set successfully:', response.data.data.length, 'groups');
       }
     } catch (error) {
-      console.error('Error fetching custom groups:', error);
-      // Don't show error toast for custom groups as it's not critical
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error fetching custom groups:', error);
+      }
       setCustomGroups([]);
     }
   };
@@ -155,36 +128,23 @@ const Exams = () => {
 
   const fetchFreeExams = async () => {
     try {
-      console.log('=== FETCHING FREE EXAMS ===');
-      console.log('API URL:', axios.defaults.baseURL + '/api/exams/free/manage');
-      
       const res = await axios.get('/api/exams/free/manage', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
       
-      console.log('=== FREE EXAMS RESPONSE ===');
-      console.log('Status:', res.status);
-      console.log('Data:', res.data);
-      console.log('Data.data:', res.data?.data);
-      console.log('Data.data length:', res.data?.data?.length);
-      
       const freeExamsData = res.data?.data || [];
-      console.log('Setting free exams:', freeExamsData);
       setFreeExams(freeExamsData);
     } catch (error) {
-      console.error('=== FREE EXAMS ERROR ===');
-      console.error('Error:', error);
-      console.error('Error response:', error.response);
-      
-      if (error.response?.status === 401) {
-        // Don't show error for free exams if auth fails, just set empty array
-        setFreeExams([]);
-      } else {
-        toast.error('حدث خطأ أثناء تحميل الامتحانات المجانية');
-        setFreeExams([]);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Free exams fetch error:', error);
       }
+      
+      if (error.response?.status !== 401) {
+        toast.error('حدث خطأ أثناء تحميل الامتحانات المجانية');
+      }
+      setFreeExams([]);
     }
   };
 

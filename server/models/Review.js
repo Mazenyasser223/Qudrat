@@ -44,4 +44,12 @@ const reviewSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Performance indexes
+reviewSchema.index({ isActive: 1 });
+reviewSchema.index({ isApproved: 1 });
+reviewSchema.index({ order: 1 });
+reviewSchema.index({ createdAt: -1 });
+// Compound index for common queries
+reviewSchema.index({ isActive: 1, isApproved: 1 });
+
 module.exports = mongoose.model('Review', reviewSchema);

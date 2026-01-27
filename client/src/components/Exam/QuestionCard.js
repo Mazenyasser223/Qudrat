@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, CheckCircle, XCircle } from 'lucide-react';
 
-const QuestionCard = ({ 
+const QuestionCard = React.memo(({ 
   question, 
   questionNumber, 
   totalQuestions, 
@@ -17,9 +17,9 @@ const QuestionCard = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const options = ['A', 'B', 'C', 'D'];
+  const options = useMemo(() => ['A', 'B', 'C', 'D'], []);
 
-  const getOptionColor = (option) => {
+  const getOptionColor = useCallback((option) => {
     if (!showCorrectAnswer) {
       return selectedAnswer === option 
         ? 'bg-primary-100 border-primary-500 text-primary-700' 
@@ -34,7 +34,7 @@ const QuestionCard = ({
       return 'bg-red-100 border-red-500 text-red-700';
     }
     return 'bg-gray-50 border-gray-300 text-gray-500';
-  };
+  }, [showCorrectAnswer, selectedAnswer, question.correctAnswer]);
 
   const getOptionIcon = (option) => {
     if (!showCorrectAnswer) return null;
@@ -160,6 +160,8 @@ const QuestionCard = ({
       </div>
     </div>
   );
-};
+});
+
+QuestionCard.displayName = 'QuestionCard';
 
 export default QuestionCard;

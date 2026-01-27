@@ -149,8 +149,8 @@ const StudentDashboard = () => {
     return `المجموعة ${groupNumber}`;
   };
 
-  // Filter and search logic
-  const filteredExams = () => {
+  // Filter and search logic (memoized for performance)
+  const filteredExams = useMemo(() => {
     let allExams = [];
     Object.values(examGroups).flat().forEach(exam => {
       allExams.push(exam);
@@ -170,13 +170,12 @@ const StudentDashboard = () => {
     }
 
     return allExams;
-  };
+  }, [examGroups, searchTerm, selectedGroup]);
 
-  const groupedExams = () => {
-    const filtered = filteredExams();
+  const groupedExams = useMemo(() => {
     const grouped = {};
     
-    filtered.forEach(exam => {
+    filteredExams.forEach(exam => {
       if (!grouped[exam.examGroup]) {
         grouped[exam.examGroup] = [];
       }
@@ -189,9 +188,9 @@ const StudentDashboard = () => {
     });
 
     return grouped;
-  };
+  }, [filteredExams]);
 
-  const availableGroups = () => {
+  const availableGroups = useMemo(() => {
     const groups = ['all'];
     Object.keys(examGroups).forEach(group => {
       if (examGroups[group].length > 0) {
@@ -199,7 +198,7 @@ const StudentDashboard = () => {
       }
     });
     return groups;
-  };
+  }, [examGroups]);
 
   const handleStartExam = (exam) => {
     const status = getExamStatus(exam);

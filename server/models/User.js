@@ -171,9 +171,15 @@ const userSchema = new mongoose.Schema({
 
 // Performance indexes (email and phoneNumber already have unique indexes)
 userSchema.index({ role: 1 });
+userSchema.index({ isActive: 1 });
 userSchema.index({ 'examProgress.examId': 1 });
 userSchema.index({ 'examProgress.status': 1 });
+userSchema.index({ 'examProgress.examGroup': 1 });
 userSchema.index({ createdAt: -1 });
+// Compound indexes for common query patterns
+userSchema.index({ role: 1, isActive: 1 });
+userSchema.index({ role: 1, 'examProgress.status': 1 });
+userSchema.index({ 'examProgress.examGroup': 1, 'examProgress.status': 1 });
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {

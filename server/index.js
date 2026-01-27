@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 const path = require('path');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
@@ -45,6 +46,12 @@ app.use(mongoSanitizer);
 app.use(hppProtection);
 app.use(securityLogger);
 
+// Compression middleware (must be before routes) - reduces response size by 70-90%
+app.use(compression({
+  threshold: 1024, // Only compress responses larger than 1KB
+  level: 6 // Compression level (0-9, 6 is default and balanced)
+}));
+
 // CORS middleware with security
 app.use(cors(corsOptions));
 
@@ -54,9 +61,9 @@ app.use('/api/exams/submit', examSubmissionLimiter);
 app.use('/api', apiLimiter);
 app.use(generalLimiter);
 
-// Body parser middleware
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+// Body parser middleware (reduced from 50mb to 10mb for security and performance)
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '5mb' }));
 
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

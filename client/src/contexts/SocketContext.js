@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
 
@@ -16,13 +16,29 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const { user } = useAuth();
+  const socketRef = useRef(null);
+  const userIdRef = useRef(null);
 
   useEffect(() => {
-    if (user) {
+    // Only reconnect if user.id actually changes (not on every user object update)
+    const userId = user?.id;
+    const userRole = user?.role;
+
+    if (userId && userId !== userIdRef.current) {
+      userIdRef.current = userId;
+
+      // Close existing socket if any
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+
       // Create socket connection
       const newSocket = io(process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000'), {
         transports: ['websocket'],
-        autoConnect: true
+        autoConnect: true,
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionAttempts: 5
       });
 
       // Connection event handlers
@@ -31,10 +47,10 @@ export const SocketProvider = ({ children }) => {
         setIsConnected(true);
         
         // Join appropriate room based on user role
-        if (user.role === 'teacher' || user.role === 'admin') {
-          newSocket.emit('join-teacher-room', user.id);
-        } else if (user.role === 'student') {
-          newSocket.emit('join-student-room', user.id);
+        if (userRole === 'teacher' || userRole === 'admin') {
+          newSocket.emit('join-teacher-room', userId);
+        } else if (userRole === 'student') {
+          newSocket.emit('join-student-room', userId);
         }
       });
 
@@ -48,21 +64,26 @@ export const SocketProvider = ({ children }) => {
         setIsConnected(false);
       });
 
+      socketRef.current = newSocket;
       setSocket(newSocket);
 
       // Cleanup on unmount
       return () => {
-        newSocket.close();
+        if (socketRef.current) {
+          socketRef.current.close();
+          socketRef.current = null;
+        }
       };
-    } else {
+    } else if (!userId && socketRef.current) {
       // Disconnect socket if user logs out
-      if (socket) {
-        socket.close();
-        setSocket(null);
-        setIsConnected(false);
-      }
+      socketRef.current.close();
+      socketRef.current = null;
+      setSocket(null);
+      setIsConnected(false);
+      userIdRef.current = null;
     }
-  }, [user]);
+    // Note: No dependencies on socket to prevent reconnection loop
+  }, [user?.id, user?.role]);
 
   const value = {
     socket,

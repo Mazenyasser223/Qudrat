@@ -80,8 +80,12 @@ const reviewExamSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for better performance
+// Performance indexes
 reviewExamSchema.index({ studentId: 1, originalExamId: 1 });
+reviewExamSchema.index({ studentId: 1 });
+reviewExamSchema.index({ originalExamId: 1 });
+reviewExamSchema.index({ isActive: 1 });
+reviewExamSchema.index({ createdAt: -1 });
 
 // Virtual for current attempt number
 reviewExamSchema.virtual('currentAttemptNumber').get(function() {
