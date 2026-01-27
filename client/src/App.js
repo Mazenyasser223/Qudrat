@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { DarkModeProvider } from './context/DarkModeContext';
 import { SocketProvider } from './contexts/SocketContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
@@ -55,9 +56,10 @@ const Unauthorized = () => (
 function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <SocketProvider>
-          <Router>
+      <DarkModeProvider>
+        <AuthProvider>
+          <SocketProvider>
+            <Router>
             <div className="App">
             <Suspense fallback={<LoadingFallback />}>
             <Routes>
@@ -220,6 +222,7 @@ function App() {
         </Router>
       </SocketProvider>
     </AuthProvider>
+      </DarkModeProvider>
     </ErrorBoundary>
   );
 }

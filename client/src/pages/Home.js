@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { useDarkMode } from '../context/DarkModeContext';
 import toast from 'react-hot-toast';
+import { Moon, Sun } from 'lucide-react';
 
 // Review Submission Form Component
 const ReviewSubmissionForm = () => {
@@ -58,7 +60,7 @@ const ReviewSubmissionForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-white/10 rounded-2xl p-6 backdrop-blur-sm">
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-white/10 dark:bg-gray-800/30 rounded-2xl p-6 backdrop-blur-sm">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Student Name */}
         <div>
@@ -156,6 +158,7 @@ const Home = () => {
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   useEffect(() => {
     // Load critical data first
@@ -262,16 +265,29 @@ const Home = () => {
 
   // Always show the landing page first, regardless of authentication status
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100">
-      <header className="bg-[#214C3A] text-white">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+      <header className="bg-[#214C3A] dark:bg-gray-800 text-white border-b border-gray-700 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3 rtl:space-x-reverse">
             <img src="/logo.png" alt="Qudrat Logo" className="h-10 w-auto" loading="lazy" />
             <span className="text-xl font-bold text-white">Qudrat</span>
           </div>
           <nav className="flex items-center space-x-3 rtl:space-x-reverse">
+            {/* Dark Mode Toggle Button */}
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
+              aria-label={isDarkMode ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
+              title={isDarkMode ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
+            >
+              {isDarkMode ? (
+                <Sun className="h-5 w-5 text-yellow-300" />
+              ) : (
+                <Moon className="h-5 w-5 text-white" />
+              )}
+            </button>
             <a href="#about" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">نبذة عني</a>
-            <Link to="/login" className="px-4 py-1.5 rounded-lg bg-white text-[#214C3A] font-semibold hover:bg-gray-100 transition">تسجيل الدخول</Link>
+            <Link to="/login" className="px-4 py-1.5 rounded-lg bg-white text-[#214C3A] dark:bg-gray-700 dark:text-white font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition">تسجيل الدخول</Link>
           </nav>
         </div>
       </header>
@@ -282,7 +298,7 @@ const Home = () => {
             <img 
               src="/alaaa.jpg" 
               alt="تدريب احترافي لاختبارات القدرات الكمي" 
-              className="w-full h-auto rounded-2xl shadow-2xl border-4 border-green-200 hover:shadow-3xl transition-all duration-500 transform hover:scale-105"
+              className="w-full h-auto rounded-2xl shadow-2xl border-4 border-green-200 dark:border-gray-700 hover:shadow-3xl transition-all duration-500 transform hover:scale-105"
               style={{
                 maxHeight: '400px',
                 objectFit: 'contain'
@@ -294,11 +310,11 @@ const Home = () => {
               }}
             />
             <div 
-              className="hidden w-full h-64 bg-gradient-to-r from-green-100 to-green-200 rounded-2xl border-4 border-green-200 flex items-center justify-center text-green-700 font-semibold text-center p-8"
+              className="hidden w-full h-64 bg-gradient-to-r from-green-100 to-green-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl border-4 border-green-200 dark:border-gray-700 flex items-center justify-center text-green-700 dark:text-gray-200 font-semibold text-center p-8"
             >
               <div>
-                <h1 className="text-4xl sm:text-5xl font-extrabold text-green-900 mb-4">تدريب احترافي لاختبارات القدرات الكمي</h1>
-                <p className="text-green-900/80 text-lg">منصة متخصصة في تدريب الطلاب على اختبارات القدرات الكمية</p>
+                <h1 className="text-4xl sm:text-5xl font-extrabold text-green-900 dark:text-white mb-4">تدريب احترافي لاختبارات القدرات الكمي</h1>
+                <p className="text-green-900/80 dark:text-gray-300 text-lg">منصة متخصصة في تدريب الطلاب على اختبارات القدرات الكمية</p>
               </div>
             </div>
           </div>
@@ -307,11 +323,11 @@ const Home = () => {
         {/* PDFs Section - مذكرات و قوانين */}
         <section className="mb-16">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-green-900 mb-2">مذكرات و قوانين</h2>
-            <p className="text-green-700 text-lg">مواد تعليمية مجانية لمساعدتك في التحضير</p>
+            <h2 className="text-3xl font-bold text-green-900 dark:text-white mb-2">مذكرات و قوانين</h2>
+            <p className="text-green-700 dark:text-gray-300 text-lg">مواد تعليمية مجانية لمساعدتك في التحضير</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="card p-8 text-center bg-[#214C3A] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="card p-8 text-center bg-[#214C3A] dark:bg-gray-800 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               <img src="/icons/basics.png" alt="تأسيس" className="mx-auto h-16 w-16 mb-4 opacity-90" loading="lazy" />
               <h3 className="text-2xl font-bold mb-2">تأسيس</h3>
               <p className="text-gray-200 mb-4">مذكرة تأسيس شاملة للمفاهيم الأساسية</p>
@@ -324,7 +340,7 @@ const Home = () => {
                 </span>
               </a>
             </div>
-            <div className="card p-8 text-center bg-[#214C3A] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="card p-8 text-center bg-[#214C3A] dark:bg-gray-800 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               <img src="/icons/rules.png" alt="قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" loading="lazy" />
               <h3 className="text-2xl font-bold mb-2">قوانين</h3>
               <p className="text-gray-200 mb-4">ملف شامل لقوانين القدرات الكمي</p>
@@ -337,7 +353,7 @@ const Home = () => {
                 </span>
               </a>
             </div>
-            <div className="card p-8 text-center bg-[#214C3A] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="card p-8 text-center bg-[#214C3A] dark:bg-gray-800 text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               <img src="/icons/rules.png" alt="تسميع قوانين" className="mx-auto h-16 w-16 mb-4 opacity-90" loading="lazy" />
               <h3 className="text-2xl font-bold mb-2">تسميع قوانين</h3>
               <p className="text-gray-200 mb-4">اختبار قوانين القدرات للتدريب</p>
@@ -356,8 +372,8 @@ const Home = () => {
         {/* Free Section - القسم المجاني */}
         <section className="mb-16">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-green-900 mb-2">القسم المجاني</h2>
-            <p className="text-green-700 text-lg">جرب هذه الامتحانات المجانية قبل الاشتراك</p>
+            <h2 className="text-3xl font-bold text-green-900 dark:text-white mb-2">القسم المجاني</h2>
+            <p className="text-green-700 dark:text-gray-300 text-lg">جرب هذه الامتحانات المجانية قبل الاشتراك</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {loading ? (
@@ -426,8 +442,8 @@ const Home = () => {
         {/* Premium Groups Section - المجموعات المميزة */}
         <section className="mb-16">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-green-900 mb-2">المجموعات المميزة</h2>
-            <p className="text-green-700 text-lg">اختبارات التأسيس + 8 مجموعات تدريبية متدرجة المستوى</p>
+            <h2 className="text-3xl font-bold text-green-900 dark:text-white mb-2">المجموعات المميزة</h2>
+            <p className="text-green-700 dark:text-gray-300 text-lg">اختبارات التأسيس + 8 مجموعات تدريبية متدرجة المستوى</p>
             <div className="mt-4 inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full text-sm font-semibold">
               🔒 محتوى مميز - يتطلب اشتراك
             </div>
@@ -436,7 +452,7 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {/* Foundation Exams Card */}
             <div className="relative group">
-              <div className="card p-6 text-center bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-75">
+              <div className="card p-6 text-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 border-2 border-gray-300 dark:border-gray-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-75">
                 {/* Lock overlay */}
                 <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
                   <div className="bg-white/90 rounded-full p-3 shadow-lg">
@@ -451,9 +467,9 @@ const Home = () => {
                   <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center opacity-50">
                     <span className="text-2xl font-bold text-white">ت</span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-700 mb-2">اختبارات التأسيس</h3>
-                  <p className="text-gray-600 text-sm mb-3">اختبارات تأسيسية شاملة</p>
-                  <div className="text-xs text-gray-500 space-y-1">
+                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">اختبارات التأسيس</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">اختبارات تأسيسية شاملة</p>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
                     <div>✓ تصحيح تلقائي</div>
                     <div>✓ تحليل الأخطاء</div>
                     <div>✓ متابعة التقدم</div>
@@ -464,7 +480,7 @@ const Home = () => {
 
             {Array.from({ length: 8 }, (_, i) => i + 1).map((groupNum) => (
               <div key={groupNum} className="relative group">
-                <div className="card p-6 text-center bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-75">
+                <div className="card p-6 text-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 border-2 border-gray-300 dark:border-gray-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-75">
                   {/* Lock overlay */}
                   <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
                     <div className="bg-white/90 rounded-full p-3 shadow-lg">
@@ -479,9 +495,9 @@ const Home = () => {
                     <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center opacity-50">
                       <span className="text-2xl font-bold text-white">{groupNum}</span>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-700 mb-2">المجموعة {groupNum}</h3>
-                    <p className="text-gray-600 text-sm mb-3">25 اختبار إلكتروني متدرج</p>
-                    <div className="text-xs text-gray-500 space-y-1">
+                    <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">المجموعة {groupNum}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">25 اختبار إلكتروني متدرج</p>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
                       <div>✓ تصحيح تلقائي</div>
                       <div>✓ تحليل الأخطاء</div>
                       <div>✓ متابعة التقدم</div>
@@ -494,7 +510,7 @@ const Home = () => {
             {/* Custom Groups */}
             {customGroups.map((group) => (
               <div key={group._id} className="relative group">
-                <div className="card p-6 text-center bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-gray-300 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-75">
+                <div className="card p-6 text-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 border-2 border-gray-300 dark:border-gray-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-75">
                   {/* Lock overlay */}
                   <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
                     <div className="bg-white/90 rounded-full p-3 shadow-lg">
@@ -607,7 +623,7 @@ const Home = () => {
         {/* Student Reviews Section - تقييمات الطلاب */}
         <section className="mb-16">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-green-900 mb-2">تقييمات الطلاب</h2>
+            <h2 className="text-3xl font-bold text-green-900 dark:text-white mb-2">تقييمات الطلاب</h2>
             <p className="text-green-700 text-lg">آراء الطلاب في المنصة وتجربتهم التعليمية</p>
             <div className="mt-4 inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full text-sm font-semibold">
               ⭐ تقييمات حقيقية من طلابنا
@@ -628,7 +644,7 @@ const Home = () => {
             ) : reviews.length > 0 ? (
               // Dynamic text reviews
               reviews.map((review) => (
-                <div key={review._id} className="card p-6 bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div key={review._id} className="card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                   {/* Rating stars */}
                   <div className="flex items-center justify-center mb-4">
                     <div className="flex text-yellow-400 text-lg">
@@ -655,7 +671,7 @@ const Home = () => {
               // Fallback message when no reviews
               <div className="col-span-full text-center py-12">
                 <div className="text-6xl mb-4">⭐</div>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">لا توجد تقييمات بعد</h3>
+                <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">لا توجد تقييمات بعد</h3>
                 <p className="text-gray-500">كن أول من يشارك تجربته مع المنصة</p>
               </div>
             )}
