@@ -273,17 +273,18 @@ const Home = () => {
             <span className="text-xl font-bold text-white">Qudrat</span>
           </div>
           <nav className="flex items-center space-x-3 rtl:space-x-reverse">
-            {/* Dark Mode Toggle Button - Very Visible */}
+            {/* Dark Mode Toggle Button - EXTREMELY Visible */}
             <button
               onClick={toggleDarkMode}
-              className="p-3 rounded-lg bg-white/30 hover:bg-white/40 dark:bg-gray-700 dark:hover:bg-gray-600 border-2 border-white/30 dark:border-gray-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="relative p-3 rounded-lg bg-white hover:bg-white/90 dark:bg-gray-700 dark:hover:bg-gray-600 border-2 border-white dark:border-gray-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-xl hover:shadow-2xl transform hover:scale-110 z-10"
               aria-label={isDarkMode ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
               title={isDarkMode ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
+              style={{ minWidth: '48px', minHeight: '48px' }}
             >
               {isDarkMode ? (
-                <Sun className="h-6 w-6 text-yellow-300" />
+                <Sun className="h-6 w-6 text-yellow-500" />
               ) : (
-                <Moon className="h-6 w-6 text-white" />
+                <Moon className="h-6 w-6 text-gray-800" />
               )}
             </button>
             <a href="#about" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">نبذة عني</a>
