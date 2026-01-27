@@ -419,9 +419,9 @@ const StudentDashboard = () => {
                     if (hasReviewExam) {
                       // If has review exam, color based on review performance
                       if (reviewFullMark) {
-                        cardClasses = 'bg-gradient-to-r from-green-50 to-green-100 border-green-300 hover:shadow-md';
+                        cardClasses = 'bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 border-green-300 dark:border-green-700 hover:shadow-md';
                       } else {
-                        cardClasses = 'bg-gradient-to-r from-red-50 to-red-100 border-red-300 hover:shadow-md';
+                        cardClasses = 'bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/30 dark:to-red-800/30 border-red-300 dark:border-red-700 hover:shadow-md';
                       }
                     } else if (status === 'completed' && progress) {
                       // No review exam, color based on original exam score
@@ -430,18 +430,18 @@ const StudentDashboard = () => {
                       const hasZeroScore = progress.score === 0;
                       
                       if (isFullMark) {
-                        cardClasses = 'bg-gradient-to-r from-green-50 to-green-100 border-green-300 hover:shadow-md';
+                        cardClasses = 'bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 border-green-300 dark:border-green-700 hover:shadow-md';
                       } else if (hasPartialScore) {
-                        cardClasses = 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-300 hover:shadow-md';
+                        cardClasses = 'bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/30 dark:to-yellow-800/30 border-yellow-300 dark:border-yellow-700 hover:shadow-md';
                       } else {
-                        cardClasses = 'bg-gradient-to-r from-gray-100 to-gray-200 border-gray-300 hover:shadow-md opacity-75';
+                        cardClasses = 'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 border-gray-300 dark:border-gray-600 hover:shadow-md opacity-75';
                       }
                     } else if (status === 'unlocked') {
-                      cardClasses = 'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 hover:shadow-md';
+                      cardClasses = 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 border-blue-200 dark:border-blue-700 hover:shadow-md';
                     } else if (status === 'in_progress') {
-                      cardClasses = 'bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200 hover:shadow-md';
+                      cardClasses = 'bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/30 border-orange-200 dark:border-orange-700 hover:shadow-md';
                     } else {
-                      cardClasses = 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200 opacity-75';
+                      cardClasses = 'bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 border-gray-200 dark:border-gray-600 opacity-75';
                     }
                     
                     return (
@@ -454,28 +454,28 @@ const StudentDashboard = () => {
                           <div className="flex items-center space-x-2 rtl:space-x-reverse">
                             {getStatusIcon(status)}
                             <span className={`text-sm font-medium ${
-                              status === 'completed' ? 'text-green-700' :
-                              status === 'unlocked' ? 'text-blue-700' :
-                              status === 'in_progress' ? 'text-yellow-700' :
-                              'text-gray-500'
+                              status === 'completed' ? 'text-green-700 dark:text-green-400' :
+                              status === 'unlocked' ? 'text-blue-700 dark:text-blue-400' :
+                              status === 'in_progress' ? 'text-yellow-700 dark:text-yellow-400' :
+                              'text-gray-500 dark:text-gray-400'
                             }`}>
                               {getStatusText(status)}
                             </span>
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
                             {exam.totalQuestions} أسئلة • {exam.timeLimit} دقيقة
                           </div>
                         </div>
                         
-                        <h4 className="font-semibold text-gray-900 mb-2 text-sm">
+                        <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 text-sm">
                           {exam.title}
                         </h4>
                         
                         {status === 'completed' && progress && (
                           <div className="space-y-2">
                             <div className="flex items-center justify-between text-xs">
-                              <span className="text-gray-600">الدرجة:</span>
-                              <span className="font-semibold text-green-600">
+                              <span className="text-gray-600 dark:text-gray-400">الدرجة:</span>
+                              <span className="font-semibold text-green-600 dark:text-green-400">
                                 {progress.score}/{exam.totalQuestions} ({progress.percentage.toFixed(2)}%)
                               </span>
                             </div>
@@ -493,18 +493,18 @@ const StudentDashboard = () => {
                               <div className="mt-3 space-y-2">
                                 {/* Best Review Score Display */}
                                 {progress.wrongQuestions && progress.wrongQuestions.length > 0 && (
-                                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-2">
+                                  <div className="bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700 rounded-lg p-2">
                                     <div className="flex items-center justify-between text-xs mb-1">
-                                      <span className="text-purple-700 font-medium">أفضل درجة في المراجعة:</span>
+                                      <span className="text-purple-700 dark:text-purple-300 font-medium">أفضل درجة في المراجعة:</span>
                                       <span className={`font-bold ${
                                         progress.bestReviewScore >= 100
-                                          ? 'text-green-600'
-                                          : 'text-red-600'
+                                          ? 'text-green-600 dark:text-green-400'
+                                          : 'text-red-600 dark:text-red-400'
                                       }`}>
                                         {Math.round((progress.bestReviewScore || 0) / 100 * progress.wrongQuestions.length)}/{progress.wrongQuestions.length} ({progress.bestReviewScore || 0}%)
                                       </span>
                                     </div>
-                                    <div className="w-full bg-purple-200 rounded-full h-1.5">
+                                    <div className="w-full bg-purple-200 dark:bg-purple-800 rounded-full h-1.5">
                                       <div 
                                         className={`h-1.5 rounded-full ${
                                           progress.bestReviewScore >= 100
