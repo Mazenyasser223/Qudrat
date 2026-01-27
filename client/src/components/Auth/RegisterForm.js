@@ -23,7 +23,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto h-16 w-16 flex items-center justify-center">
@@ -33,10 +33,10 @@ const RegisterForm = () => {
               className="h-16 w-auto"
             />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-green-800">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-green-800 dark:text-green-400">
             إنشاء حساب مدرس
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             أنشئ حساب مدرس جديد للوصول إلى منصة قدرات
           </p>
         </div>
@@ -50,7 +50,7 @@ const RegisterForm = () => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <User className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                 </div>
                 <input
                   id="name"
@@ -79,7 +79,7 @@ const RegisterForm = () => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <Mail className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                 </div>
                 <input
                   id="email"
@@ -108,7 +108,7 @@ const RegisterForm = () => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                 </div>
                 <input
                   id="password"
@@ -130,9 +130,9 @@ const RegisterForm = () => {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <EyeOff className="h-5 w-5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <Eye className="h-5 w-5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400" />
                   )}
                 </button>
               </div>
@@ -146,7 +146,7 @@ const RegisterForm = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
               {loading ? (
                 <div className="spinner"></div>
@@ -157,12 +157,12 @@ const RegisterForm = () => {
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               لديك حساب بالفعل؟{' '}
               <button
                 type="button"
                 onClick={() => navigate('/')}
-                className="font-medium text-primary-600 hover:text-primary-500 transition-colors"
+                className="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition-colors"
               >
                 تسجيل الدخول
               </button>

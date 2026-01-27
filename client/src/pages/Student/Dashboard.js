@@ -253,7 +253,7 @@ const StudentDashboard = () => {
         return <Clock className="h-5 w-5 text-yellow-600" />;
       case 'locked':
       default:
-        return <Lock className="h-5 w-5 text-gray-400" />;
+        return <Lock className="h-5 w-5 text-gray-400 dark:text-gray-500" />;
     }
   };
 
@@ -282,11 +282,11 @@ const StudentDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-8 text-white">
+      <div className="bg-gradient-to-r from-primary-600 to-primary-700 dark:from-primary-700 dark:to-primary-800 rounded-xl p-8 text-white">
         <div className="flex items-center justify-between">
       <div>
             <h1 className="text-4xl font-bold mb-2">لوحة تحكم الطالب</h1>
-            <p className="text-primary-100 text-lg">اختر المجموعة والامتحان الذي تريد حله</p>
+            <p className="text-primary-100 dark:text-primary-200 text-lg">اختر المجموعة والامتحان الذي تريد حله</p>
           </div>
         </div>
       </div>
@@ -309,24 +309,24 @@ const StudentDashboard = () => {
             {/* Search Input */}
             <div className="flex-1 max-w-md">
               <div className="relative">
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
                 <input
                   type="text"
                   placeholder="البحث في الامتحانات..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pr-10 pl-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full pr-10 pl-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent"
                 />
               </div>
             </div>
 
             {/* Group Filter */}
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-              <Filter className="h-4 w-4 text-gray-500" />
+              <Filter className="h-4 w-4 text-gray-500 dark:text-gray-400" />
               <select
                 value={selectedGroup}
                 onChange={(e) => setSelectedGroup(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent"
               >
                 <option value="all">جميع المجموعات</option>
                 <option value="0">اختبارات التأسيس</option>
@@ -337,13 +337,13 @@ const StudentDashboard = () => {
             </div>
 
             {/* View Mode Toggle */}
-            <div className="flex items-center space-x-1 rtl:space-x-reverse bg-gray-100 rounded-lg p-1">
+            <div className="flex items-center space-x-1 rtl:space-x-reverse bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
               <button
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded-md transition-colors ${
                   viewMode === 'list' 
-                    ? 'bg-white shadow-sm text-primary-600' 
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-white dark:bg-gray-600 shadow-sm text-primary-600 dark:text-primary-400' 
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
                 <List className="h-4 w-4" />
@@ -352,8 +352,8 @@ const StudentDashboard = () => {
                 onClick={() => setViewMode('grid')}
                 className={`p-2 rounded-md transition-colors ${
                   viewMode === 'grid' 
-                    ? 'bg-white shadow-sm text-primary-600' 
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-white dark:bg-gray-600 shadow-sm text-primary-600 dark:text-primary-400' 
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
                 <Grid className="h-4 w-4" />
@@ -362,7 +362,7 @@ const StudentDashboard = () => {
           </div>
 
           {/* Results Count */}
-          <div className="mt-4 text-sm text-gray-600">
+          <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
             عرض {filteredExams.length} من {Object.values(examGroups).flat().length} امتحان
           </div>
         </div>
@@ -374,10 +374,10 @@ const StudentDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {Object.keys(groupedExams).length === 0 ? (
             <div className="col-span-full">
-              <div className="text-center py-12 bg-white rounded-xl shadow-sm border">
-                <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">لا توجد امتحانات</h3>
-                <p className="text-gray-500 mb-6">
+              <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700">
+                <BookOpen className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">لا توجد امتحانات</h3>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">
                   {searchTerm ? 'لم يتم العثور على امتحانات تطابق البحث' : 'لا توجد امتحانات متاحة حالياً'}
                 </p>
               </div>
