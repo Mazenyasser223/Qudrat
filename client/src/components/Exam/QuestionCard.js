@@ -22,18 +22,18 @@ const QuestionCard = React.memo(({
   const getOptionColor = useCallback((option) => {
     if (!showCorrectAnswer) {
       return selectedAnswer === option 
-        ? 'bg-primary-100 border-primary-500 text-primary-700' 
-        : 'bg-white border-gray-300 hover:border-primary-300';
+        ? 'bg-primary-100 dark:bg-primary-900/30 border-primary-500 dark:border-primary-400 text-primary-700 dark:text-primary-300' 
+        : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-500';
     }
 
     // Show correct/incorrect answers
     if (option === question.correctAnswer) {
-      return 'bg-green-100 border-green-500 text-green-700';
+      return 'bg-green-100 dark:bg-green-900/30 border-green-500 dark:border-green-400 text-green-700 dark:text-green-300';
     }
     if (selectedAnswer === option && option !== question.correctAnswer) {
-      return 'bg-red-100 border-red-500 text-red-700';
+      return 'bg-red-100 dark:bg-red-900/30 border-red-500 dark:border-red-400 text-red-700 dark:text-red-300';
     }
-    return 'bg-gray-50 border-gray-300 text-gray-500';
+    return 'bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400';
   }, [showCorrectAnswer, selectedAnswer, question.correctAnswer]);
 
   const getOptionIcon = (option) => {
@@ -52,12 +52,12 @@ const QuestionCard = React.memo(({
     <div className="card">
       <div className="card-header">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             السؤال {questionNumber} من {totalQuestions}
           </h3>
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
             {isAnswered && (
-              <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">
+              <span className="text-sm text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full">
                 تم الإجابة
               </span>
             )}
@@ -68,17 +68,17 @@ const QuestionCard = React.memo(({
       <div className="card-body">
         {/* Question Image */}
         <div className="mb-6">
-          <div className="relative bg-gray-50 rounded-lg p-4 min-h-[200px] flex items-center justify-center">
+          <div className="relative bg-gray-50 dark:bg-gray-800 rounded-lg p-4 min-h-[200px] flex items-center justify-center">
             {!imageLoaded && !imageError && (
               <div className="text-center">
                 <div className="spinner mx-auto mb-2"></div>
-                <p className="text-gray-500">جاري تحميل الصورة...</p>
+                <p className="text-gray-500 dark:text-gray-400">جاري تحميل الصورة...</p>
               </div>
             )}
             
             {imageError ? (
-              <div className="text-center text-gray-500">
-                <XCircle className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+              <div className="text-center text-gray-500 dark:text-gray-400">
+                <XCircle className="h-12 w-12 mx-auto mb-2 text-gray-400 dark:text-gray-500" />
                 <p>فشل في تحميل الصورة</p>
               </div>
             ) : (
@@ -137,20 +137,20 @@ const QuestionCard = React.memo(({
             <button
               onClick={onPrevious}
               disabled={questionNumber === 1}
-              className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronRight className="h-4 w-4" />
               <span>السابق</span>
             </button>
 
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-500 dark:text-gray-400">
               {questionNumber} / {totalQuestions}
             </div>
 
             <button
               onClick={onNext}
               disabled={questionNumber === totalQuestions}
-              className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <span>التالي</span>
               <ChevronLeft className="h-4 w-4" />
