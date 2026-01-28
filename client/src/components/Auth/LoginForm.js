@@ -19,7 +19,6 @@ const LoginForm = () => {
 
   const onSubmit = async (data) => {
     const result = await login(data.email, data.password);
-    console.log(result);
     if (result.success) {
       // If there's a return URL, navigate to it (for free exam access)
       if (returnUrl) {

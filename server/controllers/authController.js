@@ -123,7 +123,9 @@ const login = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Login error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Login error:', error);
+    }
     res.status(500).json({
       success: false,
       message: 'Server error during login'

@@ -116,7 +116,21 @@ export const AuthProvider = ({ children }) => {
       dispatch({ type: 'AUTH_START' });
       const res = await axios.post('/api/auth/login', { email, password });
       
+      if (!res.data || !res.data.success) {
+        const message = res.data?.message || 'فشل تسجيل الدخول';
+        dispatch({ type: 'AUTH_FAIL', payload: message });
+        toast.error(message);
+        return { success: false, message };
+      }
+      
       const { token, user } = res.data;
+      if (!token || !user) {
+        const message = 'استجابة غير صحيحة من الخادم';
+        dispatch({ type: 'AUTH_FAIL', payload: message });
+        toast.error(message);
+        return { success: false, message };
+      }
+      
       safeLocalStorage.setItem('token', token);
       
       dispatch({
@@ -127,7 +141,26 @@ export const AuthProvider = ({ children }) => {
       toast.success('تم تسجيل الدخول بنجاح');
       return { success: true, user };
     } catch (error) {
-      const message = error.response?.data?.message || 'حدث خطأ أثناء تسجيل الدخول';
+      let message = 'حدث خطأ أثناء تسجيل الدخول';
+      
+      if (error.response) {
+        // Server responded with error
+        if (error.response.status === 429) {
+          message = 'تم تجاوز الحد المسموح من المحاولات، يرجى المحاولة لاحقاً';
+        } else if (error.response.status === 401) {
+          message = error.response.data?.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+        } else if (error.response.status === 403) {
+          message = error.response.data?.message || 'ليس لديك صلاحية للوصول';
+        } else if (error.response.status >= 500) {
+          message = 'خطأ في الخادم، يرجى المحاولة لاحقاً';
+        } else {
+          message = error.response.data?.message || message;
+        }
+      } else if (error.request) {
+        // Request made but no response
+        message = 'لا يمكن الاتصال بالخادم، تحقق من اتصال الإنترنت';
+      }
+      
       dispatch({ type: 'AUTH_FAIL', payload: message });
       toast.error(message);
       return { success: false, message };
@@ -159,10 +192,12 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     try {
-        localStorage.removeItem('token');
-      } catch (error) {
+      safeLocalStorage.removeItem('token');
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
         console.warn('Error removing token from localStorage:', error);
       }
+    }
     dispatch({ type: 'LOGOUT' });
     toast.success('تم تسجيل الخروج بنجاح');
   };

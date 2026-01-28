@@ -56,10 +56,17 @@ app.use(compression({
 app.use(cors(corsOptions));
 
 // Rate limiting with security
-// Removed authLimiter to allow unlimited login attempts
+// Exclude auth routes from general limiter to prevent blocking legitimate logins
+app.use((req, res, next) => {
+  // Skip rate limiting for auth endpoints
+  if (req.path.startsWith('/api/auth/login') || req.path.startsWith('/api/auth/register')) {
+    return next();
+  }
+  generalLimiter(req, res, next);
+});
+
 app.use('/api/exams/submit', examSubmissionLimiter);
 app.use('/api', apiLimiter);
-app.use(generalLimiter);
 
 // Body parser middleware (reduced from 50mb to 10mb for security and performance)
 app.use(express.json({ limit: '10mb' }));
