@@ -44,6 +44,7 @@ const StudentProfile = () => {
   const [selectedExamForSubmission, setSelectedExamForSubmission] = useState(null);
   const [attemptedExams, setAttemptedExams] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [examsLoading, setExamsLoading] = useState(false);
   // Individual exam control states
   const [togglingExam, setTogglingExam] = useState(null);
   const [togglingGroup, setTogglingGroup] = useState(null);
@@ -54,43 +55,39 @@ const StudentProfile = () => {
   const [reviewMistakes, setReviewMistakes] = useState({}); // Track which exams have review mistakes enabled
 
   useEffect(() => {
-    console.log('=== STUDENT PROFILE MOUNTED ===');
-    console.log('Student ID from URL:', studentId);
-    console.log('Student ID type:', typeof studentId);
-    console.log('Student ID length:', studentId?.length);
-    console.log('Current URL:', window.location.href);
-    
-    // Reset loading state when studentId changes
     setLoading(true);
+    setExamsLoading(true);
     setStudent(null);
-    
-    // Validate student ID format
+
     if (!studentId || studentId.length < 10) {
-      console.error('Invalid student ID format:', studentId);
       toast.error('معرف الطالب غير صحيح');
       navigate('/teacher/students');
       setLoading(false);
+      setExamsLoading(false);
       return;
     }
-    
+
     const loadData = async () => {
       try {
         setLoading(true);
-        console.log('Starting to load data for student:', studentId);
-        await Promise.all([
-          fetchStudentData(),
-          fetchExams(),
-          fetchCustomGroups()
-        ]);
-        console.log('Data loading completed successfully');
+        setExamsLoading(true);
+        const studentData = await fetchStudentData();
+        if (!studentData) {
+          setLoading(false);
+          setExamsLoading(false);
+          return;
+        }
         setLoading(false);
+        fetchExams().finally(() => setExamsLoading(false));
+        fetchCustomGroups();
       } catch (error) {
-        console.error('Error loading initial data:', error);
+        if (process.env.NODE_ENV === 'development') console.error('Error loading initial data:', error);
         toast.error('حدث خطأ أثناء تحميل البيانات');
         setLoading(false);
+        setExamsLoading(false);
       }
     };
-    
+
     loadData();
   }, [studentId]);
 
@@ -218,7 +215,6 @@ const StudentProfile = () => {
 
       toast.success(checked ? 'تم تفعيل مراجعة الأخطاء' : 'تم إلغاء تفعيل مراجعة الأخطاء');
     } catch (error) {
-      console.error('Error updating review mistakes enabled:', error);
       // Revert on error
       setReviewMistakes(prev => ({
         ...prev,
@@ -244,71 +240,36 @@ const StudentProfile = () => {
 
   const fetchStudentData = async (isRefresh = false) => {
     try {
-      if (isRefresh) {
-        setRefreshing(true);
-      }
-      
-      console.log('=== FETCHING STUDENT DATA ===');
-      console.log('Student ID:', studentId);
-      console.log('API URL:', `/api/users/students/${studentId}`);
-      console.log('Token present:', !!localStorage.getItem('token'));
-      
-      const startTime = Date.now();
+      if (isRefresh) setRefreshing(true);
+
       const response = await axios.get(`/api/users/students/${studentId}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        timeout: 15000 // 15 second timeout
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+        timeout: 15000
       });
-      
-      const endTime = Date.now();
-      console.log(`Student data fetched in ${endTime - startTime}ms`);
-      
-      
+
       if (response.data && response.data.data) {
-        setStudent(response.data.data);
-        console.log('Student set successfully:', response.data.data);
-        
-        // Validate student data
-        if (!response.data.data._id || !response.data.data.name) {
-          console.error('Invalid student data structure');
+        const data = response.data.data;
+        if (!data._id || !data.name) {
           toast.error('بيانات الطالب غير صحيحة');
-          setStudent(null); // Set student to null to trigger error state
-          return;
+          setStudent(null);
+          return null;
         }
-      } else {
-        console.error('No student data in response');
-        console.error('Response structure:', response.data);
-        toast.error('لم يتم العثور على بيانات الطالب');
-        setStudent(null); // Set student to null to trigger error state
-        return;
+        setStudent(data);
+        if (isRefresh) toast.success('تم تحديث بيانات الطالب بنجاح');
+        return data;
       }
-      
-      if (isRefresh) {
-        toast.success('تم تحديث بيانات الطالب بنجاح');
-      }
+      toast.error('لم يتم العثور على بيانات الطالب');
+      setStudent(null);
+      return null;
     } catch (error) {
-      console.error('=== STUDENT DATA ERROR ===');
-      console.error('Error object:', error);
-      console.error('Error message:', error.message);
-      console.error('Error response:', error.response);
-      console.error('Error details:', {
-        message: error.message,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        headers: error.response?.headers
-      });
-      
       if (error.response?.status === 404) {
-        // Don't show toast for 404, let the component handle it
         setStudent(null);
       } else if (error.response?.status === 401) {
         toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
         localStorage.removeItem('token');
         navigate('/login');
       } else if (error.response?.status === 403) {
-        toast.error('ليس لديك صلاحية للوصول إلى بيانات هذا الطالب');
+        toast.error('ليس لديك صلاحية الوصول إلى بيانات هذا الطالب');
         setStudent(null);
       } else if (error.response?.status >= 500) {
         toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
@@ -320,58 +281,35 @@ const StudentProfile = () => {
         toast.error(`حدث خطأ أثناء تحميل بيانات الطالب: ${error.response?.data?.message || error.message}`);
         setStudent(null);
       }
+      return null;
     } finally {
-      if (isRefresh) {
-        setRefreshing(false);
-      }
+      if (isRefresh) setRefreshing(false);
     }
   };
 
   const fetchExams = async () => {
     try {
-      console.log('=== FETCHING EXAMS ===');
-      console.log('API URL:', '/api/exams');
-      
       const response = await axios.get('/api/exams', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
-      
-      console.log('=== EXAMS RESPONSE ===');
-      console.log('Status:', response.status);
-      console.log('Data:', response.data);
-      console.log('Exams data:', response.data.data);
-      
       if (response.data && response.data.data) {
-      setExams(response.data.data);
-        console.log('Exams set successfully:', response.data.data.length, 'exams');
-        
-        // Validate exams data
         if (!Array.isArray(response.data.data)) {
-          console.error('Invalid exams data structure - not an array');
           toast.error('بيانات الاختبارات غير صحيحة');
           setExams([]);
           return;
         }
+        setExams(response.data.data);
       } else {
-        console.error('No exams data in response');
-        console.error('Response structure:', response.data);
         toast.error('لم يتم العثور على اختبارات');
         setExams([]);
       }
     } catch (error) {
-      console.error('=== EXAMS ERROR ===');
-      console.error('Error object:', error);
-      console.error('Error message:', error.message);
-      console.error('Error response:', error.response);
-      
       if (error.response?.status === 401) {
         toast.error('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى');
         localStorage.removeItem('token');
         navigate('/login');
       } else if (error.response?.status === 403) {
-        toast.error('ليس لديك صلاحية للوصول إلى الاختبارات');
+        toast.error('ليس لديك صلاحية الوصول إلى الاختبارات');
       } else if (error.response?.status >= 500) {
         toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
       } else if (!error.response) {
@@ -380,28 +318,18 @@ const StudentProfile = () => {
         toast.error(`حدث خطأ أثناء تحميل الاختبارات: ${error.response?.data?.message || error.message}`);
       }
       setExams([]);
-    } finally {
-      setLoading(false);
     }
   };
 
   const fetchCustomGroups = async () => {
     try {
-      console.log('=== FETCHING CUSTOM GROUPS ===');
       const response = await axios.get('/api/exam-groups', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
-      
-      console.log('Custom groups response:', response.data);
       if (response.data && response.data.data) {
         setCustomGroups(response.data.data);
-        console.log('Custom groups set successfully:', response.data.data.length, 'groups');
       }
-    } catch (error) {
-      console.error('Error fetching custom groups:', error);
-      // Don't show error toast for custom groups as it's not critical
+    } catch {
       setCustomGroups([]);
     }
   };
@@ -422,62 +350,35 @@ const StudentProfile = () => {
   };
 
   const fetchStudentProgress = () => {
-    console.log('=== FETCHING STUDENT PROGRESS ===');
-    console.log('Student:', !!student);
-    console.log('Student exam progress:', student?.examProgress);
-    
-    // Student progress is already available in the student data
     if (student && student.examProgress) {
-      console.log('Setting student progress:', student.examProgress.length, 'progress entries');
       setStudentProgress(student.examProgress);
       calculateGroupStatus(student.examProgress);
     } else {
-      console.log('No student or exam progress available');
       setStudentProgress([]);
     }
   };
 
   const calculateGroupStatus = (progress) => {
-    console.log('=== CALCULATING GROUP STATUS ===');
-    console.log('Progress data:', progress);
-    
     const status = {};
-    
-    // Initialize all groups (0-8 + custom groups) as locked
-    // First, initialize standard groups 0-8
-    for (let i = 0; i <= 8; i++) {
-      status[i] = 'locked';
-    }
-    
-    // Then, initialize custom groups from exams data
+    for (let i = 0; i <= 8; i++) status[i] = 'locked';
     if (exams && Array.isArray(exams)) {
-      const customGroups = [...new Set(exams.map(exam => exam.examGroup).filter(group => group > 8))];
-      customGroups.forEach(groupNum => {
-        status[groupNum] = 'locked';
-      });
+      const customGroupNums = [...new Set(exams.map(exam => exam.examGroup).filter(g => g > 8))];
+      customGroupNums.forEach(num => { status[num] = 'locked'; });
     }
-    
     if (!progress || !Array.isArray(progress)) {
-      console.log('No valid progress data, all groups locked');
       setGroupStatus(status);
       return;
     }
-    
-    // Check each exam progress
     progress.forEach(progressItem => {
       try {
         const groupNum = progressItem.examId ? progressItem.examId.examGroup : progressItem.examGroup;
-        if (groupNum !== undefined && groupNum !== null) {
-          if (progressItem.status === 'unlocked' || progressItem.status === 'in_progress' || progressItem.status === 'completed') {
-            status[groupNum] = 'unlocked';
-          }
+        if (groupNum != null && ['unlocked', 'in_progress', 'completed'].includes(progressItem.status)) {
+          status[groupNum] = 'unlocked';
         }
-      } catch (error) {
-        console.error('Error processing progress item:', error, progressItem);
+      } catch {
+        // skip invalid item
       }
     });
-    
-    console.log('Final group status:', status);
     setGroupStatus(status);
   };
 
@@ -510,11 +411,6 @@ const StudentProfile = () => {
       // Force a re-render by updating state
       setStudentProgress(prev => [...prev]);
     } catch (error) {
-      console.error('=== TOGGLE MULTIPLE EXAMS ERROR ===');
-      console.error('Error object:', error);
-      console.error('Error message:', error.message);
-      console.error('Error response:', error.response);
-      
       if (error.response?.status === 404) {
         toast.error('الطالب غير موجود');
       } else if (error.response?.status === 401) {
@@ -542,30 +438,15 @@ const StudentProfile = () => {
 
   const handleToggleGroup = async (groupNumber, action) => {
     try {
-      console.log('=== TOGGLING GROUP ===');
-      console.log('Group number:', groupNumber);
-      console.log('Action:', action);
-      console.log('Student ID:', studentId);
-      
-      const response = await axios.put(`/api/users/students/${studentId}/toggle-group`, {
+      await axios.put(`/api/users/students/${studentId}/toggle-group`, {
         groupNumber: parseInt(groupNumber),
         action
       }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
-      
-      console.log('Toggle group response:', response.data);
-      
       toast.success(`تم ${action === 'lock' ? 'قفل' : 'فتح'} المجموعة ${groupNumber} بنجاح`);
       await fetchStudentData();
     } catch (error) {
-      console.error('=== TOGGLE GROUP ERROR ===');
-      console.error('Error object:', error);
-      console.error('Error message:', error.message);
-      console.error('Error response:', error.response);
-      
       if (error.response?.status === 404) {
         toast.error('الطالب غير موجود');
       } else if (error.response?.status === 401) {
@@ -585,73 +466,49 @@ const StudentProfile = () => {
   };
 
   const handleViewMistakes = (exam) => {
-    console.log('=== VIEWING MISTAKES ===');
-    console.log('Exam:', exam);
-    console.log('Student:', student);
-    
     if (!exam) {
-      console.error('No exam provided');
       toast.error('لم يتم العثور على الاختبار');
       return;
     }
-    
     if (!student) {
-      console.error('No student data available');
       toast.error('لم يتم العثور على بيانات الطالب');
       return;
     }
-    
     setSelectedExamForMistakes(exam);
     setShowMistakes(true);
   };
 
   const handleCloseMistakes = () => {
-    console.log('=== CLOSING MISTAKES ===');
     setShowMistakes(false);
     setSelectedExamForMistakes(null);
   };
 
   const handleViewAllAnswers = () => {
-    console.log('=== VIEWING ALL ANSWERS ===');
-    console.log('Student:', student);
-    
     if (!student) {
-      console.error('No student data available');
       toast.error('لم يتم العثور على بيانات الطالب');
       return;
     }
-    
     setShowAllAnswers(true);
   };
 
   const handleCloseAllAnswers = () => {
-    console.log('=== CLOSING ALL ANSWERS ===');
     setShowAllAnswers(false);
   };
 
   const handleViewSubmission = (exam) => {
-    console.log('=== VIEWING SUBMISSION ===');
-    console.log('Exam:', exam);
-    console.log('Student:', student);
-    
     if (!exam) {
-      console.error('No exam provided');
       toast.error('لم يتم العثور على الاختبار');
       return;
     }
-    
     if (!student) {
-      console.error('No student data available');
       toast.error('لم يتم العثور على بيانات الطالب');
       return;
     }
-    
     setSelectedExamForSubmission(exam);
     setShowSubmission(true);
   };
 
   const handleCloseSubmission = () => {
-    console.log('=== CLOSING SUBMISSION ===');
     setShowSubmission(false);
     setSelectedExamForSubmission(null);
   };
@@ -671,25 +528,15 @@ const StudentProfile = () => {
     try {
       setTogglingExam(examId);
       setLockDialog({ isOpen: false, examId: null, examTitle: '', action: '' });
-      console.log(`Toggling exam ${examId} to ${action}`);
-      
       const response = await axios.put(`/api/users/students/${studentId}/toggle-exam/${examId}`, {
         action
       }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
         timeout: 60000
       });
-      
-      console.log('Toggle exam response:', response.data);
       toast.success(response.data.message);
-      
-      // Refresh student data
       await fetchStudentData();
-      
     } catch (error) {
-      console.error('Error toggling exam:', error);
       toast.error(error.response?.data?.message || 'حدث خطأ أثناء تغيير حالة الاختبار');
     } finally {
       setTogglingExam(null);
@@ -700,29 +547,16 @@ const StudentProfile = () => {
   const handleToggleGroupAccess = async (groupId, action) => {
     try {
       setTogglingGroup(groupId);
-      console.log(`Toggling group ${groupId} to ${action}`);
-      
-      toast.loading(`جاري ${action === 'open' ? 'فتح' : 'قفل'} جميع الاختبارات في المجموعة...`, {
-        duration: 60000
-      });
-      
+      toast.loading(`جاري ${action === 'open' ? 'فتح' : 'قفل'} جميع الاختبارات في المجموعة...`, { duration: 60000 });
       const response = await axios.put(`/api/users/students/${studentId}/toggle-group/${groupId}`, {
         action
       }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
         timeout: 60000
       });
-      
-      console.log('Toggle group response:', response.data);
       toast.success(response.data.message);
-      
-      // Refresh student data
       await fetchStudentData();
-      
     } catch (error) {
-      console.error('Error toggling group:', error);
       if (error.code === 'ECONNABORTED') {
         toast.error('انتهت مهلة الطلب. يرجى المحاولة مرة أخرى');
       } else {
@@ -755,27 +589,14 @@ const StudentProfile = () => {
     try {
       setReopeningExam(examId);
       setReopenDialog({ isOpen: false, examId: null, examTitle: '' });
-      console.log(`Reopening exam ${examId} for student ${studentId}`);
-      
-      toast.loading('جاري إعادة فتح الامتحان...', {
-        duration: 30000
-      });
-      
+      toast.loading('جاري إعادة فتح الامتحان...', { duration: 30000 });
       const response = await axios.put(`/api/users/students/${studentId}/reopen-exam/${examId}`, {}, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
         timeout: 30000
       });
-      
-      console.log('Reopen exam response:', response.data);
       toast.success(response.data.message);
-      
-      // Refresh student data to show updated status
       await fetchStudentData();
-      
     } catch (error) {
-      console.error('Error reopening exam:', error);
       if (error.code === 'ECONNABORTED') {
         toast.error('انتهت مهلة الطلب. يرجى المحاولة مرة أخرى');
       } else {
@@ -958,18 +779,18 @@ const StudentProfile = () => {
                 <span>الوصول السريع للمجموعات والاختبارات</span>
               </h4>
               <div className="text-sm text-gray-600 bg-white px-3 py-1 rounded-full border">
-                {exams.length} اختبار متاح
+                {examsLoading ? '...' : `${exams.length} اختبار متاح`}
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {(() => {
-                // Get all unique group numbers from exams
+              {examsLoading ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500">
+                  <div className="spinner mb-3" />
+                  <p>جاري تحميل الاختبارات...</p>
+                </div>
+              ) : (() => {
                 const allGroupNumbers = [...new Set(exams.map(exam => exam.examGroup))].sort((a, b) => a - b);
-                console.log('=== EXAM CARDS DEBUG ===');
-                console.log('All group numbers:', allGroupNumbers);
-                console.log('Exams:', exams);
-                
                 return allGroupNumbers.map(groupNum => {
                   const groupExams = exams.filter(exam => exam.examGroup === groupNum);
                 
@@ -1124,9 +945,9 @@ const StudentProfile = () => {
                   </div>
                 );
                 });
-              })()}}
-        </div>
-      </div>
+              })()}
+            </div>
+          </div>
 
         <div className="card-body p-0">
           <div className="overflow-x-auto" style={{ position: 'relative' }}>
@@ -1224,33 +1045,17 @@ const StudentProfile = () => {
                   
                   // Initialize groups dynamically based on actual exam groups
                   const uniqueGroups = [...new Set(exams.map(exam => exam.examGroup))];
-                  console.log('=== GROUPED EXAMS DEBUG ===');
-                  console.log('All exams:', exams);
-                  console.log('Unique groups:', uniqueGroups);
-                  console.log('Custom groups from state:', customGroups);
-                  
                   uniqueGroups.forEach(groupNum => {
                     groupedExams[groupNum] = [];
                     groupCumulative[groupNum] = { totalScore: 0, totalQuestions: 0, completedExams: 0 };
                   });
-                  
-                  // Group exams and calculate cumulative data
-                  console.log('=== PROCESSING EXAMS FOR TABLE ===');
-                  console.log('Exams to process:', exams.length);
-                  console.log('Student progress:', studentProgress.length);
-                  
                   exams.forEach(exam => {
                     const groupNum = exam.examGroup;
                     const progress = findProgressByExamId(exam._id, studentProgress);
-                    
-                    console.log(`Processing exam ${exam._id} in group ${groupNum}, progress:`, !!progress);
-                    
-                    // Ensure the group exists before pushing
                     if (!groupedExams[groupNum]) {
                       groupedExams[groupNum] = [];
                       groupCumulative[groupNum] = { totalScore: 0, totalQuestions: 0, completedExams: 0 };
                     }
-                    
                     if (progress) {
                       groupedExams[groupNum].push({ exam, progress });
                       
@@ -1542,17 +1347,6 @@ const StudentProfile = () => {
                   const allGroupNumbers = Object.keys(groupedExams)
                     .map(Number)
                     .sort((a, b) => a - b);
-                  
-                  console.log('=== TABLE RENDERING DEBUG ===');
-                  console.log('All group numbers for table:', allGroupNumbers);
-                  console.log('Grouped exams keys:', Object.keys(groupedExams));
-                  console.log('Grouped exams:', groupedExams);
-                  
-                  console.log('=== TABLE RENDERING DEBUG ===');
-                  console.log('All group numbers for table:', allGroupNumbers);
-                  console.log('Grouped exams keys:', Object.keys(groupedExams));
-                  console.log('Grouped exams:', groupedExams);
-                  
                   allGroupNumbers.forEach(groupNum => {
                     if (groupedExams[groupNum] && groupedExams[groupNum].length > 0) {
                       groupedExams[groupNum].forEach((item, index) => {

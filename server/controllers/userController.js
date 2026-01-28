@@ -48,31 +48,18 @@ const getStudents = async (req, res) => {
 // @access  Private (Teacher only)
 const getStudent = async (req, res) => {
   try {
-    console.log('=== GET STUDENT REQUEST ===');
-    console.log('Student ID:', req.params.id);
-    console.log('Student ID type:', typeof req.params.id);
-    console.log('Student ID length:', req.params.id?.length);
-    console.log('User:', req.user);
-    console.log('User role:', req.user?.role);
-    console.log('User ID:', req.user?.id);
-    
-    // Validate student ID format
     if (!req.params.id || req.params.id.length < 10) {
-      console.log('Invalid student ID format');
       return res.status(400).json({
         success: false,
         message: 'Invalid student ID format'
       });
     }
-    
-    console.log('Searching for student with ID:', req.params.id);
-    // Optimized query - avoid populate for better performance
+
     const student = await User.findById(req.params.id)
       .select('-password')
       .lean(); // Use lean() for better performance
     
     if (!student) {
-      console.log('Student not found in database');
       return res.status(404).json({
         success: false,
         message: 'Student not found'
@@ -96,13 +83,7 @@ const getStudent = async (req, res) => {
       progress.examId = examMap[progress.examId.toString()] || progress.examId;
     });
 
-    console.log('Student found:', !!student);
-    console.log('Student role:', student?.role);
-    console.log('Student name:', student?.name);
-    console.log('Student email:', student?.email);
-    
     if (student.role !== 'student') {
-      console.log('User found but not a student, role:', student.role);
       return res.status(404).json({
         success: false,
         message: 'Student not found'
@@ -144,19 +125,14 @@ const getStudent = async (req, res) => {
       });
     }
 
-    console.log('=== STUDENT DATA PREPARED ===');
-    console.log('Student exam progress count:', student.examProgress?.length || 0);
-    
     res.json({
       success: true,
       data: student
     });
   } catch (error) {
-    console.error('=== GET STUDENT ERROR ===');
-    console.error('Error object:', error);
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
-    
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Get student error:', error);
+    }
     res.status(500).json({
       success: false,
       message: 'Server error while fetching student',
