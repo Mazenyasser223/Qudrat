@@ -138,7 +138,7 @@ const login = async (req, res) => {
 // @access  Private
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id).select('-password').lean();
     
     // Add best review score for each exam progress if user is a student
     if (user.role === 'student' && user.examProgress && user.examProgress.length > 0) {

@@ -148,11 +148,16 @@ const securityLogger = (req, res, next) => {
   checkSuspicious(req.query, 'query');
   checkSuspicious(req.params, 'params');
   
-  // Log request details
+  // Only log slow requests or errors in production
   const originalSend = res.send;
   res.send = function(data) {
     const duration = Date.now() - startTime;
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} - ${res.statusCode} - ${duration}ms - IP: ${req.ip}`);
+    // Only log if request is slow (>1000ms) or error status
+    if (duration > 1000 || res.statusCode >= 400) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} - ${res.statusCode} - ${duration}ms`);
+      }
+    }
     originalSend.call(this, data);
   };
   

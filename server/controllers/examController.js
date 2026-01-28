@@ -67,13 +67,8 @@ const getExam = async (req, res) => {
 // @access  Private (Teacher only)
 const createExam = async (req, res) => {
   try {
-    console.log('📝 === CREATE EXAM REQUEST ===');
-    console.log('Request body keys:', Object.keys(req.body));
-    console.log('User ID:', req.user.id);
-    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log('❌ Validation errors:', errors.array());
       return res.status(400).json({
         success: false,
         message: 'Validation errors',
@@ -82,7 +77,6 @@ const createExam = async (req, res) => {
     }
 
     const { title, description, examGroup, order, timeLimit, questions } = req.body;
-    console.log('📊 Exam data:', { title, examGroup, order, timeLimit, questionsCount: questions?.length });
 
     // Check if exam with same group and order exists
     const existingExam = await Exam.findOne({ 
@@ -92,7 +86,6 @@ const createExam = async (req, res) => {
     });
 
     if (existingExam) {
-      console.log('❌ Exam with same group and order already exists:', existingExam.title);
       return res.status(400).json({
         success: false,
         message: 'Exam with this group and order already exists'
@@ -101,7 +94,6 @@ const createExam = async (req, res) => {
 
     // Parse questions if it's a string
     const parsedQuestions = typeof questions === 'string' ? JSON.parse(questions) : questions;
-    console.log('📋 Parsed questions count:', parsedQuestions.length);
 
     // Questions already contain Cloudinary URLs, no need to map files
     const questionsWithImages = parsedQuestions.map((question) => {
@@ -110,8 +102,6 @@ const createExam = async (req, res) => {
         questionImage: question.questionImage || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==' // 1x1 transparent pixel
       };
     });
-
-    console.log('🖼️ Questions with images count:', questionsWithImages.length);
 
     // Create exam
     const exam = await Exam.create({
@@ -125,18 +115,8 @@ const createExam = async (req, res) => {
       createdBy: req.user.id
     });
 
-    console.log('✅ Exam created successfully:', {
-      id: exam._id,
-      title: exam.title,
-      examGroup: exam.examGroup,
-      order: exam.order,
-      totalQuestions: exam.totalQuestions,
-      isActive: exam.isActive
-    });
-
     // Invalidate cache for exams list
     invalidateCache('/api/exams');
-    console.log('🗑️ Cache invalidated for exams list');
 
     // Update exam group count asynchronously (don't block response)
     updateExamGroupCount(examGroup).catch(error => {
@@ -144,8 +124,8 @@ const createExam = async (req, res) => {
     });
 
     // Update all students' exam progress asynchronously (don't block response)
-    updateStudentsExamProgress().catch(error => {
-      console.error('Error updating students exam progress:', error);
+    updateStudentsExamProgress().catch(() => {
+      // Silently fail - non-critical operation
     });
 
     res.status(201).json({
@@ -154,7 +134,9 @@ const createExam = async (req, res) => {
       data: exam
     });
   } catch (error) {
-    console.error('❌ Create exam error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Create exam error:', error);
+    }
     res.status(500).json({
       success: false,
       message: 'Server error while creating exam'
@@ -167,15 +149,8 @@ const createExam = async (req, res) => {
 // @access  Private (Teacher only)
 const updateExam = async (req, res) => {
   try {
-    console.log('=== UPDATE EXAM REQUEST ===');
-    console.log('Exam ID:', req.params.id);
-    console.log('Request body keys:', Object.keys(req.body));
-    console.log('Questions count:', req.body.questions?.length);
-    console.log('Request body sample:', JSON.stringify(req.body, null, 2).substring(0, 500));
-    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log('Validation errors:', errors.array());
       return res.status(400).json({
         success: false,
         message: 'Validation errors',
@@ -214,10 +189,10 @@ const updateExam = async (req, res) => {
     let parsedQuestions;
     try {
       parsedQuestions = typeof questions === 'string' ? JSON.parse(questions) : questions;
-      console.log('Parsed questions type:', typeof parsedQuestions);
-      console.log('Parsed questions length:', Array.isArray(parsedQuestions) ? parsedQuestions.length : 'Not an array');
     } catch (parseError) {
-      console.error('Error parsing questions:', parseError);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error parsing questions:', parseError);
+      }
       return res.status(400).json({
         success: false,
         message: 'Invalid questions format'
@@ -225,9 +200,6 @@ const updateExam = async (req, res) => {
     }
 
     // Questions already contain Base64 image data, no need to map files
-    console.log('Processing questions with images...');
-    console.log('Questions count:', parsedQuestions.length);
-    
     const questionsWithImages = parsedQuestions.map((question) => {
       return {
         ...question,
@@ -235,7 +207,6 @@ const updateExam = async (req, res) => {
       };
     });
 
-    console.log('Starting database update...');
     // Update exam with timeout
     const updatedExam = await Exam.findByIdAndUpdate(
       req.params.id,
@@ -256,14 +227,8 @@ const updateExam = async (req, res) => {
       }
     );
 
-    console.log('=== EXAM UPDATE SUCCESS ===');
-    console.log('Updated exam ID:', updatedExam._id);
-    console.log('Updated exam title:', updatedExam.title);
-    console.log('Questions count:', updatedExam.questions.length);
-    
     // Invalidate cache for exams list
     invalidateCache('/api/exams');
-    console.log('🗑️ Cache invalidated for exams list');
     
     res.json({
       success: true,
@@ -407,14 +372,6 @@ const getExamsByGroup = async (req, res) => {
 const submitExam = async (req, res) => {
   try {
     const { answers, timeSpent, submittedAt } = req.body;
-    
-    console.log('=== EXAM SUBMISSION DEBUG ===');
-    console.log('Student ID:', req.user.id);
-    console.log('Exam ID:', req.params.id);
-    console.log('Answers received:', answers);
-    console.log('Answers length:', answers?.length);
-    console.log('Time spent:', timeSpent);
-    console.log('Submitted at:', submittedAt);
 
     // Only select needed fields for better performance
     const exam = await Exam.findById(req.params.id)
@@ -460,23 +417,11 @@ const submitExam = async (req, res) => {
     const wrongQuestions = [];
 
     // Process all answers in a single loop for better performance
-    console.log('=== PROCESSING ANSWERS ===');
-    console.log('Exam questions count:', exam.questions.length);
-    console.log('Answers array length:', answers.length);
-    
     for (let i = 0; i < answers.length; i++) {
       const answer = answers[i];
       const question = exam.questions[i];
       
-      console.log(`Question ${i + 1}:`, {
-        questionId: question?._id,
-        correctAnswer: question?.correctAnswer,
-        selectedAnswer: answer?.selectedAnswer,
-        hasAnswer: !!answer?.selectedAnswer
-      });
-      
       if (!question) {
-        console.log(`Skipping question ${i + 1} - question not found`);
         continue; // Skip if question doesn't exist
       }
       
@@ -494,11 +439,6 @@ const submitExam = async (req, res) => {
         isCorrect
       });
     }
-    
-    console.log('=== PROCESSING RESULTS ===');
-    console.log('Correct answers:', correctAnswers);
-    console.log('Wrong questions:', wrongQuestions.length);
-    console.log('Detailed answers:', detailedAnswers);
 
     const score = correctAnswers;
     const percentage = (correctAnswers / exam.questions.length) * 100;
