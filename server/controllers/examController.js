@@ -11,29 +11,16 @@ const { invalidateCache } = require('../middleware/cache');
 // @access  Private
 const getExams = async (req, res) => {
   try {
-    // Pagination parameters
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 100;
-    const skip = (page - 1) * limit;
-    
-    // Get total count for pagination
-    const totalCount = await Exam.countDocuments({ isActive: true });
-    
-    // For list view, only fetch basic exam info without questions to improve performance
+    // Return ALL active exams (no pagination) - teachers/students need to see full list
     const exams = await Exam.find({ isActive: true })
       .select('title description examGroup order timeLimit isFreeExam totalQuestions createdAt updatedAt')
       .populate('createdBy', 'name email')
       .sort({ examGroup: 1, order: 1 })
-      .skip(skip)
-      .limit(limit)
       .lean();
 
     res.json({
       success: true,
       count: exams.length,
-      total: totalCount,
-      page,
-      totalPages: Math.ceil(totalCount / limit),
       data: exams
     });
   } catch (error) {
