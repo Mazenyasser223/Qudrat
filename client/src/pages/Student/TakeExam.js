@@ -20,6 +20,7 @@ const TakeExam = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState(null);
+  const [resultsAnswers, setResultsAnswers] = useState(null);
   const [timeUp, setTimeUp] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
   const [markedForReview, setMarkedForReview] = useState(new Set());
@@ -108,6 +109,41 @@ const TakeExam = () => {
     });
   };
 
+  const fetchAndShowResults = async () => {
+    try {
+      const res = await axios.get(`/api/exams/${examId}/student-submission`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const submission = res.data.data;
+      const resultsData = {
+        score: submission.score,
+        percentage: submission.percentage,
+        correctAnswers: submission.correctAnswers,
+        totalQuestions: submission.totalQuestions,
+        wrongAnswers: submission.wrongAnswers
+      };
+      const answersInOrder = exam.questions.map((question) => {
+        const a = (submission.answers || []).find(
+          (x) => x.questionId && question._id && x.questionId.toString() === question._id.toString()
+        );
+        return a
+          ? { selectedAnswer: a.selectedAnswer, isCorrect: a.isCorrect }
+          : { selectedAnswer: null, isCorrect: false };
+      });
+      setResults(resultsData);
+      setResultsAnswers(answersInOrder);
+      setShowResults(true);
+    } catch (fetchError) {
+      console.error('Error fetching submission:', fetchError);
+      toast.error('تم تسليم الامتحان لكن تعذر تحميل النتائج. يمكنك مراجعتها من لوحة التحكم.');
+      navigate('/student');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleSubmit = async ({ skipConfirm = false } = {}) => {
     if (submitting || showResults) {
       return;
@@ -141,13 +177,27 @@ const TakeExam = () => {
       }, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        },
+        timeout: 60000
       });
 
-      setResults(res.data.data);
-      setShowResults(true);
-      toast.success(skipConfirm ? 'تم تسليم الامتحان تلقائيًا لانتهاء الوقت' : 'تم تسليم الامتحان بنجاح');
+      const data = res.data?.data;
+      if (data && typeof data.score === 'number') {
+        setResults(data);
+        setShowResults(true);
+        toast.success(skipConfirm ? 'تم تسليم الامتحان تلقائيًا لانتهاء الوقت' : 'تم تسليم الامتحان بنجاح');
+      } else {
+        await fetchAndShowResults();
+      }
     } catch (error) {
+      const isAlreadyCompleted = error.response?.status === 400 &&
+        (error.response?.data?.message?.includes('already completed') ||
+         error.response?.data?.message?.includes('مكتمل'));
+      if (isAlreadyCompleted) {
+        toast.success('تم تسليم هذا الامتحان مسبقًا. عرض النتائج...');
+        await fetchAndShowResults();
+        return;
+      }
       console.error('Error submitting exam:', error);
       toast.error(error.response?.data?.message || 'حدث خطأ أثناء تسليم الامتحان');
     } finally {
@@ -198,19 +248,22 @@ const TakeExam = () => {
   }
 
   if (showResults && results) {
+    const answersForResults =
+      resultsAnswers != null
+        ? resultsAnswers
+        : exam.questions.map((question, originalIndex) => {
+            const shuffledIndex = questionOrder[originalIndex];
+            const selectedAnswer = answers[shuffledIndex];
+            return {
+              selectedAnswer: selectedAnswer,
+              isCorrect: selectedAnswer === question.correctAnswer
+            };
+          });
     return (
       <ExamResults
         exam={exam}
         results={results}
-        answers={exam.questions.map((question, originalIndex) => {
-          // Get the shuffled index for this original question
-          const shuffledIndex = questionOrder[originalIndex];
-          const selectedAnswer = answers[shuffledIndex];
-          return {
-            selectedAnswer: selectedAnswer,
-            isCorrect: selectedAnswer === question.correctAnswer
-          };
-        })}
+        answers={answersForResults}
         onBackToDashboard={() => navigate('/student')}
       />
     );
