@@ -373,10 +373,16 @@ const submitExam = async (req, res) => {
   try {
     const { answers, timeSpent, submittedAt } = req.body;
 
-    // Only select needed fields for better performance
+    if (!Array.isArray(answers)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Answers must be an array'
+      });
+    }
+
+    // Only select needed fields for better performance (no .lean() so we can update statistics)
     const exam = await Exam.findById(req.params.id)
-      .select('questions.correctAnswer questions._id title examGroup order totalQuestions statistics')
-      .lean();
+      .select('questions.correctAnswer questions._id title examGroup order totalQuestions statistics');
     if (!exam) {
       return res.status(404).json({
         success: false,
@@ -467,7 +473,7 @@ const submitExam = async (req, res) => {
     const completedExams = student.examProgress.filter(progress => progress.status === 'completed');
     const totalScore = completedExams.reduce((sum, progress) => sum + progress.score, 0);
     const totalQuestions = completedExams.reduce((sum, progress) => {
-      return sum + (progress.examId.totalQuestions || 0);
+      return sum + (progress.totalQuestions || 0);
     }, 0);
 
     student.totalScore = totalScore;
@@ -478,15 +484,14 @@ const submitExam = async (req, res) => {
 
     await student.save();
 
-    // Update exam statistics
+    // Update exam statistics (exam is a Mongoose doc, not .lean())
     exam.statistics.totalAttempts += 1;
     if (percentage >= 50) { // Assuming 50% is passing
       exam.statistics.passRate += 1;
     }
-    exam.statistics.averageScore = 
-      (exam.statistics.averageScore * (exam.statistics.totalAttempts - 1) + percentage) / 
+    exam.statistics.averageScore =
+      (exam.statistics.averageScore * (exam.statistics.totalAttempts - 1) + percentage) /
       exam.statistics.totalAttempts;
-    
     await exam.save();
 
     // Emit real-time update to teachers (optimized - only fetch IDs)
