@@ -4,7 +4,9 @@ const compression = require('compression');
 const path = require('path');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-require('dotenv').config();
+
+// Load .env from server directory (important when running from project root)
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 // Import database connection
 const connectDB = require('./config/database');

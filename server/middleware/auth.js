@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { debugLog } = require('../debugLog');
 
 // Protect routes - verify JWT token
 const protect = async (req, res, next) => {
@@ -13,6 +14,9 @@ const protect = async (req, res, next) => {
 
     // Make sure token exists
     if (!token) {
+      // #region agent log
+      (function(p){debugLog(p);require('http').request({hostname:'127.0.0.1',port:7914,path:'/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'}}, (r) => { r.resume(); }).end(JSON.stringify(p));})({sessionId:'97296c',location:'auth.js:protect',message:'protect_no_token',data:{path:req.path},timestamp:Date.now(),hypothesisId:'token_invalid'});
+      // #endregion
       return res.status(401).json({
         success: false,
         message: 'Not authorized to access this route'
@@ -27,6 +31,9 @@ const protect = async (req, res, next) => {
       const user = await User.findById(decoded.id).select('-password');
       
       if (!user) {
+        // #region agent log
+        (function(p){debugLog(p);require('http').request({hostname:'127.0.0.1',port:7914,path:'/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'}}, (r) => { r.resume(); }).end(JSON.stringify(p));})({sessionId:'97296c',location:'auth.js:protect',message:'protect_user_not_found',data:{path:req.path},timestamp:Date.now(),hypothesisId:'token_invalid'});
+        // #endregion
         return res.status(401).json({
           success: false,
           message: 'No user found with this token'
@@ -34,15 +41,24 @@ const protect = async (req, res, next) => {
       }
 
       if (!user.isActive) {
+        // #region agent log
+        (function(p){debugLog(p);require('http').request({hostname:'127.0.0.1',port:7914,path:'/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'}}, (r) => { r.resume(); }).end(JSON.stringify(p));})({sessionId:'97296c',location:'auth.js:protect',message:'protect_user_deactivated',data:{path:req.path},timestamp:Date.now(),hypothesisId:'token_invalid'});
+        // #endregion
         return res.status(401).json({
           success: false,
           message: 'User account is deactivated'
         });
       }
 
+      // #region agent log
+      (function(p){debugLog(p);require('http').request({hostname:'127.0.0.1',port:7914,path:'/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'}}, (r) => { r.resume(); }).end(JSON.stringify(p));})({sessionId:'97296c',location:'auth.js:protect',message:'protect_success',data:{path:req.path},timestamp:Date.now(),hypothesisId:'jwt_verify_fail'});
+      // #endregion
       req.user = user;
       next();
     } catch (error) {
+      // #region agent log
+      (function(p){debugLog(p);require('http').request({hostname:'127.0.0.1',port:7914,path:'/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'}}, (r) => { r.resume(); }).end(JSON.stringify(p));})({sessionId:'97296c',location:'auth.js:protect',message:'protect_jwt_verify_fail',data:{path:req.path,errName:error?.name,errMessage:error?.message},timestamp:Date.now(),hypothesisId:'jwt_verify_fail'});
+      // #endregion
       if (process.env.NODE_ENV === 'development') {
         console.error('Token verification error:', error.message);
       }

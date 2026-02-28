@@ -38,6 +38,13 @@ const createRateLimit = (windowMs, max, message) => {
     standardHeaders: true,
     legacyHeaders: false,
     handler: (req, res) => {
+      // #region agent log
+      const { debugLog } = require('../debugLog');
+      const payload = { sessionId: '97296c', location: 'security.js:rateLimit', message: 'rate_limit_429', data: { path: req.path }, timestamp: Date.now(), hypothesisId: 'rate_limit' };
+      debugLog(payload);
+      const http = require('http');
+      http.request({ hostname: '127.0.0.1', port: 7914, path: '/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35', method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '97296c' } }, (r) => { r.resume(); }).end(JSON.stringify(payload));
+      // #endregion
       res.status(429).json({
         success: false,
         message: message || 'Too many requests from this IP, please try again later.'

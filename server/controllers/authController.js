@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { debugLog } = require('../debugLog');
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -67,11 +68,17 @@ const registerTeacher = async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 const login = async (req, res) => {
+  // #region agent log
+  (function(p){debugLog(p);fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify(p)}).catch(()=>{});})({sessionId:'97296c',location:'authController.js:login',message:'login_entry',data:{hasEmail:!!req.body?.email,hasPassword:!!req.body?.password},timestamp:Date.now(),hypothesisId:'login_fail'});
+  // #endregion
   try {
     const { email, password } = req.body;
 
     // Basic validation
     if (!email || !password) {
+      // #region agent log
+      (function(p){debugLog(p);fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify(p)}).catch(()=>{});})({sessionId:'97296c',location:'authController.js:login',message:'login_validation_fail',data:{},timestamp:Date.now(),hypothesisId:'login_fail'});
+      // #endregion
       return res.status(400).json({
         success: false,
         message: 'Please provide email and password'
@@ -81,6 +88,9 @@ const login = async (req, res) => {
     // Check for user
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
+      // #region agent log
+      (function(p){debugLog(p);fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify(p)}).catch(()=>{});})({sessionId:'97296c',location:'authController.js:login',message:'login_user_not_found',data:{},timestamp:Date.now(),hypothesisId:'login_fail'});
+      // #endregion
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials'
@@ -90,6 +100,9 @@ const login = async (req, res) => {
     // Check if password matches
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
+      // #region agent log
+      (function(p){debugLog(p);fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify(p)}).catch(()=>{});})({sessionId:'97296c',location:'authController.js:login',message:'login_password_mismatch',data:{},timestamp:Date.now(),hypothesisId:'login_fail'});
+      // #endregion
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials'
@@ -98,6 +111,9 @@ const login = async (req, res) => {
 
     // Check if user is active
     if (!user.isActive) {
+      // #region agent log
+      (function(p){debugLog(p);fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify(p)}).catch(()=>{});})({sessionId:'97296c',location:'authController.js:login',message:'login_account_deactivated',data:{},timestamp:Date.now(),hypothesisId:'login_fail'});
+      // #endregion
       return res.status(401).json({
         success: false,
         message: 'Account is deactivated'
@@ -110,6 +126,9 @@ const login = async (req, res) => {
     // Generate token
     const token = generateToken(user._id);
 
+    // #region agent log
+    (function(p){debugLog(p);fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify(p)}).catch(()=>{});})({sessionId:'97296c',location:'authController.js:login',message:'login_success',data:{role:user.role},timestamp:Date.now(),hypothesisId:'login_fail'});
+    // #endregion
     res.json({
       success: true,
       message: 'Login successful',
@@ -123,6 +142,9 @@ const login = async (req, res) => {
       }
     });
   } catch (error) {
+    // #region agent log
+    (function(p){debugLog(p);fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify(p)}).catch(()=>{});})({sessionId:'97296c',location:'authController.js:login',message:'login_server_error',data:{errName:error?.name,errMessage:error?.message},timestamp:Date.now(),hypothesisId:'login_fail'});
+    // #endregion
     if (process.env.NODE_ENV === 'development') {
       console.error('Login error:', error);
     }
