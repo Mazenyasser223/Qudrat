@@ -201,8 +201,10 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
 
 // Update last login
 userSchema.methods.updateLastLogin = function() {
-  this.lastLogin = new Date();
-  return this.save();
+  return this.constructor.updateOne(
+    { _id: this._id },
+    { $set: { lastLogin: new Date() } }
+  );
 };
 
 module.exports = mongoose.model('User', userSchema);
