@@ -6,6 +6,16 @@ import { safeLocalStorage } from '../utils/storage';
 // Configure axios base URL
 axios.defaults.baseURL = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
 
+/** Cursor agent ingest — only in local dev; never call user's loopback in production builds. */
+const agentIngestDev = (payload) => {
+  if (process.env.NODE_ENV !== 'development') return;
+  fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '97296c' },
+    body: JSON.stringify(payload),
+  }).catch(() => {});
+};
+
 const AuthContext = createContext();
 
 // Safe localStorage getter with error handling
@@ -95,13 +105,13 @@ export const AuthProvider = ({ children }) => {
 
   const loadUser = async () => {
     // #region agent log
-    fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify({sessionId:'97296c',location:'AuthContext.js:loadUser',message:'loadUser_start',data:{hasToken:!!state.token},timestamp:Date.now(),hypothesisId:'token_invalid'})}).catch(()=>{});
+    agentIngestDev({ sessionId: '97296c', location: 'AuthContext.js:loadUser', message: 'loadUser_start', data: { hasToken: !!state.token }, timestamp: Date.now(), hypothesisId: 'token_invalid' });
     // #endregion
     try {
       dispatch({ type: 'AUTH_START' });
       const res = await axios.get('/api/auth/me');
       // #region agent log
-      fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify({sessionId:'97296c',location:'AuthContext.js:loadUser',message:'loadUser_success',data:{status:res?.status},timestamp:Date.now(),hypothesisId:'token_invalid'})}).catch(()=>{});
+      agentIngestDev({ sessionId: '97296c', location: 'AuthContext.js:loadUser', message: 'loadUser_success', data: { status: res?.status }, timestamp: Date.now(), hypothesisId: 'token_invalid' });
       // #endregion
       dispatch({
         type: 'AUTH_SUCCESS',
@@ -112,7 +122,7 @@ export const AuthProvider = ({ children }) => {
       });
     } catch (error) {
       // #region agent log
-      fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify({sessionId:'97296c',location:'AuthContext.js:loadUser',message:'loadUser_fail',data:{status:error?.response?.status,noResponse:!!error?.request&&!error?.response},timestamp:Date.now(),hypothesisId:'token_invalid'})}).catch(()=>{});
+      agentIngestDev({ sessionId: '97296c', location: 'AuthContext.js:loadUser', message: 'loadUser_fail', data: { status: error?.response?.status, noResponse: !!error?.request && !error?.response }, timestamp: Date.now(), hypothesisId: 'token_invalid' });
       // #endregion
       console.error('Load user error:', error);
       dispatch({ type: 'AUTH_FAIL', payload: null });
@@ -122,13 +132,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     // #region agent log
-    fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify({sessionId:'97296c',location:'AuthContext.js:login',message:'login_start',data:{},timestamp:Date.now(),hypothesisId:'login_fail'})}).catch(()=>{});
+    agentIngestDev({ sessionId: '97296c', location: 'AuthContext.js:login', message: 'login_start', data: {}, timestamp: Date.now(), hypothesisId: 'login_fail' });
     // #endregion
     try {
       dispatch({ type: 'AUTH_START' });
       const res = await axios.post('/api/auth/login', { email, password });
       // #region agent log
-      fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify({sessionId:'97296c',location:'AuthContext.js:login',message:'login_response',data:{status:res?.status,success:!!res?.data?.success},timestamp:Date.now(),hypothesisId:'login_fail'})}).catch(()=>{});
+      agentIngestDev({ sessionId: '97296c', location: 'AuthContext.js:login', message: 'login_response', data: { status: res?.status, success: !!res?.data?.success }, timestamp: Date.now(), hypothesisId: 'login_fail' });
       // #endregion
       if (!res.data || !res.data.success) {
         const message = res.data?.message || 'فشل تسجيل الدخول';
@@ -156,7 +166,7 @@ export const AuthProvider = ({ children }) => {
       return { success: true, user };
     } catch (error) {
       // #region agent log
-      fetch('http://127.0.0.1:7914/ingest/5963aa55-001a-43d9-a9b3-abb9b2119b35',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'97296c'},body:JSON.stringify({sessionId:'97296c',location:'AuthContext.js:login',message:'login_catch',data:{status:error?.response?.status,noResponse:!!error?.request&&!error?.response},timestamp:Date.now(),hypothesisId:'cors_network'})}).catch(()=>{});
+      agentIngestDev({ sessionId: '97296c', location: 'AuthContext.js:login', message: 'login_catch', data: { status: error?.response?.status, noResponse: !!error?.request && !error?.response }, timestamp: Date.now(), hypothesisId: 'cors_network' });
       // #endregion
       let message = 'حدث خطأ أثناء تسجيل الدخول';
       
