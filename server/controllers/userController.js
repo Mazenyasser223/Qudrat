@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Exam = require('../models/Exam');
 const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
+const { invalidateCache } = require('../middleware/cache');
 
 // @desc    Get all students
 // @route   GET /api/users/students
@@ -234,7 +235,9 @@ const createStudent = async (req, res) => {
     }
 
     console.log('Student created successfully:', { id: student._id, name: student.name, email: student.email });
-    
+
+    invalidateCache('/api/users/students');
+
     res.status(201).json({
       success: true,
       message: 'Student created successfully',
@@ -301,6 +304,8 @@ const updateStudent = async (req, res) => {
       { new: true, runValidators: true }
     ).select('-password');
 
+    invalidateCache('/api/users/students');
+
     res.json({
       success: true,
       message: 'Student updated successfully',
@@ -345,6 +350,8 @@ const deleteStudent = async (req, res) => {
         });
       });
     }
+
+    invalidateCache('/api/users/students');
 
     res.json({
       success: true,
