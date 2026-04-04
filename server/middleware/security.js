@@ -57,10 +57,10 @@ const createRateLimit = (windowMs, max, message) => {
   });
 };
 
-// General rate limiting (100 requests per 15 minutes)
+// General rate limiting (teacher SPAs + multi-image uploads need headroom)
 const generalLimiter = createRateLimit(
   15 * 60 * 1000, // 15 minutes
-  100, // 100 requests
+  400, // 400 requests
   'Too many requests from this IP, please try again later.'
 );
 
@@ -78,10 +78,10 @@ const examSubmissionLimiter = createRateLimit(
   'Too many exam submissions, please try again later.'
 );
 
-// API rate limiting (200 requests per 15 minutes)
+// API rate limiting (stacked with general; allow busy authenticated sessions)
 const apiLimiter = createRateLimit(
   15 * 60 * 1000, // 15 minutes
-  200, // 200 requests
+  800, // 800 requests
   'API rate limit exceeded, please try again later.'
 );
 

@@ -57,6 +57,10 @@ app.use(compression({
 // CORS middleware with security
 app.use(cors(corsOptions));
 
+// Burst teacher uploads (many POSTs in seconds) must not share the same budget as normal browsing
+const skipExamImageUpload = (req) =>
+  req.method === 'POST' && req.path === '/api/exams/upload-image';
+
 // Rate limiting with security
 // Exclude auth routes from general limiter to prevent blocking legitimate logins
 app.use((req, res, next) => {
@@ -64,11 +68,19 @@ app.use((req, res, next) => {
   if (req.path.startsWith('/api/auth/login') || req.path.startsWith('/api/auth/register')) {
     return next();
   }
+  if (skipExamImageUpload(req)) {
+    return next();
+  }
   generalLimiter(req, res, next);
 });
 
 app.use('/api/exams/submit', examSubmissionLimiter);
-app.use('/api', apiLimiter);
+app.use('/api', (req, res, next) => {
+  if (skipExamImageUpload(req)) {
+    return next();
+  }
+  apiLimiter(req, res, next);
+});
 
 // Body parser middleware (reduced from 50mb to 10mb for security and performance)
 app.use(express.json({ limit: '10mb' }));
