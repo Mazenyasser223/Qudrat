@@ -70,6 +70,13 @@ const getExamGroups = async (req, res) => {
         : inferred !== null
           ? 'name'
           : null;
+      // DB row looks like a standard curriculum name but no exams use this custom folder — safe to delete as clutter.
+      obj.isRedundantAlias =
+        g.groupNumber >= 9 &&
+        customSlot === 0 &&
+        inferred !== null &&
+        inferred >= 0 &&
+        inferred <= 8;
       return obj;
     });
 
@@ -128,12 +135,28 @@ const createExamGroup = async (req, res) => {
   try {
     const { name, description, isPremium = true, linkedCurriculumGroup } = req.body;
 
+    const trimmedName = typeof name === 'string' ? name.trim() : '';
+    if (!trimmedName) {
+      return res.status(400).json({
+        success: false,
+        message: 'Group name is required'
+      });
+    }
+
+    if (inferStandardGroupFromName(trimmedName) !== null) {
+      return res.status(400).json({
+        success: false,
+        message:
+          'This name matches a real site group (Foundation or Group 1–8). Use the curriculum section on Manage Groups — do not create a duplicate folder with the same name.'
+      });
+    }
+
     // Get the next available group number
     const lastGroup = await ExamGroup.findOne({}, {}, { sort: { groupNumber: -1 } });
     const nextGroupNumber = lastGroup ? lastGroup.groupNumber + 1 : 9;
 
     const groupData = {
-      name,
+      name: trimmedName,
       description,
       groupNumber: nextGroupNumber,
       isPremium,
@@ -206,7 +229,23 @@ const updateExamGroup = async (req, res) => {
     }
 
     const updateData = {};
-    if (name) updateData.name = name;
+    if (name !== undefined && name !== null) {
+      const t = String(name).trim();
+      if (!t) {
+        return res.status(400).json({
+          success: false,
+          message: 'Group name cannot be empty'
+        });
+      }
+      if (group.groupNumber >= 9 && inferStandardGroupFromName(t) !== null) {
+        return res.status(400).json({
+          success: false,
+          message:
+            'This name matches a real site group (Foundation or Group 1–8). Use the curriculum section — do not rename extra folders to duplicate those names.'
+        });
+      }
+      updateData.name = t;
+    }
     if (description !== undefined) updateData.description = description;
     if (isPremium !== undefined) updateData.isPremium = isPremium;
 

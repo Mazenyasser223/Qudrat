@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { Plus, Edit, Eye, BarChart3, Users, BookOpen, Search, Filter, Trash2, Save, X } from 'lucide-react';
+import { Plus, Edit, Eye, Search, Trash2, Save, X } from 'lucide-react';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import PageHeader from '../../components/PageHeader';
 
@@ -154,9 +154,20 @@ const ExamGroups = () => {
     setDeleteDialog({ isOpen: false, groupId: null, groupName: '' });
   };
 
-  const filteredGroups = groups.filter(group =>
-    group.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const matchesSearch = (group) =>
+    group.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+  const redundantFolders = groups.filter((g) => g.isRedundantAlias && matchesSearch(g));
+  const realCustomFolders = groups.filter((g) => !g.isRedundantAlias && matchesSearch(g));
+
+  const curriculumSlots = [
+    { filter: 0, title: 'التأسيس', hint: 'examGroup = 0' },
+    ...Array.from({ length: 8 }, (_, i) => ({
+      filter: i + 1,
+      title: `المجموعة ${i + 1}`,
+      hint: `examGroup = ${i + 1}`
+    }))
+  ];
 
   if (loading) {
     return (
@@ -172,7 +183,7 @@ const ExamGroups = () => {
       {/* Header Section */}
       <PageHeader
         title="إدارة المجموعات"
-        description="الأسماء مثل «مجموعة ١» أو «مجموعة التأسيس» تُربط تلقائياً بعدد الامتحانات القياسي. يمكنك من التعديل ربطاً يدوياً يتجاوز الاسم، أو ترك رقم المجلد المخصص (٩+) فقط عندما لا يطابق الاسم معياراً قياسياً."
+        description="القسم الأول: مجموعات الموقع الحقيقية (٠–٨). القسم الثاني: مجلدات إضافية (٩+) عندما تُخزَّن امتحانات برقم مخصص. المجلدات المكررة بلا امتحانات تظهر للحذف الآمن."
         action={(
           <button
             onClick={() => setShowCreateForm(true)}
@@ -185,21 +196,80 @@ const ExamGroups = () => {
       />
 
       {curriculumExamCounts && (
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-900">
-          <p className="font-semibold mb-2">عدد الامتحانات في المجموعات القياسية (عند إنشاء امتحان تختار «المجموعة ١» … أو التأسيس)</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-            <div className="bg-white rounded-lg px-2 py-1.5 border border-blue-100 text-center">
-              <span className="text-blue-700">التأسيس</span>
-              <div className="font-bold text-lg">{curriculumExamCounts['0'] ?? 0}</div>
-            </div>
-            {Array.from({ length: 8 }, (_, i) => i + 1).map((num) => (
-              <div key={num} className="bg-white rounded-lg px-2 py-1.5 border border-blue-100 text-center">
-                <span className="text-blue-700">المجموعة {num}</span>
-                <div className="font-bold text-lg">{curriculumExamCounts[String(num)] ?? 0}</div>
+        <section className="space-y-3">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">مجموعات الموقع الحقيقية</h2>
+            <p className="text-sm text-gray-600 mt-1">
+              هذه هي المجموعات التي يعتمدها النظام عند إنشاء الامتحانات (التأسيس والمجموعات ١–٨). العدد من الامتحانات الفعلية في قاعدة البيانات.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {curriculumSlots.map(({ filter, title, hint }) => (
+              <div
+                key={filter}
+                className="bg-white rounded-xl border border-primary-100 shadow-sm p-4 flex flex-col items-center text-center hover:shadow-md transition-shadow"
+              >
+                <h3 className="text-base font-bold text-gray-900 mb-1">{title}</h3>
+                <div className="text-3xl font-bold text-primary-600 my-2">
+                  {curriculumExamCounts[String(filter)] ?? 0}
+                </div>
+                <p className="text-xs text-gray-500 mb-3">امتحان</p>
+                <p className="text-[11px] text-gray-400 mb-3">{hint}</p>
+                <div className="flex items-center gap-2 mt-auto">
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/teacher/exams?group=${filter}`)}
+                    className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg border border-primary-100"
+                    title="عرض الامتحانات"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/teacher/exams/create?group=${filter}`)}
+                    className="p-2 text-green-600 hover:bg-green-50 rounded-lg border border-green-100"
+                    title="إضافة امتحان"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
+      )}
+
+      {redundantFolders.length > 0 && (
+        <section className="rounded-xl border-2 border-amber-200 bg-amber-50 p-4 space-y-3">
+          <div>
+            <h2 className="text-lg font-bold text-amber-900">مجلدات مكررة غير مستخدمة</h2>
+            <p className="text-sm text-amber-800 mt-1">
+              هذه السجلات في قاعدة البيانات تشبه أسماء المنهج (١–٨ أو التأسيس) لكن لا يوجد أي امتحان محفوظ برقم المجلد المخصص (٩+). يمكنك حذفها بأمان — امتحانات المنهج الحقيقي لا تتأثر.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {redundantFolders.map((group) => (
+              <div
+                key={group._id}
+                className="bg-white rounded-xl border border-amber-300 shadow-sm p-4 flex flex-col"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-lg font-bold text-gray-900">{group.name}</h3>
+                  <span className="text-xs bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">غير مستخدم</span>
+                </div>
+                <p className="text-xs text-gray-600 mb-3">المجلد #{group.groupNumber} — لا امتحانات عليه</p>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteGroup(group._id, group.name)}
+                  className="mt-auto w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  حذف السجل
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Search and Filter Section */}
@@ -220,9 +290,23 @@ const ExamGroups = () => {
         </div>
       </div>
 
-      {/* Groups Grid */}
+      <section className="space-y-3">
+        <div>
+          <h2 className="text-lg font-bold text-gray-900">مجلدات إضافية (رقم ٩ فما فوق)</h2>
+          <p className="text-sm text-gray-600 mt-1">
+            تُستخدم عندما تُنشئ امتحانات وتختار مجموعة «مخصصة» برقم ٩ أو أكبر. مثال: «مجموعة تحصيلي» مع امتحانات على رقم المجلد ١٩.
+          </p>
+        </div>
+        {realCustomFolders.length === 0 && !searchTerm ? (
+          <p className="text-sm text-gray-500 bg-gray-50 border border-gray-100 rounded-lg p-4">
+            لا توجد مجلدات إضافية نشطة. استخدم «إضافة مجموعة جديدة» فقط إذا احتجت تصنيفاً إضافياً بخلاف المنهج ٠–٨.
+          </p>
+        ) : null}
+      </section>
+
+      {/* Real custom folders (DB) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredGroups.map((group) => (
+        {realCustomFolders.map((group) => (
           <div key={group._id} className="bg-white rounded-xl shadow-sm border hover:shadow-lg transition-all duration-300">
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
@@ -349,25 +433,10 @@ const ExamGroups = () => {
         ))}
       </div>
 
-      {/* Empty State */}
-      {filteredGroups.length === 0 && (
-        <div className="text-center py-12">
-          <BookOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            {searchTerm ? 'لا توجد مجموعات تطابق البحث' : 'لا توجد مجموعات بعد'}
-          </h3>
-          <p className="text-gray-600 mb-6">
-            {searchTerm ? 'جرب البحث بكلمات مختلفة' : 'ابدأ بإنشاء مجموعة جديدة لإضافة امتحانات مخصصة'}
-          </p>
-          {!searchTerm && (
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="btn-primary flex items-center space-x-2 rtl:space-x-reverse mx-auto"
-            >
-              <Plus className="h-5 w-5" />
-              <span>إنشاء مجموعة جديدة</span>
-            </button>
-          )}
+      {/* Empty search */}
+      {searchTerm && realCustomFolders.length === 0 && redundantFolders.length === 0 && (
+        <div className="text-center py-8 text-gray-600">
+          لا توجد نتائج للبحث «{searchTerm}»
         </div>
       )}
 
@@ -420,6 +489,9 @@ const ExamGroups = () => {
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
                     عند الربط، يظهر على البطاقة عدد الامتحانات في تلك المجموعة القياسية، وتفتح صفحة الامتحانات بنفس الفلتر.
+                  </p>
+                  <p className="text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded p-2 mt-2">
+                    تجنّب تسمية المجلد مثل «مجموعة ١» أو «التأسيس» إن لم تكن بحاجة لمجلد إضافي؛ استخدم مجموعات الموقع أعلاه. الأسماء المشابهة للمنهج دون امتحانات على رقم ٩+ تُصنَّف كمكررة ويمكن حذفها.
                   </p>
                 </div>
 
