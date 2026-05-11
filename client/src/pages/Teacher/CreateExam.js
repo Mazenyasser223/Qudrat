@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Plus, Trash2, Upload, Save, ArrowLeft } from 'lucide-react';
@@ -8,6 +8,7 @@ import ConfirmationDialog from '../../components/ConfirmationDialog';
 
 const CreateExam = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showMultipleUpload, setShowMultipleUpload] = useState(false);
@@ -81,6 +82,15 @@ const CreateExam = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const g = searchParams.get('group');
+    if (g === null || g === '') return;
+    const n = parseInt(g, 10);
+    if (!Number.isNaN(n) && n >= 0) {
+      setValue('examGroup', n);
+    }
+  }, [searchParams, setValue]);
 
   // Function to get next available order for a group
   const getNextAvailableOrder = (group) => {

@@ -18,9 +18,19 @@ const getExamGroups = async (req, res) => {
     const countByGroupNumber = new Map(counts.map((c) => [String(c._id), c.count]));
 
     const groupsWithCounts = groups.map((g) => {
-      const count = countByGroupNumber.get(String(g.groupNumber)) ?? 0;
       const obj = g.toObject({ virtuals: true });
-      obj.examCount = count;
+      const customSlot = countByGroupNumber.get(String(g.groupNumber)) ?? 0;
+      const linked =
+        obj.linkedCurriculumGroup !== undefined &&
+        obj.linkedCurriculumGroup !== null
+          ? obj.linkedCurriculumGroup
+          : null;
+      const filterGroup =
+        linked !== null && linked >= 0 && linked <= 8 ? linked : g.groupNumber;
+      const resolved = countByGroupNumber.get(String(filterGroup)) ?? 0;
+      obj.examCount = resolved;
+      obj.customSlotExamCount = customSlot;
+      obj.examFilterGroup = filterGroup;
       return obj;
     });
 
@@ -77,7 +87,7 @@ const getExamGroup = async (req, res) => {
 // @access  Private (Teacher only)
 const createExamGroup = async (req, res) => {
   try {
-    const { name, description, isPremium = true } = req.body;
+    const { name, description, isPremium = true, linkedCurriculumGroup } = req.body;
 
     // Get the next available group number
     const lastGroup = await ExamGroup.findOne({}, {}, { sort: { groupNumber: -1 } });
@@ -91,6 +101,17 @@ const createExamGroup = async (req, res) => {
       ...(req.user?.id && { createdBy: req.user.id })
     };
 
+    if (
+      linkedCurriculumGroup !== undefined &&
+      linkedCurriculumGroup !== null &&
+      linkedCurriculumGroup !== ''
+    ) {
+      const n = parseInt(linkedCurriculumGroup, 10);
+      if (!Number.isNaN(n) && n >= 0 && n <= 8) {
+        groupData.linkedCurriculumGroup = n;
+      }
+    }
+
     const group = await ExamGroup.create(groupData);
 
     res.status(201).json({
@@ -102,6 +123,13 @@ const createExamGroup = async (req, res) => {
     console.error('Create exam group error:', error);
     
     if (error.code === 11000) {
+      const key = error.keyPattern && Object.keys(error.keyPattern)[0];
+      if (key === 'linkedCurriculumGroup') {
+        return res.status(400).json({
+          success: false,
+          message: 'Another group is already linked to that standard curriculum slot (0–8).'
+        });
+      }
       return res.status(400).json({
         success: false,
         message: 'Group name or number already exists'
@@ -120,7 +148,7 @@ const createExamGroup = async (req, res) => {
 // @access  Private (Teacher only)
 const updateExamGroup = async (req, res) => {
   try {
-    const { name, description, isPremium } = req.body;
+    const { name, description, isPremium, linkedCurriculumGroup } = req.body;
 
     const group = await ExamGroup.findById(req.params.id);
     if (!group) {
@@ -143,6 +171,21 @@ const updateExamGroup = async (req, res) => {
     if (description !== undefined) updateData.description = description;
     if (isPremium !== undefined) updateData.isPremium = isPremium;
 
+    if (Object.prototype.hasOwnProperty.call(req.body, 'linkedCurriculumGroup')) {
+      if (
+        linkedCurriculumGroup === null ||
+        linkedCurriculumGroup === '' ||
+        linkedCurriculumGroup === undefined
+      ) {
+        updateData.$unset = { ...(updateData.$unset || {}), linkedCurriculumGroup: '' };
+      } else {
+        const n = parseInt(linkedCurriculumGroup, 10);
+        if (!Number.isNaN(n) && n >= 0 && n <= 8) {
+          updateData.linkedCurriculumGroup = n;
+        }
+      }
+    }
+
     const updatedGroup = await ExamGroup.findByIdAndUpdate(
       req.params.id,
       updateData,
@@ -158,6 +201,13 @@ const updateExamGroup = async (req, res) => {
     console.error('Update exam group error:', error);
     
     if (error.code === 11000) {
+      const key = error.keyPattern && Object.keys(error.keyPattern)[0];
+      if (key === 'linkedCurriculumGroup') {
+        return res.status(400).json({
+          success: false,
+          message: 'Another group is already linked to that standard curriculum slot (0–8).'
+        });
+      }
       return res.status(400).json({
         success: false,
         message: 'Group name already exists'

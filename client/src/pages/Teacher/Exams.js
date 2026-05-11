@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Plus, BookOpen, Clock, Users, Edit, Trash2, Eye, Search, Filter, Grid, List, MoreVertical, BarChart3, TrendingUp, Award } from 'lucide-react';
@@ -8,6 +8,7 @@ import PageHeader from '../../components/PageHeader';
 
 const Exams = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [exams, setExams] = useState([]);
   const [customGroups, setCustomGroups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,6 +27,13 @@ const Exams = () => {
     // Check backend health first
     checkBackendHealth();
   }, []);
+
+  useEffect(() => {
+    const g = searchParams.get('group');
+    if (g !== null && g !== '') {
+      setSelectedGroup(g);
+    }
+  }, [searchParams]);
 
   const checkBackendHealth = async () => {
     try {

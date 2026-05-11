@@ -14,10 +14,12 @@ const ExamGroups = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    name: ''
+    name: '',
+    linkedCurriculumGroup: ''
   });
   const [editingGroup, setEditingGroup] = useState(null);
   const [editName, setEditName] = useState('');
+  const [editLinked, setEditLinked] = useState('');
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, groupId: null, groupName: '' });
   const [curriculumExamCounts, setCurriculumExamCounts] = useState(null);
 
@@ -53,7 +55,11 @@ const ExamGroups = () => {
 
     try {
       setSubmitting(true);
-      const response = await axios.post('/api/exam-groups', formData, {
+      const payload = { name: formData.name.trim() };
+      if (formData.linkedCurriculumGroup !== '' && formData.linkedCurriculumGroup !== undefined) {
+        payload.linkedCurriculumGroup = parseInt(formData.linkedCurriculumGroup, 10);
+      }
+      const response = await axios.post('/api/exam-groups', payload, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -61,7 +67,7 @@ const ExamGroups = () => {
 
       toast.success('تم إنشاء المجموعة بنجاح');
       setShowCreateForm(false);
-      setFormData({ name: '' });
+      setFormData({ name: '', linkedCurriculumGroup: '' });
       fetchGroups();
     } catch (error) {
       console.error('Error creating group:', error);
@@ -75,6 +81,11 @@ const ExamGroups = () => {
   const handleEditGroup = (group) => {
     setEditingGroup(group._id);
     setEditName(group.name);
+    setEditLinked(
+      group.linkedCurriculumGroup !== undefined && group.linkedCurriculumGroup !== null
+        ? String(group.linkedCurriculumGroup)
+        : ''
+    );
   };
 
   const handleSaveEdit = async (groupId) => {
@@ -84,7 +95,10 @@ const ExamGroups = () => {
     }
 
     try {
-      await axios.put(`/api/exam-groups/${groupId}`, { name: editName }, {
+      await axios.put(`/api/exam-groups/${groupId}`, {
+        name: editName.trim(),
+        linkedCurriculumGroup: editLinked === '' ? null : parseInt(editLinked, 10)
+      }, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -93,6 +107,7 @@ const ExamGroups = () => {
       toast.success('تم تحديث اسم المجموعة بنجاح');
       setEditingGroup(null);
       setEditName('');
+      setEditLinked('');
       fetchGroups();
     } catch (error) {
       console.error('Error updating group:', error);
@@ -103,6 +118,7 @@ const ExamGroups = () => {
   const handleCancelEdit = () => {
     setEditingGroup(null);
     setEditName('');
+    setEditLinked('');
   };
 
   const handleDeleteGroup = (groupId, groupName) => {
@@ -154,7 +170,7 @@ const ExamGroups = () => {
       {/* Header Section */}
       <PageHeader
         title="إدارة المجموعات"
-        description="المجموعات المخصصة (رقم ٩ فما فوق)؛ العدد يعكس فقط الامتحانات المسجلة تحت رقم المجموعة المخصص، وليس المجموعات القياسية ٠–٨"
+        description="من أيقونة التعديل: اربط المجلد بمجموعة قياسية (التأسيس أو ١–٨) ليعرض العدد الحقيقي ويفتح نفس الفلتر في صفحة الامتحانات. بدون ربط يُحسب العدد حسب رقم المجلد المخصص (٩+)."
         action={(
           <button
             onClick={() => setShowCreateForm(true)}
@@ -210,29 +226,51 @@ const ExamGroups = () => {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   {editingGroup === group._id ? (
-                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <input
-                        type="text"
-                        value={editName}
-                        onChange={(e) => setEditName(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-lg font-bold"
-                        placeholder="اسم المجموعة"
-                        autoFocus
-                      />
-                      <button
-                        onClick={() => handleSaveEdit(group._id)}
-                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                        title="حفظ التعديل"
-                      >
-                        <Save className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-                        title="إلغاء التعديل"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
+                    <div className="space-y-3 w-full">
+                      <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                        <input
+                          type="text"
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-lg font-bold"
+                          placeholder="اسم المجموعة"
+                          autoFocus
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleSaveEdit(group._id)}
+                          className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                          title="حفظ التعديل"
+                        >
+                          <Save className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleCancelEdit}
+                          className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                          title="إلغاء التعديل"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          ربط بعدد الامتحانات (مجموعة قياسية في النظام)
+                        </label>
+                        <select
+                          value={editLinked}
+                          onChange={(e) => setEditLinked(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="">بدون ربط (العدد حسب رقم المجلد المخصص فقط)</option>
+                          <option value="0">التأسيس (٠)</option>
+                          {Array.from({ length: 8 }, (_, i) => i + 1).map((num) => (
+                            <option key={num} value={String(num)}>
+                              المجموعة القياسية {num}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   ) : (
                     <div className="flex items-center justify-between">
@@ -257,32 +295,40 @@ const ExamGroups = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="text-center">
+                <div className="text-center col-span-2">
                   <div className="text-2xl font-bold text-primary-600">{group.examCount}</div>
                   <div className="text-sm text-gray-600">امتحان</div>
+                  {group.linkedCurriculumGroup !== undefined && group.linkedCurriculumGroup !== null ? (
+                    <p className="text-xs text-gray-500 mt-1">
+                      مرتبط بالمجموعة القياسية {group.linkedCurriculumGroup === 0 ? 'التأسيس' : group.linkedCurriculumGroup}
+                    </p>
+                  ) : null}
                 </div>
               </div>
 
               <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                <div className="text-sm text-gray-500">
-                  المجموعة #{group.groupNumber}
+                <div className="text-sm text-gray-500 space-y-0.5">
+                  <div>المجلد #{group.groupNumber}</div>
+                  <div className="text-xs text-gray-400">فلتر العرض: {group.examFilterGroup ?? group.groupNumber}</div>
                 </div>
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
                   <button
-                    onClick={() => navigate(`/teacher/exams?group=${group.groupNumber}`)}
+                    type="button"
+                    onClick={() => navigate(`/teacher/exams?group=${group.examFilterGroup ?? group.groupNumber}`)}
                     className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                     title="عرض الامتحانات"
                   >
                     <Eye className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => navigate(`/teacher/exams/create?group=${group.groupNumber}`)}
+                    type="button"
+                    onClick={() => navigate(`/teacher/exams/create?group=${group.examFilterGroup ?? group.groupNumber}`)}
                     className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                     title="إضافة امتحان"
                   >
                     <Plus className="h-4 w-4" />
                   </button>
-                  {group.examCount === 0 && (
+                  {(group.customSlotExamCount ?? 0) === 0 && (
                     <button
                       onClick={() => handleDeleteGroup(group._id, group.name)}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
@@ -348,13 +394,39 @@ const ExamGroups = () => {
                     required
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    ربط بعدد الامتحانات (اختياري)
+                  </label>
+                  <select
+                    value={formData.linkedCurriculumGroup}
+                    onChange={(e) =>
+                      setFormData({ ...formData, linkedCurriculumGroup: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    <option value="">بدون ربط</option>
+                    <option value="0">التأسيس (٠)</option>
+                    {Array.from({ length: 8 }, (_, i) => i + 1).map((num) => (
+                      <option key={num} value={String(num)}>
+                        المجموعة القياسية {num}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    عند الربط، يظهر على البطاقة عدد الامتحانات في تلك المجموعة القياسية، وتفتح صفحة الامتحانات بنفس الفلتر.
+                  </p>
+                </div>
 
               </div>
 
               <div className="flex justify-end space-x-3 rtl:space-x-reverse mt-6 pt-4 border-t border-gray-200">
                 <button
                   type="button"
-                  onClick={() => setShowCreateForm(false)}
+                  onClick={() => {
+                    setShowCreateForm(false);
+                    setFormData({ name: '', linkedCurriculumGroup: '' });
+                  }}
                   className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
                 >
                   إلغاء
