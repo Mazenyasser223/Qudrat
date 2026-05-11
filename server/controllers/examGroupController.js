@@ -10,9 +10,23 @@ const getExamGroups = async (req, res) => {
       .populate('createdBy', 'name email')
       .sort({ groupNumber: 1 });
 
+    // Compute live exam counts (source of truth) to avoid stale `examCount` values.
+    const counts = await Exam.aggregate([
+      { $match: { isActive: true } },
+      { $group: { _id: '$examGroup', count: { $sum: 1 } } }
+    ]);
+    const countByGroupNumber = new Map(counts.map((c) => [String(c._id), c.count]));
+
+    const groupsWithCounts = groups.map((g) => {
+      const count = countByGroupNumber.get(String(g.groupNumber)) ?? 0;
+      const obj = g.toObject({ virtuals: true });
+      obj.examCount = count;
+      return obj;
+    });
+
     res.json({
       success: true,
-      data: groups
+      data: groupsWithCounts
     });
   } catch (error) {
     console.error('Get exam groups error:', error);
