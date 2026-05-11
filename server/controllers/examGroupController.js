@@ -24,9 +24,16 @@ const getExamGroups = async (req, res) => {
       return obj;
     });
 
+    // Standard curriculum groups 0–8 (examGroup on Exam). Custom ExamGroup rows use groupNumber >= 9.
+    const curriculumExamCounts = {};
+    for (let i = 0; i <= 8; i += 1) {
+      curriculumExamCounts[String(i)] = countByGroupNumber.get(String(i)) ?? 0;
+    }
+
     res.json({
       success: true,
-      data: groupsWithCounts
+      data: groupsWithCounts,
+      curriculumExamCounts
     });
   } catch (error) {
     console.error('Get exam groups error:', error);

@@ -4,6 +4,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Plus, Edit, Eye, BarChart3, Users, BookOpen, Search, Filter, Trash2, Save, X } from 'lucide-react';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
+import PageHeader from '../../components/PageHeader';
 
 const ExamGroups = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const ExamGroups = () => {
   const [editingGroup, setEditingGroup] = useState(null);
   const [editName, setEditName] = useState('');
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, groupId: null, groupName: '' });
+  const [curriculumExamCounts, setCurriculumExamCounts] = useState(null);
 
   useEffect(() => {
     fetchGroups();
@@ -32,6 +34,7 @@ const ExamGroups = () => {
         }
       });
       setGroups(response.data.data);
+      setCurriculumExamCounts(response.data.curriculumExamCounts || null);
     } catch (error) {
       console.error('Error fetching groups:', error);
       toast.error('حدث خطأ أثناء تحميل المجموعات');
@@ -149,12 +152,10 @@ const ExamGroups = () => {
   return (
     <div className="space-y-6">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-6 text-white">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">إدارة المجموعات</h1>
-            <p className="text-primary-100">إنشاء وإدارة مجموعات الامتحانات المخصصة</p>
-          </div>
+      <PageHeader
+        title="إدارة المجموعات"
+        description="المجموعات المخصصة (رقم ٩ فما فوق)؛ العدد يعكس فقط الامتحانات المسجلة تحت رقم المجموعة المخصص، وليس المجموعات القياسية ٠–٨"
+        action={(
           <button
             onClick={() => setShowCreateForm(true)}
             className="bg-white text-primary-600 hover:bg-primary-50 px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 rtl:space-x-reverse transition-colors shadow-lg"
@@ -162,8 +163,26 @@ const ExamGroups = () => {
             <Plus className="h-5 w-5" />
             <span>إضافة مجموعة جديدة</span>
           </button>
+        )}
+      />
+
+      {curriculumExamCounts && (
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-900">
+          <p className="font-semibold mb-2">عدد الامتحانات في المجموعات القياسية (عند إنشاء امتحان تختار «المجموعة ١» … أو التأسيس)</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+            <div className="bg-white rounded-lg px-2 py-1.5 border border-blue-100 text-center">
+              <span className="text-blue-700">التأسيس</span>
+              <div className="font-bold text-lg">{curriculumExamCounts['0'] ?? 0}</div>
+            </div>
+            {Array.from({ length: 8 }, (_, i) => i + 1).map((num) => (
+              <div key={num} className="bg-white rounded-lg px-2 py-1.5 border border-blue-100 text-center">
+                <span className="text-blue-700">المجموعة {num}</span>
+                <div className="font-bold text-lg">{curriculumExamCounts[String(num)] ?? 0}</div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Search and Filter Section */}
       <div className="bg-white rounded-xl shadow-sm border p-6">

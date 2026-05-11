@@ -4,6 +4,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Plus, BookOpen, Clock, Users, Edit, Trash2, Eye, Search, Filter, Grid, List, MoreVertical, BarChart3, TrendingUp, Award } from 'lucide-react';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
+import PageHeader from '../../components/PageHeader';
 
 const Exams = () => {
   const navigate = useNavigate();
@@ -289,21 +290,19 @@ const Exams = () => {
   return (
     <div className="space-y-6">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-6 text-white">
-      <div className="flex justify-between items-center">
-        <div>
-            <h1 className="text-3xl font-bold mb-2">إدارة الامتحانات</h1>
-            <p className="text-primary-100">إنشاء وإدارة الامتحانات والمجموعات بسهولة</p>
-        </div>
-        <button
-          onClick={() => navigate('/teacher/exams/create')}
+      <PageHeader
+        title="إدارة الامتحانات"
+        description="إنشاء وإدارة الامتحانات بسهولة"
+        action={(
+          <button
+            onClick={() => navigate('/teacher/exams/create')}
             className="bg-white text-primary-600 hover:bg-primary-50 px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 rtl:space-x-reverse transition-colors shadow-lg"
           >
             <Plus className="h-5 w-5" />
             <span>إضافة امتحان جديد</span>
           </button>
-        </div>
-      </div>
+        )}
+      />
 
       {/* Search and Filter Section */}
       <div className="bg-white rounded-xl shadow-sm border p-6">

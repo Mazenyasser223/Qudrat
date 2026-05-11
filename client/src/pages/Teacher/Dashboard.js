@@ -17,7 +17,7 @@ const TeacherDashboard = () => {
     },
     {
       title: 'إدارة الامتحانات',
-      description: 'إنشاء وتعديل الامتحانات',
+      description: 'إنشاء وإدارة الامتحانات بسهولة',
       icon: BookOpen,
       color: 'from-primary-500 to-primary-600',
       bgColor: 'bg-primary-50',
@@ -26,7 +26,7 @@ const TeacherDashboard = () => {
     },
     {
       title: 'إدارة المجموعات',
-      description: 'إنشاء وإدارة مجموعات الامتحانات المخصصة',
+      description: 'إنشاء وإدارة مجموعات الامتحانات بسهولة',
       icon: FolderPlus,
       color: 'from-purple-500 to-purple-600',
       bgColor: 'bg-purple-50',
