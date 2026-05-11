@@ -1,6 +1,32 @@
 const ExamGroup = require('../models/ExamGroup');
 const Exam = require('../models/Exam');
 
+/** When no explicit DB link, map common Arabic names to standard examGroup 0–8. */
+const inferStandardGroupFromName = (name) => {
+  if (!name || typeof name !== 'string') return null;
+  const t = name.trim().replace(/\s+/g, ' ');
+  if (/تأسيس/.test(t)) return 0;
+  const arabicToLatin = (ch) => {
+    const code = ch.charCodeAt(0);
+    if (code >= 0x0660 && code <= 0x0669) return String(code - 0x0660);
+    if (code >= 0x06f0 && code <= 0x06f9) return String(code - 0x06f0);
+    return ch;
+  };
+  const m = t.match(/(?:المجموعة|مجموعة)\s*([0-9\u0660-\u0669\u06f0-\u06f9]+)/);
+  if (!m) {
+    const en = t.match(/group\s*([0-9]+)/i);
+    if (en) {
+      const n = parseInt(en[1], 10);
+      return n >= 1 && n <= 8 ? n : null;
+    }
+    return null;
+  }
+  const numStr = [...m[1]].map(arabicToLatin).join('');
+  const n = parseInt(numStr, 10);
+  if (Number.isNaN(n) || n < 1 || n > 8) return null;
+  return n;
+};
+
 // @desc    Get all exam groups
 // @route   GET /api/exam-groups
 // @access  Private (Teacher only)
@@ -20,17 +46,30 @@ const getExamGroups = async (req, res) => {
     const groupsWithCounts = groups.map((g) => {
       const obj = g.toObject({ virtuals: true });
       const customSlot = countByGroupNumber.get(String(g.groupNumber)) ?? 0;
-      const linked =
+      const explicit =
         obj.linkedCurriculumGroup !== undefined &&
-        obj.linkedCurriculumGroup !== null
-          ? obj.linkedCurriculumGroup
-          : null;
+        obj.linkedCurriculumGroup !== null;
+      const explicitVal = explicit ? obj.linkedCurriculumGroup : null;
+      const inferred = explicit ? null : inferStandardGroupFromName(obj.name);
+      const linked =
+        explicit && explicitVal >= 0 && explicitVal <= 8
+          ? explicitVal
+          : inferred !== null && inferred >= 0 && inferred <= 8
+            ? inferred
+            : null;
       const filterGroup =
         linked !== null && linked >= 0 && linked <= 8 ? linked : g.groupNumber;
       const resolved = countByGroupNumber.get(String(filterGroup)) ?? 0;
       obj.examCount = resolved;
       obj.customSlotExamCount = customSlot;
       obj.examFilterGroup = filterGroup;
+      obj.resolvedCurriculumSlot =
+        linked !== null && linked >= 0 && linked <= 8 ? linked : null;
+      obj.curriculumLinkSource = explicit
+        ? 'saved'
+        : inferred !== null
+          ? 'name'
+          : null;
       return obj;
     });
 

@@ -84,7 +84,9 @@ const ExamGroups = () => {
     setEditLinked(
       group.linkedCurriculumGroup !== undefined && group.linkedCurriculumGroup !== null
         ? String(group.linkedCurriculumGroup)
-        : ''
+        : group.resolvedCurriculumSlot !== undefined && group.resolvedCurriculumSlot !== null
+          ? String(group.resolvedCurriculumSlot)
+          : ''
     );
   };
 
@@ -170,7 +172,7 @@ const ExamGroups = () => {
       {/* Header Section */}
       <PageHeader
         title="إدارة المجموعات"
-        description="من أيقونة التعديل: اربط المجلد بمجموعة قياسية (التأسيس أو ١–٨) ليعرض العدد الحقيقي ويفتح نفس الفلتر في صفحة الامتحانات. بدون ربط يُحسب العدد حسب رقم المجلد المخصص (٩+)."
+        description="الأسماء مثل «مجموعة ١» أو «مجموعة التأسيس» تُربط تلقائياً بعدد الامتحانات القياسي. يمكنك من التعديل ربطاً يدوياً يتجاوز الاسم، أو ترك رقم المجلد المخصص (٩+) فقط عندما لا يطابق الاسم معياراً قياسياً."
         action={(
           <button
             onClick={() => setShowCreateForm(true)}
@@ -298,9 +300,12 @@ const ExamGroups = () => {
                 <div className="text-center col-span-2">
                   <div className="text-2xl font-bold text-primary-600">{group.examCount}</div>
                   <div className="text-sm text-gray-600">امتحان</div>
-                  {group.linkedCurriculumGroup !== undefined && group.linkedCurriculumGroup !== null ? (
+                  {group.resolvedCurriculumSlot !== undefined && group.resolvedCurriculumSlot !== null ? (
                     <p className="text-xs text-gray-500 mt-1">
-                      مرتبط بالمجموعة القياسية {group.linkedCurriculumGroup === 0 ? 'التأسيس' : group.linkedCurriculumGroup}
+                      {group.curriculumLinkSource === 'name'
+                        ? 'مرتبط تلقائياً بالمجموعة القياسية '
+                        : 'مرتبط بالمجموعة القياسية '}
+                      {group.resolvedCurriculumSlot === 0 ? 'التأسيس' : group.resolvedCurriculumSlot}
                     </p>
                   ) : null}
                 </div>
