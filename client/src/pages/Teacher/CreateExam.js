@@ -5,15 +5,19 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Plus, Trash2, Upload, Save, ArrowLeft } from 'lucide-react';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const CreateExam = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { customGroups: allCustomGroups, getGroupName } = useExamGroupSettings();
+  const customGroups = allCustomGroups.filter(
+    (group) => typeof group.groupNumber === 'number' && group.groupNumber > 8
+  );
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showMultipleUpload, setShowMultipleUpload] = useState(false);
   const [existingExams, setExistingExams] = useState([]);
-  const [customGroups, setCustomGroups] = useState([]);
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, questionIndex: null });
 
   const {
@@ -59,23 +63,12 @@ const CreateExam = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [examsResponse, groupsResponse] = await Promise.all([
-          axios.get('/api/exams', {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-          }),
-          axios.get('/api/exam-groups', {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-          })
-        ]);
+        const examsResponse = await axios.get('/api/exams', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         setExistingExams(examsResponse.data.data);
-        const filteredGroups = (groupsResponse.data.data || [])
-          .filter(group => typeof group.groupNumber === 'number' && group.groupNumber > 8)
-          .sort((a, b) => a.groupNumber - b.groupNumber);
-        setCustomGroups(filteredGroups);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -366,9 +359,9 @@ const CreateExam = () => {
                     min: { value: 0, message: 'المجموعة يجب أن تكون 0 أو أكثر' }
                   })}
                 >
-                  <option value={0}>اختبارات التأسيس</option>
+                  <option value={0}>{getGroupName(0)}</option>
                   {Array.from({ length: 8 }, (_, i) => i + 1).map(num => (
-                    <option key={num} value={num}>المجموعة {num}</option>
+                    <option key={num} value={num}>{getGroupName(num)}</option>
                   ))}
                   {customGroups.map(group => (
                     <option key={group._id || group.groupNumber} value={group.groupNumber}>

@@ -6,10 +6,12 @@ import ExamTimer from '../components/Exam/ExamTimer';
 import QuestionCard from '../components/Exam/QuestionCard';
 import ExamResults from '../components/Exam/ExamResults';
 import { ArrowLeft, CheckCircle, Home } from 'lucide-react';
+import { useExamGroupSettings } from '../context/ExamGroupSettingsContext';
 
 const PublicExam = () => {
   const { examId } = useParams();
   const navigate = useNavigate();
+  const { getGroupName } = useExamGroupSettings();
   
   const [exam, setExam] = useState(null);
   const [shuffledQuestions, setShuffledQuestions] = useState([]);
@@ -256,7 +258,7 @@ const PublicExam = () => {
                 <div>
                   <h1 className="text-xl font-bold text-gray-900">{exam.title}</h1>
                   <p className="text-gray-600">
-                    {exam.examGroup === 0 ? 'اختبار تأسيسي مجاني' : `امتحان مجاني - المجموعة ${exam.examGroup}`}
+                    {exam.examGroup === 0 ? `اختبار مجاني - ${getGroupName(exam.examGroup)}` : `امتحان مجاني - ${getGroupName(exam.examGroup)}`}
                   </p>
                 </div>
               </div>

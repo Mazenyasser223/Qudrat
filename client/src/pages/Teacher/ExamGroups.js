@@ -18,27 +18,24 @@ import {
 } from 'lucide-react';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import PageHeader from '../../components/PageHeader';
+import { getCurriculumGroupName } from '../../utils/curriculumGroupNames';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('token')}`
 });
 
-const curriculumSlots = [
-  { filter: 0, title: 'التأسيس' },
-  ...Array.from({ length: 8 }, (_, i) => ({
-    filter: i + 1,
-    title: `المجموعة ${i + 1}`
-  }))
-];
+const curriculumSlots = Array.from({ length: 9 }, (_, i) => i);
 
-const getStandardGroupLabel = (groupNum) => {
-  if (groupNum === 0) return 'التأسيس';
-  if (groupNum >= 1 && groupNum <= 8) return `المجموعة ${groupNum}`;
-  return `مجلد #${groupNum}`;
-};
+const getStandardGroupLabel = (groupNum, names = {}) => getCurriculumGroupName(groupNum, names);
 
 const ExamGroups = () => {
   const navigate = useNavigate();
+  const {
+    curriculumGroupNames,
+    applySettings,
+    refreshSettings
+  } = useExamGroupSettings();
   const [groups, setGroups] = useState([]);
   const [exams, setExams] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +53,8 @@ const ExamGroups = () => {
   const [examDeleteDialog, setExamDeleteDialog] = useState({ isOpen: false, examId: null, examTitle: '' });
   const [curriculumExamCounts, setCurriculumExamCounts] = useState(null);
   const [curriculumOrder, setCurriculumOrder] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+  const [editingCurriculumSlot, setEditingCurriculumSlot] = useState(null);
+  const [editCurriculumName, setEditCurriculumName] = useState('');
   const [expandedGroup, setExpandedGroup] = useState(null);
   const [busyKey, setBusyKey] = useState(null);
 
@@ -69,6 +68,7 @@ const ExamGroups = () => {
       setGroups(groupsRes.data.data);
       setCurriculumExamCounts(groupsRes.data.curriculumExamCounts || null);
       setCurriculumOrder(groupsRes.data.curriculumGroupOrder || [0, 1, 2, 3, 4, 5, 6, 7, 8]);
+      applySettings(groupsRes.data);
       setExams(examsRes.data.data || []);
     } catch (error) {
       console.error('Error fetching groups/exams:', error);
@@ -96,8 +96,14 @@ const ExamGroups = () => {
   }, [exams]);
 
   const curriculumSlotMap = useMemo(
-    () => Object.fromEntries(curriculumSlots.map((slot) => [slot.filter, slot])),
-    []
+    () =>
+      Object.fromEntries(
+        curriculumSlots.map((slot) => [
+          slot,
+          { filter: slot, title: getCurriculumGroupName(slot, curriculumGroupNames) }
+        ])
+      ),
+    [curriculumGroupNames]
   );
 
   const orderedCurriculumSlots = useMemo(
@@ -106,9 +112,9 @@ const ExamGroups = () => {
   );
 
   const transferTargets = useMemo(() => {
-    const targets = curriculumSlots.map(({ filter, title }) => ({
+    const targets = curriculumSlots.map((filter) => ({
       value: filter,
-      label: title
+      label: getCurriculumGroupName(filter, curriculumGroupNames)
     }));
     groups
       .filter((g) => g.groupNumber >= 9)
@@ -116,12 +122,12 @@ const ExamGroups = () => {
         targets.push({ value: g.groupNumber, label: g.name });
       });
     return targets;
-  }, [groups]);
+  }, [groups, curriculumGroupNames]);
 
   const getGroupLabel = (groupNum) => {
     const custom = groups.find((g) => g.groupNumber === groupNum);
     if (custom) return custom.name;
-    return getStandardGroupLabel(groupNum);
+    return getStandardGroupLabel(groupNum, curriculumGroupNames);
   };
 
   const handleCreateGroup = async (e) => {
@@ -195,6 +201,43 @@ const ExamGroups = () => {
     setEditingGroup(null);
     setEditName('');
     setEditLinked('');
+  };
+
+  const handleEditCurriculumSlot = (slot) => {
+    setEditingCurriculumSlot(slot);
+    setEditCurriculumName(getCurriculumGroupName(slot, curriculumGroupNames));
+  };
+
+  const handleSaveCurriculumName = async (slot) => {
+    if (!editCurriculumName.trim()) {
+      toast.error('اسم المجموعة مطلوب');
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        '/api/exam-groups/curriculum-name',
+        { slot, name: editCurriculumName.trim() },
+        { headers: authHeaders() }
+      );
+
+      toast.success('تم تحديث اسم المجموعة بنجاح');
+      setEditingCurriculumSlot(null);
+      setEditCurriculumName('');
+      if (response.data?.curriculumGroupNames) {
+        applySettings({ curriculumGroupNames: response.data.curriculumGroupNames });
+      } else {
+        await refreshSettings();
+      }
+    } catch (error) {
+      console.error('Error updating curriculum group name:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء تحديث اسم المجموعة');
+    }
+  };
+
+  const handleCancelCurriculumEdit = () => {
+    setEditingCurriculumSlot(null);
+    setEditCurriculumName('');
   };
 
   const handleDeleteGroup = (groupId, groupName) => {
@@ -522,27 +565,66 @@ const ExamGroups = () => {
                 className="bg-white rounded-xl border border-primary-100 shadow-sm p-4 flex flex-col hover:shadow-md transition-shadow"
               >
                 <div className="flex items-center justify-between mb-1">
-                  <h3 className="text-base font-bold text-gray-900 text-center flex-1">{title}</h3>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button
-                      type="button"
-                      disabled={slotIndex === 0 || busyKey === 'reorder-curriculum'}
-                      onClick={() => moveCurriculumGroup(filter, 'up')}
-                      className="p-1.5 text-gray-500 hover:bg-gray-100 rounded disabled:opacity-30"
-                      title="تحريك المجموعة لأعلى"
-                    >
-                      <ArrowUp className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      disabled={slotIndex === curriculumOrder.length - 1 || busyKey === 'reorder-curriculum'}
-                      onClick={() => moveCurriculumGroup(filter, 'down')}
-                      className="p-1.5 text-gray-500 hover:bg-gray-100 rounded disabled:opacity-30"
-                      title="تحريك المجموعة لأسفل"
-                    >
-                      <ArrowDown className="h-4 w-4" />
-                    </button>
-                  </div>
+                  {editingCurriculumSlot === filter ? (
+                    <div className="flex items-center gap-2 flex-1 w-full">
+                      <input
+                        type="text"
+                        value={editCurriculumName}
+                        onChange={(e) => setEditCurriculumName(e.target.value)}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base font-bold"
+                        placeholder="اسم المجموعة"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleSaveCurriculumName(filter)}
+                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                        title="حفظ التعديل"
+                      >
+                        <Save className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleCancelCurriculumEdit}
+                        className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                        title="إلغاء التعديل"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <h3 className="text-base font-bold text-gray-900 text-center flex-1">{title}</h3>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => handleEditCurriculumSlot(filter)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="تعديل اسم المجموعة"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={slotIndex === 0 || busyKey === 'reorder-curriculum'}
+                          onClick={() => moveCurriculumGroup(filter, 'up')}
+                          className="p-1.5 text-gray-500 hover:bg-gray-100 rounded disabled:opacity-30"
+                          title="تحريك المجموعة لأعلى"
+                        >
+                          <ArrowUp className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={slotIndex === curriculumOrder.length - 1 || busyKey === 'reorder-curriculum'}
+                          onClick={() => moveCurriculumGroup(filter, 'down')}
+                          className="p-1.5 text-gray-500 hover:bg-gray-100 rounded disabled:opacity-30"
+                          title="تحريك المجموعة لأسفل"
+                        >
+                          <ArrowDown className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div className="text-3xl font-bold text-primary-600 my-2 text-center">
                   {curriculumExamCounts[String(filter)] ?? 0}
@@ -643,10 +725,10 @@ const ExamGroups = () => {
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
                           >
                             <option value="">بدون ربط (العدد حسب رقم المجلد المخصص فقط)</option>
-                            <option value="0">التأسيس (٠)</option>
+                            <option value="0">{getCurriculumGroupName(0, curriculumGroupNames)} (٠)</option>
                             {Array.from({ length: 8 }, (_, i) => i + 1).map((num) => (
                               <option key={num} value={String(num)}>
-                                المجموعة القياسية {num}
+                                {getCurriculumGroupName(num, curriculumGroupNames)}
                               </option>
                             ))}
                           </select>
@@ -707,7 +789,7 @@ const ExamGroups = () => {
                         {group.curriculumLinkSource === 'name'
                           ? 'مرتبط تلقائياً بالمجموعة القياسية '
                           : 'مرتبط بالمجموعة القياسية '}
-                        {group.resolvedCurriculumSlot === 0 ? 'التأسيس' : group.resolvedCurriculumSlot}
+                        {getCurriculumGroupName(group.resolvedCurriculumSlot, curriculumGroupNames)}
                       </p>
                     ) : null}
                   </div>
@@ -805,10 +887,10 @@ const ExamGroups = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   >
                     <option value="">بدون ربط</option>
-                    <option value="0">التأسيس (٠)</option>
+                    <option value="0">{getCurriculumGroupName(0, curriculumGroupNames)} (٠)</option>
                     {Array.from({ length: 8 }, (_, i) => i + 1).map((num) => (
                       <option key={num} value={String(num)}>
-                        المجموعة القياسية {num}
+                        {getCurriculumGroupName(num, curriculumGroupNames)}
                       </option>
                     ))}
                   </select>

@@ -7,10 +7,12 @@ import QuestionCard from '../../components/Exam/QuestionCard';
 import ExamResults from '../../components/Exam/ExamResults';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
 import { useAutoSubmitOnLeave } from '../../hooks/useAutoSubmitOnLeave';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const TakeExam = () => {
   const { examId } = useParams();
   const navigate = useNavigate();
+  const { getGroupName } = useExamGroupSettings();
   
   const [exam, setExam] = useState(null);
   const [shuffledQuestions, setShuffledQuestions] = useState([]);
@@ -313,7 +315,7 @@ const TakeExam = () => {
               </button>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">{exam.title}</h1>
-                <p className="text-gray-600">المجموعة {exam.examGroup} - امتحان {exam.order}</p>
+                <p className="text-gray-600">{getGroupName(exam.examGroup)} - امتحان {exam.order}</p>
               </div>
             </div>
             

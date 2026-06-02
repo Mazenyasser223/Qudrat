@@ -5,16 +5,17 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Plus, Trash2, Save, ArrowLeft, ChevronUp, ChevronDown } from 'lucide-react';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const EditExam = () => {
   const { examId } = useParams();
   const navigate = useNavigate();
+  const { customGroups, getGroupName } = useExamGroupSettings();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [exam, setExam] = useState(null);
   const [cancelRequest, setCancelRequest] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, questionIndex: null });
-  const [customGroups, setCustomGroups] = useState([]);
 
   const {
     register,
@@ -55,6 +56,7 @@ const EditExam = () => {
         order: examData.order,
         timeLimit: examData.timeLimit,
         questions: examData.questions.map(q => ({
+          _id: q._id,
           questionImage: q.questionImage || '',
           correctAnswer: q.correctAnswer,
           explanation: q.explanation || ''
@@ -69,27 +71,9 @@ const EditExam = () => {
     }
   }, [examId, navigate, reset]);
 
-  const fetchCustomGroups = useCallback(async () => {
-    try {
-      const response = await axios.get('/api/exam-groups', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (response.data?.data) {
-        setCustomGroups(response.data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching custom groups:', error);
-      setCustomGroups([]);
-    }
-  }, []);
-
   useEffect(() => {
     fetchExam();
-    fetchCustomGroups();
-  }, [fetchExam, fetchCustomGroups]);
+  }, [fetchExam]);
 
   // Cleanup function
   useEffect(() => {
@@ -201,7 +185,11 @@ const EditExam = () => {
       }
       
       console.log('Exam update response:', response.data);
-      toast.success('تم تحديث الامتحان بنجاح');
+      if (response.data.scoresRecalculating) {
+        toast.success('تم تحديث الامتحان وإعادة حساب درجات الطلاب');
+      } else {
+        toast.success('تم تحديث الامتحان بنجاح');
+      }
       
       // Small delay to ensure the success message is seen
       setTimeout(() => {
@@ -388,9 +376,9 @@ const EditExam = () => {
                     valueAsNumber: true 
                   })}
                 >
-                  <option value={0}>اختبارات التأسيس</option>
+                  <option value={0}>{getGroupName(0)}</option>
                   {Array.from({ length: 8 }, (_, i) => i + 1).map(num => (
-                    <option key={num} value={num}>المجموعة {num}</option>
+                    <option key={num} value={num}>{getGroupName(num)}</option>
                   ))}
                   {customGroups
                     .filter(group => group.groupNumber > 8)

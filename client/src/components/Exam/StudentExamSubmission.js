@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { X, Eye, EyeOff, CheckCircle, XCircle, AlertCircle, BookOpen, Clock, TrendingUp, User, Award, Target, Zap, Star, ChevronLeft, ChevronRight, List, ChevronDown } from 'lucide-react';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const StudentExamSubmission = ({ studentId, studentName, examId, examTitle, onClose, allExams = [] }) => {
+  const { getGroupName } = useExamGroupSettings();
   const [submission, setSubmission] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAnswers, setShowAnswers] = useState(false);
@@ -67,10 +69,6 @@ const StudentExamSubmission = ({ studentId, studentName, examId, examTitle, onCl
   const getAnswerLabel = (answer) => {
     const labels = { 'A': 'أ', 'B': 'ب', 'C': 'ج', 'D': 'د' };
     return labels[answer] || answer;
-  };
-
-  const getGroupName = (examGroup) => {
-    return examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${examGroup}`;
   };
 
   const getStatusColor = (status) => {

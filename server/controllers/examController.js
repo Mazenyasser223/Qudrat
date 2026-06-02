@@ -5,6 +5,10 @@ const ReviewExam = require('../models/ReviewExam');
 const { validationResult } = require('express-validator');
 const path = require('path');
 const { invalidateCache } = require('../middleware/cache');
+const {
+  recalculateExamScores,
+  scoringRelevantChanges
+} = require('../utils/recalculateExamScores');
 
 // @desc    Get all exams
 // @route   GET /api/exams
@@ -207,6 +211,12 @@ const updateExam = async (req, res) => {
       };
     });
 
+    const oldQuestions = exam.questions.map((q) => ({
+      _id: q._id,
+      correctAnswer: q.correctAnswer
+    }));
+    const shouldRecalculateScores = scoringRelevantChanges(oldQuestions, questionsWithImages);
+
     // Update exam with timeout
     const updatedExam = await Exam.findByIdAndUpdate(
       req.params.id,
@@ -229,11 +239,20 @@ const updateExam = async (req, res) => {
 
     // Invalidate cache for exams list
     invalidateCache('/api/exams');
+
+    if (shouldRecalculateScores) {
+      recalculateExamScores(updatedExam._id).catch((error) => {
+        console.error('Error recalculating student scores after exam update:', error);
+      });
+    }
     
     res.json({
       success: true,
-      message: 'Exam updated successfully',
-      data: updatedExam
+      message: shouldRecalculateScores
+        ? 'Exam updated successfully. Student scores are being recalculated.'
+        : 'Exam updated successfully',
+      data: updatedExam,
+      scoresRecalculating: shouldRecalculateScores
     });
   } catch (error) {
     console.error('=== UPDATE EXAM ERROR ===');
@@ -1073,22 +1092,13 @@ const getStudentMistakes = async (req, res) => {
       }
       
       if (question) {
-        // Handle both old and new data structures
-        let isCorrect;
-        if (answer.isCorrect !== undefined) {
-          // New data structure - use the stored isCorrect field
-          isCorrect = answer.isCorrect;
-        } else {
-          // Old data structure - calculate isCorrect on the fly
-          isCorrect = answer.selectedAnswer === question.correctAnswer;
-        }
+        const isCorrect = answer.selectedAnswer === question.correctAnswer;
         
         console.log(`Question ${index + 1}:`, {
           questionId: question._id.toString(),
           studentAnswer: answer.selectedAnswer,
           correctAnswer: question.correctAnswer,
-          isCorrect: isCorrect,
-          hasIsCorrectField: answer.isCorrect !== undefined
+          isCorrect
         });
         
         // Add to mistakes if not correct (wrong answer or unanswered)

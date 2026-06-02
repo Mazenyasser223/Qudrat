@@ -2,6 +2,7 @@ const ExamGroup = require('../models/ExamGroup');
 const Exam = require('../models/Exam');
 const SiteSettings = require('../models/SiteSettings');
 const { DEFAULT_CURRICULUM_ORDER } = SiteSettings;
+const { normalizeCurriculumGroupNames } = require('../utils/curriculumGroupNames');
 
 /** When no explicit DB link, map common Arabic names to standard examGroup 0–8. */
 const inferStandardGroupFromName = (name) => {
@@ -89,12 +90,14 @@ const getExamGroups = async (req, res) => {
     }
 
     const curriculumGroupOrder = await SiteSettings.getCurriculumGroupOrder();
+    const curriculumGroupNames = await SiteSettings.getCurriculumGroupNames();
 
     res.json({
       success: true,
       data: groupsWithCounts,
       curriculumExamCounts,
-      curriculumGroupOrder
+      curriculumGroupOrder,
+      curriculumGroupNames
     });
   } catch (error) {
     console.error('Get exam groups error:', error);
@@ -489,6 +492,48 @@ const reorderCurriculumGroups = async (req, res) => {
   }
 };
 
+// @desc    Update display name for a standard curriculum group (0–8)
+// @route   PUT /api/exam-groups/curriculum-name
+// @access  Private (Teacher only)
+const updateCurriculumGroupName = async (req, res) => {
+  try {
+    const slot = parseInt(req.body.slot, 10);
+    const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
+
+    if (Number.isNaN(slot) || slot < 0 || slot > 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'slot must be a curriculum group number between 0 and 8'
+      });
+    }
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Group name is required'
+      });
+    }
+
+    const settings = await SiteSettings.getMain();
+    const current = normalizeCurriculumGroupNames(settings.curriculumGroupNames);
+    current[String(slot)] = name;
+    settings.curriculumGroupNames = current;
+    await settings.save();
+
+    res.json({
+      success: true,
+      message: 'Curriculum group name updated successfully',
+      curriculumGroupNames: current
+    });
+  } catch (error) {
+    console.error('Update curriculum group name error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while updating curriculum group name'
+    });
+  }
+};
+
 module.exports = {
   getExamGroups,
   getExamGroup,
@@ -497,5 +542,6 @@ module.exports = {
   deleteExamGroup,
   getGroupStatistics,
   reorderExamFolders,
-  reorderCurriculumGroups
+  reorderCurriculumGroups,
+  updateCurriculumGroupName
 };

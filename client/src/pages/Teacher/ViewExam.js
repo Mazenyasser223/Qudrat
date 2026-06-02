@@ -3,10 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { ArrowLeft, Edit, BookOpen, Clock, Eye, ChevronUp, ChevronDown } from 'lucide-react';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const ViewExam = () => {
   const { examId } = useParams();
   const navigate = useNavigate();
+  const { getGroupName } = useExamGroupSettings();
   const [loading, setLoading] = useState(true);
   const [exam, setExam] = useState(null);
 
@@ -134,7 +136,7 @@ const ViewExam = () => {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">المجموعة:</span>
-                  <span className="font-medium">المجموعة {exam.examGroup}</span>
+                  <span className="font-medium">{getGroupName(exam.examGroup)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">الترتيب:</span>

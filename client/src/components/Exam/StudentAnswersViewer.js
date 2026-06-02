@@ -3,11 +3,12 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { X, Eye, EyeOff, CheckCircle, XCircle, AlertCircle, BookOpen, Clock, TrendingUp, ChevronLeft, ChevronRight, List, ChevronDown, RefreshCw } from 'lucide-react';
 import {
-  sortExamGroupNumbers,
-  DEFAULT_CURRICULUM_GROUP_ORDER
+  sortExamGroupNumbers
 } from '../../utils/examGroupOrder';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
+  const { customGroups, curriculumGroupOrder, getGroupName } = useExamGroupSettings();
   const [studentAnswers, setStudentAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAnswers, setShowAnswers] = useState(false);
@@ -17,12 +18,9 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
   const [selectedGroup, setSelectedGroup] = useState('all');
   const [filteredExams, setFilteredExams] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [customGroups, setCustomGroups] = useState([]);
-  const [curriculumGroupOrder, setCurriculumGroupOrder] = useState(DEFAULT_CURRICULUM_GROUP_ORDER);
 
   useEffect(() => {
     fetchStudentAnswers();
-    fetchGroupOrder();
   }, [studentId]);
 
   // Filter exams by group
@@ -46,22 +44,6 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showExamSelector]);
-
-  const fetchGroupOrder = async () => {
-    try {
-      const response = await axios.get('/api/exam-groups', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (response.data?.data) {
-        setCustomGroups(response.data.data);
-      }
-      if (response.data?.curriculumGroupOrder) {
-        setCurriculumGroupOrder(response.data.curriculumGroupOrder);
-      }
-    } catch {
-      setCustomGroups([]);
-    }
-  };
 
   const fetchStudentAnswers = async (isRefresh = false) => {
     try {
@@ -110,10 +92,6 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
   const getAnswerLabel = (answer) => {
     const labels = { 'A': 'أ', 'B': 'ب', 'C': 'ج', 'D': 'د' };
     return labels[answer] || answer;
-  };
-
-  const getGroupName = (examGroup) => {
-    return examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${examGroup}`;
   };
 
   const getStatusColor = (status) => {
@@ -193,7 +171,7 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
                   <option value="all">جميع المجموعات</option>
                   {getAvailableGroups().map(groupNum => (
                     <option key={groupNum} value={groupNum}>
-                      {groupNum === 0 ? 'اختبارات التأسيس' : `المجموعة ${groupNum}`}
+                      {getGroupName(groupNum)}
                     </option>
                   ))}
                 </select>

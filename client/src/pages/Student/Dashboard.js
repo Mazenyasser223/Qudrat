@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { BookOpen, Lock, Unlock, CheckCircle, Clock, Play, RotateCcw, AlertCircle, Eye, TrendingUp, Search, Filter, Grid, List, Plus, History, ChevronDown, ChevronRight } from 'lucide-react';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
+  const { customGroups, curriculumGroupOrder, getGroupName } = useExamGroupSettings();
   const [examGroups, setExamGroups] = useState([]);
-  const [customGroups, setCustomGroups] = useState([]);
-  const [curriculumGroupOrder, setCurriculumGroupOrder] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   const [studentProgress, setStudentProgress] = useState([]);
   const [reviewExams, setReviewExams] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,6 @@ const StudentDashboard = () => {
 
   useEffect(() => {
     fetchExamGroups();
-    fetchCustomGroups();
     fetchStudentProgress();
     fetchReviewExams();
     
@@ -61,22 +60,6 @@ const StudentDashboard = () => {
       toast.error('حدث خطأ أثناء تحميل المجموعات');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchCustomGroups = async () => {
-    try {
-      const res = await axios.get('/api/exam-groups', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      setCustomGroups(res.data.data || []);
-      if (res.data?.curriculumGroupOrder) {
-        setCurriculumGroupOrder(res.data.curriculumGroupOrder);
-      }
-    } catch (error) {
-      console.error('Error fetching custom groups:', error);
     }
   };
 
@@ -162,21 +145,6 @@ const StudentDashboard = () => {
       return ao - bo;
     });
   }, [curriculumGroupOrder, customGroups]);
-
-  const getGroupName = (groupNumber) => {
-    if (groupNumber === '0' || groupNumber === 0) {
-      return 'اختبارات التأسيس';
-    }
-    
-    // Check if it's a custom group
-    const customGroup = customGroups.find(group => group.groupNumber === parseInt(groupNumber));
-    if (customGroup) {
-      return customGroup.name;
-    }
-    
-    // Default to standard group naming
-    return `المجموعة ${groupNumber}`;
-  };
 
   // Filter and search logic (memoized for performance)
   const filteredExams = useMemo(() => {

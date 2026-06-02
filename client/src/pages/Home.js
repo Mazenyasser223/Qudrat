@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useDarkMode } from '../context/DarkModeContext';
 import toast from 'react-hot-toast';
 import { Moon, Sun } from 'lucide-react';
+import { useExamGroupSettings } from '../context/ExamGroupSettingsContext';
 
 // Review Submission Form Component
 const ReviewSubmissionForm = () => {
@@ -153,7 +154,7 @@ const ReviewSubmissionForm = () => {
 const Home = () => {
   const [freeExams, setFreeExams] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [customGroups, setCustomGroups] = useState([]);
+  const { customGroups, getGroupName } = useExamGroupSettings();
   const [loading, setLoading] = useState(true);
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const navigate = useNavigate();
@@ -161,9 +162,7 @@ const Home = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   useEffect(() => {
-    // Load critical data first
     fetchFreeExams();
-    fetchCustomGroups();
     
     // Load reviews after a short delay to improve initial page load
     const reviewsTimer = setTimeout(() => {
@@ -181,15 +180,6 @@ const Home = () => {
       console.error('Error fetching free exams:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchCustomGroups = async () => {
-    try {
-      const res = await axios.get('/api/exam-groups');
-      setCustomGroups(res.data.data || []);
-    } catch (error) {
-      console.error('Error fetching custom groups:', error);
     }
   };
 
@@ -444,7 +434,7 @@ const Home = () => {
         <section className="mb-16">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-green-900 dark:text-white mb-2">المجموعات المميزة</h2>
-            <p className="text-green-700 dark:text-gray-300 text-lg">اختبارات التأسيس + 8 مجموعات تدريبية متدرجة المستوى</p>
+            <p className="text-green-700 dark:text-gray-300 text-lg">{getGroupName(0)} + 8 مجموعات تدريبية متدرجة المستوى</p>
             <div className="mt-4 inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full text-sm font-semibold">
               🔒 محتوى مميز - يتطلب اشتراك
             </div>
@@ -468,7 +458,7 @@ const Home = () => {
                   <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center opacity-50">
                     <span className="text-2xl font-bold text-white">ت</span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">اختبارات التأسيس</h3>
+                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">{getGroupName(0)}</h3>
                   <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">اختبارات تأسيسية شاملة</p>
                   <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
                     <div>✓ تصحيح تلقائي</div>
@@ -496,7 +486,7 @@ const Home = () => {
                     <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center opacity-50">
                       <span className="text-2xl font-bold text-white">{groupNum}</span>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">المجموعة {groupNum}</h3>
+                    <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">{getGroupName(groupNum)}</h3>
                     <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">25 اختبار إلكتروني متدرج</p>
                     <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
                       <div>✓ تصحيح تلقائي</div>
@@ -509,7 +499,7 @@ const Home = () => {
             ))}
 
             {/* Custom Groups */}
-            {customGroups.map((group) => (
+            {customGroups.filter((group) => group.groupNumber >= 9).map((group) => (
               <div key={group._id} className="relative group">
                 <div className="card p-6 text-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 border-2 border-gray-300 dark:border-gray-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 opacity-75">
                   {/* Lock overlay */}

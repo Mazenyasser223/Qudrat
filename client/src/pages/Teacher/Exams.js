@@ -5,13 +5,13 @@ import toast from 'react-hot-toast';
 import { Plus, BookOpen, Clock, Users, Edit, Trash2, Eye, Search, Filter, Grid, List, MoreVertical, BarChart3, TrendingUp, Award } from 'lucide-react';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import PageHeader from '../../components/PageHeader';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const Exams = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { customGroups, curriculumGroupOrder, getGroupName } = useExamGroupSettings();
   const [exams, setExams] = useState([]);
-  const [customGroups, setCustomGroups] = useState([]);
-  const [curriculumGroupOrder, setCurriculumGroupOrder] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -40,7 +40,6 @@ const Exams = () => {
     try {
       await axios.get('/api/health', { timeout: 5000 });
       fetchExams();
-      fetchCustomGroups();
       fetchFreeExams();
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
@@ -48,7 +47,6 @@ const Exams = () => {
       }
       // Try to fetch anyway
       fetchExams();
-      fetchCustomGroups();
       fetchFreeExams();
     }
   };
@@ -100,46 +98,6 @@ const Exams = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fetchCustomGroups = async () => {
-    try {
-      const response = await axios.get('/api/exam-groups', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (response.data && response.data.data) {
-        setCustomGroups(response.data.data);
-      }
-      if (response.data?.curriculumGroupOrder) {
-        setCurriculumGroupOrder(response.data.curriculumGroupOrder);
-      }
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Error fetching custom groups:', error);
-      }
-      setCustomGroups([]);
-    }
-  };
-
-  const getGroupName = (groupNumber) => {
-    const num = parseInt(groupNumber, 10);
-    if (num === 0) {
-      return 'اختبارات التأسيس';
-    }
-
-    const customGroup = customGroups.find((group) => group.groupNumber === num);
-    if (customGroup) {
-      return customGroup.name;
-    }
-
-    if (num >= 1 && num <= 8) {
-      return `المجموعة ${num}`;
-    }
-
-    return `مجلد #${num}`;
   };
 
   const sortGroupNumbers = (groupNums) => {
@@ -374,8 +332,7 @@ const Exams = () => {
                 className="appearance-none pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white min-w-[150px]"
               >
                 <option value="all">جميع المجموعات</option>
-                <option value="0">اختبارات التأسيس</option>
-                {sortGroupNumbers(availableGroups.filter((g) => g !== 0)).map((group) => (
+                {sortGroupNumbers(availableGroups).map((group) => (
                   <option key={group} value={group}>{getGroupName(group)}</option>
                 ))}
               </select>

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { normalizeCurriculumGroupNames } = require('../utils/curriculumGroupNames');
 
 const DEFAULT_CURRICULUM_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
@@ -11,6 +12,10 @@ const siteSettingsSchema = new mongoose.Schema({
   curriculumGroupOrder: {
     type: [Number],
     default: () => [...DEFAULT_CURRICULUM_ORDER]
+  },
+  curriculumGroupNames: {
+    type: mongoose.Schema.Types.Mixed,
+    default: () => ({})
   }
 }, {
   timestamps: true
@@ -36,6 +41,11 @@ siteSettingsSchema.statics.getCurriculumGroupOrder = async function getCurriculu
     return [...DEFAULT_CURRICULUM_ORDER];
   }
   return order;
+};
+
+siteSettingsSchema.statics.getCurriculumGroupNames = async function getCurriculumGroupNames() {
+  const settings = await this.getMain();
+  return normalizeCurriculumGroupNames(settings.curriculumGroupNames);
 };
 
 module.exports = mongoose.model('SiteSettings', siteSettingsSchema);

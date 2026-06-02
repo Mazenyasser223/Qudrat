@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { BarChart3, Users, BookOpen, TrendingUp, Download, Eye } from 'lucide-react';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const Analytics = () => {
+  const { getGroupName } = useExamGroupSettings();
   const [analytics, setAnalytics] = useState({
     students: [],
     exams: [],
@@ -303,7 +305,7 @@ const Analytics = () => {
                             <div>
                               <h4 className="font-semibold text-gray-900 text-lg">{exam.title}</h4>
                               <p className="text-sm text-gray-600">
-                                {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} - امتحان {exam.order}
+                                {getGroupName(exam.examGroup)} - امتحان {exam.order}
                               </p>
                             </div>
                           </div>

@@ -24,17 +24,16 @@ import StudentAnswersViewer from '../../components/Exam/StudentAnswersViewer';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import StudentExamSubmission from '../../components/Exam/StudentExamSubmission';
 import {
-  sortExamGroupNumbers,
-  DEFAULT_CURRICULUM_GROUP_ORDER
+  sortExamGroupNumbers
 } from '../../utils/examGroupOrder';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const StudentProfile = () => {
   const { studentId } = useParams();
   const navigate = useNavigate();
+  const { customGroups, curriculumGroupOrder, getGroupName } = useExamGroupSettings();
   const [student, setStudent] = useState(null);
   const [exams, setExams] = useState([]);
-  const [customGroups, setCustomGroups] = useState([]);
-  const [curriculumGroupOrder, setCurriculumGroupOrder] = useState(DEFAULT_CURRICULUM_GROUP_ORDER);
   const [loading, setLoading] = useState(true);
   const [showLockUnlockModal, setShowLockUnlockModal] = useState(false);
   const [selectedExams, setSelectedExams] = useState([]);
@@ -84,7 +83,6 @@ const StudentProfile = () => {
         }
         setLoading(false);
         fetchExams().finally(() => setExamsLoading(false));
-        fetchCustomGroups();
       } catch (error) {
         if (process.env.NODE_ENV === 'development') console.error('Error loading initial data:', error);
         toast.error('حدث خطأ أثناء تحميل البيانات');
@@ -326,41 +324,10 @@ const StudentProfile = () => {
     }
   };
 
-  const fetchCustomGroups = async () => {
-    try {
-      const response = await axios.get('/api/exam-groups', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (response.data && response.data.data) {
-        setCustomGroups(response.data.data);
-      }
-      if (response.data?.curriculumGroupOrder) {
-        setCurriculumGroupOrder(response.data.curriculumGroupOrder);
-      }
-    } catch {
-      setCustomGroups([]);
-    }
-  };
-
   const sortGroupNumbers = useCallback(
     (groupNums) => sortExamGroupNumbers(groupNums, curriculumGroupOrder, customGroups),
     [curriculumGroupOrder, customGroups]
   );
-
-  const getGroupName = (groupNumber) => {
-    if (groupNumber === 0) {
-      return 'اختبارات التأسيس';
-    }
-    
-    // Check if it's a custom group
-    const customGroup = customGroups.find(group => group.groupNumber === parseInt(groupNumber));
-    if (customGroup) {
-      return customGroup.name;
-    }
-    
-    // Default to standard group name
-    return `المجموعة ${groupNumber}`;
-  };
 
   const fetchStudentProgress = () => {
     if (student && student.examProgress) {
@@ -1107,7 +1074,7 @@ const StudentProfile = () => {
                             {isFirstInGroup && (
                               <div className="space-y-2">
                                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                                  <span className="font-semibold text-blue-700">اختبارات التأسيس</span>
+                                  <span className="font-semibold text-blue-700">{getGroupName(0)}</span>
                                   {cumulativeData.completedExams > 0 && (
                                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                       {cumulativeData.cumulativePercentage.toFixed(2)}%

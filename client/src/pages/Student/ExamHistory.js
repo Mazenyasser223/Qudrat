@@ -3,10 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { ArrowLeft, CheckCircle, XCircle, Clock, Calendar, TrendingUp, BookOpen, AlertCircle } from 'lucide-react';
+import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const ExamHistory = () => {
   const { examId } = useParams();
   const navigate = useNavigate();
+  const { getGroupName } = useExamGroupSettings();
   
   const [exam, setExam] = useState(null);
   const [studentSubmission, setStudentSubmission] = useState(null);
@@ -125,7 +127,7 @@ const ExamHistory = () => {
                   <span>{exam.title}</span>
                 </h1>
                 <p className="text-gray-600">
-                  {exam.examGroup === 0 ? 'اختبارات التأسيس' : `المجموعة ${exam.examGroup}`} • امتحان {exam.order}
+                  {getGroupName(exam.examGroup)} • امتحان {exam.order}
                 </p>
               </div>
             </div>

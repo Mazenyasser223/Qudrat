@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { DarkModeProvider } from './context/DarkModeContext';
+import { ExamGroupSettingsProvider } from './context/ExamGroupSettingsContext';
 import { SocketProvider } from './contexts/SocketContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout/Layout';
@@ -58,6 +59,7 @@ function App() {
     <ErrorBoundary>
       <DarkModeProvider>
         <AuthProvider>
+          <ExamGroupSettingsProvider>
           <SocketProvider>
             <Router>
             <div className="App">
@@ -221,6 +223,7 @@ function App() {
           </div>
         </Router>
       </SocketProvider>
+          </ExamGroupSettingsProvider>
     </AuthProvider>
       </DarkModeProvider>
     </ErrorBoundary>

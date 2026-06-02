@@ -8,7 +8,8 @@ const {
   deleteExamGroup,
   getGroupStatistics,
   reorderExamFolders,
-  reorderCurriculumGroups
+  reorderCurriculumGroups,
+  updateCurriculumGroupName
 } = require('../controllers/examGroupController');
 // Public route for getting groups (for homepage)
 router.get('/', getExamGroups);
@@ -36,6 +37,11 @@ router.put('/reorder-folders', reorderExamFolders);
 // @desc    Reorder standard curriculum groups (0–8)
 // @access  Private (Teacher only)
 router.put('/reorder-curriculum', reorderCurriculumGroups);
+
+// @route   PUT /api/exam-groups/curriculum-name
+// @desc    Update display name for a standard curriculum group (0–8)
+// @access  Private (Teacher only)
+router.put('/curriculum-name', updateCurriculumGroupName);
 
 // @route   PUT /api/exam-groups/:id
 // @desc    Update exam group
