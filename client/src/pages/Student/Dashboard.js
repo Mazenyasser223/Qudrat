@@ -8,6 +8,7 @@ const StudentDashboard = () => {
   const navigate = useNavigate();
   const [examGroups, setExamGroups] = useState([]);
   const [customGroups, setCustomGroups] = useState([]);
+  const [curriculumGroupOrder, setCurriculumGroupOrder] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   const [studentProgress, setStudentProgress] = useState([]);
   const [reviewExams, setReviewExams] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,6 +72,9 @@ const StudentDashboard = () => {
         }
       });
       setCustomGroups(res.data.data || []);
+      if (res.data?.curriculumGroupOrder) {
+        setCurriculumGroupOrder(res.data.curriculumGroupOrder);
+      }
     } catch (error) {
       console.error('Error fetching custom groups:', error);
     }
@@ -134,6 +138,31 @@ const StudentDashboard = () => {
     return progress ? progress.percentage : 0;
   };
 
+  const sortGroupKeys = useCallback((groupKeys) => {
+    const curriculumRank = new Map(
+      curriculumGroupOrder.map((slot, index) => [slot, index])
+    );
+    const customOrder = new Map(
+      customGroups
+        .filter((g) => g.groupNumber >= 9)
+        .sort((a, b) => (a.displayOrder ?? a.groupNumber) - (b.displayOrder ?? b.groupNumber))
+        .map((g, index) => [g.groupNumber, index])
+    );
+
+    return [...groupKeys].sort((a, b) => {
+      const aNum = parseInt(a, 10);
+      const bNum = parseInt(b, 10);
+      if (aNum <= 8 && bNum <= 8) {
+        return (curriculumRank.get(aNum) ?? aNum) - (curriculumRank.get(bNum) ?? bNum);
+      }
+      if (aNum <= 8) return -1;
+      if (bNum <= 8) return 1;
+      const ao = customOrder.has(aNum) ? customOrder.get(aNum) : aNum;
+      const bo = customOrder.has(bNum) ? customOrder.get(bNum) : bNum;
+      return ao - bo;
+    });
+  }, [curriculumGroupOrder, customGroups]);
+
   const getGroupName = (groupNumber) => {
     if (groupNumber === '0' || groupNumber === 0) {
       return 'اختبارات التأسيس';
@@ -191,14 +220,14 @@ const StudentDashboard = () => {
   }, [filteredExams]);
 
   const availableGroups = useMemo(() => {
-    const groups = ['all'];
-    Object.keys(examGroups).forEach(group => {
-      if (examGroups[group].length > 0) {
-        groups.push(group);
-      }
-    });
-    return groups;
-  }, [examGroups]);
+    const groups = Object.keys(examGroups).filter((group) => examGroups[group].length > 0);
+    return sortGroupKeys(groups);
+  }, [examGroups, sortGroupKeys]);
+
+  const sortedGroupedExamKeys = useMemo(
+    () => sortGroupKeys(Object.keys(groupedExams)),
+    [groupedExams, sortGroupKeys]
+  );
 
   const handleStartExam = (exam) => {
     const status = getExamStatus(exam);
@@ -329,8 +358,7 @@ const StudentDashboard = () => {
                 className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent"
               >
                 <option value="all">جميع المجموعات</option>
-                <option value="0">اختبارات التأسيس</option>
-                {availableGroups.filter(g => g !== 'all' && g !== '0').map(group => (
+                {availableGroups.map((group) => (
                   <option key={group} value={group}>{getGroupName(group)}</option>
                 ))}
               </select>
@@ -383,7 +411,9 @@ const StudentDashboard = () => {
               </div>
             </div>
           ) : (
-            Object.entries(groupedExams).map(([groupNumber, groupExams]) => (
+            sortedGroupedExamKeys.map((groupNumber) => {
+              const groupExams = groupedExams[groupNumber];
+              return (
               <div key={groupNumber} className="bg-white rounded-xl shadow-sm border overflow-hidden">
                 {/* Group Header */}
                 <div className={`p-4 ${
@@ -581,8 +611,9 @@ const StudentDashboard = () => {
                     );
                   })}
                 </div>
-                </div>
-            ))
+              </div>
+              );
+            })
           )}
         </div>
       ) : (
@@ -597,7 +628,9 @@ const StudentDashboard = () => {
               </p>
             </div>
           ) : (
-            Object.entries(groupedExams).map(([groupNumber, groupExams]) => (
+            sortedGroupedExamKeys.map((groupNumber) => {
+              const groupExams = groupedExams[groupNumber];
+              return (
               <div key={groupNumber} className="bg-white rounded-xl shadow-sm border overflow-hidden">
                 {/* Group Header */}
                 <div className={`p-4 ${
@@ -710,7 +743,8 @@ const StudentDashboard = () => {
                   </table>
                 </div>
             </div>
-            ))
+              );
+            })
           )}
         </div>
       )}
@@ -735,7 +769,7 @@ const StudentDashboard = () => {
           {studentProgress.filter(p => p.status === 'completed').length > 0 ? (
             <div className="space-y-4">
               {/* Toggle List for Each Group */}
-              {Object.keys(examGroups).map(groupKey => {
+              {sortGroupKeys(Object.keys(examGroups)).map((groupKey) => {
                 const groupNum = parseInt(groupKey);
                 const groupExams = examGroups[groupKey] || [];
                 const completedExams = groupExams.filter(exam => {

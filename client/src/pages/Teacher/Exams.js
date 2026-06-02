@@ -11,6 +11,7 @@ const Exams = () => {
   const [searchParams] = useSearchParams();
   const [exams, setExams] = useState([]);
   const [customGroups, setCustomGroups] = useState([]);
+  const [curriculumGroupOrder, setCurriculumGroupOrder] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -112,6 +113,9 @@ const Exams = () => {
       if (response.data && response.data.data) {
         setCustomGroups(response.data.data);
       }
+      if (response.data?.curriculumGroupOrder) {
+        setCurriculumGroupOrder(response.data.curriculumGroupOrder);
+      }
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Error fetching custom groups:', error);
@@ -139,6 +143,9 @@ const Exams = () => {
   };
 
   const sortGroupNumbers = (groupNums) => {
+    const curriculumRank = new Map(
+      curriculumGroupOrder.map((slot, index) => [slot, index])
+    );
     const customOrder = new Map(
       customGroups
         .filter((g) => g.groupNumber >= 9)
@@ -149,9 +156,9 @@ const Exams = () => {
     return [...groupNums].sort((a, b) => {
       const aNum = typeof a === 'string' ? parseInt(a, 10) : a;
       const bNum = typeof b === 'string' ? parseInt(b, 10) : b;
-      if (aNum === 0) return bNum === 0 ? 0 : -1;
-      if (bNum === 0) return 1;
-      if (aNum <= 8 && bNum <= 8) return aNum - bNum;
+      if (aNum <= 8 && bNum <= 8) {
+        return (curriculumRank.get(aNum) ?? aNum) - (curriculumRank.get(bNum) ?? bNum);
+      }
       if (aNum <= 8) return -1;
       if (bNum <= 8) return 1;
       const ao = customOrder.has(aNum) ? customOrder.get(aNum) : aNum;

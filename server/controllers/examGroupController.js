@@ -1,5 +1,7 @@
 const ExamGroup = require('../models/ExamGroup');
 const Exam = require('../models/Exam');
+const SiteSettings = require('../models/SiteSettings');
+const { DEFAULT_CURRICULUM_ORDER } = SiteSettings;
 
 /** When no explicit DB link, map common Arabic names to standard examGroup 0–8. */
 const inferStandardGroupFromName = (name) => {
@@ -86,10 +88,13 @@ const getExamGroups = async (req, res) => {
       curriculumExamCounts[String(i)] = countByGroupNumber.get(String(i)) ?? 0;
     }
 
+    const curriculumGroupOrder = await SiteSettings.getCurriculumGroupOrder();
+
     res.json({
       success: true,
       data: groupsWithCounts,
-      curriculumExamCounts
+      curriculumExamCounts,
+      curriculumGroupOrder
     });
   } catch (error) {
     console.error('Get exam groups error:', error);
@@ -437,6 +442,53 @@ const reorderExamFolders = async (req, res) => {
   }
 };
 
+// @desc    Reorder standard curriculum groups (0–8)
+// @route   PUT /api/exam-groups/reorder-curriculum
+// @access  Private (Teacher only)
+const reorderCurriculumGroups = async (req, res) => {
+  try {
+    const { orderedSlots } = req.body;
+
+    if (!Array.isArray(orderedSlots) || orderedSlots.length !== 9) {
+      return res.status(400).json({
+        success: false,
+        message: 'orderedSlots must be an array of all 9 curriculum groups (0–8)'
+      });
+    }
+
+    const normalized = orderedSlots.map((n) => parseInt(n, 10));
+    const expected = new Set(DEFAULT_CURRICULUM_ORDER);
+    const received = new Set(normalized);
+
+    if (
+      normalized.some((n) => Number.isNaN(n) || n < 0 || n > 8) ||
+      received.size !== 9 ||
+      ![...expected].every((n) => received.has(n))
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: 'orderedSlots must contain each curriculum group 0–8 exactly once'
+      });
+    }
+
+    const settings = await SiteSettings.getMain();
+    settings.curriculumGroupOrder = normalized;
+    await settings.save();
+
+    res.json({
+      success: true,
+      message: 'Curriculum groups reordered successfully',
+      curriculumGroupOrder: normalized
+    });
+  } catch (error) {
+    console.error('Reorder curriculum groups error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while reordering curriculum groups'
+    });
+  }
+};
+
 module.exports = {
   getExamGroups,
   getExamGroup,
@@ -444,5 +496,6 @@ module.exports = {
   updateExamGroup,
   deleteExamGroup,
   getGroupStatistics,
-  reorderExamFolders
+  reorderExamFolders,
+  reorderCurriculumGroups
 };

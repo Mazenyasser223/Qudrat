@@ -55,6 +55,7 @@ const ExamGroups = () => {
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, groupId: null, groupName: '' });
   const [examDeleteDialog, setExamDeleteDialog] = useState({ isOpen: false, examId: null, examTitle: '' });
   const [curriculumExamCounts, setCurriculumExamCounts] = useState(null);
+  const [curriculumOrder, setCurriculumOrder] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   const [expandedGroup, setExpandedGroup] = useState(null);
   const [busyKey, setBusyKey] = useState(null);
 
@@ -67,6 +68,7 @@ const ExamGroups = () => {
       ]);
       setGroups(groupsRes.data.data);
       setCurriculumExamCounts(groupsRes.data.curriculumExamCounts || null);
+      setCurriculumOrder(groupsRes.data.curriculumGroupOrder || [0, 1, 2, 3, 4, 5, 6, 7, 8]);
       setExams(examsRes.data.data || []);
     } catch (error) {
       console.error('Error fetching groups/exams:', error);
@@ -92,6 +94,16 @@ const ExamGroups = () => {
     });
     return map;
   }, [exams]);
+
+  const curriculumSlotMap = useMemo(
+    () => Object.fromEntries(curriculumSlots.map((slot) => [slot.filter, slot])),
+    []
+  );
+
+  const orderedCurriculumSlots = useMemo(
+    () => curriculumOrder.map((n) => curriculumSlotMap[n]).filter(Boolean),
+    [curriculumOrder, curriculumSlotMap]
+  );
 
   const transferTargets = useMemo(() => {
     const targets = curriculumSlots.map(({ filter, title }) => ({
@@ -277,6 +289,36 @@ const ExamGroups = () => {
     } finally {
       setBusyKey(null);
     }
+  };
+
+  const reorderCurriculumGroups = async (orderedSlots) => {
+    try {
+      setBusyKey('reorder-curriculum');
+      await axios.put(
+        '/api/exam-groups/reorder-curriculum',
+        { orderedSlots },
+        { headers: authHeaders() }
+      );
+      setCurriculumOrder(orderedSlots);
+      toast.success('تم تحديث ترتيب المجموعات');
+    } catch (error) {
+      console.error('Error reordering curriculum groups:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء إعادة ترتيب المجموعات');
+      await fetchData();
+    } finally {
+      setBusyKey(null);
+    }
+  };
+
+  const moveCurriculumGroup = async (slot, direction) => {
+    const index = curriculumOrder.indexOf(slot);
+    if (index === -1) return;
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= curriculumOrder.length) return;
+
+    const newOrder = [...curriculumOrder];
+    [newOrder[index], newOrder[targetIndex]] = [newOrder[targetIndex], newOrder[index]];
+    await reorderCurriculumGroups(newOrder);
   };
 
   const reorderFolders = async (orderedGroupIds) => {
@@ -468,15 +510,40 @@ const ExamGroups = () => {
         <section className="space-y-3">
           <h2 className="text-lg font-bold text-gray-900">مجموعات الموقع (٠–٨)</h2>
           <p className="text-sm text-gray-500">
-            يمكنك إعادة ترتيب الامتحانات، نقلها بين المجموعات، أو حذفها من كل مجموعة.
+            أعد ترتيب المجموعات نفسها، ورتّب الامتحانات أو انقلها أو احذفها داخل كل مجموعة.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {curriculumSlots.map(({ filter, title }) => (
+            {orderedCurriculumSlots.map(({ filter, title }) => {
+              const slotIndex = curriculumOrder.indexOf(filter);
+
+              return (
               <div
                 key={filter}
                 className="bg-white rounded-xl border border-primary-100 shadow-sm p-4 flex flex-col hover:shadow-md transition-shadow"
               >
-                <h3 className="text-base font-bold text-gray-900 mb-1 text-center">{title}</h3>
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="text-base font-bold text-gray-900 text-center flex-1">{title}</h3>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      disabled={slotIndex === 0 || busyKey === 'reorder-curriculum'}
+                      onClick={() => moveCurriculumGroup(filter, 'up')}
+                      className="p-1.5 text-gray-500 hover:bg-gray-100 rounded disabled:opacity-30"
+                      title="تحريك المجموعة لأعلى"
+                    >
+                      <ArrowUp className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      disabled={slotIndex === curriculumOrder.length - 1 || busyKey === 'reorder-curriculum'}
+                      onClick={() => moveCurriculumGroup(filter, 'down')}
+                      className="p-1.5 text-gray-500 hover:bg-gray-100 rounded disabled:opacity-30"
+                      title="تحريك المجموعة لأسفل"
+                    >
+                      <ArrowDown className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
                 <div className="text-3xl font-bold text-primary-600 my-2 text-center">
                   {curriculumExamCounts[String(filter)] ?? 0}
                 </div>
@@ -501,7 +568,8 @@ const ExamGroups = () => {
                 </div>
                 {renderManagePanel(`curriculum-${filter}`, filter, title)}
               </div>
-            ))}
+              );
+            })}
           </div>
         </section>
       )}
