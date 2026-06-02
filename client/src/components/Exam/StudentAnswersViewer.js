@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { X, Eye, EyeOff, CheckCircle, XCircle, AlertCircle, BookOpen, Clock, TrendingUp, ChevronLeft, ChevronRight, List, ChevronDown, RefreshCw } from 'lucide-react';
+import {
+  sortExamGroupNumbers,
+  DEFAULT_CURRICULUM_GROUP_ORDER
+} from '../../utils/examGroupOrder';
 
 const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
   const [studentAnswers, setStudentAnswers] = useState([]);
@@ -13,9 +17,12 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
   const [selectedGroup, setSelectedGroup] = useState('all');
   const [filteredExams, setFilteredExams] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [customGroups, setCustomGroups] = useState([]);
+  const [curriculumGroupOrder, setCurriculumGroupOrder] = useState(DEFAULT_CURRICULUM_GROUP_ORDER);
 
   useEffect(() => {
     fetchStudentAnswers();
+    fetchGroupOrder();
   }, [studentId]);
 
   // Filter exams by group
@@ -39,6 +46,22 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showExamSelector]);
+
+  const fetchGroupOrder = async () => {
+    try {
+      const response = await axios.get('/api/exam-groups', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (response.data?.data) {
+        setCustomGroups(response.data.data);
+      }
+      if (response.data?.curriculumGroupOrder) {
+        setCurriculumGroupOrder(response.data.curriculumGroupOrder);
+      }
+    } catch {
+      setCustomGroups([]);
+    }
+  };
 
   const fetchStudentAnswers = async (isRefresh = false) => {
     try {
@@ -132,7 +155,7 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
     studentAnswers.forEach(exam => {
       groups.add(exam.exam.examGroup);
     });
-    return Array.from(groups).sort((a, b) => a - b);
+    return sortExamGroupNumbers(Array.from(groups), curriculumGroupOrder, customGroups);
   };
 
   if (loading) {

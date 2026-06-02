@@ -23,6 +23,10 @@ import StudentMistakes from '../../components/Exam/StudentMistakes';
 import StudentAnswersViewer from '../../components/Exam/StudentAnswersViewer';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import StudentExamSubmission from '../../components/Exam/StudentExamSubmission';
+import {
+  sortExamGroupNumbers,
+  DEFAULT_CURRICULUM_GROUP_ORDER
+} from '../../utils/examGroupOrder';
 
 const StudentProfile = () => {
   const { studentId } = useParams();
@@ -30,6 +34,7 @@ const StudentProfile = () => {
   const [student, setStudent] = useState(null);
   const [exams, setExams] = useState([]);
   const [customGroups, setCustomGroups] = useState([]);
+  const [curriculumGroupOrder, setCurriculumGroupOrder] = useState(DEFAULT_CURRICULUM_GROUP_ORDER);
   const [loading, setLoading] = useState(true);
   const [showLockUnlockModal, setShowLockUnlockModal] = useState(false);
   const [selectedExams, setSelectedExams] = useState([]);
@@ -329,10 +334,18 @@ const StudentProfile = () => {
       if (response.data && response.data.data) {
         setCustomGroups(response.data.data);
       }
+      if (response.data?.curriculumGroupOrder) {
+        setCurriculumGroupOrder(response.data.curriculumGroupOrder);
+      }
     } catch {
       setCustomGroups([]);
     }
   };
+
+  const sortGroupNumbers = useCallback(
+    (groupNums) => sortExamGroupNumbers(groupNums, curriculumGroupOrder, customGroups),
+    [curriculumGroupOrder, customGroups]
+  );
 
   const getGroupName = (groupNumber) => {
     if (groupNumber === 0) {
@@ -721,33 +734,20 @@ const StudentProfile = () => {
                 <span>حالة المجموعات</span>
               </h4>
               <div className="grid grid-cols-5 gap-2">
-                {/* Group 0 - اختبارات التأسيس */}
-                <div className="text-center">
-                  <div className={`w-8 h-8 rounded-full mx-auto mb-1 flex items-center justify-center text-white text-xs font-bold ${
-                    groupStatus[0] === 'unlocked' ? 'bg-blue-500' : 'bg-gray-500'
-                  }`}>
-                    ت
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    {groupStatus[0] === 'unlocked' ? 'مفتوحة' : 'مقفلة'}
-                  </div>
-                </div>
-                {/* All other groups (1-8 + custom groups) */}
-                {Object.keys(groupStatus)
-                  .map(Number)
-                  .filter(groupNum => groupNum > 0)
-                  .sort((a, b) => a - b)
-                  .map((groupNum) => {
+                {sortGroupNumbers(Object.keys(groupStatus).map(Number)).map((groupNum) => {
                     const isUnlocked = groupStatus[groupNum] === 'unlocked';
+                    const isFoundation = groupNum === 0;
                     const isCustomGroup = groupNum > 8;
-                    const groupName = isCustomGroup ? getGroupName(groupNum) : `المجموعة ${groupNum}`;
+                    const groupName = getGroupName(groupNum);
                     
                     return (
                       <div key={groupNum} className="text-center">
                         <div className={`w-8 h-8 rounded-full mx-auto mb-1 flex items-center justify-center text-white text-xs font-bold ${
-                          isUnlocked ? 'bg-green-500' : 'bg-red-500'
+                          isFoundation
+                            ? (isUnlocked ? 'bg-blue-500' : 'bg-gray-500')
+                            : (isUnlocked ? 'bg-green-500' : 'bg-red-500')
                         }`} title={groupName}>
-                          {groupNum}
+                          {isFoundation ? 'ت' : groupNum}
                         </div>
                         <div className="text-xs text-gray-600">
                           {isUnlocked ? 'مفتوحة' : 'مقفلة'}
@@ -790,7 +790,7 @@ const StudentProfile = () => {
                   <p>جاري تحميل الاختبارات...</p>
                 </div>
               ) : (() => {
-                const allGroupNumbers = [...new Set(exams.map(exam => exam.examGroup))].sort((a, b) => a - b);
+                const allGroupNumbers = sortGroupNumbers([...new Set(exams.map(exam => exam.examGroup))]);
                 return allGroupNumbers.map(groupNum => {
                   const groupExams = exams.filter(exam => exam.examGroup === groupNum);
                 
@@ -1344,9 +1344,7 @@ const StudentProfile = () => {
                   }
                   
                   // Render ALL groups dynamically (including group 0 and all custom groups)
-                  const allGroupNumbers = Object.keys(groupedExams)
-                    .map(Number)
-                    .sort((a, b) => a - b);
+                  const allGroupNumbers = sortGroupNumbers(Object.keys(groupedExams).map(Number));
                   allGroupNumbers.forEach(groupNum => {
                     if (groupedExams[groupNum] && groupedExams[groupNum].length > 0) {
                       groupedExams[groupNum].forEach((item, index) => {
