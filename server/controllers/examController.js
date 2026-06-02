@@ -1434,6 +1434,158 @@ const removeExamFromFree = async (req, res) => {
   }
 };
 
+// Helper: renumber exam orders in a group sequentially starting at 1
+const compactGroupOrders = async (groupNumber) => {
+  const exams = await Exam.find({ examGroup: groupNumber, isActive: true }).sort({ order: 1 });
+  for (let i = 0; i < exams.length; i += 1) {
+    const nextOrder = i + 1;
+    if (exams[i].order !== nextOrder) {
+      exams[i].order = nextOrder;
+      await exams[i].save();
+    }
+  }
+};
+
+// @desc    Reorder exams within a group
+// @route   PUT /api/exams/group/:groupNumber/reorder
+// @access  Private (Teacher only)
+const reorderExamsInGroup = async (req, res) => {
+  try {
+    const groupNumber = parseInt(req.params.groupNumber, 10);
+    const { orderedExamIds } = req.body;
+
+    if (Number.isNaN(groupNumber) || groupNumber < 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid group number'
+      });
+    }
+
+    if (!Array.isArray(orderedExamIds) || orderedExamIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'orderedExamIds must be a non-empty array'
+      });
+    }
+
+    const exams = await Exam.find({
+      _id: { $in: orderedExamIds },
+      examGroup: groupNumber,
+      isActive: true
+    });
+
+    if (exams.length !== orderedExamIds.length) {
+      return res.status(400).json({
+        success: false,
+        message: 'One or more exams are invalid or belong to a different group'
+      });
+    }
+
+    await Promise.all(
+      orderedExamIds.map((id, index) =>
+        Exam.findByIdAndUpdate(id, { order: index + 1 })
+      )
+    );
+
+    invalidateCache('/api/exams');
+
+    res.json({
+      success: true,
+      message: 'Exams reordered successfully'
+    });
+  } catch (error) {
+    console.error('Reorder exams in group error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while reordering exams'
+    });
+  }
+};
+
+// @desc    Transfer exam to another group
+// @route   PUT /api/exams/:id/transfer
+// @access  Private (Teacher only)
+const transferExam = async (req, res) => {
+  try {
+    const { targetGroup, order } = req.body;
+    const targetGroupNum = parseInt(targetGroup, 10);
+
+    if (Number.isNaN(targetGroupNum) || targetGroupNum < 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid target group'
+      });
+    }
+
+    const exam = await Exam.findById(req.params.id);
+    if (!exam || !exam.isActive) {
+      return res.status(404).json({
+        success: false,
+        message: 'Exam not found'
+      });
+    }
+
+    const oldGroup = exam.examGroup;
+    if (oldGroup === targetGroupNum) {
+      return res.status(400).json({
+        success: false,
+        message: 'Exam is already in this group'
+      });
+    }
+
+    let newOrder;
+    if (order !== undefined && order !== null) {
+      newOrder = parseInt(order, 10);
+      if (Number.isNaN(newOrder) || newOrder < 1) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid order value'
+        });
+      }
+      const conflict = await Exam.findOne({
+        _id: { $ne: exam._id },
+        examGroup: targetGroupNum,
+        order: newOrder,
+        isActive: true
+      });
+      if (conflict) {
+        return res.status(400).json({
+          success: false,
+          message: 'An exam with this order already exists in the target group'
+        });
+      }
+    } else {
+      const lastInTarget = await Exam.findOne({
+        examGroup: targetGroupNum,
+        isActive: true
+      }).sort({ order: -1 });
+      newOrder = lastInTarget ? lastInTarget.order + 1 : 1;
+    }
+
+    exam.examGroup = targetGroupNum;
+    exam.order = newOrder;
+    await exam.save();
+
+    await compactGroupOrders(oldGroup);
+
+    updateExamGroupCount(oldGroup).catch(() => {});
+    updateExamGroupCount(targetGroupNum).catch(() => {});
+    invalidateCache('/api/exams');
+
+    res.json({
+      success: true,
+      message: 'Exam transferred successfully',
+      data: exam
+    });
+  } catch (error) {
+    console.error('Transfer exam error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while transferring exam'
+    });
+  }
+};
+
 module.exports = {
   getExams,
   getExam,
@@ -1441,6 +1593,8 @@ module.exports = {
   updateExam,
   deleteExam,
   getExamsByGroup,
+  reorderExamsInGroup,
+  transferExam,
   submitExam,
   getReviewExam,
   submitReviewExam,

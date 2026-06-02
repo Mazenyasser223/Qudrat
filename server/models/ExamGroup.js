@@ -18,6 +18,10 @@ const examGroupSchema = new mongoose.Schema({
     unique: true,
     min: 9 // Start from 9 to avoid conflicts with existing groups 0-8
   },
+  displayOrder: {
+    type: Number,
+    required: false
+  },
   // When set (0–8), this folder is tied to the standard curriculum examGroup for counts & filters.
   linkedCurriculumGroup: {
     type: Number,
@@ -68,6 +72,7 @@ examGroupSchema.pre('save', function(next) {
 
 // Indexes for performance
 examGroupSchema.index({ groupNumber: 1 });
+examGroupSchema.index({ displayOrder: 1 });
 examGroupSchema.index(
   { linkedCurriculumGroup: 1 },
   {

@@ -6,7 +6,8 @@ const {
   createExamGroup,
   updateExamGroup,
   deleteExamGroup,
-  getGroupStatistics
+  getGroupStatistics,
+  reorderExamFolders
 } = require('../controllers/examGroupController');
 // Public route for getting groups (for homepage)
 router.get('/', getExamGroups);
@@ -24,6 +25,11 @@ router.get('/:id', getExamGroup);
 // @desc    Create new exam group
 // @access  Private (Teacher only)
 router.post('/', createExamGroup);
+
+// @route   PUT /api/exam-groups/reorder-folders
+// @desc    Reorder custom exam folders
+// @access  Private (Teacher only)
+router.put('/reorder-folders', reorderExamFolders);
 
 // @route   PUT /api/exam-groups/:id
 // @desc    Update exam group

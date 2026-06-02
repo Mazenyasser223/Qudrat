@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -6,6 +6,7 @@ import ExamTimer from '../../components/Exam/ExamTimer';
 import QuestionCard from '../../components/Exam/QuestionCard';
 import ExamResults from '../../components/Exam/ExamResults';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
+import { useAutoSubmitOnLeave } from '../../hooks/useAutoSubmitOnLeave';
 
 const TakeExam = () => {
   const { examId } = useParams();
@@ -109,6 +110,18 @@ const TakeExam = () => {
     });
   };
 
+  const buildAnswersPayload = useCallback(() => {
+    if (!exam?.questions?.length) {
+      return [];
+    }
+    return exam.questions.map((_, originalIndex) => {
+      const shuffledIndex = questionOrder[originalIndex];
+      return {
+        selectedAnswer: answers[shuffledIndex] || null
+      };
+    });
+  }, [exam, questionOrder, answers]);
+
   const fetchAndShowResults = async () => {
     try {
       const res = await axios.get(`/api/exams/${examId}/student-submission`, {
@@ -144,7 +157,7 @@ const TakeExam = () => {
     }
   };
 
-  const handleSubmit = async ({ skipConfirm = false } = {}) => {
+  const handleSubmit = async ({ skipConfirm = false, reason = null } = {}) => {
     if (submitting || showResults) {
       return;
     }
@@ -158,17 +171,8 @@ const TakeExam = () => {
 
     try {
       setSubmitting(true);
-      
-      // Map shuffled answers back to original question order
-      const answersArray = exam.questions.map((question, originalIndex) => {
-        // Get the shuffled index for this original question
-        const shuffledIndex = questionOrder[originalIndex];
-        const selectedAnswer = answers[shuffledIndex] || null;
-        
-        return {
-          selectedAnswer: selectedAnswer
-        };
-      });
+
+      const answersArray = buildAnswersPayload();
 
       const res = await axios.post(`/api/exams/${examId}/submit`, {
         answers: answersArray,
@@ -185,7 +189,13 @@ const TakeExam = () => {
       if (data && typeof data.score === 'number') {
         setResults(data);
         setShowResults(true);
-        toast.success(skipConfirm ? 'تم تسليم الامتحان تلقائيًا لانتهاء الوقت' : 'تم تسليم الامتحان بنجاح');
+        toast.success(
+          reason === 'leave'
+            ? 'تم تسليم الامتحان تلقائيًا عند مغادرة الصفحة'
+            : skipConfirm
+              ? 'تم تسليم الامتحان تلقائيًا لانتهاء الوقت'
+              : 'تم تسليم الامتحان بنجاح'
+        );
       } else {
         await fetchAndShowResults();
       }
@@ -204,6 +214,24 @@ const TakeExam = () => {
       setSubmitting(false);
     }
   };
+
+  const getSubmitRequest = useCallback(() => ({
+    url: `/api/exams/${examId}/submit`,
+    token: localStorage.getItem('token'),
+    body: {
+      answers: buildAnswersPayload(),
+      timeSpent: timeSpent,
+      submittedAt: new Date().toISOString()
+    }
+  }), [examId, buildAnswersPayload, timeSpent]);
+
+  const examInProgress = !loading && !!exam && !showResults && !submitting;
+
+  useAutoSubmitOnLeave({
+    enabled: examInProgress,
+    getSubmitRequest,
+    onAutoSubmit: () => handleSubmit({ skipConfirm: true, reason: 'leave' })
+  });
 
   const handleTimeUp = () => {
     setTimeUp(true);

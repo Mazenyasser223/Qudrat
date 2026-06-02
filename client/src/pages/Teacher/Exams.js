@@ -121,18 +121,43 @@ const Exams = () => {
   };
 
   const getGroupName = (groupNumber) => {
-    if (groupNumber === 0) {
+    const num = parseInt(groupNumber, 10);
+    if (num === 0) {
       return 'اختبارات التأسيس';
     }
-    
-    // Check if it's a custom group
-    const customGroup = customGroups.find(group => group.groupNumber === parseInt(groupNumber));
+
+    const customGroup = customGroups.find((group) => group.groupNumber === num);
     if (customGroup) {
       return customGroup.name;
     }
-    
-    // Default to standard group name
-    return `المجموعة ${groupNumber}`;
+
+    if (num >= 1 && num <= 8) {
+      return `المجموعة ${num}`;
+    }
+
+    return `مجلد #${num}`;
+  };
+
+  const sortGroupNumbers = (groupNums) => {
+    const customOrder = new Map(
+      customGroups
+        .filter((g) => g.groupNumber >= 9)
+        .sort((a, b) => (a.displayOrder ?? a.groupNumber) - (b.displayOrder ?? b.groupNumber))
+        .map((g, index) => [g.groupNumber, index])
+    );
+
+    return [...groupNums].sort((a, b) => {
+      const aNum = typeof a === 'string' ? parseInt(a, 10) : a;
+      const bNum = typeof b === 'string' ? parseInt(b, 10) : b;
+      if (aNum === 0) return bNum === 0 ? 0 : -1;
+      if (bNum === 0) return 1;
+      if (aNum <= 8 && bNum <= 8) return aNum - bNum;
+      if (aNum <= 8) return -1;
+      if (bNum <= 8) return 1;
+      const ao = customOrder.has(aNum) ? customOrder.get(aNum) : aNum;
+      const bo = customOrder.has(bNum) ? customOrder.get(bNum) : bNum;
+      return ao - bo;
+    });
   };
 
   const fetchFreeExams = async () => {
@@ -275,6 +300,11 @@ const Exams = () => {
   // Get unique groups for filter dropdown
   const availableGroups = [...new Set(exams.map(exam => exam.examGroup))].sort();
 
+  const sortedGroupedExamEntries = sortGroupNumbers(Object.keys(groupedExams)).map((groupNumber) => [
+    groupNumber,
+    groupedExams[groupNumber]
+  ]);
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
@@ -338,8 +368,8 @@ const Exams = () => {
               >
                 <option value="all">جميع المجموعات</option>
                 <option value="0">اختبارات التأسيس</option>
-                {availableGroups.filter(g => g !== 0).map(group => (
-                  <option key={group} value={group}>المجموعة {group}</option>
+                {sortGroupNumbers(availableGroups.filter((g) => g !== 0)).map((group) => (
+                  <option key={group} value={group}>{getGroupName(group)}</option>
                 ))}
               </select>
             </div>
@@ -466,7 +496,7 @@ const Exams = () => {
               </div>
             </div>
           ) : (
-            Object.entries(groupedExams).map(([groupNumber, groupExams]) => (
+            sortedGroupedExamEntries.map(([groupNumber, groupExams]) => (
               <div key={groupNumber} className="bg-white rounded-xl shadow-sm border overflow-hidden">
                 {/* Group Header */}
                 <div className={`p-4 ${
@@ -603,7 +633,7 @@ const Exams = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {Object.entries(groupedExams).map(([groupNumber, groupExams]) =>
+                  {sortedGroupedExamEntries.map(([groupNumber, groupExams]) =>
                     groupExams.map((exam) => (
                       <tr key={exam._id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -622,7 +652,7 @@ const Exams = () => {
                               ? 'bg-primary-100 text-primary-800' 
                               : 'bg-gray-100 text-gray-800'
                           }`}>
-                            {groupNumber === '0' ? 'التأسيس' : `المجموعة ${groupNumber}`}
+                            {getGroupName(groupNumber)}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">

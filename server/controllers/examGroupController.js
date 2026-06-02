@@ -34,7 +34,7 @@ const getExamGroups = async (req, res) => {
   try {
     const groups = await ExamGroup.find({ isActive: true })
       .populate('createdBy', 'name email')
-      .sort({ groupNumber: 1 });
+      .sort({ displayOrder: 1, groupNumber: 1 });
 
     // Compute live exam counts (source of truth) to avoid stale `examCount` values.
     const counts = await Exam.aggregate([
@@ -159,6 +159,7 @@ const createExamGroup = async (req, res) => {
       name: trimmedName,
       description,
       groupNumber: nextGroupNumber,
+      displayOrder: nextGroupNumber,
       isPremium,
       ...(req.user?.id && { createdBy: req.user.id })
     };
@@ -389,11 +390,59 @@ const getGroupStatistics = async (req, res) => {
   }
 };
 
+// @desc    Reorder custom exam folders (groupNumber >= 9)
+// @route   PUT /api/exam-groups/reorder-folders
+// @access  Private (Teacher only)
+const reorderExamFolders = async (req, res) => {
+  try {
+    const { orderedGroupIds } = req.body;
+
+    if (!Array.isArray(orderedGroupIds) || orderedGroupIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'orderedGroupIds must be a non-empty array'
+      });
+    }
+
+    const groups = await ExamGroup.find({
+      _id: { $in: orderedGroupIds },
+      isActive: true,
+      groupNumber: { $gte: 9 }
+    });
+
+    if (groups.length !== orderedGroupIds.length) {
+      return res.status(400).json({
+        success: false,
+        message: 'One or more folder IDs are invalid or not custom folders'
+      });
+    }
+
+    const baseOrder = 1000;
+    await Promise.all(
+      orderedGroupIds.map((id, index) =>
+        ExamGroup.findByIdAndUpdate(id, { displayOrder: baseOrder + index })
+      )
+    );
+
+    res.json({
+      success: true,
+      message: 'Folders reordered successfully'
+    });
+  } catch (error) {
+    console.error('Reorder exam folders error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while reordering folders'
+    });
+  }
+};
+
 module.exports = {
   getExamGroups,
   getExamGroup,
   createExamGroup,
   updateExamGroup,
   deleteExamGroup,
-  getGroupStatistics
+  getGroupStatistics,
+  reorderExamFolders
 };

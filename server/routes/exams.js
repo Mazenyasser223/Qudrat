@@ -6,6 +6,8 @@ const {
   updateExam, 
   deleteExam, 
   getExamsByGroup,
+  reorderExamsInGroup,
+  transferExam,
   submitExam,
   getReviewExam,
   submitReviewExam,
@@ -97,6 +99,11 @@ router.get('/', protect, cacheMiddleware(300), getExams);
 // @access  Private
 router.get('/group/:groupNumber', protect, cacheMiddleware(300), getExamsByGroup);
 
+// @route   PUT /api/exams/group/:groupNumber/reorder
+// @desc    Reorder exams within a group
+// @access  Private (Teacher only)
+router.put('/group/:groupNumber/reorder', isTeacher, reorderExamsInGroup);
+
 // Review Exam Routes (must come before /:id routes to avoid conflicts)
 // @route   GET /api/exams/review
 // @desc    Get student's review exams
@@ -155,6 +162,11 @@ router.get('/:id', getExam);
 // @desc    Create new exam
 // @access  Private (Teacher only)
 router.post('/', isTeacher, createExam);
+
+// @route   PUT /api/exams/:id/transfer
+// @desc    Transfer exam to another group
+// @access  Private (Teacher only)
+router.put('/:id/transfer', isTeacher, transferExam);
 
 // @route   PUT /api/exams/:id
 // @desc    Update exam
