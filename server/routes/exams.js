@@ -2,6 +2,7 @@ const express = require('express');
 const { 
   getExams, 
   getExam, 
+  startExam,
   createExam, 
   updateExam, 
   deleteExam, 
@@ -17,6 +18,7 @@ const {
   getStudentSubmission,
   getMySubmission,
   getPublicExam,
+  gradePublicExam,
   getFreeExams,
   getFreeExamsForManagement,
   setExamAsFree,
@@ -33,6 +35,11 @@ const router = express.Router();
 // @desc    Get single exam by ID (public for free exams)
 // @access  Public
 router.get('/public/:id', getPublicExam);
+
+// @route   POST /api/exams/public/:id/grade
+// @desc    Grade public exam answers (not stored)
+// @access  Public
+router.post('/public/:id/grade', gradePublicExam);
 
 // @route   GET /api/exams/free
 // @desc    Get free exams for home page
@@ -177,6 +184,11 @@ router.put('/:id', isTeacher, updateExam);
 // @desc    Delete exam
 // @access  Private (Teacher only)
 router.delete('/:id', isTeacher, deleteExam);
+
+// @route   POST /api/exams/:id/start
+// @desc    Start exam (student only)
+// @access  Private (Student only)
+router.post('/:id/start', isStudent, startExam);
 
 // @route   POST /api/exams/:id/submit
 // @desc    Submit exam answers

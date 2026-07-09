@@ -7,21 +7,18 @@ const getApiBaseUrl = () =>
   (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
 
 /**
- * Auto-submits an in-progress exam when the student leaves the page
- * (closes tab, refreshes, or navigates away in the app).
+ * Auto-submits an in-progress exam when the student closes the tab or refreshes.
+ * In-app navigation (e.g. Back button) does NOT trigger auto-submit.
  */
 export function useAutoSubmitOnLeave({
   enabled,
-  getSubmitRequest,
-  onAutoSubmit
+  getSubmitRequest
 }) {
   const getSubmitRequestRef = useRef(getSubmitRequest);
-  const onAutoSubmitRef = useRef(onAutoSubmit);
   const submittedRef = useRef(false);
 
   useEffect(() => {
     getSubmitRequestRef.current = getSubmitRequest;
-    onAutoSubmitRef.current = onAutoSubmit;
   });
 
   useEffect(() => {
@@ -31,7 +28,7 @@ export function useAutoSubmitOnLeave({
 
     submittedRef.current = false;
 
-    const submitOnce = (useKeepalive = false) => {
+    const handlePageLeave = () => {
       if (submittedRef.current) {
         return;
       }
@@ -42,30 +39,23 @@ export function useAutoSubmitOnLeave({
         return;
       }
 
-      if (useKeepalive) {
-        const baseUrl = getApiBaseUrl();
-        const fullUrl = request.url.startsWith('http')
-          ? request.url
-          : `${baseUrl}${request.url}`;
+      const baseUrl = getApiBaseUrl();
+      const fullUrl = request.url.startsWith('http')
+        ? request.url
+        : `${baseUrl}${request.url}`;
 
-        const headers = {
-          'Content-Type': 'application/json',
-          ...(request.token ? { Authorization: `Bearer ${request.token}` } : {})
-        };
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(request.token ? { Authorization: `Bearer ${request.token}` } : {})
+      };
 
-        fetch(fullUrl, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(request.body),
-          keepalive: true
-        }).catch(() => {});
-        return;
-      }
-
-      onAutoSubmitRef.current?.();
+      fetch(fullUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(request.body),
+        keepalive: true
+      }).catch(() => {});
     };
-
-    const handlePageLeave = () => submitOnce(true);
 
     window.addEventListener('beforeunload', handlePageLeave);
     window.addEventListener('pagehide', handlePageLeave);
@@ -73,7 +63,6 @@ export function useAutoSubmitOnLeave({
     return () => {
       window.removeEventListener('beforeunload', handlePageLeave);
       window.removeEventListener('pagehide', handlePageLeave);
-      submitOnce(false);
     };
   }, [enabled]);
 }

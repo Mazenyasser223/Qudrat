@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build": "echo 'No build step required for server'"
+    "build": "echo 'No build step required for server'",
+    "report:duplicates": "node scripts/generate-duplicate-report.js",
+    "report:visual": "node scripts/generate-visual-duplicate-report.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

@@ -5,6 +5,7 @@ import { X, Eye, EyeOff, CheckCircle, XCircle, AlertCircle, BookOpen, Clock, Tre
 import {
   sortExamGroupNumbers
 } from '../../utils/examGroupOrder';
+import { getAnswerStatus as resolveAnswerStatus } from '../../utils/examAnswerMatching';
 import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
@@ -79,14 +80,15 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
     }
   };
 
-  const getAnswerStatus = (question, studentAnswer) => {
-    if (!studentAnswer || studentAnswer.trim() === '') {
-      return { status: 'unanswered', icon: AlertCircle, color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
-    } else if (studentAnswer === question.correctAnswer) {
+  const getAnswerStatus = (question, answer) => {
+    const status = resolveAnswerStatus(answer, question);
+    if (status === 'correct') {
       return { status: 'correct', icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-100' };
-    } else {
+    }
+    if (status === 'wrong') {
       return { status: 'wrong', icon: XCircle, color: 'text-red-600', bgColor: 'bg-red-100' };
     }
+    return { status: 'unanswered', icon: AlertCircle, color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
   };
 
   const getAnswerLabel = (answer) => {
@@ -333,15 +335,17 @@ const StudentAnswersViewer = ({ studentId, studentName, onClose }) => {
 
                 {/* Questions */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {examData.answers.map((answer, questionIndex) => {
-                    const question = examData.exam.questions.find(q => q._id.toString() === answer.questionId.toString());
-                    if (!question) return null;
+                  {examData.exam.questions.map((question, questionIndex) => {
+                    const answer = examData.answers.find(
+                      (a) => a.questionId && a.questionId.toString() === question._id.toString()
+                    );
+                    if (!answer) return null;
 
-                    const answerStatus = getAnswerStatus(question, answer.selectedAnswer);
+                    const answerStatus = getAnswerStatus(question, answer);
                     const StatusIcon = answerStatus.icon;
 
                     return (
-                      <div key={answer.questionId} className="bg-white border border-gray-200 rounded-lg p-4">
+                      <div key={question._id} className="bg-white border border-gray-200 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center">
                             <StatusIcon className={`w-4 h-4 ${answerStatus.color} ml-2`} />

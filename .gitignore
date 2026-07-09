@@ -40,6 +40,8 @@ Thumbs.db
 # Generated reports
 server/*.txt
 server/duplicate-questions-*.txt
+duplicate-questions-report.txt
+duplicate-questions-visual-report.txt
 
 # Uploads (keep structure but ignore content)
 server/uploads/questions/*

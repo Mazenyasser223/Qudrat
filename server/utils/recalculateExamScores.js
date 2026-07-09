@@ -16,10 +16,18 @@ const regradeProgress = (examProgress, examQuestions) => {
   const wrongQuestions = [];
 
   const answers = examProgress.answers || [];
+  const answersByQuestionId = new Map();
+
   for (let i = 0; i < answers.length; i += 1) {
     const answer = answers[i];
     const question = findQuestionForAnswer(examQuestions, answer, i);
     if (!question) continue;
+    answersByQuestionId.set(question._id.toString(), answer);
+  }
+
+  for (const question of examQuestions) {
+    const answer = answersByQuestionId.get(question._id.toString());
+    if (!answer) continue;
 
     const isCorrect = answer.selectedAnswer === question.correctAnswer;
     if (isCorrect) {

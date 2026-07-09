@@ -96,81 +96,66 @@ const PublicExam = () => {
     });
   };
 
-  const handleSubmit = async () => {
-    if (window.confirm('هل أنت متأكد من إرسال الإجابات؟')) {
-      try {
-        setSubmitting(true);
-        
-        // Calculate time spent
-        const timeSpent = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
-        
-        // Calculate results
-        let correctAnswers = 0;
-        let wrongAnswers = 0;
-        let unanswered = 0;
-        
-        const detailedAnswers = shuffledQuestions.map((question, index) => {
-          const userAnswer = answers[index];
-          const isCorrect = userAnswer === question.correctAnswer;
-          
-          if (!userAnswer) {
-            unanswered++;
-          } else if (isCorrect) {
-            correctAnswers++;
-          } else {
-            wrongAnswers++;
-          }
-          
-          return {
-            questionId: question._id,
-            selectedAnswer: userAnswer,
-            correctAnswer: question.correctAnswer,
-            isCorrect: isCorrect
-          };
-        });
-        
-        const totalQuestions = shuffledQuestions.length;
-        const score = correctAnswers;
-        const percentage = Math.round((correctAnswers / totalQuestions) * 100);
-        
-        const examResults = {
-          examId: exam._id,
-          examTitle: exam.title,
-          score: score,
-          totalQuestions: totalQuestions,
-          correctAnswers: correctAnswers,
-          wrongAnswers: wrongAnswers,
-          unanswered: unanswered,
-          percentage: percentage,
-          timeSpent: timeSpent,
-          answers: detailedAnswers,
-          submittedAt: new Date().toISOString(),
-          isPublicExam: true
-        };
+  const handleSubmit = async ({ skipConfirm = false } = {}) => {
+    if (!skipConfirm) {
+      const confirmed = window.confirm('هل أنت متأكد من إرسال الإجابات؟');
+      if (!confirmed) return;
+    }
 
-        // Create exam object with shuffled questions for results display
-        const examForResults = {
-          ...exam,
-          questions: shuffledQuestions
-        };
-        
-        setResults(examResults);
-        setExamForResults(examForResults);
-        setShowResults(true);
-        
-        toast.success('تم إرسال الإجابات بنجاح!');
-      } catch (error) {
-        console.error('Error submitting exam:', error);
-        toast.error('حدث خطأ أثناء إرسال الإجابات');
-      } finally {
-        setSubmitting(false);
-      }
+    try {
+      setSubmitting(true);
+
+      const timeSpent = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+
+      const answersPayload = shuffledQuestions.map((question, index) => ({
+        questionId: question._id,
+        selectedAnswer: answers[index] ?? null
+      }));
+
+      const res = await axios.post(`/api/exams/public/${examId}/grade`, {
+        answers: answersPayload
+      });
+
+      const graded = res.data.data;
+
+      const questionById = new Map(
+        (graded.questions || []).map((q) => [q._id.toString(), q])
+      );
+      const questionsForResults = shuffledQuestions
+        .map((q) => questionById.get(q._id.toString()))
+        .filter(Boolean);
+
+      const examResults = {
+        examId: exam._id,
+        examTitle: exam.title,
+        score: graded.score,
+        totalQuestions: graded.totalQuestions,
+        correctAnswers: graded.correctAnswers,
+        wrongAnswers: graded.wrongAnswers,
+        unanswered: graded.unanswered,
+        percentage: graded.percentage,
+        timeSpent,
+        answers: graded.answers,
+        submittedAt: new Date().toISOString(),
+        isPublicExam: true
+      };
+
+      setResults(examResults);
+      setExamForResults({ ...exam, questions: questionsForResults });
+      setShowResults(true);
+
+      toast.success('تم إرسال الإجابات بنجاح!');
+    } catch (error) {
+      console.error('Error submitting exam:', error);
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء إرسال الإجابات');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleTimeUp = () => {
     setTimeUp(true);
-    handleSubmit();
+    handleSubmit({ skipConfirm: true });
   };
 
   const handleBackToHome = () => {

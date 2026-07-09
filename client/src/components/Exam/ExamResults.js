@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle, XCircle } from 'lucide-react';
+import { findAnswerForQuestion, getAnswerStatus } from '../../utils/examAnswerMatching';
 
 const ExamResults = ({ 
   exam, 
@@ -52,14 +53,14 @@ const ExamResults = ({
         <div className="card-body">
           <div className="space-y-4">
             {exam.questions.map((question, index) => {
-              const answer = answers && answers[index] ? answers[index] : null;
-              const isCorrect = answer ? answer.isCorrect : false;
-              const isAnswered = answer && answer.selectedAnswer && answer.selectedAnswer.trim() !== '';
-              const isNotAnswered = !isAnswered;
+              const answer = findAnswerForQuestion(answers, question, index);
+              const status = getAnswerStatus(answer, question);
+              const isCorrect = status === 'correct';
+              const isNotAnswered = status === 'unanswered';
               
               return (
                 <div
-                  key={index}
+                  key={question._id || index}
                   className={`p-4 rounded-lg border-2 ${
                     isCorrect 
                       ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' 

@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, AlertTriangle } from 'lucide-react';
 
-const ExamTimer = ({ timeLimit, onTimeUp, onWarning, onTimeUpdate }) => {
-  const [timeLeft, setTimeLeft] = useState(timeLimit * 60); // Convert minutes to seconds
+const ExamTimer = ({ timeLimit, initialTimeSpent = 0, onTimeUp, onWarning, onTimeUpdate }) => {
+  const totalSeconds = timeLimit * 60;
+  const [timeLeft, setTimeLeft] = useState(Math.max(totalSeconds - initialTimeSpent, 0));
   const [warningShown, setWarningShown] = useState(false);
   const [hasTriggeredTimeUp, setHasTriggeredTimeUp] = useState(false);
 
   useEffect(() => {
-    setTimeLeft(timeLimit * 60);
-    setWarningShown(false);
+    const spent = initialTimeSpent || 0;
+    setTimeLeft(Math.max(totalSeconds - spent, 0));
+    setWarningShown(spent >= totalSeconds - 300);
     setHasTriggeredTimeUp(false);
-  }, [timeLimit]);
+  }, [timeLimit, initialTimeSpent, totalSeconds]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
       if (!hasTriggeredTimeUp) {
         setHasTriggeredTimeUp(true);
-        onTimeUpdate?.(timeLimit * 60);
+        onTimeUpdate?.(totalSeconds);
         onTimeUp();
       }
       return;
@@ -34,7 +36,7 @@ const ExamTimer = ({ timeLimit, onTimeUp, onWarning, onTimeUpdate }) => {
         if (newTimeLeft >= 0) {
           // Calculate time spent and notify parent component
           if (onTimeUpdate) {
-            const timeSpent = (timeLimit * 60) - newTimeLeft;
+            const timeSpent = totalSeconds - newTimeLeft;
             onTimeUpdate(timeSpent);
           }
         }
@@ -43,7 +45,7 @@ const ExamTimer = ({ timeLimit, onTimeUp, onWarning, onTimeUpdate }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft, onTimeUp, onWarning, warningShown, hasTriggeredTimeUp, onTimeUpdate, timeLimit]);
+  }, [timeLeft, onTimeUp, onWarning, warningShown, hasTriggeredTimeUp, onTimeUpdate, totalSeconds]);
 
   const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);

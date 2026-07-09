@@ -6,6 +6,13 @@ import ExamTimer from '../../components/Exam/ExamTimer';
 import QuestionCard from '../../components/Exam/QuestionCard';
 import { ArrowLeft, CheckCircle, RotateCcw } from 'lucide-react';
 import { useAutoSubmitOnLeave } from '../../hooks/useAutoSubmitOnLeave';
+import {
+  loadExamSession,
+  saveExamSession,
+  clearExamSession,
+  restoreShuffledQuestions,
+  buildQuestionOrder
+} from '../../utils/examSessionStorage';
 
 const TakeReviewExam = () => {
   const { reviewExamId } = useParams();
@@ -24,8 +31,27 @@ const TakeReviewExam = () => {
   const [timeSpent, setTimeSpent] = useState(0);
   const [markedForReview, setMarkedForReview] = useState(new Set());
 
+  const persistSession = useCallback((
+    shuffled,
+    order,
+    answersState,
+    current,
+    marked,
+    spent
+  ) => {
+    if (!reviewExamId || !shuffled.length) return;
+    saveExamSession(`review-${reviewExamId}`, {
+      shuffledQuestionIds: shuffled.map((q) => q._id),
+      answers: answersState,
+      currentQuestion: current,
+      markedForReview: [...marked],
+      timeSpent: spent
+    });
+  }, [reviewExamId]);
+
   useEffect(() => {
     fetchReviewExam();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reviewExamId]);
 
   // Function to shuffle array using Fisher-Yates algorithm
@@ -48,26 +74,30 @@ const TakeReviewExam = () => {
       });
       const reviewExamData = res.data.data;
       setReviewExam(reviewExamData);
-      
-      // Shuffle questions for this review exam session
-      const shuffled = shuffleArray(reviewExamData.questions);
+
+      const saved = loadExamSession(`review-${reviewExamId}`);
+      const restored = saved
+        ? restoreShuffledQuestions(reviewExamData.questions, saved.shuffledQuestionIds)
+        : null;
+
+      const shuffled = restored || shuffleArray(reviewExamData.questions);
+      const order = buildQuestionOrder(reviewExamData.questions, shuffled);
+
       setShuffledQuestions(shuffled);
-      
-      // Create question order mapping (original index -> shuffled index)
-      // Use question._id for reliable comparison instead of object reference
-      const order = reviewExamData.questions.map((originalQuestion, originalIndex) => {
-        return shuffled.findIndex(shuffledQuestion => 
-          shuffledQuestion._id === originalQuestion._id
-        );
-      });
       setQuestionOrder(order);
-      
-      // Initialize answers object
+
       const initialAnswers = {};
       shuffled.forEach((_, index) => {
-        initialAnswers[index] = null;
+        initialAnswers[index] = saved?.answers?.[index] ?? null;
       });
       setAnswers(initialAnswers);
+      setCurrentQuestion(saved?.currentQuestion ?? 0);
+      setMarkedForReview(new Set(saved?.markedForReview ?? []));
+      setTimeSpent(saved?.timeSpent ?? 0);
+
+      if (!restored) {
+        persistSession(shuffled, order, initialAnswers, 0, new Set(), 0);
+      }
     } catch (error) {
       console.error('Error fetching review exam:', error);
       toast.error('حدث خطأ أثناء تحميل امتحان المراجعة');
@@ -78,10 +108,11 @@ const TakeReviewExam = () => {
   };
 
   const handleAnswerSelect = (answer) => {
-    setAnswers(prev => ({
-      ...prev,
-      [currentQuestion]: answer
-    }));
+    setAnswers((prev) => {
+      const next = { ...prev, [currentQuestion]: answer };
+      persistSession(shuffledQuestions, questionOrder, next, currentQuestion, markedForReview, timeSpent);
+      return next;
+    });
   };
 
   const handlePrevious = () => {
@@ -112,10 +143,11 @@ const TakeReviewExam = () => {
     if (!reviewExam?.questions?.length) {
       return [];
     }
-    return reviewExam.questions.map((_, originalIndex) => {
+    return reviewExam.questions.map((question, originalIndex) => {
       const shuffledIndex = questionOrder[originalIndex];
       return {
-        selectedAnswer: answers[shuffledIndex] || null
+        questionId: question._id,
+        selectedAnswer: answers[shuffledIndex] ?? null
       };
     });
   }, [reviewExam, questionOrder, answers]);
@@ -147,6 +179,7 @@ const TakeReviewExam = () => {
 
       setResults(res.data.data);
       setShowResults(true);
+      clearExamSession(`review-${reviewExamId}`);
       toast.success(
         reason === 'leave'
           ? 'تم تسليم امتحان المراجعة تلقائيًا عند مغادرة الصفحة'
@@ -176,8 +209,7 @@ const TakeReviewExam = () => {
 
   useAutoSubmitOnLeave({
     enabled: examInProgress,
-    getSubmitRequest,
-    onAutoSubmit: () => handleSubmit({ skipConfirm: true, reason: 'leave' })
+    getSubmitRequest
   });
 
   const handleTimeUp = () => {
@@ -188,6 +220,22 @@ const TakeReviewExam = () => {
 
   const handleTimeWarning = () => {
     toast.error('تبقى 5 دقائق فقط على انتهاء امتحان المراجعة!');
+  };
+
+  const handleTimeUpdate = (spent) => {
+    setTimeSpent(spent);
+    persistSession(shuffledQuestions, questionOrder, answers, currentQuestion, markedForReview, spent);
+  };
+
+  const handleBack = () => {
+    const hasAnswers = Object.values(answers).some((a) => a !== null);
+    if (hasAnswers) {
+      const leave = window.confirm(
+        'إجاباتك محفوظة مؤقتًا. يمكنك العودة لاحقًا لإكمال امتحان المراجعة. هل تريد المغادرة؟'
+      );
+      if (!leave) return;
+    }
+    navigate('/student');
   };
 
   const getAnsweredCount = () => {
@@ -339,7 +387,7 @@ const TakeReviewExam = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
               <button
-                onClick={() => navigate('/student')}
+                onClick={handleBack}
                 className="flex items-center space-x-2 rtl:space-x-reverse text-gray-600 hover:text-gray-800 transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -368,9 +416,10 @@ const TakeReviewExam = () => {
                 {/* Timer moved here */}
                 <ExamTimer
                   timeLimit={reviewExam.timeLimit || reviewExam.questions.length}
+                  initialTimeSpent={timeSpent}
                   onTimeUp={handleTimeUp}
                   onWarning={handleTimeWarning}
-                  onTimeUpdate={setTimeSpent}
+                  onTimeUpdate={handleTimeUpdate}
                 />
               </div>
             </div>

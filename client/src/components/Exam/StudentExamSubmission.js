@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { X, Eye, EyeOff, CheckCircle, XCircle, AlertCircle, BookOpen, Clock, TrendingUp, User, Award, Target, Zap, Star, ChevronLeft, ChevronRight, List, ChevronDown } from 'lucide-react';
+import { findAnswerForQuestion, getAnswerStatus } from '../../utils/examAnswerMatching';
 import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
 
 const StudentExamSubmission = ({ studentId, studentName, examId, examTitle, onClose, allExams = [] }) => {
@@ -56,14 +57,14 @@ const StudentExamSubmission = ({ studentId, studentName, examId, examTitle, onCl
     }
   };
 
-  const getAnswerStatus = (question, studentAnswer) => {
-    if (!studentAnswer || studentAnswer.trim() === '') {
-      return { status: 'unanswered', icon: AlertCircle, color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
-    } else if (studentAnswer === question.correctAnswer) {
+  const getAnswerStatusDisplay = (status) => {
+    if (status === 'correct') {
       return { status: 'correct', icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-100' };
-    } else {
+    }
+    if (status === 'wrong') {
       return { status: 'wrong', icon: XCircle, color: 'text-red-600', bgColor: 'bg-red-100' };
     }
+    return { status: 'unanswered', icon: AlertCircle, color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
   };
 
   const getAnswerLabel = (answer) => {
@@ -334,9 +335,9 @@ const StudentExamSubmission = ({ studentId, studentName, examId, examTitle, onCl
           
           <div className="space-y-8">
             {exam.questions.map((question, index) => {
-              const answer = answers.find(a => a.questionId.toString() === question._id.toString());
+              const answer = findAnswerForQuestion(answers, question, index);
               const studentAnswer = answer ? answer.selectedAnswer : null;
-              const answerStatus = getAnswerStatus(question, studentAnswer);
+              const answerStatus = getAnswerStatusDisplay(getAnswerStatus(answer, question));
               const StatusIcon = answerStatus.icon;
 
               return (

@@ -4,6 +4,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { ArrowLeft, CheckCircle, XCircle, Clock, Calendar, TrendingUp, BookOpen, AlertCircle } from 'lucide-react';
 import { useExamGroupSettings } from '../../context/ExamGroupSettingsContext';
+import { findAnswerForQuestion, getAnswerStatus } from '../../utils/examAnswerMatching';
 
 const ExamHistory = () => {
   const { examId } = useParams();
@@ -21,23 +22,25 @@ const ExamHistory = () => {
   const fetchExamHistory = async () => {
     try {
       setLoading(true);
-      
-      // Fetch exam details
-      const examRes = await axios.get(`/api/exams/${examId}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      setExam(examRes.data.data);
 
-      // Fetch student submission
       const submissionRes = await axios.get(`/api/exams/${examId}/student-submission`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      setStudentSubmission(submissionRes.data.data);
-      
+      const submission = submissionRes.data.data;
+      setStudentSubmission(submission);
+
+      if (submission.exam) {
+        setExam(submission.exam);
+      } else {
+        const examRes = await axios.get(`/api/exams/${examId}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setExam(examRes.data.data);
+      }
     } catch (error) {
       console.error('Error fetching exam history:', error);
       toast.error('حدث خطأ أثناء تحميل تفاصيل الامتحان');
@@ -47,20 +50,10 @@ const ExamHistory = () => {
     }
   };
 
-  const getAnswerStatus = (questionIndex) => {
-    if (!studentSubmission || !studentSubmission.answers) return 'unanswered';
-    
-    const answer = studentSubmission.answers[questionIndex];
-    if (!answer || !answer.selectedAnswer || answer.selectedAnswer.trim() === '') {
-      return 'unanswered';
-    }
-    
-    const question = exam.questions[questionIndex];
-    if (answer.selectedAnswer === question.correctAnswer) {
-      return 'correct';
-    } else {
-      return 'wrong';
-    }
+  const getQuestionAnswerStatus = (question, index) => {
+    if (!studentSubmission?.answers) return 'unanswered';
+    const answer = findAnswerForQuestion(studentSubmission.answers, question, index);
+    return getAnswerStatus(answer, question);
   };
 
   const getAnswerIcon = (status) => {
@@ -184,29 +177,18 @@ const ExamHistory = () => {
                 <span className="text-sm text-gray-600">الوقت المستغرق:</span>
                 <span className="text-sm font-medium">
                   {(() => {
-                    // Debug: log the time values
-                    console.log('Time Debug:', {
-                      timeSpent: studentSubmission.timeSpent,
-                      timeTaken: studentSubmission.timeTaken,
-                      typeTimeSpent: typeof studentSubmission.timeSpent,
-                      typeTimeTaken: typeof studentSubmission.timeTaken
-                    });
-                    
-                    // Check timeSpent first
                     if (studentSubmission.timeSpent && studentSubmission.timeSpent > 0) {
                       const minutes = Math.floor(studentSubmission.timeSpent / 60);
                       const seconds = studentSubmission.timeSpent % 60;
                       return `${minutes}:${seconds.toString().padStart(2, '0')}`;
                     }
-                    
-                    // Check timeTaken as fallback
+
                     if (studentSubmission.timeTaken && studentSubmission.timeTaken > 0) {
                       const minutes = Math.floor(studentSubmission.timeTaken / 60);
                       const seconds = studentSubmission.timeTaken % 60;
                       return `${minutes}:${seconds.toString().padStart(2, '0')}`;
                     }
-                    
-                    // If no time data, show "غير محدد"
+
                     return 'غير محدد';
                   })()}
                 </span>
@@ -216,29 +198,24 @@ const ExamHistory = () => {
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <BookOpen className="h-4 w-4 text-gray-500" />
                 <span className="text-sm text-gray-600">إجمالي الأسئلة:</span>
-                <span className="text-sm font-medium">{exam.totalQuestions}</span>
+                <span className="text-sm font-medium">
+                  {studentSubmission.totalQuestions || exam.totalQuestions}
+                </span>
               </div>
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <TrendingUp className="h-4 w-4 text-gray-500" />
                 <span className="text-sm text-gray-600">الدرجة:</span>
-                <span className="text-sm font-medium">{studentSubmission.score}/{exam.totalQuestions}</span>
+                <span className="text-sm font-medium">
+                  {studentSubmission.score}/{studentSubmission.totalQuestions || exam.totalQuestions}
+                </span>
               </div>
-              {(() => {
-                // Debug: log the bestReviewScore value
-                console.log('Best Review Score Debug:', {
-                  bestReviewScore: studentSubmission.bestReviewScore,
-                  type: typeof studentSubmission.bestReviewScore,
-                  studentSubmission: studentSubmission
-                });
-                
-                return studentSubmission.bestReviewScore && studentSubmission.bestReviewScore > 0 ? (
+              {studentSubmission.bestReviewScore > 0 ? (
                   <div className="flex items-center space-x-2 rtl:space-x-reverse">
                     <TrendingUp className="h-4 w-4 text-orange-500" />
                     <span className="text-sm text-gray-600">أفضل درجة في المراجعة:</span>
                     <span className="text-sm font-medium text-orange-600">{studentSubmission.bestReviewScore.toFixed(2)}%</span>
                   </div>
-                ) : null;
-              })()}
+                ) : null}
             </div>
           </div>
         </div>
@@ -252,12 +229,13 @@ const ExamHistory = () => {
         <div className="card-body">
           <div className="space-y-6">
             {exam.questions.map((question, index) => {
-              const answerStatus = getAnswerStatus(index);
-              const studentAnswer = studentSubmission.answers[index]?.selectedAnswer;
+              const answer = findAnswerForQuestion(studentSubmission.answers, question, index);
+              const answerStatus = getQuestionAnswerStatus(question, index);
+              const studentAnswer = answer?.selectedAnswer;
               
               return (
                 <div
-                  key={index}
+                  key={question._id || index}
                   className={`p-6 rounded-lg border-2 ${getAnswerColor(answerStatus)}`}
                 >
                   <div className="flex items-start justify-between mb-4">

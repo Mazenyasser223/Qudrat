@@ -9,6 +9,10 @@ const {
   recalculateExamScores,
   scoringRelevantChanges
 } = require('../utils/recalculateExamScores');
+const {
+  gradeAnswersByQuestionId,
+  stripExamForStudent
+} = require('../utils/examGrading');
 
 // @desc    Get all exams
 // @route   GET /api/exams
@@ -53,15 +57,87 @@ const getExam = async (req, res) => {
       });
     }
 
+    let data = exam;
+    if (req.user.role === 'student') {
+      data = stripExamForStudent(exam);
+    }
+
     res.json({
       success: true,
-      data: exam
+      data
     });
   } catch (error) {
     console.error('Get exam error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error while fetching exam'
+    });
+  }
+};
+
+// @desc    Start exam (student only) — sets in_progress and returns exam without answers
+// @route   POST /api/exams/:id/start
+// @access  Private (Student only)
+const startExam = async (req, res) => {
+  try {
+    const exam = await Exam.findById(req.params.id)
+      .populate('createdBy', 'name email');
+
+    if (!exam) {
+      return res.status(404).json({
+        success: false,
+        message: 'Exam not found'
+      });
+    }
+
+    const student = await User.findById(req.user.id);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Student not found'
+      });
+    }
+
+    const examProgress = student.examProgress.find(
+      (progress) => progress.examId.toString() === req.params.id
+    );
+
+    if (!examProgress) {
+      return res.status(404).json({
+        success: false,
+        message: 'Exam progress not found'
+      });
+    }
+
+    if (examProgress.status === 'completed') {
+      return res.status(400).json({
+        success: false,
+        message: 'Exam already completed. You can only take each exam once.'
+      });
+    }
+
+    if (examProgress.status === 'locked') {
+      return res.status(403).json({
+        success: false,
+        message: 'This exam is locked. Complete previous exams first.'
+      });
+    }
+
+    if (examProgress.status === 'unlocked') {
+      examProgress.status = 'in_progress';
+      examProgress.startTime = new Date();
+      await student.save();
+    }
+
+    res.json({
+      success: true,
+      data: stripExamForStudent(exam)
+    });
+  } catch (error) {
+    console.error('Start exam error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while starting exam'
     });
   }
 };
@@ -401,7 +477,7 @@ const submitExam = async (req, res) => {
 
     // Only select needed fields for better performance (no .lean() so we can update statistics)
     const exam = await Exam.findById(req.params.id)
-      .select('questions.correctAnswer questions._id title examGroup order totalQuestions statistics');
+      .select('title examGroup order totalQuestions statistics questions');
     if (!exam) {
       return res.status(404).json({
         success: false,
@@ -436,34 +512,24 @@ const submitExam = async (req, res) => {
       });
     }
 
-    // Optimized score calculation - batch processing
-    let correctAnswers = 0;
-    const detailedAnswers = [];
-    const wrongQuestions = [];
-
-    // Process all answers in a single loop for better performance
-    for (let i = 0; i < answers.length; i++) {
-      const answer = answers[i];
-      const question = exam.questions[i];
-      
-      if (!question) {
-        continue; // Skip if question doesn't exist
-      }
-      
-      const isCorrect = answer.selectedAnswer === question.correctAnswer;
-      
-      if (isCorrect) {
-        correctAnswers++;
-      } else {
-        wrongQuestions.push(question._id);
-      }
-
-      detailedAnswers.push({
-        questionId: question._id,
-        selectedAnswer: answer.selectedAnswer,
-        isCorrect
+    if (examProgress.status !== 'unlocked' && examProgress.status !== 'in_progress') {
+      return res.status(403).json({
+        success: false,
+        message: 'This exam is locked. Complete previous exams first.'
       });
     }
+
+    if (answers.length !== exam.questions.length) {
+      return res.status(400).json({
+        success: false,
+        message: `عدد الإجابات (${answers.length}) لا يتطابق مع عدد الأسئلة (${exam.questions.length})`
+      });
+    }
+
+    const { correctAnswers, detailedAnswers, wrongQuestions } = gradeAnswersByQuestionId(
+      exam.questions,
+      answers
+    );
 
     const score = correctAnswers;
     const percentage = (correctAnswers / exam.questions.length) * 100;
@@ -544,7 +610,15 @@ const submitExam = async (req, res) => {
         timeSpent: timeSpent || 0,
         submittedAt: examProgress.submittedAt,
         hasReviewExam: wrongQuestions.length > 0,
-        reviewExamId: reviewExam ? reviewExam._id : null
+        reviewExamId: reviewExam ? reviewExam._id : null,
+        answers: detailedAnswers,
+        exam: {
+          _id: exam._id,
+          title: exam.title,
+          examGroup: exam.examGroup,
+          order: exam.order,
+          questions: exam.questions
+        }
       }
     });
   } catch (error) {
@@ -747,10 +821,8 @@ const getReviewExam = async (req, res) => {
       const originalQuestion = originalExam.questions[reviewQuestion.originalQuestionIndex];
       return {
         _id: reviewQuestion.questionId,
-        questionImage: originalQuestion.questionImage,
-        options: originalQuestion.options,
-        correctAnswer: originalQuestion.correctAnswer,
-        explanation: originalQuestion.explanation
+        questionImage: originalQuestion?.questionImage,
+        options: originalQuestion?.options
       };
     });
 
@@ -838,38 +910,44 @@ const submitReviewExam = async (req, res) => {
     console.log('✅ Original exam found:', originalExam._id);
     console.log('📊 Original exam questions:', originalExam.questions.length);
 
-    // Calculate score
+    // Calculate score — prefer questionId matching over positional index
     let correctAnswers = 0;
     const detailedAnswers = [];
 
     answers.forEach((answer, index) => {
       const reviewQuestion = reviewExam.questions[index];
-      const originalQuestion = originalExam.questions[reviewQuestion.originalQuestionIndex];
-      
-      // Check if question still exists (exam might have been edited)
+      let originalQuestion = null;
+
+      if (answer?.questionId) {
+        originalQuestion = originalExam.questions.find(
+          (q) => q._id.toString() === answer.questionId.toString()
+        );
+      }
+      if (!originalQuestion && reviewQuestion) {
+        originalQuestion = originalExam.questions[reviewQuestion.originalQuestionIndex];
+      }
+
       if (!originalQuestion) {
-        console.log(`⚠️ Question ${index + 1}: Original question not found at index ${reviewQuestion.originalQuestionIndex}`);
+        console.log(`⚠️ Question ${index + 1}: Original question not found`);
         detailedAnswers.push({
-          questionId: reviewQuestion.questionId,
-          selectedAnswer: answer?.selectedAnswer || null,
+          questionId: reviewQuestion?.questionId || answer?.questionId,
+          selectedAnswer: answer?.selectedAnswer ?? null,
           isCorrect: false
         });
         return;
       }
 
-      // Handle null/undefined answers
-      const selectedAnswer = answer?.selectedAnswer || null;
-      const isCorrect = selectedAnswer && selectedAnswer === originalQuestion.correctAnswer;
-      
-      console.log(`Question ${index + 1}: selected=${selectedAnswer}, correct=${originalQuestion.correctAnswer}, isCorrect=${isCorrect}`);
-      
+      const selectedAnswer = answer?.selectedAnswer ?? null;
+      const isCorrect =
+        selectedAnswer != null && selectedAnswer === originalQuestion.correctAnswer;
+
       if (isCorrect) {
         correctAnswers++;
       }
 
       detailedAnswers.push({
-        questionId: reviewQuestion.questionId,
-        selectedAnswer: selectedAnswer,
+        questionId: originalQuestion._id,
+        selectedAnswer,
         isCorrect
       });
     });
@@ -999,7 +1077,8 @@ const repeatExam = async (req, res) => {
     // Reset the exam progress
     student.examProgress[progressIndex] = {
       examId: examId,
-      status: 'not_started',
+      examGroup: exam.examGroup,
+      status: 'unlocked',
       correctAnswers: 0,
       totalQuestions: exam.questions.length,
       wrongQuestions: [],
@@ -1246,10 +1325,15 @@ const getMySubmission = async (req, res) => {
       }
     }
 
+    const exam = await Exam.findById(req.params.examId)
+      .select('title examGroup order questions')
+      .lean();
+
     res.json({
       success: true,
       data: {
         examId: examProgress.examId,
+        exam,
         score: examProgress.score,
         percentage: examProgress.percentage,
         correctAnswers: examProgress.correctAnswers,
@@ -1297,13 +1381,96 @@ const getPublicExam = async (req, res) => {
 
     res.json({
       success: true,
-      data: exam
+      data: stripExamForStudent(exam)
     });
   } catch (error) {
     console.error('Get public exam error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error while fetching exam'
+    });
+  }
+};
+
+// @desc    Grade public (free) exam answers — no auth, not stored
+// @route   POST /api/exams/public/:id/grade
+// @access  Public
+const gradePublicExam = async (req, res) => {
+  try {
+    const { answers } = req.body;
+
+    if (!Array.isArray(answers)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Answers must be an array'
+      });
+    }
+
+    const exam = await Exam.findById(req.params.id);
+    if (!exam) {
+      return res.status(404).json({
+        success: false,
+        message: 'Exam not found'
+      });
+    }
+
+    if (!exam.isFreeExam) {
+      return res.status(403).json({
+        success: false,
+        message: 'This exam is not available for public access'
+      });
+    }
+
+    if (answers.length !== exam.questions.length) {
+      return res.status(400).json({
+        success: false,
+        message: `عدد الإجابات (${answers.length}) لا يتطابق مع عدد الأسئلة (${exam.questions.length})`
+      });
+    }
+
+    const { correctAnswers, detailedAnswers } = gradeAnswersByQuestionId(
+      exam.questions,
+      answers
+    );
+
+    const totalQuestions = exam.questions.length;
+    const score = correctAnswers;
+    const percentage = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
+
+    const answersWithCorrect = detailedAnswers.map((a) => {
+      const question = exam.questions.find(
+        (q) => q._id.toString() === a.questionId.toString()
+      );
+      return {
+        ...a,
+        correctAnswer: question?.correctAnswer
+      };
+    });
+
+    res.json({
+      success: true,
+      data: {
+        score,
+        percentage,
+        correctAnswers,
+        totalQuestions,
+        wrongAnswers: totalQuestions - correctAnswers,
+        unanswered: detailedAnswers.filter((a) => !a.selectedAnswer).length,
+        answers: answersWithCorrect,
+        questions: exam.questions.map((q) => ({
+          _id: q._id,
+          questionImage: q.questionImage,
+          options: q.options,
+          correctAnswer: q.correctAnswer,
+          explanation: q.explanation
+        }))
+      }
+    });
+  } catch (error) {
+    console.error('Grade public exam error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while grading exam'
     });
   }
 };
@@ -1599,6 +1766,7 @@ const transferExam = async (req, res) => {
 module.exports = {
   getExams,
   getExam,
+  startExam,
   createExam,
   updateExam,
   deleteExam,
@@ -1614,6 +1782,7 @@ module.exports = {
   getStudentSubmission,
   getMySubmission,
   getPublicExam,
+  gradePublicExam,
   getFreeExams,
   getFreeExamsForManagement,
   setExamAsFree,
