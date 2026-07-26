@@ -55,6 +55,7 @@ const ExamGroups = () => {
     groupName: '',
     groupNumber: null,
     examCount: 0,
+    examAction: 'move', // 'move' | 'delete'
     moveExamsTo: ''
   });
   const [examDeleteDialog, setExamDeleteDialog] = useState({ isOpen: false, examId: null, examTitle: '' });
@@ -247,6 +248,16 @@ const ExamGroups = () => {
     setEditCurriculumName('');
   };
 
+  const emptyDeleteDialog = {
+    isOpen: false,
+    groupId: null,
+    groupName: '',
+    groupNumber: null,
+    examCount: 0,
+    examAction: 'move',
+    moveExamsTo: ''
+  };
+
   const handleDeleteGroup = (group) => {
     const examCount = group.customSlotExamCount ?? 0;
     const defaultDest =
@@ -261,6 +272,7 @@ const ExamGroups = () => {
       groupName: group.name,
       groupNumber: group.groupNumber,
       examCount,
+      examAction: 'move',
       moveExamsTo: examCount > 0 ? defaultDest : ''
     });
   };
@@ -268,30 +280,35 @@ const ExamGroups = () => {
   const confirmDeleteGroup = async () => {
     if (!deleteDialog.groupId) return;
 
-    if (deleteDialog.examCount > 0 && deleteDialog.moveExamsTo === '') {
+    const willDeleteExams = deleteDialog.examCount > 0 && deleteDialog.examAction === 'delete';
+    const willMoveExams = deleteDialog.examCount > 0 && deleteDialog.examAction === 'move';
+
+    if (willMoveExams && deleteDialog.moveExamsTo === '') {
       toast.error('اختر المجموعة التي تُنقل إليها الامتحانات');
       return;
     }
 
     try {
-      const payload =
-        deleteDialog.examCount > 0
-          ? { data: { moveExamsTo: parseInt(deleteDialog.moveExamsTo, 10) }, headers: authHeaders() }
-          : { headers: authHeaders() };
-      await axios.delete(`/api/exam-groups/${deleteDialog.groupId}`, payload);
-      toast.success(
-        deleteDialog.examCount > 0
-          ? 'تم حذف المجلد ونقل الامتحانات بنجاح'
-          : 'تم حذف المجلد بنجاح'
-      );
-      setDeleteDialog({
-        isOpen: false,
-        groupId: null,
-        groupName: '',
-        groupNumber: null,
-        examCount: 0,
-        moveExamsTo: ''
+      let data;
+      if (willDeleteExams) {
+        data = { deleteExams: true };
+      } else if (willMoveExams) {
+        data = { moveExamsTo: parseInt(deleteDialog.moveExamsTo, 10) };
+      }
+
+      await axios.delete(`/api/exam-groups/${deleteDialog.groupId}`, {
+        headers: authHeaders(),
+        ...(data ? { data } : {})
       });
+
+      toast.success(
+        willDeleteExams
+          ? 'تم حذف المجلد والامتحانات بنجاح'
+          : willMoveExams
+            ? 'تم حذف المجلد ونقل الامتحانات بنجاح'
+            : 'تم حذف المجلد بنجاح'
+      );
+      setDeleteDialog(emptyDeleteDialog);
       fetchData();
     } catch (error) {
       console.error('Error deleting group:', error);
@@ -300,14 +317,7 @@ const ExamGroups = () => {
   };
 
   const cancelDeleteGroup = () => {
-    setDeleteDialog({
-      isOpen: false,
-      groupId: null,
-      groupName: '',
-      groupNumber: null,
-      examCount: 0,
-      moveExamsTo: ''
-    });
+    setDeleteDialog(emptyDeleteDialog);
   };
 
   const handleDeleteExam = (examId, examTitle) => {
@@ -1005,30 +1015,71 @@ const ExamGroups = () => {
               <p className="text-gray-600 leading-relaxed">
                 هل أنت متأكد من حذف المجلد «{deleteDialog.groupName}»؟
               </p>
-              <p className="text-sm text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
-                لن يتم حذف أي امتحان — يُحذف المجلد فقط.
-              </p>
-              {deleteDialog.examCount > 0 && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    نقل الامتحانات ({deleteDialog.examCount}) إلى:
+              {deleteDialog.examCount > 0 ? (
+                <div className="space-y-3">
+                  <p className="text-sm font-medium text-gray-700">
+                    ماذا تفعل بـ {deleteDialog.examCount} امتحان في هذا المجلد؟
+                  </p>
+                  <label className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                    <input
+                      type="radio"
+                      name="examAction"
+                      className="mt-1"
+                      checked={deleteDialog.examAction === 'move'}
+                      onChange={() =>
+                        setDeleteDialog((prev) => ({ ...prev, examAction: 'move' }))
+                      }
+                    />
+                    <span className="flex-1 text-sm text-gray-700">
+                      نقل الامتحانات إلى مجموعة أخرى (بدون حذفها)
+                    </span>
                   </label>
-                  <select
-                    value={deleteDialog.moveExamsTo}
-                    onChange={(e) =>
-                      setDeleteDialog((prev) => ({ ...prev, moveExamsTo: e.target.value }))
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  >
-                    {transferTargets
-                      .filter((t) => t.value !== deleteDialog.groupNumber)
-                      .map((t) => (
-                        <option key={t.value} value={String(t.value)}>
-                          {t.label}
-                        </option>
-                      ))}
-                  </select>
+                  {deleteDialog.examAction === 'move' && (
+                    <div className="pr-8">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        نقل إلى:
+                      </label>
+                      <select
+                        value={deleteDialog.moveExamsTo}
+                        onChange={(e) =>
+                          setDeleteDialog((prev) => ({ ...prev, moveExamsTo: e.target.value }))
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      >
+                        {transferTargets
+                          .filter((t) => t.value !== deleteDialog.groupNumber)
+                          .map((t) => (
+                            <option key={t.value} value={String(t.value)}>
+                              {t.label}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  )}
+                  <label className="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:bg-red-50 has-[:checked]:border-red-400 has-[:checked]:bg-red-50">
+                    <input
+                      type="radio"
+                      name="examAction"
+                      className="mt-1"
+                      checked={deleteDialog.examAction === 'delete'}
+                      onChange={() =>
+                        setDeleteDialog((prev) => ({ ...prev, examAction: 'delete' }))
+                      }
+                    />
+                    <span className="flex-1 text-sm text-red-700">
+                      حذف الامتحانات مع المجلد
+                    </span>
+                  </label>
+                  {deleteDialog.examAction === 'delete' && (
+                    <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                      سيتم حذف المجلد و{deleteDialog.examCount} امتحان نهائياً. لا يمكن التراجع.
+                    </p>
+                  )}
                 </div>
+              ) : (
+                <p className="text-sm text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
+                  المجلد فارغ — يُحذف المجلد فقط.
+                </p>
               )}
             </div>
             <div className="flex justify-end space-x-3 rtl:space-x-reverse p-6 border-t border-gray-200 bg-gray-50 rounded-b-lg">
@@ -1044,7 +1095,9 @@ const ExamGroups = () => {
                 onClick={confirmDeleteGroup}
                 className="px-4 py-2 rounded-lg transition-colors font-medium bg-red-600 hover:bg-red-700 text-white"
               >
-                حذف المجلد
+                {deleteDialog.examAction === 'delete' && deleteDialog.examCount > 0
+                  ? 'حذف المجلد والامتحانات'
+                  : 'حذف المجلد'}
               </button>
             </div>
           </div>

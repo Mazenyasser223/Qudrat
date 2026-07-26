@@ -1,5 +1,6 @@
 const ExamGroup = require('../models/ExamGroup');
 const Exam = require('../models/Exam');
+const User = require('../models/User');
 const SiteSettings = require('../models/SiteSettings');
 const { DEFAULT_CURRICULUM_ORDER } = SiteSettings;
 const { normalizeCurriculumGroupNames } = require('../utils/curriculumGroupNames');
@@ -309,7 +310,7 @@ const updateExamGroup = async (req, res) => {
   }
 };
 
-// @desc    Delete exam group (folder only — exams are kept and optionally moved)
+// @desc    Delete exam group (move exams elsewhere, or delete exams with the folder)
 // @route   DELETE /api/exam-groups/:id
 // @access  Private (Teacher only)
 const deleteExamGroup = async (req, res) => {
@@ -330,6 +331,8 @@ const deleteExamGroup = async (req, res) => {
       });
     }
 
+    const deleteExams = req.body?.deleteExams === true || req.body?.deleteExams === 'true';
+
     // Exams that live in this custom folder slot (not curriculum-linked filter counts)
     const examsInFolder = await Exam.find({
       examGroup: group.groupNumber,
@@ -338,82 +341,104 @@ const deleteExamGroup = async (req, res) => {
 
     let movedCount = 0;
     let movedTo = null;
+    let deletedExamCount = 0;
 
     if (examsInFolder.length > 0) {
-      const bodyTarget =
-        req.body?.moveExamsTo !== undefined && req.body?.moveExamsTo !== null && req.body?.moveExamsTo !== ''
-          ? parseInt(req.body.moveExamsTo, 10)
-          : null;
-      const linked =
-        group.linkedCurriculumGroup !== undefined && group.linkedCurriculumGroup !== null
-          ? group.linkedCurriculumGroup
-          : inferStandardGroupFromName(group.name);
-      const targetGroupNum = bodyTarget !== null && !Number.isNaN(bodyTarget) ? bodyTarget : linked;
+      if (deleteExams) {
+        const examIds = examsInFolder.map((e) => e._id);
 
-      if (targetGroupNum === null || targetGroupNum === undefined || Number.isNaN(targetGroupNum)) {
-        return res.status(400).json({
-          success: false,
-          message:
-            'Folder contains exams. Provide moveExamsTo (destination group number) so exams are kept and moved before deleting the folder.'
-        });
-      }
+        await Exam.updateMany(
+          { _id: { $in: examIds } },
+          { $set: { isActive: false } }
+        );
 
-      if (targetGroupNum === group.groupNumber) {
-        return res.status(400).json({
-          success: false,
-          message: 'Destination group must be different from the folder being deleted'
-        });
-      }
+        await User.updateMany(
+          { 'examProgress.examId': { $in: examIds } },
+          { $pull: { examProgress: { examId: { $in: examIds } } } }
+        );
 
-      if (targetGroupNum >= 9) {
-        const targetFolder = await ExamGroup.findOne({ groupNumber: targetGroupNum, isActive: true });
-        if (!targetFolder) {
+        deletedExamCount = examIds.length;
+      } else {
+        const bodyTarget =
+          req.body?.moveExamsTo !== undefined && req.body?.moveExamsTo !== null && req.body?.moveExamsTo !== ''
+            ? parseInt(req.body.moveExamsTo, 10)
+            : null;
+        const linked =
+          group.linkedCurriculumGroup !== undefined && group.linkedCurriculumGroup !== null
+            ? group.linkedCurriculumGroup
+            : inferStandardGroupFromName(group.name);
+        const targetGroupNum = bodyTarget !== null && !Number.isNaN(bodyTarget) ? bodyTarget : linked;
+
+        if (targetGroupNum === null || targetGroupNum === undefined || Number.isNaN(targetGroupNum)) {
           return res.status(400).json({
             success: false,
-            message: 'Destination folder not found'
+            message:
+              'Folder contains exams. Provide moveExamsTo, or set deleteExams=true to delete exams with the folder.'
           });
         }
-      } else if (targetGroupNum < 0 || targetGroupNum > 8) {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid destination group'
-        });
-      }
 
-      const lastInTarget = await Exam.findOne({
-        examGroup: targetGroupNum,
-        isActive: true
-      }).sort({ order: -1 });
-      let nextOrder = lastInTarget ? lastInTarget.order + 1 : 1;
+        if (targetGroupNum === group.groupNumber) {
+          return res.status(400).json({
+            success: false,
+            message: 'Destination group must be different from the folder being deleted'
+          });
+        }
 
-      for (const exam of examsInFolder) {
-        exam.examGroup = targetGroupNum;
-        exam.order = nextOrder;
-        nextOrder += 1;
-        await exam.save();
-      }
+        if (targetGroupNum >= 9) {
+          const targetFolder = await ExamGroup.findOne({ groupNumber: targetGroupNum, isActive: true });
+          if (!targetFolder) {
+            return res.status(400).json({
+              success: false,
+              message: 'Destination folder not found'
+            });
+          }
+        } else if (targetGroupNum < 0 || targetGroupNum > 8) {
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid destination group'
+          });
+        }
 
-      movedCount = examsInFolder.length;
-      movedTo = targetGroupNum;
+        const lastInTarget = await Exam.findOne({
+          examGroup: targetGroupNum,
+          isActive: true
+        }).sort({ order: -1 });
+        let nextOrder = lastInTarget ? lastInTarget.order + 1 : 1;
 
-      // Refresh denormalized count on destination custom folder if any
-      if (targetGroupNum >= 9) {
-        const destCount = await Exam.countDocuments({ examGroup: targetGroupNum, isActive: true });
-        await ExamGroup.findOneAndUpdate({ groupNumber: targetGroupNum }, { examCount: destCount });
+        for (const exam of examsInFolder) {
+          exam.examGroup = targetGroupNum;
+          exam.order = nextOrder;
+          nextOrder += 1;
+          await exam.save();
+        }
+
+        movedCount = examsInFolder.length;
+        movedTo = targetGroupNum;
+
+        // Refresh denormalized count on destination custom folder if any
+        if (targetGroupNum >= 9) {
+          const destCount = await Exam.countDocuments({ examGroup: targetGroupNum, isActive: true });
+          await ExamGroup.findOneAndUpdate({ groupNumber: targetGroupNum }, { examCount: destCount });
+        }
       }
     }
 
     await ExamGroup.findByIdAndDelete(req.params.id);
     invalidateCache('/api/exams');
 
+    let message = 'Exam group deleted successfully';
+    if (deletedExamCount > 0) {
+      message = `Exam group deleted successfully. ${deletedExamCount} exam(s) deleted.`;
+    } else if (movedCount > 0) {
+      message = `Exam group deleted successfully. ${movedCount} exam(s) moved to group ${movedTo}.`;
+    }
+
     res.json({
       success: true,
-      message:
-        movedCount > 0
-          ? `Exam group deleted successfully. ${movedCount} exam(s) moved to group ${movedTo}.`
-          : 'Exam group deleted successfully',
+      message,
       movedCount,
-      movedTo
+      movedTo,
+      deletedExamCount
     });
   } catch (error) {
     console.error('Delete exam group error:', error);
