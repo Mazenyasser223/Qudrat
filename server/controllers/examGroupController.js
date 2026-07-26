@@ -3,6 +3,7 @@ const Exam = require('../models/Exam');
 const SiteSettings = require('../models/SiteSettings');
 const { DEFAULT_CURRICULUM_ORDER } = SiteSettings;
 const { normalizeCurriculumGroupNames } = require('../utils/curriculumGroupNames');
+const { invalidateCache } = require('../middleware/cache');
 
 /** When no explicit DB link, map common Arabic names to standard examGroup 0–8. */
 const inferStandardGroupFromName = (name) => {
@@ -308,7 +309,7 @@ const updateExamGroup = async (req, res) => {
   }
 };
 
-// @desc    Delete exam group
+// @desc    Delete exam group (folder only — exams are kept and optionally moved)
 // @route   DELETE /api/exam-groups/:id
 // @access  Private (Teacher only)
 const deleteExamGroup = async (req, res) => {
@@ -329,23 +330,90 @@ const deleteExamGroup = async (req, res) => {
       });
     }
 
-    // Check if group has active exams
-    const examCount = await Exam.countDocuments({ 
-      examGroup: group.groupNumber, 
-      isActive: true 
-    });
-    if (examCount > 0) {
-      return res.status(400).json({
-        success: false,
-        message: `Cannot delete group. It contains ${examCount} exam(s). Please move or delete the exams first.`
-      });
+    // Exams that live in this custom folder slot (not curriculum-linked filter counts)
+    const examsInFolder = await Exam.find({
+      examGroup: group.groupNumber,
+      isActive: true
+    }).sort({ order: 1 });
+
+    let movedCount = 0;
+    let movedTo = null;
+
+    if (examsInFolder.length > 0) {
+      const bodyTarget =
+        req.body?.moveExamsTo !== undefined && req.body?.moveExamsTo !== null && req.body?.moveExamsTo !== ''
+          ? parseInt(req.body.moveExamsTo, 10)
+          : null;
+      const linked =
+        group.linkedCurriculumGroup !== undefined && group.linkedCurriculumGroup !== null
+          ? group.linkedCurriculumGroup
+          : inferStandardGroupFromName(group.name);
+      const targetGroupNum = bodyTarget !== null && !Number.isNaN(bodyTarget) ? bodyTarget : linked;
+
+      if (targetGroupNum === null || targetGroupNum === undefined || Number.isNaN(targetGroupNum)) {
+        return res.status(400).json({
+          success: false,
+          message:
+            'Folder contains exams. Provide moveExamsTo (destination group number) so exams are kept and moved before deleting the folder.'
+        });
+      }
+
+      if (targetGroupNum === group.groupNumber) {
+        return res.status(400).json({
+          success: false,
+          message: 'Destination group must be different from the folder being deleted'
+        });
+      }
+
+      if (targetGroupNum >= 9) {
+        const targetFolder = await ExamGroup.findOne({ groupNumber: targetGroupNum, isActive: true });
+        if (!targetFolder) {
+          return res.status(400).json({
+            success: false,
+            message: 'Destination folder not found'
+          });
+        }
+      } else if (targetGroupNum < 0 || targetGroupNum > 8) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid destination group'
+        });
+      }
+
+      const lastInTarget = await Exam.findOne({
+        examGroup: targetGroupNum,
+        isActive: true
+      }).sort({ order: -1 });
+      let nextOrder = lastInTarget ? lastInTarget.order + 1 : 1;
+
+      for (const exam of examsInFolder) {
+        exam.examGroup = targetGroupNum;
+        exam.order = nextOrder;
+        nextOrder += 1;
+        await exam.save();
+      }
+
+      movedCount = examsInFolder.length;
+      movedTo = targetGroupNum;
+
+      // Refresh denormalized count on destination custom folder if any
+      if (targetGroupNum >= 9) {
+        const destCount = await Exam.countDocuments({ examGroup: targetGroupNum, isActive: true });
+        await ExamGroup.findOneAndUpdate({ groupNumber: targetGroupNum }, { examCount: destCount });
+      }
     }
 
     await ExamGroup.findByIdAndDelete(req.params.id);
+    invalidateCache('/api/exams');
 
     res.json({
       success: true,
-      message: 'Exam group deleted successfully'
+      message:
+        movedCount > 0
+          ? `Exam group deleted successfully. ${movedCount} exam(s) moved to group ${movedTo}.`
+          : 'Exam group deleted successfully',
+      movedCount,
+      movedTo
     });
   } catch (error) {
     console.error('Delete exam group error:', error);

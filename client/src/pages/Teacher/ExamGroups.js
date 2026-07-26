@@ -49,7 +49,14 @@ const ExamGroups = () => {
   const [editingGroup, setEditingGroup] = useState(null);
   const [editName, setEditName] = useState('');
   const [editLinked, setEditLinked] = useState('');
-  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, groupId: null, groupName: '' });
+  const [deleteDialog, setDeleteDialog] = useState({
+    isOpen: false,
+    groupId: null,
+    groupName: '',
+    groupNumber: null,
+    examCount: 0,
+    moveExamsTo: ''
+  });
   const [examDeleteDialog, setExamDeleteDialog] = useState({ isOpen: false, examId: null, examTitle: '' });
   const [curriculumExamCounts, setCurriculumExamCounts] = useState(null);
   const [curriculumOrder, setCurriculumOrder] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8]);
@@ -240,26 +247,67 @@ const ExamGroups = () => {
     setEditCurriculumName('');
   };
 
-  const handleDeleteGroup = (groupId, groupName) => {
-    setDeleteDialog({ isOpen: true, groupId, groupName });
+  const handleDeleteGroup = (group) => {
+    const examCount = group.customSlotExamCount ?? 0;
+    const defaultDest =
+      group.linkedCurriculumGroup !== undefined && group.linkedCurriculumGroup !== null
+        ? String(group.linkedCurriculumGroup)
+        : group.resolvedCurriculumSlot !== undefined && group.resolvedCurriculumSlot !== null
+          ? String(group.resolvedCurriculumSlot)
+          : '0';
+    setDeleteDialog({
+      isOpen: true,
+      groupId: group._id,
+      groupName: group.name,
+      groupNumber: group.groupNumber,
+      examCount,
+      moveExamsTo: examCount > 0 ? defaultDest : ''
+    });
   };
 
   const confirmDeleteGroup = async () => {
     if (!deleteDialog.groupId) return;
 
+    if (deleteDialog.examCount > 0 && deleteDialog.moveExamsTo === '') {
+      toast.error('اختر المجموعة التي تُنقل إليها الامتحانات');
+      return;
+    }
+
     try {
-      await axios.delete(`/api/exam-groups/${deleteDialog.groupId}`, { headers: authHeaders() });
-      toast.success('تم حذف المجموعة بنجاح');
-      setDeleteDialog({ isOpen: false, groupId: null, groupName: '' });
+      const payload =
+        deleteDialog.examCount > 0
+          ? { data: { moveExamsTo: parseInt(deleteDialog.moveExamsTo, 10) }, headers: authHeaders() }
+          : { headers: authHeaders() };
+      await axios.delete(`/api/exam-groups/${deleteDialog.groupId}`, payload);
+      toast.success(
+        deleteDialog.examCount > 0
+          ? 'تم حذف المجلد ونقل الامتحانات بنجاح'
+          : 'تم حذف المجلد بنجاح'
+      );
+      setDeleteDialog({
+        isOpen: false,
+        groupId: null,
+        groupName: '',
+        groupNumber: null,
+        examCount: 0,
+        moveExamsTo: ''
+      });
       fetchData();
     } catch (error) {
       console.error('Error deleting group:', error);
-      toast.error(error.response?.data?.message || 'حدث خطأ أثناء حذف المجموعة');
+      toast.error(error.response?.data?.message || 'حدث خطأ أثناء حذف المجلد');
     }
   };
 
   const cancelDeleteGroup = () => {
-    setDeleteDialog({ isOpen: false, groupId: null, groupName: '' });
+    setDeleteDialog({
+      isOpen: false,
+      groupId: null,
+      groupName: '',
+      groupNumber: null,
+      examCount: 0,
+      moveExamsTo: ''
+    });
   };
 
   const handleDeleteExam = (examId, examTitle) => {
@@ -819,11 +867,12 @@ const ExamGroups = () => {
                     >
                       <Plus className="h-4 w-4" />
                     </button>
-                    {(group.customSlotExamCount ?? 0) === 0 && isCustom && (
+                    {isCustom && (
                       <button
-                        onClick={() => handleDeleteGroup(group._id, group.name)}
+                        type="button"
+                        onClick={() => handleDeleteGroup(group)}
                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        title="حذف المجموعة (فقط إذا كانت فارغة)"
+                        title="حذف المجلد (بدون حذف الامتحانات)"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -934,16 +983,73 @@ const ExamGroups = () => {
         </div>
       )}
 
-      <ConfirmationDialog
-        isOpen={deleteDialog.isOpen}
-        onClose={cancelDeleteGroup}
-        onConfirm={confirmDeleteGroup}
-        title="حذف المجموعة"
-        message={`هل أنت متأكد من حذف المجموعة "${deleteDialog.groupName}"؟ سيتم حذف المجموعة نهائياً.`}
-        confirmText="حذف المجموعة"
-        cancelText="إلغاء"
-        type="danger"
-      />
+      {deleteDialog.isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) cancelDeleteGroup();
+          }}
+        >
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full border-2 border-red-200">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">حذف المجلد</h3>
+              <button
+                type="button"
+                onClick={cancelDeleteGroup}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4 text-right">
+              <p className="text-gray-600 leading-relaxed">
+                هل أنت متأكد من حذف المجلد «{deleteDialog.groupName}»؟
+              </p>
+              <p className="text-sm text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
+                لن يتم حذف أي امتحان — يُحذف المجلد فقط.
+              </p>
+              {deleteDialog.examCount > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    نقل الامتحانات ({deleteDialog.examCount}) إلى:
+                  </label>
+                  <select
+                    value={deleteDialog.moveExamsTo}
+                    onChange={(e) =>
+                      setDeleteDialog((prev) => ({ ...prev, moveExamsTo: e.target.value }))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    {transferTargets
+                      .filter((t) => t.value !== deleteDialog.groupNumber)
+                      .map((t) => (
+                        <option key={t.value} value={String(t.value)}>
+                          {t.label}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end space-x-3 rtl:space-x-reverse p-6 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+              <button
+                type="button"
+                onClick={cancelDeleteGroup}
+                className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              >
+                إلغاء
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteGroup}
+                className="px-4 py-2 rounded-lg transition-colors font-medium bg-red-600 hover:bg-red-700 text-white"
+              >
+                حذف المجلد
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <ConfirmationDialog
         isOpen={examDeleteDialog.isOpen}
